@@ -37,7 +37,7 @@ export default class RestApplication {
     const port = this.config.get('PORT');
     this.expressApplication.listen(port);
 
-    this.logger.info(`🚀Server started on ${getFullServerPath(host, port)}`);
+    this.logger.info(`Server started on ${getFullServerPath(host, port)}`);
   }
 
   public async init() {
