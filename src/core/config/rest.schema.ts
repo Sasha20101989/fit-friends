@@ -13,6 +13,7 @@ export type RestSchema = {
   DB_NAME: string;
   JWT_SECRET:string;
   EXPIRATION_TIME: string;
+  HOST: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -69,5 +70,11 @@ export const configRestSchema = convict<RestSchema>({
     format: String,
     env: 'EXPIRATION_TIME',
     default: null
+  },
+  HOST: {
+    doc: 'Host wrere started service',
+    format: String,
+    env: 'HOST',
+    default: 'localhost'
   }
 });
