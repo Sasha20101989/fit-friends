@@ -31,6 +31,6 @@ export default class RestApplication {
   }
 
   public async init() {
-
+    this.logger.info('Application initialization');
   }
 }

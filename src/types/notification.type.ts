@@ -1,4 +1,4 @@
-import type { User } from "./user.interface.js";
+import type { User } from './user.interface.js';
 
 export type Notification = {
   date: Date;
