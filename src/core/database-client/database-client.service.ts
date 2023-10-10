@@ -62,7 +62,7 @@ export default class MongoClientService implements DatabaseClientInterface {
       return;
     }
 
-    this.logger.info('Trying to connect to MongoDB…');
+    this.logger.info('Trying to connect to MongoDB...');
     await this._connect(uri);
     this.logger.info('Database connection established.');
   }
