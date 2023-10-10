@@ -1,49 +1,69 @@
-// import type { DatabaseClientInterface } from '../../core/database-client/mongo-client.interface.js';
-// import { getMongoURI } from '../../core/helpers/db.js';
+import type { DatabaseClientInterface } from '../../core/database-client/mongo-client.interface.js';
+import type{ LoggerInterface } from '../../core/logger/logger.interface.js';
+import type{ UserServiceInterface } from '../user/user-service.interface.js';
+import type { User } from '../../types/user.interface.js';
 
-// export default class ImportCommand implements CliCommandInterface {
-//   public readonly name = '--import';
-//   private userService!: UserServiceInterface;
-//   private offerService!: OfferServiceInterface;
-//   private databaseService!: DatabaseClientInterface;
-//   private logger: LoggerInterface;
-//   private configService: ConfigService;
-//   private salt!: string;
+import { getMongoURI } from '../../core/helpers/db.js';
+import ConfigService from '../../core/config/config.service.js';
+import ConsoleLoggerService from '../../core/logger/console.service.js';
+import UserService from '../user/user-service.js';
+import { UserModel } from '../user/user.entity.js';
+import MongoClientService from '../../core/database-client/database-client.service.js';
 
-//   constructor() {
-//     this.onLine = this.onLine.bind(this);
-//     this.onComplete = this.onComplete.bind(this);
+import { generateRandomUser } from './data-generator.js';
 
-//     this.logger = new ConsoleLoggerService();
-//     this.configService = new ConfigService(this.logger);
-//     this.userService = new UserService(this.logger, UserModel);
-//     this.offerService = new OfferService(this.logger, OfferModel);
-//     this.databaseService = new MongoClientService(this.logger);
-//   }
+const COUNT_GENERATED_USERS = 10;
+const DEFAULT_USER_PASSWORD = '123456';
 
-//   private async saveOffer(offer: RentalOffer) {
+export default class DataGeneratorCommand {
+  private userService!: UserServiceInterface;
+  private databaseService!: DatabaseClientInterface;
+  private logger: LoggerInterface;
+  private configService: ConfigService;
+  private salt!: string;
 
-//     const user = await this.userService.findOrCreate({
-//       ...offer.user,
-//       password: DEFAULT_USER_PASSWORD
-//     }, this.salt);
+  constructor() {
+    this.logger = new ConsoleLoggerService();
+    this.configService = new ConfigService(this.logger);
+    this.userService = new UserService(this.logger, UserModel);
+    this.databaseService = new MongoClientService(this.logger);
+  }
 
-//     const coordinates: CityCoordinates = cityCoordinates[offer.city];
+  private async saveUser(user: User) {
 
-//     await this.offerService.create({
-//       ...offer,
-//       coordinates,
-//       userId: user.id,
-//     });
-//   }
+    await this.userService.findOrCreate({
+      ...user,
+      password: DEFAULT_USER_PASSWORD
+    }, this.salt);
+  }
 
-//   public async execute(filename: string, login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
-//     const defaulDbPort = this.configService.get('DB_PORT');
-//     const uri = getMongoURI(login, password, host, defaulDbPort, dbname);
-//     this.salt = salt;
+  private async generateAndSaveUsers() {
+    const promises: Promise<void>[] = [];
 
-//     await this.databaseService.connect(uri);
+    for (let i = 0; i < COUNT_GENERATED_USERS; i++) {
+      const randomUser = generateRandomUser();
 
+      const savePromise = this.saveUser(randomUser);
 
-//   }
-// }
+      promises.push(savePromise);
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info('All users have been generated and saved.');
+  }
+
+  public async execute(login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
+    const defaulDbPort = this.configService.get('DB_PORT');
+    const uri = getMongoURI(login, password, host, defaulDbPort, dbname);
+    this.salt = salt;
+
+    await this.databaseService.connect(uri);
+
+    try{
+      await this.generateAndSaveUsers()
+    }catch(exception){
+      this.logger.info(`User generation failed with an error: ${exception}`);
+    }
+  }
+}

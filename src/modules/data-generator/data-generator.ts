@@ -1,3 +1,4 @@
+import { User } from './../../types/user.interface';
 // import { DataGeneratorInterface } from './data-generator.interface.js';
 
 // export default class OfferGenerator implements DataGeneratorInterface {
@@ -30,3 +31,22 @@
 //     ].join('\t');
 //   }
 // }
+
+const generateUsers = () => {
+  const users = [];
+  for (let i = 1; i <= 10; i++) {
+    const user: User = {
+      name: `User ${i}`,
+      email: `user${i}@example.com`,
+      /* Другие поля пользователя */
+    };
+    users.push(user);
+  }
+  return users;
+};
+
+const users: User[] = generateUsers();
+
+export function generateRandomUser(): User {
+  return users[Math.floor(Math.random() * users.length)];
+}

@@ -20,6 +20,9 @@ export interface UserEntity extends defaultClasses.Base {}
 @modelOptions({
   schemaOptions: {
     collection: 'users'
+  },
+  options: {
+    allowMixed: 0
   }
 })
 

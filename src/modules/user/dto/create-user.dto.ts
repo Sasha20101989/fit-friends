@@ -5,7 +5,6 @@ import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
-import { Role } from '../../../types/role.enum.js';
 
 export default class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required' })
