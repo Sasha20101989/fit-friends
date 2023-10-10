@@ -1,11 +1,14 @@
 import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
 
+import type { DatabaseClientInterface } from '../core/database-client/mongo-client.interface.js';
 import type { LoggerInterface } from '../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../core/config/config.interface.js';
 import { RestSchema } from '../core/config/rest.schema.js';
 import { AppComponent } from '../types/app-component.enum.js';
+
 import { getFullServerPath } from '../core/helpers/common.js';
+import { getMongoURI } from '../core/helpers/db.js';
 
 @injectable()
 export default class RestApplication {
@@ -14,20 +17,25 @@ export default class RestApplication {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
+    @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
   ) {
     this.expressApplication = express();
   }
 
-  private async _initExceptionFilters() {
+  private async _initDb() {
+    this.logger.info('Init database...');
 
-  }
+    const mongoUri = getMongoURI(
+      this.config.get('MONGO_INITDB_ROOT_USERNAME'),
+      this.config.get('MONGO_INITDB_ROOT_PASSWORD'),
+      this.config.get('DB_HOST'),
+      this.config.get('DB_PORT'),
+      this.config.get('DB_NAME'),
+    );
 
-  private async _initMiddleware() {
+    await this.databaseClient.connect(mongoUri);
 
-  }
-
-  private async _initRoutes() {
-
+    this.logger.info('Init database completed');
   }
 
   private async _initServer() {
@@ -42,6 +50,10 @@ export default class RestApplication {
 
   public async init() {
     this.logger.info('Application initialization');
+
+    await this._initDb().catch((error) => {
+      this.logger.error(`Error during database initialization: ${error.message}`);
+    });
 
     await this._initServer().catch((error) => {
       this.logger.error(`Error server initialization: ${error.message}`);
