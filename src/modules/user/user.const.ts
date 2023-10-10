@@ -1,0 +1,23 @@
+export const PASSWORD_CONSTRAINTS = {
+  MIN_LENGTH: 6,
+  MAX_LENGTH: 12,
+};
+
+export const USERNAME_CONSTRAINTS = {
+  MIN_LENGTH: 1,
+  MAX_LENGTH: 15,
+};
+
+export const CALORIES_CONSTRAINTS = {
+  MIN_TO_BURN: 1000,
+  MAX_TO_BURN: 5000,
+  MIN_TO_SPEND: 1000,
+  MAX_TO_SPEND: 5000,
+};
+
+export const DESCRIPTION_CONSTRAINTS = {
+  MIN_LENGTH: 10,
+  MAX_LENGTH: 140,
+};
+
+export const JWT_ALGORITHM = 'HS256';
