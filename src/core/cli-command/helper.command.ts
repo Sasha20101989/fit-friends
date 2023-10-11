@@ -12,7 +12,7 @@ export default class HelpCommand implements CliCommandInterface {
             main.js --<command> [--arguments]
         Команды:
             ${chalk.green('--help')}:                      # Печатает этот текст
-            ${chalk.green('--import <path>')}:             # Импортирует в базу данных информацию из tsv-файла. Путь к файлу передаётся в параметре <path>.
+            ${chalk.green('--import <login> <password> <host> <dbname> <salt>')}:             # Генерирует и импортирует в базу данных информацию. Необходимо дополнить параметрами <имя пользователя базы данных> <пароль пользователя базы данных> <порт базы данных> <название базы данных> <соль>.
     `));
   }
 }

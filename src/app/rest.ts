@@ -4,8 +4,11 @@ import { inject, injectable } from 'inversify';
 import type { DatabaseClientInterface } from '../core/database-client/mongo-client.interface.js';
 import type { LoggerInterface } from '../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../core/config/config.interface.js';
+import type { ControllerInterface } from '../core/controller/controller.interface.js';
+
 import { RestSchema } from '../core/config/rest.schema.js';
 import { AppComponent } from '../types/app-component.enum.js';
+import { AuthenticateMiddleware } from '../core/middlewares/authenticate.middleware.js';
 
 import { getFullServerPath } from '../core/helpers/common.js';
 import { getMongoURI } from '../core/helpers/db.js';
@@ -18,6 +21,7 @@ export default class RestApplication {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
+    @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -38,6 +42,25 @@ export default class RestApplication {
     this.logger.info('Init database completed');
   }
 
+  private async _initMiddleware() {
+    this.logger.info('Global middleware initialization...');
+
+    this.expressApplication.use(express.json());
+
+    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
+    this.expressApplication.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+
+    this.logger.info('Global middleware initialization completed');
+  }
+
+  private async _initRoutes() {
+    this.logger.info('Controller initialization...');
+
+    this.expressApplication.use('/users', this.userController.router);
+
+    this.logger.info('Controller initialization completed');
+  }
+
   private async _initServer() {
     this.logger.info('Try to init server...');
 
@@ -54,6 +77,10 @@ export default class RestApplication {
     await this._initDb().catch((error) => {
       this.logger.error(`Error during database initialization: ${error.message}`);
     });
+
+    await this._initMiddleware();
+
+    await this._initRoutes();
 
     await this._initServer().catch((error) => {
       this.logger.error(`Error server initialization: ${error.message}`);
