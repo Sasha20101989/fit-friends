@@ -2,19 +2,19 @@ import typegoose, { defaultClasses } from '@typegoose/typegoose';
 
 import { createSHA256 } from '../../core/helpers/common.js';
 
-import type { User } from '../../types/user.interface.js';
+import type { Trainer } from '../../types/trainer.interface.js';
 
 import { Role } from '../../types/role.enum.js';
-import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { Gender } from '../../types/gender.enum..js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
-import CreateUserDto from './dto/create-user.dto.js';
+import CreateTrainerDto from './dto/create-trainer.dto.js';
+
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
-export interface UserEntity extends defaultClasses.Base {}
+export interface TrainerEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
@@ -25,7 +25,7 @@ export interface UserEntity extends defaultClasses.Base {}
   }
 })
 
-export class UserEntity extends defaultClasses.TimeStamps implements User {
+export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer {
   @prop({ required: true })
   public name: string;
 
@@ -45,7 +45,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public birthDate?: string;
 
   @prop({ required: true, enum: Role, default: Role.User })
-  public role!: Role.User;
+  public role!: Role.Trainer;
 
   @prop({ required: false, trim: true })
   public description?: string;
@@ -62,42 +62,31 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({ required: true, type: String, enum: WorkoutType })
   public workoutTypes: WorkoutType[];
 
-  @prop({ required: true, enum: WorkoutDuration })
-  public workoutDuration: WorkoutDuration;
+  @prop({ required: true })
+  public certificate: string;
 
   @prop({ required: true })
-  public caloriesToBurn: number;
+  public trainerAchievements?: string;
 
   @prop({ required: true })
-  public caloriesToSpend: number;
+  public personalTraining: boolean;
 
-  @prop({ required: true })
-  public readinessForWorkout: boolean;
-
-  @prop({default: 0})
-  public traningCount!: number;
-
-  @prop()
-  public traningIds!: string[];
-
-  constructor(userData: CreateUserDto) {
+  constructor(trainerData: CreateTrainerDto) {
     super();
 
-    this.name = userData.name;
-    this.email = userData.email;
-    this.avatar = userData.avatar;
-    this.gender = userData.gender;
-    this.birthDate = userData.birthDate;
-    this.description = userData.description;
-    this.location = userData.location;
-    this.backgroundImage = userData.backgroundImage;
-    this.trainingLevel = userData.trainingLevel;
-    this.workoutTypes = userData.workoutTypes;
-    this.workoutDuration = userData.workoutDuration;
-    this.caloriesToBurn = userData.caloriesToBurn;
-    this.caloriesToSpend = userData.caloriesToSpend;
-    this.readinessForWorkout = userData.readinessForWorkout;
-    this.traningCount = userData.traningCount;
+    this.name = trainerData.name;
+    this.email = trainerData.email;
+    this.avatar = trainerData.avatar;
+    this.gender = trainerData.gender;
+    this.birthDate = trainerData.birthDate;
+    this.description = trainerData.description;
+    this.location = trainerData.location;
+    this.backgroundImage = trainerData.backgroundImage;
+    this.trainingLevel = trainerData.trainingLevel;
+    this.workoutTypes = trainerData.workoutTypes;
+    this.certificate = trainerData.certificate;
+    this.trainerAchievements = trainerData.trainerAchievements;
+    this.personalTraining = trainerData.personalTraining;
   }
 
   public setPassword(password: string, salt: string) {
@@ -114,4 +103,4 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   }
 }
 
-export const UserModel = getModelForClass(UserEntity);
+export const TrainerModel = getModelForClass(TrainerEntity);

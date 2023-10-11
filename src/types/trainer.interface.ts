@@ -3,7 +3,7 @@ import { Role } from './role.enum.js';
 
 export interface Trainer extends BaseUser {
   role: Role.Trainer;
-  certificates: string;
-  trainerAchievements: string;
+  certificate: string;
+  trainerAchievements?: string;
   personalTraining: boolean;
 }

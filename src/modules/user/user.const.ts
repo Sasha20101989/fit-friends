@@ -20,4 +20,9 @@ export const DESCRIPTION_CONSTRAINTS = {
   MAX_LENGTH: 140,
 };
 
+export const ARCHIEVEMENTS_CONSTRAINTS = {
+  MIN_LENGTH: 10,
+  MAX_LENGTH: 140,
+};
+
 export const JWT_ALGORITHM = 'HS256';

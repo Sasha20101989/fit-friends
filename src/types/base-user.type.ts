@@ -14,5 +14,4 @@ export type BaseUser = {
   description?: string;
   trainingLevel: TrainingLevel;
   workoutTypes: WorkoutType[];
-  traningCount: number;
 }

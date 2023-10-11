@@ -25,7 +25,7 @@ export default class UserService implements UserServiceInterface {
     user.setPassword(dto.password, salt);
 
     const result = await this.userModel.create(user);
-    this.logger.info(`New user created: ${user.email} and password ${user.getPassword()}`);
+    this.logger.info(`New user created: ${user.email} and name ${user.name}`);
 
     return result;
   }
