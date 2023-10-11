@@ -8,4 +8,5 @@ export interface User extends BaseUser {
   caloriesToBurn: number;
   caloriesToSpend: number;
   readinessForWorkout: boolean;
+  traningCount: number;
 }
