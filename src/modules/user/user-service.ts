@@ -8,6 +8,8 @@ import type {UserServiceInterface} from './user-service.interface.js';
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
+import UpdateUserDto from './dto/update-user.dto.js';
+import { MongoId } from '../../types/mongo-id.type.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
@@ -15,6 +17,12 @@ export default class UserService implements UserServiceInterface {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>
   ) {}
+
+  public async updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, {new: true})
+      .exec();
+  }
 
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
     const user = new UserEntity(dto);

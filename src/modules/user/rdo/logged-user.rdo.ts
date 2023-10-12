@@ -9,6 +9,4 @@ export default class LoggedUserRdo {
 
   @Expose()
   public avatar!: string;
-
-  //дописать
 }

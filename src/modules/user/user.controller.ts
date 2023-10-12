@@ -22,6 +22,9 @@ import LoggedUserRdo from './rdo/logged-user.rdo.js';
 import UserRdo from './rdo/user.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-by-email-middleware.js';
+import UpdateUserDto from './dto/update-user.dto.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -36,7 +39,7 @@ export default class UserController extends Controller {
     this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
     this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
-
+    this.addRoute({ path: '/:userId', method: HttpMethod.Put, handler: this.updateById, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId'), new ValidateDtoMiddleware(UpdateUserDto)] });
     this.addRoute({
       path: '/login',
       method: HttpMethod.Get,
@@ -128,5 +131,23 @@ export default class UserController extends Controller {
       res,
       fillDTO(UserRdo, result)
     );
+  }
+
+  public async updateById(
+    { params, body }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
+    res: Response
+  ): Promise<void> {
+    const { userId } = params;
+    const updatedUser = await this.userService.updateById(userId, body);
+
+    if (!updatedUser) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `User with id ${userId} not found.`,
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(UserRdo, updatedUser));
   }
 }
