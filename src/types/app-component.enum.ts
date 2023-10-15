@@ -10,5 +10,4 @@ export const AppComponent = {
   UserController: Symbol.for('UserController'),
   TokenServiceInterface: Symbol.for('TokenServiceInterface'),
   TokenModel: Symbol.for('TokenModel'),
-  TokenController: Symbol.for('TokenController'),
 } as const;

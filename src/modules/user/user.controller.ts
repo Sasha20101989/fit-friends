@@ -2,12 +2,10 @@ import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import * as core from 'express-serve-static-core';
-
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { UserServiceInterface } from './user-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import type { UnknownRecord } from '../../types/unknown-record.type.js';
-
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
@@ -25,23 +23,25 @@ import UpdateUserDto from './dto/update-user.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
-import { TokenServiceInterface } from '../token/token-service.interface.js';
+import { VerifyUserResponse } from './response/verify-user.response.js';
+import { Token } from '../../types/token.enum.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
     this.logger.info('Register routes for UserController...');
 
     this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
     this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
+    this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
     this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
     this.addRoute({ path: '/:userId', method: HttpMethod.Put, handler: this.updateById, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId'), new ValidateDtoMiddleware(UpdateUserDto)] });
+    this.addRoute({ path: '/refresh', method: HttpMethod.Get, handler: this.refreshToken, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({
       path: '/login',
       method: HttpMethod.Get,
@@ -49,8 +49,29 @@ export default class UserController extends Controller {
     });
   }
 
+  public async refreshToken(
+    req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
+    res: Response
+  ){
+    const { refreshToken } = req.cookies;
+    const { body } = req;
+    const userData = await this.userService.refresh(refreshToken, body);
+
+    if (!userData) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    this.setRefreshTokenCookie(res, userData.refreshToken);
+
+    this.ok(res, { message: 'Token updated' });
+  }
+
   public async checkAuthenticate(req: Request, res: Response) {
-    if(!req.user){
+    if (!req.user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
@@ -61,7 +82,7 @@ export default class UserController extends Controller {
     const { user: { email } } = req;
     const foundedUser = await this.userService.findByEmail(email);
 
-    if (! foundedUser) {
+    if (!foundedUser) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
@@ -84,9 +105,9 @@ export default class UserController extends Controller {
 
   public async login(
     { body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
-    res: Response,
+    res: Response
   ): Promise<void> {
-    const result = await this
+    const result: VerifyUserResponse | null = await this
       .userService
       .verifyUser(body, this.configService.get('SALT'));
 
@@ -94,35 +115,38 @@ export default class UserController extends Controller {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
-        'UserController',
+        'UserController'
       );
     }
 
-    const tokens = this.tokenService.generateTokens(body);
-    await this.tokenService.saveToken(result.user.id , tokens.refreshToken);
-
-    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
-    const numericValue = parseInt(expirationTime);
-
-    let maxAge;
-    if (expirationTime.endsWith('d')) {
-      maxAge = numericValue * 24 * 60 * 60 * 1000;
-    }else{
-      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
-    }
-
-    res.cookie('refreshToken', result.refreshToken, {maxAge: maxAge, httpOnly: true});
+    this.setRefreshTokenCookie(res, result.refreshToken);
 
     this.ok(res, {
       ...fillDTO(LoggedUserRdo, result.user),
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken
     });
   }
 
+  public async logout(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken || typeof refreshToken !== 'string') {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Invalid refreshToken provided in the request.',
+        'UserController'
+      );
+    }
+
+    await this.userService.logout(refreshToken);
+    this.clearCookie(res, Token.Refresh);
+    this.ok(res, { message: 'Logout successful' });
+  }
+
   public async create(
-    {body}: Request<UnknownRecord, UnknownRecord, CreateUserDto>,
-    res: Response,
+    { body }: Request<UnknownRecord, UnknownRecord, CreateUserDto>,
+    res: Response
   ): Promise<void> {
     const existsUser = await this.userService.findByEmail(body.email);
 
@@ -136,17 +160,8 @@ export default class UserController extends Controller {
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
 
-    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
-    const numericValue = parseInt(expirationTime);
+    this.setRefreshTokenCookie(res, result.refreshToken);
 
-    let maxAge;
-    if (expirationTime.endsWith('d')) {
-      maxAge = numericValue * 24 * 60 * 60 * 1000;
-    }else{
-      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
-    }
-
-    res.cookie('refreshToken', result.refreshToken, {maxAge: maxAge, httpOnly: true});
     this.created(
       res,
       fillDTO(UserRdo, result.user)
@@ -169,5 +184,23 @@ export default class UserController extends Controller {
     }
 
     this.ok(res, fillDTO(UserRdo, updatedUser));
+  }
+
+  private setRefreshTokenCookie(res: Response, refreshToken: string) {
+    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
+    const numericValue = parseInt(expirationTime);
+    let maxAge;
+
+    if (expirationTime.endsWith('d')) {
+      maxAge = numericValue * 24 * 60 * 60 * 1000;
+    } else {
+      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
+    }
+
+    res.cookie(Token.Refresh, refreshToken, { maxAge, httpOnly: true });
+  }
+
+  private clearCookie(res: Response, token: Token) {
+    res.clearCookie(token);
   }
 }

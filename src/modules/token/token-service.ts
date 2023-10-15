@@ -10,6 +10,7 @@ import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { AuthTokens } from '../../types/auth-tokens.js';
 import LoginUserDto from '../user/dto/login-user.dto.js';
+import { UserEntity } from '../user/user.entity.js';
 
 @injectable()
 export default class TokenService implements TokenServiceInterface {
@@ -55,5 +56,32 @@ export default class TokenService implements TokenServiceInterface {
     const token = await this.tokenModel.create({user: userId, refreshToken});
     this.logger.info(`Refresh token created`);
     return token;
+  }
+
+  public async removeToken(refreshToken: string): Promise<void>{
+    await this.tokenModel.deleteOne({ refreshToken }).exec();
+  }
+
+  public async findToken(refreshToken: string): Promise<TokenEntity | null>{
+    const token = await this.tokenModel.findOne({ refreshToken }).exec();
+    return token;
+  }
+
+  public async validateAccessToken(token: string): Promise<UserEntity | null>{
+    try{
+      const userData = jwt.verify(token, this.configService.get('JWT_ACCESS_SECRET')) as UserEntity;
+      return userData;
+    }catch(error){
+      return null;
+    }
+  }
+
+  public async validateRefreshToken(token: string): Promise<UserEntity | null>{
+    try{
+      const userData = jwt.verify(token, this.configService.get('JWT_REFRESH_SECRET')) as UserEntity;
+      return userData;
+    }catch(error){
+      return null;
+    }
   }
 }

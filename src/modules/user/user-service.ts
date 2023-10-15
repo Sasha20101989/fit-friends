@@ -19,10 +19,37 @@ export default class UserService implements UserServiceInterface {
     @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
   ) {}
 
+  public async logout(refreshToken: string): Promise<void> {
+    await this.tokenService.removeToken(refreshToken);
+  }
+
   public async updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findByIdAndUpdate(userId, dto, {new: true})
       .exec();
+  }
+
+  public async refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse | null>{
+    if(!refreshToken){
+      return null;
+    }
+    const userData = await this.tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+
+    if(!userData || !tokenFromDb){
+      return null;
+    }
+
+    const user = await this.findByEmail(userData.email);
+
+    if(!user){
+      return null;
+    }
+
+    const tokens = this.tokenService.generateTokens(dto);
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
   public async create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse> {
@@ -38,7 +65,7 @@ export default class UserService implements UserServiceInterface {
     const tokens = this.tokenService.generateTokens(dto);
     await this.tokenService.saveToken(userResult.id, tokens.refreshToken);
 
-    return {user: userResult, refreshToken: tokens.refreshToken};
+    return {user: userResult, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
@@ -63,7 +90,7 @@ export default class UserService implements UserServiceInterface {
       const tokens = this.tokenService.generateTokens(dto);
       await this.tokenService.saveToken(user.id, tokens.refreshToken);
 
-      return {user, refreshToken: tokens.refreshToken};
+      return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
     }
 
     return null;

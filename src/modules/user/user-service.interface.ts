@@ -8,9 +8,11 @@ import UpdateUserDto from './dto/update-user.dto.js';
 import { VerifyUserResponse } from './response/verify-user.response.js';
 
 export interface UserServiceInterface {
+  logout(refreshToken: string): Promise<void>;
   create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse>;
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
   exists(documentId: string): Promise<boolean>;
   verifyUser(dto: LoginUserDto, salt: string): Promise<VerifyUserResponse | null>;
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
+  refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse | null>;
 }
