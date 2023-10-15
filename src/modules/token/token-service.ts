@@ -9,6 +9,7 @@ import { TokenServiceInterface } from './token-service.interface.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { AuthTokens } from '../../types/auth-tokens.js';
+import LoginUserDto from '../user/dto/login-user.dto.js';
 
 @injectable()
 export default class TokenService implements TokenServiceInterface {
@@ -18,7 +19,7 @@ export default class TokenService implements TokenServiceInterface {
     @inject(AppComponent.TokenModel) private readonly tokenModel: types.ModelType<TokenEntity>
   ) {}
 
-  public generateTokens(dto: object): AuthTokens{
+  public generateTokens(dto: LoginUserDto): AuthTokens{
     this.logger.info('Create access token...');
     const accessToken = jwt.sign(
       dto,

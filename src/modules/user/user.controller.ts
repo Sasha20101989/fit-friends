@@ -25,12 +25,14 @@ import UpdateUserDto from './dto/update-user.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
+import { TokenServiceInterface } from '../token/token-service.interface.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
+    @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
     super(logger, configService);
@@ -84,11 +86,11 @@ export default class UserController extends Controller {
     { body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response,
   ): Promise<void> {
-    const user = await this
+    const result = await this
       .userService
       .verifyUser(body, this.configService.get('SALT'));
 
-    if (!user) {
+    if (!result?.user) {
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',
@@ -96,16 +98,25 @@ export default class UserController extends Controller {
       );
     }
 
-    const token = user.createAccessToken(
-      user.id,
-      user.email,
-      user.avatar,
-      this.configService.get('JWT_ACCESS_SECRET'),
-      this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'));
+    const tokens = this.tokenService.generateTokens(body);
+    await this.tokenService.saveToken(result.user.id , tokens.refreshToken);
+
+    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
+    const numericValue = parseInt(expirationTime);
+
+    let maxAge;
+    if (expirationTime.endsWith('d')) {
+      maxAge = numericValue * 24 * 60 * 60 * 1000;
+    }else{
+      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
+    }
+
+    res.cookie('refreshToken', result.refreshToken, {maxAge: maxAge, httpOnly: true});
 
     this.ok(res, {
-      ...fillDTO(LoggedUserRdo, user),
-      token
+      ...fillDTO(LoggedUserRdo, result.user),
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
     });
   }
 

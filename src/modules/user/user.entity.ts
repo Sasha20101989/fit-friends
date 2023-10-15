@@ -1,6 +1,5 @@
 import typegoose, { defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 import type { User } from '../../types/user.interface.js';
 
@@ -114,16 +113,6 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
       return await bcrypt.compare(password, this.password);
     }
     return false;
-  }
-
-  public createAccessToken(userId: string, email: string, avatar: string | undefined, accessSecret: string, accessExpirationTime: string) {
-    return jwt.sign({
-        userId: userId,
-        email,
-        avatar
-    }, accessSecret, {
-        expiresIn: accessExpirationTime
-    });
   }
 }
 

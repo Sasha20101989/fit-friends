@@ -5,17 +5,16 @@ import { AppComponent } from '../../types/app-component.enum.js';
 import { UserEntity } from './user.entity.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import type {UserServiceInterface} from './user-service.interface.js';
-import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import { MongoId } from '../../types/mongo-id.type.js';
 import { TokenServiceInterface } from '../token/token-service.interface.js';
+import { VerifyUserResponse } from './response/verify-user.response.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
-    @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>,
     @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
   ) {}
@@ -26,7 +25,7 @@ export default class UserService implements UserServiceInterface {
       .exec();
   }
 
-  public async create(dto: CreateUserDto, salt: string): Promise<{user: DocumentType<UserEntity>; refreshToken: string}> {
+  public async create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
@@ -35,12 +34,9 @@ export default class UserService implements UserServiceInterface {
     await user.setPassword(dto.password, salt);
 
     const userResult = await this.userModel.create(user);
-    this.logger.info(`New user created: ${user.email} and name ${user.name}`);
 
-    const tokens = this.tokenService.generateTokens({...userResult});
+    const tokens = this.tokenService.generateTokens(dto);
     await this.tokenService.saveToken(userResult.id, tokens.refreshToken);
-
-    this.logger.info(`New refresh token for user: ${userResult.id} created`);
 
     return {user: userResult, refreshToken: tokens.refreshToken};
   }
@@ -53,7 +49,7 @@ export default class UserService implements UserServiceInterface {
     return this.userModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public async verifyUser(dto: LoginUserDto): Promise<DocumentType<UserEntity> | null> {
+  public async verifyUser(dto: LoginUserDto): Promise<VerifyUserResponse | null> {
     const user = await this.findByEmail(dto.email);
 
     if (! user) {
@@ -63,7 +59,11 @@ export default class UserService implements UserServiceInterface {
     const ifPasswordVerified = await user.verifyPassword(dto.password);
 
     if (ifPasswordVerified) {
-      return user;
+
+      const tokens = this.tokenService.generateTokens(dto);
+      await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+      return {user, refreshToken: tokens.refreshToken};
     }
 
     return null;

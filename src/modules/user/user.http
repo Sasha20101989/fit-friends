@@ -40,22 +40,22 @@ GET http://localhost:4000/users/email HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user5@example.com"
+  "email": "feliugin@mail.net"
 }
 ###
 
 ## Проверить токен пользователя
 GET http://localhost:4000/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTJiZjQ5ZTM1ZmI1NDQyMTlhYjU0MjAiLCJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwiaWF0IjoxNjk3Mzc5NjAxLCJleHAiOjE2OTczNzk2NjF9.X4BF5H3hRnbtiLElZxCeo491uEyxbYCdBNnk-0xsYPc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpYXQiOjE2OTczODY2NDYsImV4cCI6MTY5NzM4NjcwNn0.7KLOpiwMg78j3CMKs2TusZwGS_B0x8xcSCxUhuPdMFk
 ###
 
 ## Обновление пользователя по id
 
-PUT http://localhost:4000/users/6526c11856fde92b6eb03f4c HTTP/1.1
+PUT http://localhost:4000/users/652c1003f22c24c98230cd61 HTTP/1.1
 Content-Type: application/json
 
 {
   "email": "user5@example.com",
-  "name": "Userr"
+  "name": "User"
 }
 ###
