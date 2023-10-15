@@ -1,16 +1,17 @@
 import { types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
-import { AppComponent } from '../../types/app-component.enum.js';
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
+import type { TokenServiceInterface } from './token-service.interface.js';
+import type { ConfigInterface } from '../../core/config/config.interface.js';
+import type { Auth } from '../../types/auth.js';
+import { AppComponent } from '../../types/app-component.enum.js';
 import { TokenEntity } from './token.entity.js';
-import { TokenServiceInterface } from './token-service.interface.js';
-import { ConfigInterface } from '../../core/config/config.interface.js';
-import { RestSchema } from '../../core/config/rest.schema.js';
-import { AuthTokens } from '../../types/auth-tokens.js';
-import LoginUserDto from '../user/dto/login-user.dto.js';
 import { UserEntity } from '../user/user.entity.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
+import LoginUserDto from '../user/dto/login-user.dto.js';
+
 
 @injectable()
 export default class TokenService implements TokenServiceInterface {
@@ -20,7 +21,7 @@ export default class TokenService implements TokenServiceInterface {
     @inject(AppComponent.TokenModel) private readonly tokenModel: types.ModelType<TokenEntity>
   ) {}
 
-  public generateTokens(dto: LoginUserDto): AuthTokens{
+  public generateTokens(dto: LoginUserDto): Auth{
     this.logger.info('Create access token...');
     const accessToken = jwt.sign(
       dto,
@@ -40,7 +41,7 @@ export default class TokenService implements TokenServiceInterface {
     return {
       accessToken,
       refreshToken
-    }
+    };
   }
 
   public async saveToken(userId: string, refreshToken: string): Promise<TokenEntity>{
@@ -49,12 +50,12 @@ export default class TokenService implements TokenServiceInterface {
     if(tokenDta){
       tokenDta.refreshToken = refreshToken;
 
-      this.logger.info(`Refresh token updated`);
+      this.logger.info('Refresh token updated');
       return tokenDta.save();
     }
 
     const token = await this.tokenModel.create({user: userId, refreshToken});
-    this.logger.info(`Refresh token created`);
+    this.logger.info('Refresh token created');
     return token;
   }
 

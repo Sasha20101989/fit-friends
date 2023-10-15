@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 
 export default class LoggedUserRdo {
   @Expose()
-  public token!: string;
+  public accessToken!: string;
 
   @Expose()
   public email!: string;

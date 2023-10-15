@@ -2,29 +2,30 @@ import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
 import * as core from 'express-serve-static-core';
+
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { UserServiceInterface } from './user-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import type { UnknownRecord } from '../../types/unknown-record.type.js';
+import type { ParamsGetUser } from '../../types/params-get-user.type.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/app-component.enum.js';
-import { RestSchema } from '../../core/config/rest.schema.js';
+import { Token } from '../../types/token.enum.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
+import { RestSchema } from '../../core/config/rest.schema.js';
+import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
 import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/login-user.dto.js';
-import { ParamsGetUser } from '../../types/params-get-user.type.js';
+import UpdateUserDto from './dto/update-user.dto.js';
+import { VerifyUserResponse } from './response/verify-user.response.js';
 import LoggedUserRdo from './rdo/logged-user.rdo.js';
 import UserRdo from './rdo/user.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-by-email-middleware.js';
-import UpdateUserDto from './dto/update-user.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
-import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
-import { VerifyUserResponse } from './response/verify-user.response.js';
-import { Token } from '../../types/token.enum.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -188,7 +189,7 @@ export default class UserController extends Controller {
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
     const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
-    const numericValue = parseInt(expirationTime);
+    const numericValue = parseInt(expirationTime, 10);
     let maxAge;
 
     if (expirationTime.endsWith('d')) {

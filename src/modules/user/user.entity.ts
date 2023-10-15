@@ -2,7 +2,6 @@ import typegoose, { defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
 import type { User } from '../../types/user.interface.js';
-
 import { Role } from '../../types/role.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { Gender } from '../../types/gender.enum..js';

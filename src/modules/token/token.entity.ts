@@ -10,13 +10,13 @@ const { modelOptions, getModelForClass } = typegoose;
 
 export class TokenEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
-  public user: string
+  public user: string;
 
   @prop({ required: true })
-  public refreshToken: string
+  public refreshToken: string;
 
   constructor(userId: string, refreshToken: string){
-    super()
+    super();
     this.user = userId;
     this.refreshToken = refreshToken;
   }

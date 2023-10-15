@@ -1,15 +1,15 @@
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
+import type { MongoId } from '../../types/mongo-id.type.js';
+import type {UserServiceInterface} from './user-service.interface.js';
+import type { TokenServiceInterface } from '../token/token-service.interface.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { UserEntity } from './user.entity.js';
-import CreateUserDto from './dto/create-user.dto.js';
-import type {UserServiceInterface} from './user-service.interface.js';
 import { PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
-import { MongoId } from '../../types/mongo-id.type.js';
-import { TokenServiceInterface } from '../token/token-service.interface.js';
+import CreateUserDto from './dto/create-user.dto.js';
 import { VerifyUserResponse } from './response/verify-user.response.js';
 
 @injectable()
