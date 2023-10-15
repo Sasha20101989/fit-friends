@@ -25,4 +25,4 @@ export const ARCHIEVEMENTS_CONSTRAINTS = {
   MAX_LENGTH: 140,
 };
 
-export const JWT_ALGORITHM = 'HS256';
+export const DEFAULT_MAX_AGE_TOKEN = 30;

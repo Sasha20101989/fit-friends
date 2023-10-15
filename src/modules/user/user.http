@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
   "name": "Sasha",
-  "email": "feliugin1@mail.net",
+  "email": "feliugin@mail.net",
   "password": "123456",
   "gender": "мужской",
   "location": "Звёздная",
@@ -28,7 +28,7 @@ POST http://localhost:4000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user5@example.com",
+  "email": "feliugin@mail.net",
   "password": "123456"
 }
 
@@ -46,8 +46,7 @@ Content-Type: application/json
 
 ## Проверить токен пользователя
 GET http://localhost:4000/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiaWQiOiI2NTI2YzExODU2ZmRlOTJiNmViMDNmNGMiLCJpYXQiOjE2OTcxMjQ4MDksImV4cCI6MTY5NzEyNTcwOX0.8RXzz5gPP6lpD3H10AVqOxbJ0kwPkHP6lJs2qUK_3SY
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTJiZjQ5ZTM1ZmI1NDQyMTlhYjU0MjAiLCJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwiaWF0IjoxNjk3Mzc5NjAxLCJleHAiOjE2OTczNzk2NjF9.X4BF5H3hRnbtiLElZxCeo491uEyxbYCdBNnk-0xsYPc
 ###
 
 ## Обновление пользователя по id

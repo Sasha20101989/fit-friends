@@ -76,8 +76,6 @@ npm install
 Шаг 2: Конфигурация переменных окружения
 Проект "FIT FRIENDS" использует переменные окружения для конфигурации. Для запуска проекта вам потребуется сконфигурировать следующие переменные окружения:
 
-JWT_SECRET: Секретный ключ для подписи и проверки JWT-токенов.
-DATABASE_URL: URL-адрес базы данных MongoDB.
 Создайте файл с именем .env в корневой папке проекта и укажите значения переменных окружения в следующем формате:
 
 PORT= your_port
@@ -87,8 +85,10 @@ MONGO_INITDB_ROOT_USERNAME= your_root_user_name
 MONGO_INITDB_ROOT_PASSWORD= your_root_password
 DB_PORT= your_db_port
 DB_NAME= your_db_name
-JWT_SECRET= your_secret
-EXPIRATION_TIME= your_expiration_time
+JWT_ACCESS_SECRET= your_secret
+JWT_REFRESH_SECRET= your_secret
+ACCESS_TOKEN_EXPIRATION_TIME= your_expiration_time
+REFRESH_TOKEN_EXPIRATION_TIME= your_expiration_time
 
 Шаг 3: Сборка проекта
 Перед запуском проекта необходимо выполнить сборку, чтобы скомпилировать TypeScript код в JavaScript.
@@ -115,8 +115,10 @@ MONGO_INITDB_ROOT_USERNAME - имя пользователя базы данны
 MONGO_INITDB_ROOT_PASSWORD - пароль пользователя базы данных
 DB_PORT - порт базы данных
 DB_NAME - название базы данных
-JWT_SECRET - секретный ключ для подписи и верификации JWT-токенов
-EXPIRATION_TIME - срок действия для токена аутентификации
+JWT_ACCESS_SECRET - секретный ключ для подписи и верификации JWT-токенов
+JWT_REFRESH_SECRET - секретный ключ для восстановления  JWT_ACCESS-токенов
+ACCESS_TOKEN_EXPIRATION_TIME - срок действия для токена аутентификации
+REFRESH_TOKEN_EXPIRATION_TIME - срок действия для токена djccnfyjdktybz
 
 ### Наполнение базы первоначальными данными
 

@@ -1,6 +1,6 @@
 import typegoose, { defaultClasses } from '@typegoose/typegoose';
-
-import { createSHA256 } from '../../core/helpers/common.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import type { User } from '../../types/user.interface.js';
 
@@ -100,17 +100,30 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     this.traningCount = userData.traningCount;
   }
 
-  public setPassword(password: string, salt: string) {
-    this.password = createSHA256(password, salt);
+  public async setPassword(password: string, _saltRounds: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    this.password = hashedPassword;
   }
 
   public getPassword() {
     return this.password;
   }
 
-  public verifyPassword(password: string, salt: string) {
-    const hashPassword = createSHA256(password, salt);
-    return hashPassword === this.password;
+  public async verifyPassword(password: string) {
+    if (this.password) {
+      return await bcrypt.compare(password, this.password);
+    }
+    return false;
+  }
+
+  public createAccessToken(userId: string, email: string, avatar: string | undefined, accessSecret: string, accessExpirationTime: string) {
+    return jwt.sign({
+        userId: userId,
+        email,
+        avatar
+    }, accessSecret, {
+        expiresIn: accessExpirationTime
+    });
   }
 }
 

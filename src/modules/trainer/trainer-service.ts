@@ -34,16 +34,6 @@ export default class TrainerService implements TrainerServiceInterface {
     return this.trainerModel.findOne({email});
   }
 
-  public async findOrCreate(dto: CreateTrainerDto, salt: string): Promise<DocumentType<TrainerEntity>> {
-    const existedTrainer = await this.findByEmail(dto.email);
-
-    if (existedTrainer) {
-      return existedTrainer;
-    }
-
-    return this.create(dto, salt);
-  }
-
   public async exists(documentId: string): Promise<boolean> {
     return this.trainerModel.exists({ _id: documentId }).then((v) => v !== null);
   }

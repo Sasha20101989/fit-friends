@@ -11,8 +11,10 @@ export type RestSchema = {
   MONGO_INITDB_ROOT_PASSWORD: string;
   DB_PORT: string;
   DB_NAME: string;
-  JWT_SECRET:string;
-  EXPIRATION_TIME: string;
+  JWT_ACCESS_SECRET:string;
+  JWT_REFRESH_SECRET:string;
+  ACCESS_TOKEN_EXPIRATION_TIME: string;
+  REFRESH_TOKEN_EXPIRATION_TIME: string;
   HOST: string;
 }
 
@@ -59,16 +61,28 @@ export const configRestSchema = convict<RestSchema>({
     env: 'DB_NAME',
     default: null
   },
-  JWT_SECRET: {
+  JWT_ACCESS_SECRET: {
     doc: 'Secret for sign JWT',
     format: String,
-    env: 'JWT_SECRET',
+    env: 'JWT_ACCESS_SECRET',
     default: null
   },
-  EXPIRATION_TIME: {
+  JWT_REFRESH_SECRET: {
+    doc: 'Secret for refresh JWT ACCESS TOKEN',
+    format: String,
+    env: 'JWT_REFRESH_SECRET',
+    default: null
+  },
+  ACCESS_TOKEN_EXPIRATION_TIME: {
     doc: 'Time duration for token expiration',
     format: String,
-    env: 'EXPIRATION_TIME',
+    env: 'ACCESS_TOKEN_EXPIRATION_TIME',
+    default: null
+  },
+  REFRESH_TOKEN_EXPIRATION_TIME: {
+    doc: 'Time duration for token expiration',
+    format: String,
+    env: 'REFRESH_TOKEN_EXPIRATION_TIME',
     default: null
   },
   HOST: {

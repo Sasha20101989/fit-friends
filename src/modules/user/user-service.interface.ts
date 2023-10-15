@@ -7,9 +7,8 @@ import { MongoId } from '../../types/mongo-id.type.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 
 export interface UserServiceInterface {
-  create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>>;
+  create(dto: CreateUserDto, salt: string): Promise<{user: DocumentType<UserEntity>; refreshToken: string}>;
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
-  findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>>;
   exists(documentId: string): Promise<boolean>;
   verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null>;
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;

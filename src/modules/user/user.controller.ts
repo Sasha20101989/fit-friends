@@ -13,8 +13,7 @@ import { AppComponent } from '../../types/app-component.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
 import HttpError from '../../core/errors/http-error.js';
-import { createJWT, fillDTO } from '../../core/helpers/index.js';
-import { JWT_ALGORITHM } from './user.const.js';
+import { fillDTO } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import { ParamsGetUser } from '../../types/params-get-user.type.js';
@@ -25,6 +24,7 @@ import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-
 import UpdateUserDto from './dto/update-user.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
 
 @injectable()
 export default class UserController extends Controller {
@@ -96,15 +96,12 @@ export default class UserController extends Controller {
       );
     }
 
-    const token = await createJWT(
-      JWT_ALGORITHM,
-      this.configService.get('JWT_SECRET'),
-      {
-        email: user.email,
-        id: user.id
-      },
-      this.configService.get('EXPIRATION_TIME')
-    );
+    const token = user.createAccessToken(
+      user.id,
+      user.email,
+      user.avatar,
+      this.configService.get('JWT_ACCESS_SECRET'),
+      this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'));
 
     this.ok(res, {
       ...fillDTO(LoggedUserRdo, user),
@@ -127,9 +124,21 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
+
+    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
+    const numericValue = parseInt(expirationTime);
+
+    let maxAge;
+    if (expirationTime.endsWith('d')) {
+      maxAge = numericValue * 24 * 60 * 60 * 1000;
+    }else{
+      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
+    }
+
+    res.cookie('refreshToken', result.refreshToken, {maxAge: maxAge, httpOnly: true});
     this.created(
       res,
-      fillDTO(UserRdo, result)
+      fillDTO(UserRdo, result.user)
     );
   }
 

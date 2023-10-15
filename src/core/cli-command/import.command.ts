@@ -2,6 +2,7 @@ import { trainers, users } from '../../modules/data-generator/data-generator.js'
 import { TrainerServiceInterface } from '../../modules/trainer/trainer-service.interface.js';
 import TrainerService from '../../modules/trainer/trainer-service.js';
 import { TrainerModel } from '../../modules/trainer/trainer.entity.js';
+import { TokenModel } from '../../modules/token/token.entity.js';
 import { UserServiceInterface } from '../../modules/user/user-service.interface.js';
 import UserService from '../../modules/user/user-service.js';
 import { UserModel } from '../../modules/user/user.entity.js';
@@ -29,14 +30,14 @@ export default class ImportCommand implements CliCommandInterface {
   constructor() {
     this.logger = new ConsoleLoggerService();
     this.configService = new ConfigService(this.logger);
-    this.userService = new UserService(this.logger, UserModel);
+    this.userService = new UserService(this.logger, UserModel, TokenModel);
     this.trainerService = new TrainerService(this.logger, TrainerModel);
     this.databaseService = new MongoClientService(this.logger);
   }
 
   private async saveUser(user: User) {
 
-    await this.userService.findOrCreate({
+    await this.userService.create({
       ...user,
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
@@ -44,7 +45,7 @@ export default class ImportCommand implements CliCommandInterface {
 
   private async saveTrainer(trainer: Trainer) {
 
-    await this.trainerService.findOrCreate({
+    await this.trainerService.create({
       ...trainer,
       password: DEFAULT_USER_PASSWORD
     }, this.salt);

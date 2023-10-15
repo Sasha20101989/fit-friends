@@ -10,12 +10,14 @@ import { PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import { MongoId } from '../../types/mongo-id.type.js';
+import { TokenServiceInterface } from '../token/token-service.interface.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>
+    @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>,
+    @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
   ) {}
 
   public async updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
@@ -24,47 +26,43 @@ export default class UserService implements UserServiceInterface {
       .exec();
   }
 
-  public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity(dto);
-
+  public async create(dto: CreateUserDto, salt: string): Promise<{user: DocumentType<UserEntity>; refreshToken: string}> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
 
-    user.setPassword(dto.password, salt);
+    const user = new UserEntity(dto);
+    await user.setPassword(dto.password, salt);
 
-    const result = await this.userModel.create(user);
+    const userResult = await this.userModel.create(user);
     this.logger.info(`New user created: ${user.email} and name ${user.name}`);
 
-    return result;
+    const tokens = this.tokenService.generateTokens({...userResult});
+    await this.tokenService.saveToken(userResult.id, tokens.refreshToken);
+
+    this.logger.info(`New refresh token for user: ${userResult.id} created`);
+
+    return {user: userResult, refreshToken: tokens.refreshToken};
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({email});
   }
 
-  public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const existedUser = await this.findByEmail(dto.email);
-
-    if (existedUser) {
-      return existedUser;
-    }
-
-    return this.create(dto, salt);
-  }
-
   public async exists(documentId: string): Promise<boolean> {
     return this.userModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public async verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null> {
+  public async verifyUser(dto: LoginUserDto): Promise<DocumentType<UserEntity> | null> {
     const user = await this.findByEmail(dto.email);
 
     if (! user) {
       return null;
     }
 
-    if (user.verifyPassword(dto.password, salt)) {
+    const ifPasswordVerified = await user.verifyPassword(dto.password);
+
+    if (ifPasswordVerified) {
       return user;
     }
 

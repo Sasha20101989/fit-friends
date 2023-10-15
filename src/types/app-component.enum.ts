@@ -8,4 +8,7 @@ export const AppComponent = {
   TrainerServiceInterface: Symbol.for('TrainerServiceInterface'),
   TrainerModel: Symbol.for('TrainerModel'),
   UserController: Symbol.for('UserController'),
+  TokenServiceInterface: Symbol.for('TokenServiceInterface'),
+  TokenModel: Symbol.for('TokenModel'),
+  TokenController: Symbol.for('TokenController'),
 } as const;

@@ -9,7 +9,6 @@ import { UserEntity, UserModel } from './user.entity.js';
 import { ControllerInterface } from '../../core/controller/controller.interface.js';
 import UserController from './user.controller.js';
 
-
 export function createUserContainer() {
   const userContainer = new Container();
   userContainer.bind<UserServiceInterface>(AppComponent.UserServiceInterface).to(UserService).inSingletonScope();

@@ -12,6 +12,8 @@ import { AuthenticateMiddleware } from '../core/middlewares/authenticate.middlew
 
 import { getFullServerPath } from '../core/helpers/common.js';
 import { getMongoURI } from '../core/helpers/db.js';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 @injectable()
 export default class RestApplication {
@@ -22,6 +24,7 @@ export default class RestApplication {
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
     @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
+    @inject(AppComponent.TokenController) private readonly tokenController: ControllerInterface
   ) {
     this.expressApplication = express();
   }
@@ -47,7 +50,7 @@ export default class RestApplication {
 
     this.expressApplication.use(express.json());
 
-    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_SECRET'));
+    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_ACCESS_SECRET'));
     this.expressApplication.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
 
     this.logger.info('Global middleware initialization completed');
@@ -55,8 +58,10 @@ export default class RestApplication {
 
   private async _initRoutes() {
     this.logger.info('Controller initialization...');
-
+    this.expressApplication.use(cors());
+    this.expressApplication.use(cookieParser());
     this.expressApplication.use('/users', this.userController.router);
+    this.expressApplication.use('/users', this.tokenController.router);
 
     this.logger.info('Controller initialization completed');
   }
