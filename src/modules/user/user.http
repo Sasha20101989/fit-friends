@@ -6,14 +6,14 @@ Content-Type: application/json
 
 {
   "name": "Sasha",
-  "email": "feliugin@mail.net",
+  "email": "feliugin6@mail.net",
   "password": "123456",
   "gender": "мужской",
-  "location": "Звёздная",
+  "location": "звёздная",
   "role": "пользователь",
   "backgroundImage": "image.png",
   "trainingLevel": "профессионал",
-  "workoutTypes": ["бокс"],
+  "workoutTypes": ["стрейчинг", "аэробика"],
   "workoutDuration": "10-30 мин",
   "caloriesToBurn": 1000,
   "caloriesToSpend": 1002,
@@ -35,9 +35,9 @@ Content-Type: application/json
   "password": "123456",
   "gender": "мужской",
   "role": "тренер",
-  "location": "Звёздная",
+  "location": "звёздная",
   "backgroundImage": "image.png",
-  "trainingLevel": "профессионал",
+  "trainingLevel": "любитель",
   "workoutTypes": ["бокс", "стрейчинг", "аэробика"],
   "traningCount": 1,
   "personalTraining": true,
@@ -78,8 +78,7 @@ Content-Type: application/json
 
 ## Проверить токен пользователя
 GET http://localhost:4000/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MmQ3ODgxOTI4YTI5YWRmODZkMjdmYSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTc0NzkxMDUsImV4cCI6MTY5NzQ4MDAwNX0.03KQ_XS4EN6x2Cy8hjWnNJCeWZB9lqUAnY42DaVDtJs
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MmQ3ODgxOTI4YTI5YWRmODZkMjdmYSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTc1NjE2OTEsImV4cCI6MTY5NzU2MTc1MX0.WMbqqGZ5CpLoDIbIIhbpf0HM_CMJX6EYQZ0u_nbDWEE
 ## Обновление токена
 
 GET http://localhost:4000/users/refresh HTTP/1.1
@@ -102,3 +101,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z
   "role": "тренер"
 }
 ###
+
+## Список пользователей
+
+GET http://localhost:4000/users/?trainingLevel=профессионал HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MmQ3ODgxOTI4YTI5YWRmODZkMjdmYSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTc1NjY4MDYsImV4cCI6MTY5NzU2NzcwNn0.vIXcrMl4IKoMryEVTY7BQAAVlVlJqcGTJ2CwmOkbLD8

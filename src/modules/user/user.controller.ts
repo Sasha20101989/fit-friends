@@ -8,6 +8,7 @@ import type { UserServiceInterface } from './user-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import type { UnknownRecord } from '../../types/unknown-record.type.js';
 import type { ParamsGetUser } from '../../types/params-get-user.type.js';
+import type { UserQueryParams } from '../../types/user-query-params.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { Token } from '../../types/token.enum.js';
@@ -32,6 +33,7 @@ import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { Role } from '../../types/role.enum.js';
 
+
 @injectable()
 export default class UserController extends Controller {
   constructor(
@@ -47,6 +49,7 @@ export default class UserController extends Controller {
     this.addRoute({ path: '/register-trainer', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateTrainerDto)] });
     this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
+    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
     this.addRoute({ path: '/:userId', method: HttpMethod.Put, handler: this.updateById, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId'), new ValidateDtoMiddleware(UpdateUserDto)] });
     this.addRoute({ path: '/refresh', method: HttpMethod.Get, handler: this.refreshToken, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
@@ -55,6 +58,35 @@ export default class UserController extends Controller {
       method: HttpMethod.Get,
       handler: this.checkAuthenticate,
     });
+  }
+
+  public async index(
+    req: Request<UnknownRecord, UnknownRecord, UnknownRecord, UserQueryParams>,
+    res: Response
+  ) {
+    if(!req.user){
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    if(req.user.role != Role.User){
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Access denied: You do not have the required role to perform this action.',
+        'UserController'
+      );
+    }
+
+    const { location, workoutTypes, trainingLevel, sortBy } = req.query;
+
+    const userUqery: UserQueryParams = { location, workoutTypes, trainingLevel, sortBy };
+
+    const users = await this.userService.GetAllUsers(userUqery);
+
+    this.ok(res, fillDTO(UserRdo, users || []));
   }
 
   public async refreshToken(
@@ -79,7 +111,8 @@ export default class UserController extends Controller {
   }
 
   public async checkAuthenticate(req: Request, res: Response) {
-    if (!req.user) {
+
+    if(!req.user){
       throw new HttpError(
         StatusCodes.UNAUTHORIZED,
         'Unauthorized',

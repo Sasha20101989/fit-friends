@@ -1,5 +1,6 @@
 import { DocumentType } from '@typegoose/typegoose';
 
+import type { UserQueryParams } from '../../types/user-query-params.js';
 import type { MongoId } from '../../types/mongo-id.type.js';
 import { UserEntity } from './user.entity.js';
 import CreateUserDto from './dto/create-user.dto.js';
@@ -16,4 +17,5 @@ export interface UserServiceInterface {
   verifyUser(dto: LoginUserDto, salt: string): Promise<VerifyUserResponse<UserEntity> | null>;
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
   refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>;
+  GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>;
 }
