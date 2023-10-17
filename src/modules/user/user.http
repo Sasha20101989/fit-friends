@@ -12,7 +12,7 @@ Content-Type: application/json
   "location": "звёздная",
   "role": "пользователь",
   "backgroundImage": "image.png",
-  "trainingLevel": "профессионал",
+  "trainingLevel": "любитель",
   "workoutTypes": ["стрейчинг", "аэробика"],
   "workoutDuration": "10-30 мин",
   "caloriesToBurn": 1000,
@@ -104,5 +104,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z
 
 ## Список пользователей
 
-GET http://localhost:4000/users/?trainingLevel=профессионал HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MmQ3ODgxOTI4YTI5YWRmODZkMjdmYSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTc1NjY4MDYsImV4cCI6MTY5NzU2NzcwNn0.vIXcrMl4IKoMryEVTY7BQAAVlVlJqcGTJ2CwmOkbLD8
+GET http://localhost:4000/users/?sortBy=тренер&workoutTypes=бокс HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MmQ3ODgxOTI4YTI5YWRmODZkMjdmYSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTc1NjgzOTksImV4cCI6MTY5NzU2OTI5OX0.05-LA84l3eeTMj7rxZbAwcmvXnrPmKEATNuUNfk4zwU
