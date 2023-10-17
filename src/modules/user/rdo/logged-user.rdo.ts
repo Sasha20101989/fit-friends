@@ -1,5 +1,7 @@
 import { Expose } from 'class-transformer';
 
+import { Role } from '../../../types/role.enum.js';
+
 export default class LoggedUserRdo {
   @Expose()
   public accessToken!: string;
@@ -9,4 +11,10 @@ export default class LoggedUserRdo {
 
   @Expose()
   public avatar!: string;
+
+  @Expose()
+  public role!: Role;
+
+  @Expose()
+  public id!: Role;
 }

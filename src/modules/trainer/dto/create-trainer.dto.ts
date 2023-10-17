@@ -5,6 +5,8 @@ import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { ARCHIEVEMENTS_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../../user/user.const.js';
 import { IsSinglePDF } from '../validators/is-single-pdf.validator.js';
+import { IsThreeWorkoutTypes } from '../validators/is-three-workout-types.js';
+import { Role } from '../../../types/role.enum.js';
 
 export default class CreateTrainerDto {
   @IsNotEmpty({ message: 'Name is required' })
@@ -29,6 +31,9 @@ export default class CreateTrainerDto {
   @IsEnum(Gender, { message: 'Invalid gender' })
   public gender!: Gender;
 
+  @IsEnum(Role, { message: 'Invalid role' })
+  public role!: Role;
+
   @IsOptional()
   public birthDate?: string;
 
@@ -51,6 +56,7 @@ export default class CreateTrainerDto {
 
   @IsNotEmpty({ message: 'Workout types are required' })
   @IsEnum(WorkoutType, { each: true, message: 'Invalid workout type(s)' })
+  @IsThreeWorkoutTypes({ message: 'Workout types array must not have more than 3 elements' })
   public workoutTypes!: WorkoutType[];
 
   @IsNotEmpty({ message: 'Readiness Personal Training is required' })

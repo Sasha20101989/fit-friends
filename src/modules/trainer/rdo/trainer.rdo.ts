@@ -4,10 +4,9 @@ import { Gender } from '../../../types/gender.enum..js';
 import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
-import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 import { Role } from '../../../types/role.enum.js';
 
-export default class UserRdo {
+export default class TrainerRdo {
   @Expose()
   public id!: string;
 
@@ -15,7 +14,7 @@ export default class UserRdo {
   public name!: string;
 
   @Expose()
-  public email!: string ;
+  public email!: string;
 
   @Expose()
   public avatar!: string;
@@ -30,13 +29,13 @@ export default class UserRdo {
   public role!: Role;
 
   @Expose()
+  public description!: string;
+
+  @Expose()
   public location!: Location;
 
   @Expose()
   public backgroundImage!: string;
-
-  @Expose()
-  public description!: string;
 
   @Expose()
   public trainingLevel!: TrainingLevel;
@@ -45,17 +44,11 @@ export default class UserRdo {
   public workoutTypes!: WorkoutType[];
 
   @Expose()
-  public workoutDuration!: WorkoutDuration;
+  public certificate!: string;
 
   @Expose()
-  public caloriesToBurn!: number;
+  public trainerAchievements!: string;
 
   @Expose()
-  public caloriesToSpend!: number;
-
-  @Expose()
-  public readinessForWorkout!: boolean;
-
-  @Expose()
-  public traningCount!: number;
+  public personalTraining!: boolean;
 }

@@ -1,33 +1,36 @@
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
-import type { LoggerInterface } from '../../core/logger/logger.interface.js';
+import type { TokenServiceInterface } from '../token/token-service.interface.js';
 import type { TrainerServiceInterface } from './trainer-service.interface.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { PASSWORD_CONSTRAINTS } from '.././user/user.const.js';
 import { TrainerEntity } from './trainer.entity.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
+import { VerifyUserResponse } from '../user/response/verify-user.response.js';
+
 
 @injectable()
 export default class TrainerService implements TrainerServiceInterface {
   constructor(
-    @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
+    @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
     @inject(AppComponent.TrainerModel) private readonly trainerModel: types.ModelType<TrainerEntity>
   ) {}
 
-  public async create(dto: CreateTrainerDto, salt: string): Promise<DocumentType<TrainerEntity>> {
-    const trainer = new TrainerEntity(dto);
-
+  public async create(dto: CreateTrainerDto, salt: string): Promise<VerifyUserResponse<TrainerEntity>> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
 
-    trainer.setPassword(dto.password, salt);
+    const trainer = new TrainerEntity(dto);
+    await trainer.setPassword(dto.password, salt);
 
-    const result = await this.trainerModel.create(trainer);
-    this.logger.info(`New trainer created: ${trainer.email} and name ${trainer.name}`);
+    const trainerResult = await this.trainerModel.create(trainer);
 
-    return result;
+    const tokens = this.tokenService.generateTokens({...dto, id: trainerResult.id, role: trainerResult.role});
+    await this.tokenService.saveToken(trainerResult.id, tokens.refreshToken);
+
+    return {user: trainerResult, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
   public async findByEmail(email: string): Promise<DocumentType<TrainerEntity> | null> {

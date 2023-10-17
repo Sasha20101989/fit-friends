@@ -43,7 +43,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public birthDate?: string;
 
   @prop({ required: true, enum: Role, default: Role.User })
-  public role!: Role.User;
+  public role: Role;
 
   @prop({ required: false, trim: true })
   public description?: string;
@@ -84,6 +84,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     this.name = userData.name;
     this.email = userData.email;
     this.avatar = userData.avatar;
+    this.role = userData.role;
     this.gender = userData.gender;
     this.birthDate = userData.birthDate;
     this.description = userData.description;

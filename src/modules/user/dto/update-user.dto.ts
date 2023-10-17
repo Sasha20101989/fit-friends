@@ -1,10 +1,11 @@
-import { IsEmail, IsEnum, IsInt, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
-import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
+import { IsEnum, IsInt, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
 import { Gender } from '../../../types/gender.enum..js';
 import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
+import { Role } from '../../../types/role.enum.js';
 
 export default class UpdateUserDto {
   @IsOptional()
@@ -14,7 +15,6 @@ export default class UpdateUserDto {
   public name?: string;
 
   @IsOptional()
-  @IsEmail({}, { message: 'Invalid email address' })
   public email?: string;
 
   @IsOptional()
@@ -22,9 +22,10 @@ export default class UpdateUserDto {
   public avatar?: string;
 
   @IsOptional()
-  @MinLength(PASSWORD_CONSTRAINTS.MIN_LENGTH, { message: `Minimum password length must be ${PASSWORD_CONSTRAINTS.MIN_LENGTH}` })
-  @MaxLength(PASSWORD_CONSTRAINTS.MAX_LENGTH, { message: `Maximum password length must be ${PASSWORD_CONSTRAINTS.MAX_LENGTH}` })
   public password?: string;
+
+  @IsOptional()
+  public role?: Role;
 
   @IsOptional()
   @IsEnum(Gender, { message: 'Invalid gender' })

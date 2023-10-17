@@ -1,8 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
-import { UserEntity } from '../user.entity.js';
 
-export type VerifyUserResponse = {
-  user: DocumentType<UserEntity> | null;
+export type VerifyUserResponse<T> = {
+  user: DocumentType<T> | null;
   accessToken: string;
   refreshToken: string;
 };

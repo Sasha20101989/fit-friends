@@ -5,6 +5,8 @@ import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
+import { IsThreeWorkoutTypes } from '../../trainer/validators/is-three-workout-types.js';
+import { Role } from '../../../types/role.enum.js';
 
 export default class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required' })
@@ -29,6 +31,9 @@ export default class CreateUserDto {
   @IsEnum(Gender, { message: 'Invalid gender' })
   public gender!: Gender;
 
+  @IsEnum(Role, { message: 'Invalid role' })
+  public role!: Role;
+
   @IsOptional()
   public birthDate?: string;
 
@@ -51,6 +56,7 @@ export default class CreateUserDto {
 
   @IsNotEmpty({ message: 'Workout types are required' })
   @IsEnum(WorkoutType, { each: true, message: 'Invalid workout type(s)' })
+  @IsThreeWorkoutTypes({ message: 'Workout types array must not have more than 3 elements' })
   public workoutTypes!: WorkoutType[];
 
   @IsNotEmpty({ message: 'Workout duration is required' })

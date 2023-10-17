@@ -22,7 +22,7 @@ export class AuthenticateMiddleware implements MiddlewareInterface {
         createSecretKey(this.jwtSecret, 'utf-8')
       );
 
-      req.user = { email: payload.email as string, id: payload.id as string };
+      req.user = { email: payload.email as string, id: payload.id as string, role: payload.role as string };
       return next();
     } catch {
 

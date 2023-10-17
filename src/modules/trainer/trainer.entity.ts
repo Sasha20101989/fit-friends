@@ -44,7 +44,7 @@ export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer 
   public birthDate?: string;
 
   @prop({ required: true, enum: Role, default: Role.User })
-  public role!: Role.Trainer;
+  public role: Role;
 
   @prop({ required: false, trim: true })
   public description?: string;
@@ -77,6 +77,7 @@ export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer 
     this.email = trainerData.email;
     this.avatar = trainerData.avatar;
     this.gender = trainerData.gender;
+    this.role = trainerData.role;
     this.birthDate = trainerData.birthDate;
     this.description = trainerData.description;
     this.location = trainerData.location;
@@ -88,8 +89,8 @@ export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer 
     this.personalTraining = trainerData.personalTraining;
   }
 
-  public async setPassword(password: string, salt: string) {
-    const hashedPassword = await bcrypt.hash(password, salt);
+  public async setPassword(password: string, _saltRounds: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
     this.password = hashedPassword;
   }
 

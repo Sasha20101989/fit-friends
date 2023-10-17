@@ -24,6 +24,7 @@ export default class RestApplication {
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
     @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
+    @inject(AppComponent.TrainerController) private readonly trainerController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -60,6 +61,7 @@ export default class RestApplication {
     this.expressApplication.use(cors());
     this.expressApplication.use(cookieParser());
     this.expressApplication.use('/users', this.userController.router);
+    this.expressApplication.use('/trainers', this.trainerController.router);
 
     this.logger.info('Controller initialization completed');
   }

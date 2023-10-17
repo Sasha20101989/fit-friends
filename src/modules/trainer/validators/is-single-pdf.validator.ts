@@ -2,7 +2,7 @@ import { registerDecorator, ValidationOptions, ValidationArguments } from 'class
 import mime from 'mime-types';
 
 export function IsSinglePDF(validationOptions?: ValidationOptions) {
-  return (object: Record<string, unknown>, propertyName: string) => {
+  return (object: object, propertyName: string) => {
     registerDecorator({
       name: 'isSinglePDF',
       target: object.constructor,
@@ -10,7 +10,7 @@ export function IsSinglePDF(validationOptions?: ValidationOptions) {
       constraints: [],
       options: validationOptions,
       validator: {
-        async validate(value: Record<string, unknown>, _args: ValidationArguments) {
+        async validate(value: object, _args: ValidationArguments) {
           const file = value;
 
           if (Array.isArray(file)) {

@@ -26,18 +26,25 @@ import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middl
 import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-by-email-middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { UserEntity } from './user.entity.js';
+import CreateTrainerDto from '../trainer/dto/create-trainer.dto.js';
+import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
+import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
+import { Role } from '../../types/role.enum.js';
 
 @injectable()
 export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
+    @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
     this.logger.info('Register routes for UserController...');
 
     this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
+    this.addRoute({ path: '/register-trainer', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateTrainerDto)] });
     this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
     this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
@@ -105,12 +112,17 @@ export default class UserController extends Controller {
   }
 
   public async login(
-    { body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
+    req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
   ): Promise<void> {
-    const result: VerifyUserResponse | null = await this
+    if (req.user) {
+      this.ok(res, {});
+      return;
+    }
+
+    const result: VerifyUserResponse<UserEntity> | null = await this
       .userService
-      .verifyUser(body, this.configService.get('SALT'));
+      .verifyUser(req.body, this.configService.get('SALT'));
 
     if (!result?.user) {
       throw new HttpError(
@@ -146,9 +158,30 @@ export default class UserController extends Controller {
   }
 
   public async create(
-    { body }: Request<UnknownRecord, UnknownRecord, CreateUserDto>,
+    { body }: Request<UnknownRecord, UnknownRecord, CreateUserDto | CreateTrainerDto>,
     res: Response
   ): Promise<void> {
+    if (body.role == Role.Trainer) {
+      const existsTrainer = await this.trainerService.findByEmail(body.email);
+
+      if (existsTrainer) {
+        throw new HttpError(
+          StatusCodes.CONFLICT,
+          `Trainer with email «${body.email}» exists.`,
+          'TrainerController'
+        );
+      }
+
+      const result = await this.trainerService.create(body, this.configService.get('SALT'));
+
+      this.setRefreshTokenCookie(res, result.refreshToken);
+
+      this.created(
+        res,
+        fillDTO(TrainerRdo, result.user)
+      );
+    }
+
     const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
@@ -170,11 +203,20 @@ export default class UserController extends Controller {
   }
 
   public async updateById(
-    { params, body }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
+    req: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
     res: Response
   ): Promise<void> {
-    const { userId } = params;
-    const updatedUser = await this.userService.updateById(userId, body);
+    const { userId } = req.params;
+
+    if (req.user.id !== userId) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'You are not authorized to update this profile.',
+        'UserController'
+      );
+    }
+
+    const updatedUser = await this.userService.updateById(userId, req.body);
 
     if (!updatedUser) {
       throw new HttpError(

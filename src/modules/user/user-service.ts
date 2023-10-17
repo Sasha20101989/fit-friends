@@ -24,12 +24,17 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    const filteredBody = { ...dto };
+    delete filteredBody.role;
+    delete filteredBody.email;
+    delete filteredBody.password;
+
     return this.userModel
-      .findByIdAndUpdate(userId, dto, {new: true})
+      .findByIdAndUpdate(userId, filteredBody, {new: true})
       .exec();
   }
 
-  public async refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse | null>{
+  public async refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>{
     if(!refreshToken){
       return null;
     }
@@ -46,13 +51,13 @@ export default class UserService implements UserServiceInterface {
       return null;
     }
 
-    const tokens = this.tokenService.generateTokens(dto);
+    const tokens = this.tokenService.generateTokens({...dto, id: user.id, role: user.role});
     await this.tokenService.saveToken(user.id, tokens.refreshToken);
 
     return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
-  public async create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse> {
+  public async create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse<UserEntity>> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
@@ -62,7 +67,7 @@ export default class UserService implements UserServiceInterface {
 
     const userResult = await this.userModel.create(user);
 
-    const tokens = this.tokenService.generateTokens(dto);
+    const tokens = this.tokenService.generateTokens({...dto, id: userResult.id, role: userResult.role});
     await this.tokenService.saveToken(userResult.id, tokens.refreshToken);
 
     return {user: userResult, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
@@ -76,7 +81,7 @@ export default class UserService implements UserServiceInterface {
     return this.userModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public async verifyUser(dto: LoginUserDto): Promise<VerifyUserResponse | null> {
+  public async verifyUser(dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null> {
     const user = await this.findByEmail(dto.email);
 
     if (! user) {
@@ -87,7 +92,7 @@ export default class UserService implements UserServiceInterface {
 
     if (ifPasswordVerified) {
 
-      const tokens = this.tokenService.generateTokens(dto);
+      const tokens = this.tokenService.generateTokens({...dto, id: user.id, role: user.role});
       await this.tokenService.saveToken(user.id, tokens.refreshToken);
 
       return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
