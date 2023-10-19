@@ -1,5 +1,6 @@
 export const AppComponent = {
   RestApplication: Symbol.for('RestApplication'),
+  CLIApplication: Symbol.for('CLIApplication'),
   LoggerInterface: Symbol.for('LoggerInterface'),
   ConfigInterface: Symbol.for('ConfigInterface'),
   DatabaseClientInterface: Symbol.for('DatabaseClientInterface'),
@@ -11,4 +12,7 @@ export const AppComponent = {
   TrainerController: Symbol.for('TrainerController'),
   TokenServiceInterface: Symbol.for('TokenServiceInterface'),
   TokenModel: Symbol.for('TokenModel'),
+  TrainingServiceInterface: Symbol.for('TrainingServiceInterface'),
+  TrainingModel: Symbol.for('TrainingModel'),
+  TrainingController: Symbol.for('TrainingController'),
 } as const;

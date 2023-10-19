@@ -1,14 +1,44 @@
+import { GenderPreference } from './../../types/gender-preference.enum.js';
 import { Gender } from '../../types/gender.enum..js';
 import { Location } from '../../types/location.enum.js';
 import { Role } from '../../types/role.enum.js';
 import { Trainer } from '../../types/trainer.interface.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
+import { Training } from '../../types/training.type.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
-import { User } from './../../types/user.interface';
+import { User } from './../../types/user.interface.js';
 
-const generateTrainers = () => {
-  const trainers = [];
+const generateTrainigs = (trainers: Trainer[]) => {
+  const trainings: Training[] = [];
+
+  trainers.forEach((trainer: Trainer) => {
+    for (let i = 1; i <= 10; i++) {
+      const training: Training = {
+        name: `Training${i}`,
+        backgroundImage: 'http.jpg',
+        trainingLevel: TrainingLevel.Beginner,
+        workoutType: WorkoutType.Boxing,
+        workoutDuration: WorkoutDuration.Medium,
+        price: 100,
+        calories: 1003,
+        description: "Отжимания отжимания и только отжимания",
+        genderPreference: GenderPreference.All,
+        video: "video.mov",
+        rating: 1,
+        trainer: trainer,
+        specialOffer: true
+      };
+
+      trainings.push(training);
+    }
+  });
+
+  return trainings;
+};
+
+const generateTrainers = (): Trainer[] => {
+  const trainers: Trainer[] = [];
   for (let i = 1; i <= 10; i++) {
     const trainer: Trainer = {
       name: `Trainer${i}`,
@@ -53,3 +83,4 @@ const generateUsers = () => {
 
 export const users: User[] = generateUsers();
 export const trainers: Trainer[] = generateTrainers();
+export const trainings = generateTrainigs(trainers);

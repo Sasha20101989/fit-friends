@@ -96,7 +96,6 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     this.caloriesToBurn = userData.caloriesToBurn;
     this.caloriesToSpend = userData.caloriesToSpend;
     this.readinessForWorkout = userData.readinessForWorkout;
-    this.traningCount = userData.traningCount;
   }
 
   public async setPassword(password: string, _saltRounds: string) {

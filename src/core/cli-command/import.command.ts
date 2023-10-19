@@ -1,8 +1,7 @@
-import { trainers, users } from '../../modules/data-generator/data-generator.js';
+import { trainers, trainings, users } from '../../modules/data-generator/data-generator.js';
 import { TrainerServiceInterface } from '../../modules/trainer/trainer-service.interface.js';
 import TrainerService from '../../modules/trainer/trainer-service.js';
 import { TrainerModel } from '../../modules/trainer/trainer.entity.js';
-import { TokenModel } from '../../modules/token/token.entity.js';
 import { UserServiceInterface } from '../../modules/user/user-service.interface.js';
 import UserService from '../../modules/user/user-service.js';
 import { UserModel } from '../../modules/user/user.entity.js';
@@ -15,6 +14,11 @@ import { getMongoURI } from '../helpers/db.js';
 import ConsoleLoggerService from '../logger/console.service.js';
 import { LoggerInterface } from '../logger/logger.interface.js';
 import { CliCommandInterface } from './cli-command.interface.js';
+import type { TokenServiceInterface } from './../../modules/token/token-service.interface.js';
+import { Training } from '../../types/training.type.js';
+import { TrainingServiceInterface } from '../../modules/training/training-service.interface.js';
+import TrainingService from '../../modules/training/training-service.js';
+import { TrainingModel } from '../../modules/training/training.entity.js';
 
 const DEFAULT_USER_PASSWORD = '123456';
 
@@ -22,16 +26,19 @@ export default class ImportCommand implements CliCommandInterface {
   public readonly name = '--import';
   private userService!: UserServiceInterface;
   private trainerService!: TrainerServiceInterface;
+  private trainingService!: TrainingServiceInterface;
   private databaseService!: DatabaseClientInterface;
   private logger: LoggerInterface;
   private configService: ConfigService;
   private salt!: string;
 
-  constructor() {
+  constructor(tokenService: TokenServiceInterface) {
+
     this.logger = new ConsoleLoggerService();
     this.configService = new ConfigService(this.logger);
-    this.userService = new UserService(this.logger, UserModel, TokenModel);
-    this.trainerService = new TrainerService(this.logger, TrainerModel);
+    this.userService = new UserService(UserModel, tokenService);
+    this.trainerService = new TrainerService(tokenService, TrainerModel);
+    this.trainingService = new TrainingService(TrainingModel);
     this.databaseService = new MongoClientService(this.logger);
   }
 
@@ -43,12 +50,22 @@ export default class ImportCommand implements CliCommandInterface {
     }, this.salt);
   }
 
-  private async saveTrainer(trainer: Trainer) {
-
-    await this.trainerService.create({
+  private async saveTrainer(trainer: Trainer): Promise<string> {
+    const { user } = await this.trainerService.create({
       ...trainer,
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
+
+    if (user) {
+      return user.id;
+    } else {
+      throw new Error('Failed to create trainer');
+    }
+  }
+
+  private async saveTraining(training: Training, trainerId: string) {
+
+    await this.trainingService.create({...training, trainer: trainerId});
   }
 
   private async generateAndSaveUsers() {
@@ -67,21 +84,37 @@ export default class ImportCommand implements CliCommandInterface {
     this.logger.info('All users have been generated and saved.');
   }
 
-  private async generateAndSaveTrainers() {
-    const promises: Promise<void>[] = [];
+  private async generateAndSaveTrainers(): Promise<string[]> {
+  const trainerIds: string[] = [];
 
-    for (let i = 0; i < trainers.length; i++) {
-      const trainer = trainers[i];
+  for (let i = 0; i < trainers.length; i++) {
+    const trainer = trainers[i];
 
-      const savePromise = this.saveTrainer(trainer);
-
-      promises.push(savePromise);
-    }
-
-    await Promise.all(promises);
-
-    this.logger.info('All trainers have been generated and saved.');
+    const trainerId = await this.saveTrainer(trainer);
+    trainerIds.push(trainerId);
   }
+
+  this.logger.info('All trainers have been generated and saved.');
+  return trainerIds;
+}
+
+private async generateAndSaveTrainings(trainerIds: string[]): Promise<void> {
+  const promises: Promise<void>[] = [];
+
+  for (let i = 0; i < trainings.length; i++) {
+    const training = trainings[i];
+
+    const trainerId = trainerIds[i % trainerIds.length];
+
+    const savePromise = this.saveTraining(training, trainerId);
+
+    promises.push(savePromise);
+  }
+
+  await Promise.all(promises);
+
+  this.logger.info('All trainings have been generated and saved.');
+}
 
   public async execute(login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
     const defaulDbPort = this.configService.get('DB_PORT');
@@ -92,7 +125,8 @@ export default class ImportCommand implements CliCommandInterface {
 
     try{
       await this.generateAndSaveUsers();
-      await this.generateAndSaveTrainers();
+      const trainerIds = await this.generateAndSaveTrainers();
+      await this.generateAndSaveTrainings(trainerIds);
     }catch(exception){
       this.logger.info(`User generation failed with an error: ${exception}`);
     }
