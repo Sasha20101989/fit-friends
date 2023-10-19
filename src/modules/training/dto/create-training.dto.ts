@@ -1,44 +1,44 @@
-import { IsOptional } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 import { GenderPreference } from '../../../types/gender-preference.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 
 export default class CreateTrainingDto{
-  @IsOptional()
+  @IsNotEmpty({ message: 'Name is required' })
   public name!: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'BackgroundImage is required' })
   public backgroundImage!: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'TrainingLevel is required' })
   public trainingLevel!: TrainingLevel;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Workout Type is required' })
   public workoutType!: WorkoutType;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Workout Duration is required' })
   public workoutDuration!: WorkoutDuration;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Price is required' })
   public price!: number;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Calories is required' })
   public calories!: number;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Description is required' })
   public description!: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Gender Preference is required' })
   public genderPreference!: GenderPreference;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Video is required' })
   public video!: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Trainer is required' })
   public trainer!: string;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'SpecialOffer is required' })
   public specialOffer!: boolean;
 }
 
