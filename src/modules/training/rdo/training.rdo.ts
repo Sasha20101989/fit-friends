@@ -1,8 +1,9 @@
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { GenderPreference } from "../../../types/gender-preference.enum.js";
 import { TrainingLevel } from "../../../types/training-level.enum.js";
 import { WorkoutDuration } from "../../../types/workout-duration.enum.js";
 import { WorkoutType } from "../../../types/workout-type.enum.js";
+import TrainerRdo from "../../trainer/rdo/trainer.rdo.js";
 
 export default class TrainingRdo {
   @Expose()
@@ -42,8 +43,9 @@ export default class TrainingRdo {
   public rating!: number;
 
   @Expose()
-  public trainer!: string;
-
-  @Expose()
   public specialOffer!: boolean;
+
+  @Expose({ name: 'trainer'})
+  @Type(() => TrainerRdo)
+  public trainer!: TrainerRdo;
 }

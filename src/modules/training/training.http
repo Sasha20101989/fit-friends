@@ -1,12 +1,32 @@
 # Тренировки
+
+## Объявление по идентификатору
+
+GET http://localhost:4000/trainings/6532822a1b3ae004613c0a28 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXJAbWFpbC5uZXQiLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjUzMTg3ZmZlZWM5OGY5Y2UxNDJmMmJhIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTY5NzgwODg3MywiZXhwIjoxNjk3ODA5NzczfQ.gm_juAycMKMErVTonR-yzwmrjnMY6A6xIbvGkHsCN5g
+
+##
+
 ## Создать новую тренировку
 
 POST http://localhost:4000/trainings/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXJAbWFpbC5uZXQiLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjUzMTg3ZmZlZWM5OGY5Y2UxNDJmMmJhIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTY5Nzc0NDkwNSwiZXhwIjoxNjk3NzQ1ODA1fQ.QZ9ZbF1Oq5PoPIoSsbor3taTVejxZaqLWJDBPCzUZME
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXJAbWFpbC5uZXQiLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjUzMTg3ZmZlZWM5OGY5Y2UxNDJmMmJhIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTY5NzgwODg3MywiZXhwIjoxNjk3ODA5NzczfQ.gm_juAycMKMErVTonR-yzwmrjnMY6A6xIbvGkHsCN5g
 
 {
-  "name": "Sasha create"
+  "name": "Sasha create",
+  "backgroundImage": "image.png",
+  "trainingLevel": "любитель",
+  "workoutType": "кроссфит",
+  "workoutDuration": "80-100 мин",
+  "price": 102,
+  "calories": 1003,
+  "description": "отжиматься, отжиматься и еще раз отжиматьсяБ по другому никак",
+  "genderPreference": "для мужчин",
+  "video": "video.mov",
+  "specialOffer": true
 }
+
+##
 
 ###

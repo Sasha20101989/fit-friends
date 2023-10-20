@@ -19,12 +19,16 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ParamsGetTraining } from '../../types/params-get-training.type.js';
 import TrainingRdo from './rdo/training.rdo.js';
+import HttpError from '../../core/errors/http-error.js';
+import { StatusCodes } from 'http-status-codes';
+import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 
 @injectable()
 export default class TrainingController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
+    @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
     super(logger, configService);
@@ -39,6 +43,15 @@ export default class TrainingController extends Controller {
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
   ): Promise<void> {
+
+    if (!await this.trainerService.exists(user.id)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Trainer with id ${user.id} not found.`,
+        'TrainingController'
+      );
+    }
+
     const result = await this.trainingService.create({ ...body, trainer: user?.id });
     const training = await this.trainingService.getTrainingDetails(result.id);
     this.created(res, fillDTO(TrainingRdo, training));

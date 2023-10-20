@@ -11,7 +11,7 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 export default class TrainingService implements TrainingServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(AppComponent.TrainerModel) private readonly trainingModel: types.ModelType<TrainingEntity>
+    @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>
     ){}
 
     public async exists(documentId: string): Promise<boolean> {
