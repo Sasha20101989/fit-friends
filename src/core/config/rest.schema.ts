@@ -16,6 +16,8 @@ export type RestSchema = {
   ACCESS_TOKEN_EXPIRATION_TIME: string;
   REFRESH_TOKEN_EXPIRATION_TIME: string;
   HOST: string;
+  STATIC_DIRECTORY_PATH:string;
+  UPLOAD_DIRECTORY: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -90,5 +92,17 @@ export const configRestSchema = convict<RestSchema>({
     format: String,
     env: 'HOST',
     default: 'localhost'
-  }
+  },
+  STATIC_DIRECTORY_PATH: {
+    doc: 'Path to directory with static files',
+    format: String,
+    env: 'STATIC_DIRECTORY_PATH',
+    default: null
+  },
+  UPLOAD_DIRECTORY: {
+    doc: 'Directory for upload files',
+    format: String,
+    env: 'UPLOAD_DIRECTORY',
+    default: null
+  },
 });

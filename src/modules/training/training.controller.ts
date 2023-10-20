@@ -7,7 +7,7 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
 
-import { fillDTO } from '../../core/helpers/common.js';
+import { fillDTO, getRandomBackgroundImage } from '../../core/helpers/common.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
@@ -37,6 +37,7 @@ export default class TrainingController extends Controller {
 
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createTraining, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateTrainingDto)]});
     this.addRoute({path: '/:trainingId', method: HttpMethod.Get, handler: this.showTrainingDetails, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
+    this.addRoute({path: '/:trainingId', method: HttpMethod.Put, handler: this.update, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new ValidateDtoMiddleware(UpdateTrainingDto), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
   }
 
   public async createTraining(
@@ -52,7 +53,15 @@ export default class TrainingController extends Controller {
       );
     }
 
-    const result = await this.trainingService.create({ ...body, trainer: user?.id });
+    const randomBackgroundImage= getRandomBackgroundImage();
+
+    const createTrainingDto: CreateTrainingDto = {
+        ...body,
+        backgroundImage: randomBackgroundImage,
+        trainer: user?.id,
+    };
+
+    const result = await this.trainingService.create(createTrainingDto);
     const training = await this.trainingService.getTrainingDetails(result.id);
     this.created(res, fillDTO(TrainingRdo, training));
   }
