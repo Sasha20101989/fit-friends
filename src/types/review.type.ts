@@ -6,5 +6,4 @@ export type Review = {
   training: Training;
   rating: number;
   text: string;
-  createdAt: Date;
 }

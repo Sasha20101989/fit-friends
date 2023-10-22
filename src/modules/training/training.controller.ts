@@ -22,6 +22,10 @@ import TrainingRdo from './rdo/training.rdo.js';
 import HttpError from '../../core/errors/http-error.js';
 import { StatusCodes } from 'http-status-codes';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
+import UpdateTrainingDto from './dto/update-training.dto.js';
+import { Role } from '../../types/role.enum.js';
+import { UserServiceInterface } from '../user/user-service.interface.js';
+import { TrainingQueryParams } from '../../types/training-query-params.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -29,6 +33,7 @@ export default class TrainingController extends Controller {
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
+    @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
     super(logger, configService);
@@ -37,13 +42,89 @@ export default class TrainingController extends Controller {
 
     this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createTraining, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateTrainingDto)]});
     this.addRoute({path: '/:trainingId', method: HttpMethod.Get, handler: this.showTrainingDetails, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
-    this.addRoute({path: '/:trainingId', method: HttpMethod.Put, handler: this.update, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new ValidateDtoMiddleware(UpdateTrainingDto), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
+    this.addRoute({path: '/:trainingId', method: HttpMethod.Put, handler: this.updateTraining, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new ValidateDtoMiddleware(UpdateTrainingDto), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
+    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
+  }
+
+  public async index(
+    req: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
+    res: Response
+  ) {
+    if(!req.user){
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    if(req.user.role != Role.Trainer){
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Access denied: You do not have the required role to perform this action.',
+        'UserController'
+      );
+    }
+
+    const { minPrice, maxPrice, minCalories, maxCalories, rating, workoutDuration } = req.query;
+
+    const trainingUqery: TrainingQueryParams = { minPrice, maxPrice, minCalories, maxCalories, rating, workoutDuration };
+
+    const trainings = await this.trainingService.GetAllTrainings(trainingUqery);
+
+    this.ok(res, fillDTO(TrainingRdo, trainings || []));
+  }
+
+  public async updateTraining(
+    {params, body, user}: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateTrainingDto>,
+    res: Response
+  ): Promise<void> {
+    const { trainingId } = params;
+
+    if (!await this.trainerService.exists(user.id)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Trainer with id ${user.id} not found.`,
+        'TrainingController'
+      );
+    }
+
+    const trainer = await this.userService.findByEmail(user.email);
+
+    if (trainer && trainer.role !== Role.Trainer) {
+      throw new HttpError(
+          StatusCodes.FORBIDDEN,
+          'Access denied: You do not have the required role to perform this action.',
+          'TrainingController'
+      );
+    }
+
+    const training = await this.trainingService.getTrainingDetails(trainingId);
+
+    if(training?.trainer.id !== trainer?.id){
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'Access denied: You do not have permission to edit this training.',
+        'TrainingController'
+      );
+    }
+
+    const updatedTraining = await this.trainingService.update(trainingId, body);
+    this.ok(res, fillDTO(TrainingRdo, updatedTraining));
   }
 
   public async createTraining(
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
   ): Promise<void> {
+
+    if (user.role !== Role.Trainer) {
+      throw new HttpError(
+          StatusCodes.BAD_REQUEST,
+          'Access denied: You do not have the required role to perform this action.',
+          'TrainingController'
+      );
+    }
 
     if (!await this.trainerService.exists(user.id)) {
       throw new HttpError(

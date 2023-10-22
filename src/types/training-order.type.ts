@@ -4,10 +4,9 @@ import { PurchaseType } from './purchase-type.enum.js';
 
 export type TrainingOrder = {
   purchaseType: PurchaseType;
-  service: Training;
+  training: Training;
   price: number;
   quantity: number;
   totalAmount: number;
   paymentMethod: PaymentMethod;
-  createdAt: Date;
 }

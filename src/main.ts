@@ -8,6 +8,7 @@ import { createUserContainer } from './modules/user/user.container.js';
 import { createTrainerContainer } from './modules/trainer/trainer.container.js';
 import { createTokenContainer } from './modules/token/token.container.js';
 import { createTrainingContainer } from './modules/training/training.container.js';
+import { createOrderContainer } from './modules/order/order.container.js';
 
 async function bootstrap() {
   const mainContainer = Container.merge(
@@ -16,6 +17,7 @@ async function bootstrap() {
     createTrainerContainer(),
     createUserContainer(),
     createTrainingContainer(),
+    createOrderContainer(),
   );
 
   const application = mainContainer.get<RestApplication>(AppComponent.RestApplication);
