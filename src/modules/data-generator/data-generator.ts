@@ -8,24 +8,27 @@ import { Training } from '../../types/training.type.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import { User } from './../../types/user.interface.js';
+import { TrainingOrder } from '../../types/training-order.type.js';
+import { PurchaseType } from '../../types/purchase-type.enum.js';
+import { PaymentMethod } from '../../types/payment-method.enum.js';
 
 const generateTrainigs = (trainers: Trainer[]) => {
   const trainings: Training[] = [];
 
   trainers.forEach((trainer: Trainer) => {
-    for (let i = 1; i <= 10; i++) {
+    for (let i = 1; i <= 3; i++) {
       const training: Training = {
         name: `Training${i}`,
         backgroundImage: 'http.jpg',
-        trainingLevel: TrainingLevel.Beginner,
-        workoutType: WorkoutType.Boxing,
-        workoutDuration: WorkoutDuration.Medium,
-        price: 100,
+        trainingLevel: generateRandomTrainingLevel(),
+        workoutType: generateRandomWorkoutType(),
+        workoutDuration: generateRandomWorkoutDuration(),
+        price: generateRandomPrice(),
         calories: 1003,
         description: "Отжимания отжимания и только отжимания",
-        genderPreference: GenderPreference.All,
+        genderPreference: generateRandomGenderPreference(),
         video: "video.mov",
-        rating: 1,
+        rating: generateRandomRating(),
         trainer: trainer,
         specialOffer: true
       };
@@ -39,7 +42,7 @@ const generateTrainigs = (trainers: Trainer[]) => {
 
 const generateTrainers = (): Trainer[] => {
   const trainers: Trainer[] = [];
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 1; i++) {
     const trainer: Trainer = {
       name: `Trainer${i}`,
       email: `trainer${i}@example.com`,
@@ -60,7 +63,7 @@ const generateTrainers = (): Trainer[] => {
 
 const generateUsers = () => {
   const users = [];
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 1; i++) {
     const user: User = {
       name: `User${i}`,
       email: `user${i}@example.com`,
@@ -81,6 +84,64 @@ const generateUsers = () => {
   return users;
 };
 
+const generateTrainingOrders = (trainings: Training[]): TrainingOrder[] => {
+  const trainingOrders = [];
+  for (let i = 0; i <= trainings.length; i++) {
+    const training = trainings[i];
+
+    const workoutType = training.workoutType;
+    const price = training.price;
+    const quantity = trainings.filter((t) => t.workoutType === workoutType && t.trainer.email === training.trainer.email).length;
+    const totalAmount = quantity * price;
+
+    const trainingOrder: TrainingOrder = {
+      purchaseType: PurchaseType.Subscription,
+      training: training,
+      price: price,
+      quantity: quantity,
+      totalAmount: totalAmount,
+      paymentMethod: generateRandomPaymentMethod()
+    };
+
+    trainingOrders.push(trainingOrder);
+  }
+  return trainingOrders;
+};
+
+function generateRandomRating() {
+  return Math.floor(Math.random() * 5) + 1;
+}
+
+function generateRandomWorkoutDuration() {
+  const workoutDurations = Object.values(WorkoutDuration);
+  return workoutDurations[Math.floor(Math.random() * workoutDurations.length)];
+}
+
+function generateRandomWorkoutType() {
+  const workoutTypes = Object.values(WorkoutType);
+  return workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
+}
+
+function generateRandomPrice() {
+  return Math.floor(Math.random() * 1000) + 500;
+}
+
+function generateRandomPaymentMethod() {
+  const paymentMethods = Object.values(PaymentMethod);
+  return paymentMethods[Math.floor(Math.random() * paymentMethods.length)];
+}
+
+function generateRandomTrainingLevel() {
+  const trainingLevels = Object.values(TrainingLevel);
+  return trainingLevels[Math.floor(Math.random() * trainingLevels.length)];
+}
+
+function generateRandomGenderPreference() {
+  const genderPreferences = Object.values(GenderPreference);
+  return genderPreferences[Math.floor(Math.random() * genderPreferences.length)];
+}
+
 export const users: User[] = generateUsers();
 export const trainers: Trainer[] = generateTrainers();
 export const trainings = generateTrainigs(trainers);
+export const orders = generateTrainingOrders(trainings);

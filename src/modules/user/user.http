@@ -39,7 +39,7 @@ Content-Type: application/json
   "backgroundImage": "image.png",
   "trainingLevel": "любитель",
   "workoutTypes": ["бокс", "стрейчинг", "аэробика"],
-  "traningCount": 1,
+  "traningCount": 0,
   "personalTraining": true,
   "certificate": "file.pdf",
   "trainerAchievements": "Ты будешь отжиматься пока я не вспотею"
