@@ -23,10 +23,6 @@ export default class CreateOrderDto {
   @Max(50, { message: 'Quantity must be greater than or equal to 50' })
   quantity!: number;
 
-  @IsNotEmpty({ message: 'Quantity is required' })
-  @IsNumber({}, { message: 'Quantity must be a number' })
-  totalAmount!: number;
-
   @IsNotEmpty({ message: 'Payment method is required' })
   paymentMethod!: PaymentMethod;
 }

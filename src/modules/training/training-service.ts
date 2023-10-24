@@ -89,4 +89,8 @@ export default class TrainingService implements TrainingServiceInterface {
     const users = await this.trainingModel.find(filter);
     return users;
   }
+
+  public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {
+    return this.trainingModel.find({ trainer: trainerId }).populate('trainer');
+  }
 }

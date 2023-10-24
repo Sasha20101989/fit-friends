@@ -12,4 +12,5 @@ export interface TrainingServiceInterface{
   exists(documentId: string): Promise<boolean>;
   update(trainingId: MongoId, dto: UpdateTrainingDto): Promise<DocumentType<TrainingEntity> | null>;
   GetAllTrainings(query: TrainingQueryParams): Promise<DocumentType<TrainingEntity>[]>;
+  findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]>;
 }

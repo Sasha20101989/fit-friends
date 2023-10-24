@@ -37,6 +37,10 @@ export default class TrainerService implements TrainerServiceInterface {
     return this.trainerModel.findOne({email});
   }
 
+  public async findById(trainerId: string): Promise<DocumentType<TrainerEntity> | null> {
+    return this.trainerModel.findById(trainerId);
+  }
+
   public async exists(documentId: string): Promise<boolean> {
     return this.trainerModel.exists({ _id: documentId }).then((v) => v !== null);
   }

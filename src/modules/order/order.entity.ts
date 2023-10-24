@@ -4,7 +4,6 @@ import { PaymentMethod } from '../../types/payment-method.enum.js';
 import { PurchaseType } from '../../types/purchase-type.enum.js';
 import { TrainingEntity } from '../training/training.entity.js';
 
-
 const { prop, modelOptions, getModelForClass } = typegoose;
 
 export interface OrderEntity extends defaultClasses.Base {}

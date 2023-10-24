@@ -7,68 +7,67 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { OrderServiceInterface } from './order-service.interface.js';
 import { OrderEntity } from './order.entity.js';
 import CreateOrderDto from './dto/create-order.dto.js';
-import { TrainerEntity } from '../trainer/trainer.entity.js';
-import { TrainingEntity } from '../training/training.entity.js';
+import { Sorting } from '../../types/sorting.enum.js';
+import { OrderQueryParams } from '../../types/order-query-params.js';
+import { OrderSortingField } from '../../types/order-sorting-field.enum.js';
+import TrainingOrderRdo from './rdo/training-order.rdo.js';
+import { TrainingServiceInterface } from '../training/training-service.interface.js';
+import { calculateSum } from '../../core/helpers/index.js';
 
 @injectable()
 export default class OrderService implements OrderServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.OrderModel) private readonly orderModel: ModelType<OrderEntity>,
-    @inject(AppComponent.TrainerModel) private readonly trainerModel: ModelType<TrainerEntity>,
-    @inject(AppComponent.TrainingModel) private readonly trainingModel: ModelType<TrainingEntity>,
+    @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     ){}
 
-  public async create(dto: CreateOrderDto): Promise<DocumentType<OrderEntity>> {
-    const order = await this.orderModel.create(dto);
-    this.logger.info(`New order created: ${dto.purchaseType}`);
-    return order;
+  private sortTrainingInfoList(trainingInfoList: TrainingOrderRdo[], query: OrderQueryParams): TrainingOrderRdo[] {
+    const sortType = query.sortOrder || Sorting.Ascending;
+
+    if (query.typeOrder === OrderSortingField.PurchasedQuantity) {
+        trainingInfoList.sort((a, b) => {
+            if (sortType === Sorting.Ascending) {
+                return (a.purchasedQuantity || 0) - (b.purchasedQuantity || 0);
+            } else {
+                return (b.purchasedQuantity || 0) - (a.purchasedQuantity || 0);
+            }
+        });
+    } else if (query.typeOrder === OrderSortingField.TotalSalesAmount) {
+        trainingInfoList.sort((a, b) => {
+            if (sortType === Sorting.Ascending) {
+                return (a.totalSalesAmount || 0) - (b.totalSalesAmount || 0);
+            } else {
+                return (b.totalSalesAmount || 0) - (a.totalSalesAmount || 0);
+            }
+        });
+    }
+    return trainingInfoList;
   }
 
-  // public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {
-  //   const trainer = await this.trainerModel.findOne({ _id: trainerId }).exec();
+  public async create(dto: CreateOrderDto): Promise<DocumentType<OrderEntity>> {
+    const totalAmount = dto.price * dto.quantity;
+    const result = await this.orderModel.create({...dto, totalAmount});
+    this.logger.info(`New order created: ${dto.purchaseType}`);
+    return result;
+  }
 
-  //   const orders = await this.orderModel.aggregate([
-  //     {
-  //       $lookup: {
-  //         from: 'trainings',
-  //         localField: 'training',
-  //         foreignField: '_id',
-  //         as: 'trainingInfo',
-  //       },
-  //     },
-  //     {
-  //       $match: {
-  //         'trainingInfo.trainer': trainer?._id,
-  //       },
-  //     },
-  //   ]).exec();
+  public async findByTrainerId(trainerId: string, query: OrderQueryParams): Promise<TrainingOrderRdo[]> {
+    const trainingInfoList: TrainingOrderRdo[] = [];
 
-  //   await this.orderModel.populate(orders, {path: 'training'});
+    const trainings = await this.trainingService.findByTrainerId(trainerId);
 
-  //   const trainings = orders.map(order => order.training);
+    for (const training of trainings) {
+      const trainingOrders = await this.findByTrainingId(training.id);
+      const purchasedQuantity = calculateSum(trainingOrders, (order) => order.quantity);
+      const totalSalesAmount = calculateSum(trainingOrders, (order) => order.totalAmount);
+      const trainingInfo: TrainingOrderRdo = { ...training.toObject(), purchasedQuantity, totalSalesAmount };
+      trainingInfoList.push(trainingInfo);
+    }
 
-  //   await this.trainingModel.populate(trainings, {path: 'trainer'});
-
-  //   return trainings;
-  // }
-
-
-
-  public async findByTrainerId(trainerId: string): Promise<object[]> {
-    const trainer = await this.trainerModel.findOne({ _id: trainerId }).exec();
-    const trainingInfoList = [];
-
-    if (trainer) {
-        const trainings = await this.trainingModel.find({ trainer: trainer._id }).populate('trainer').exec();
-
-        for (const training of trainings) {
-            const orders = await this.orderModel.find({ training: training._id }).populate('training').exec();
-            const purchasedQuantity = orders.reduce((total, order) => total + order.quantity, 0);
-            const totalSalesAmount = orders.reduce((total, order) => total + order.totalAmount, 0);
-            const trainingInfo = { ...training.toObject(), purchasedQuantity, totalSalesAmount };
-            trainingInfoList.push(trainingInfo);
-        }
+    if(query.typeOrder){
+      const sortedTrainingInfoList: TrainingOrderRdo[] = this.sortTrainingInfoList(trainingInfoList, query);
+      return sortedTrainingInfoList;
     }
 
     return trainingInfoList;
@@ -76,5 +75,9 @@ export default class OrderService implements OrderServiceInterface {
 
   public async exists(documentId: string): Promise<boolean> {
     return this.orderModel.exists({ _id: documentId }).then((v) => v !== null);
+  }
+
+  public async findByTrainingId(trainingId: string): Promise<DocumentType<OrderEntity>[]> {
+    return this.orderModel.find({ training: trainingId }).populate('training');
   }
 }

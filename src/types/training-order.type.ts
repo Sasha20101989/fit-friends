@@ -7,6 +7,6 @@ export type TrainingOrder = {
   training: Training;
   price: number;
   quantity: number;
-  totalAmount: number;
+  totalAmount?: number;
   paymentMethod: PaymentMethod;
 }

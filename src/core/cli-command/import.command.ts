@@ -2,7 +2,7 @@ import { OrderServiceInterface } from './../../modules/order/order-service.inter
 import { orders, trainers, trainings, users } from '../../modules/data-generator/data-generator.js';
 import { TrainerServiceInterface } from '../../modules/trainer/trainer-service.interface.js';
 import TrainerService from '../../modules/trainer/trainer-service.js';
-import { TrainerModel } from '../../modules/trainer/trainer.entity.js';
+import { TrainerEntity, TrainerModel } from '../../modules/trainer/trainer.entity.js';
 import { UserServiceInterface } from '../../modules/user/user-service.interface.js';
 import UserService from '../../modules/user/user-service.js';
 import { UserModel } from '../../modules/user/user.entity.js';
@@ -45,7 +45,7 @@ export default class ImportCommand implements CliCommandInterface {
     this.userService = new UserService(UserModel, tokenService);
     this.trainerService = new TrainerService(tokenService, TrainerModel);
     this.trainingService = new TrainingService(this.logger, TrainingModel);
-    this.orderService = new OrderService(this.logger, OrderModel);
+    this.orderService = new OrderService(this.logger, OrderModel, this.trainingService);
     this.databaseService = new MongoClientService(this.logger);
   }
 
@@ -56,17 +56,17 @@ export default class ImportCommand implements CliCommandInterface {
     }, this.salt);
   }
 
-  private async saveTrainer(trainer: Trainer): Promise<string> {
-    const { user } = await this.trainerService.create({
+  private async saveTrainer(trainer: Trainer): Promise<DocumentType<TrainerEntity>> {
+    const result = await this.trainerService.create({
       ...trainer,
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
 
-    if (user) {
-      return user.id;
-    } else {
+    if(!result.user){
       throw new Error('Failed to create trainer');
     }
+
+    return result.user;
   }
 
   private async saveTraining(training: Training, trainerId: string): Promise<DocumentType<TrainingEntity>> {
@@ -95,36 +95,47 @@ export default class ImportCommand implements CliCommandInterface {
 
   private async generateAndSaveTrainers(): Promise<string[]> {
     const trainerIds: string[] = [];
+
     for (let i = 0; i < trainers.length; i++) {
       const trainer = trainers[i];
-      const trainerId = await this.saveTrainer(trainer);
-      trainerIds.push(trainerId);
+      const result = await this.saveTrainer(trainer);
+      trainerIds.push(result.id);
     }
+
     this.logger.info('All trainers have been generated and saved.');
     return trainerIds;
   }
 
-  private async generateAndSaveTrainings(trainerIds: string[], orders: TrainingOrder[]): Promise<void> {
-    const promises: Promise<void>[] = [];
+  private async generateAndSaveTrainings(trainerIds: string[]): Promise<string[]> {
+    const trainingIds: string[] = [];
 
     for (let i = 0; i < trainings.length; i++) {
       const training = trainings[i];
-
       const trainerId = trainerIds[i % trainerIds.length];
+      const result = await this.saveTraining(training, trainerId);
+      trainingIds.push(result.id);
+    }
 
-      const savedTraining = await this.saveTraining(training, trainerId);
+    this.logger.info('All trainings have been generated and saved.');
 
-      for (let i = 0; i < orders.length; i++) {
-        const order = orders[i];
-        await this.saveOrder(order, savedTraining.id);
-      }
+    return trainingIds;
+  }
+
+  private async generateAndSaveOrders(trainingIds: string[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    for (let i = 0; i < orders.length; i++) {
+      const order = orders[i];
+      const trainingId = trainingIds[i % trainingIds.length];
+
+      await this.saveOrder(order, trainingId);
 
       promises.push(Promise.resolve());
     }
 
     await Promise.all(promises);
 
-    this.logger.info('All trainings and orders have been generated and saved.');
+    this.logger.info('All orders have been generated and saved.');
   }
 
   public async execute(login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
@@ -137,7 +148,8 @@ export default class ImportCommand implements CliCommandInterface {
     try{
       await this.generateAndSaveUsers();
       const trainerIds = await this.generateAndSaveTrainers();
-      await this.generateAndSaveTrainings(trainerIds, orders);
+      const trainingIds = await this.generateAndSaveTrainings(trainerIds);
+      await this.generateAndSaveOrders(trainingIds);
     }catch(exception){
       this.logger.info(`User generation failed with an error: ${exception}`);
     }

@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import * as core from 'express-serve-static-core';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
@@ -23,6 +22,7 @@ import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import OrderRdo from './rdo/order.rdo.js';
 import TrainingOrderRdo from './rdo/training-order.rdo.js';
+import { OrderQueryParams } from '../../types/order-query-params.js';
 
 
 @injectable()
@@ -66,12 +66,12 @@ export default class OrderController extends Controller {
     this.created(res, fillDTO(OrderRdo, order));
   }
 
+
   public async index(
-    { params, user }: Request<core.ParamsDictionary | ParamsGetOrder>,
+    { params, user, query }: Request<UnknownRecord, UnknownRecord, UnknownRecord, OrderQueryParams>,
     res: Response
   ): Promise<void> {
-
-    const { trainerId } = params;
+    const { trainerId } = params as ParamsGetOrder;
 
     if(!user){
       throw new HttpError(
@@ -97,7 +97,7 @@ export default class OrderController extends Controller {
       );
     }
 
-    const orders = await this.orderService.findByTrainerId(user.id);
+    const orders = await this.orderService.findByTrainerId(user.id, query);
 
     this.ok(res, fillDTO(TrainingOrderRdo, orders));
   }

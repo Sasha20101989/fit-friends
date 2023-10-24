@@ -53,3 +53,7 @@ export function getRandomBackgroundImage(): string {
   const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_IMAGES.length);
   return DEFAULT_STATIC_IMAGES[randomIndex];
 }
+
+export function calculateSum<T>(array: T[], getValue: (item: T) => number): number {
+  return array.reduce((total, item) => total + getValue(item), 0);
+}

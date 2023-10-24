@@ -85,27 +85,20 @@ const generateUsers = () => {
 };
 
 const generateTrainingOrders = (trainings: Training[]): TrainingOrder[] => {
-  const trainingOrders = [];
-  for (let i = 0; i <= trainings.length; i++) {
-    const training = trainings[i];
-
-    const workoutType = training.workoutType;
+  return trainings.map((training) => {
     const price = training.price;
-    const quantity = trainings.filter((t) => t.workoutType === workoutType && t.trainer.email === training.trainer.email).length;
-    const totalAmount = quantity * price;
+    const quantity = generateRandomQuantity();
 
-    const trainingOrder: TrainingOrder = {
+    const order: TrainingOrder = {
       purchaseType: PurchaseType.Subscription,
       training: training,
       price: price,
       quantity: quantity,
-      totalAmount: totalAmount,
       paymentMethod: generateRandomPaymentMethod()
     };
 
-    trainingOrders.push(trainingOrder);
-  }
-  return trainingOrders;
+    return order;
+  });
 };
 
 function generateRandomRating() {
@@ -139,6 +132,10 @@ function generateRandomTrainingLevel() {
 function generateRandomGenderPreference() {
   const genderPreferences = Object.values(GenderPreference);
   return genderPreferences[Math.floor(Math.random() * genderPreferences.length)];
+}
+
+function generateRandomQuantity() {
+  return Math.floor(Math.random() * 10) + 1;
 }
 
 export const users: User[] = generateUsers();
