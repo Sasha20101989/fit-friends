@@ -18,4 +18,7 @@ export const AppComponent = {
   OrderServiceInterface: Symbol.for('OrderServiceInterface'),
   OrderModel: Symbol.for('OrderModel'),
   OrderController: Symbol.for('OrderController'),
+  FriendServiceInterface: Symbol.for('FriendServiceInterface'),
+  FriendModel: Symbol.for('FriendModel'),
+  FriendController: Symbol.for('FriendController'),
 } as const;

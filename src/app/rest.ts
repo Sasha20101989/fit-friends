@@ -27,6 +27,7 @@ export default class RestApplication {
     @inject(AppComponent.TrainerController) private readonly trainerController: ControllerInterface,
     @inject(AppComponent.TrainingController) private readonly trainingController: ControllerInterface,
     @inject(AppComponent.OrderController) private readonly orderController: ControllerInterface,
+    @inject(AppComponent.FriendController) private readonly friendController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -76,6 +77,7 @@ export default class RestApplication {
     this.expressApplication.use('/trainers', this.trainerController.router);
     this.expressApplication.use('/trainings', this.trainingController.router);
     this.expressApplication.use('/orders', this.orderController.router);
+    this.expressApplication.use('/friends', this.friendController.router);
 
     this.logger.info('Controller initialization completed');
   }

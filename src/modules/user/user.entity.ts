@@ -1,4 +1,4 @@
-import typegoose, { defaultClasses } from '@typegoose/typegoose';
+import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
 import type { User } from '../../types/user.interface.js';
@@ -9,6 +9,7 @@ import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import CreateUserDto from './dto/create-user.dto.js';
+import { FriendEntity } from '../friend/friend.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -77,6 +78,9 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
   @prop()
   public traningIds!: string[];
+
+  @prop({ ref: FriendEntity, required: true })
+  public friends!: Ref<FriendEntity>[];
 
   constructor(userData: CreateUserDto) {
     super();

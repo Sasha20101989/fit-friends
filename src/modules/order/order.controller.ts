@@ -15,7 +15,6 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
 import { Role } from '../../types/role.enum.js';
-//import TrainingOrderRdo from './rdo/training-order.rdo.js';
 import CreateOrderDto from './dto/create-order.dto.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from '../../types/unknown-record.type.js';
