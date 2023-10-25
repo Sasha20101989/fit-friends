@@ -1,8 +1,11 @@
 import { DocumentType } from "@typegoose/typegoose";
-import CreateFriendDto from "./dto/create-friend.dto.js";
-import { FriendEntity } from "./friend.entity.js";
+import { MongoId } from "../../types/mongo-id.type.js";
+import { UserEntity } from "../user/user.entity.js";
 
 export interface FriendServiceInterface{
-  exists(documentId: string): Promise<boolean>;
-  create(dto: CreateFriendDto): Promise<DocumentType<FriendEntity>>;
+  delete(userId: MongoId, friendId: MongoId): Promise<void>;
+  findById(userId: MongoId): Promise<DocumentType<UserEntity> | null>;
+  getFriends(userId: MongoId): Promise<DocumentType<UserEntity>[]>;
+  exists(userId: MongoId, friendId: MongoId): Promise<boolean>;
+  create(userId: MongoId, friendId: MongoId): Promise<DocumentType<UserEntity> | null>;
 }

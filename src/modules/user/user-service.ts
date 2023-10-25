@@ -28,18 +28,6 @@ export default class UserService implements UserServiceInterface {
     @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
   ) {}
 
-  public async AddFriend(userId: MongoId, friendId: MongoId): Promise<DocumentType<UserEntity> | null>{
-    const result = await this.userModel.findByIdAndUpdate(userId, { $push: { friends: friendId } }).exec();
-
-    if(result){
-      if(!result.friends.includes(friendId)){
-        result.AddFriend(friendId);
-      }
-    }
-
-    return result;
-  }
-
   public async logout(refreshToken: string): Promise<void> {
     await this.tokenService.removeToken(refreshToken);
   }

@@ -53,40 +53,7 @@ export default class UserController extends Controller {
     this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
     this.addRoute({ path: '/:userId', method: HttpMethod.Put, handler: this.updateById, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId'), new ValidateDtoMiddleware(UpdateUserDto)] });
     this.addRoute({ path: '/refresh', method: HttpMethod.Get, handler: this.refreshToken, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
-    this.addRoute({
-      path: '/login',
-      method: HttpMethod.Get,
-      handler: this.checkAuthenticate,
-    });
-    this.addRoute({ path: '/friends/:userId', method: HttpMethod.Post, handler: this.createFriend, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId')] });
-  }
-
-  public async createFriend(
-    { params, user }: Request,
-    res: Response
-  ): Promise<void> {
-
-    const { userId } = params;
-
-    if (user.role !== Role.User) {
-      throw new HttpError(
-          StatusCodes.BAD_REQUEST,
-          'Access denied: You do not have the required role to perform this action.',
-          'FriendController'
-      );
-    }
-
-    if (!await this.userService.exists(user.id)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `User with id ${user.id} not found.`,
-        'FriendController'
-      );
-    }
-
-    const result = await this.userService.AddFriend(user.id, userId);
-
-    this.created(res, fillDTO(UserRdo, result));
+    this.addRoute({ path: '/login', method: HttpMethod.Get, handler: this.checkAuthenticate });
   }
 
   public async index(
