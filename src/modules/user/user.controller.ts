@@ -58,6 +58,35 @@ export default class UserController extends Controller {
       method: HttpMethod.Get,
       handler: this.checkAuthenticate,
     });
+    this.addRoute({ path: '/friends/:userId', method: HttpMethod.Post, handler: this.createFriend, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId')] });
+  }
+
+  public async createFriend(
+    { params, user }: Request,
+    res: Response
+  ): Promise<void> {
+
+    const { userId } = params;
+
+    if (user.role !== Role.User) {
+      throw new HttpError(
+          StatusCodes.BAD_REQUEST,
+          'Access denied: You do not have the required role to perform this action.',
+          'FriendController'
+      );
+    }
+
+    if (!await this.userService.exists(user.id)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `User with id ${user.id} not found.`,
+        'FriendController'
+      );
+    }
+
+    const result = await this.userService.AddFriend(user.id, userId);
+
+    this.created(res, fillDTO(UserRdo, result));
   }
 
   public async index(

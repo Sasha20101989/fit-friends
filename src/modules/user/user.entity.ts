@@ -1,4 +1,4 @@
-import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
+import typegoose, { defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
 import type { User } from '../../types/user.interface.js';
@@ -9,7 +9,6 @@ import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import CreateUserDto from './dto/create-user.dto.js';
-import { FriendEntity } from '../friend/friend.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -79,8 +78,8 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop()
   public traningIds!: string[];
 
-  @prop({ ref: FriendEntity, required: true })
-  public friends!: Ref<FriendEntity>[];
+  @prop({ required: true })
+  public friends!: string[];
 
   constructor(userData: CreateUserDto) {
     super();
@@ -116,6 +115,12 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
       return await bcrypt.compare(password, this.password);
     }
     return false;
+  }
+
+  public AddFriend(friendId: string) {
+    if (!this.friends.includes(friendId)) {
+      this.friends.push(friendId);
+    }
   }
 }
 

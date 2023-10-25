@@ -10,6 +10,7 @@ import { VerifyUserResponse } from './response/verify-user.response.js';
 import CreateTrainerDto from '../trainer/dto/create-trainer.dto.js';
 
 export interface UserServiceInterface {
+  AddFriend(userId: MongoId, friendId: MongoId): Promise<DocumentType<UserEntity> | null>;
   logout(refreshToken: string): Promise<void>;
   create(dto: CreateUserDto | CreateTrainerDto, salt: string): Promise<VerifyUserResponse<UserEntity>>;
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
@@ -18,4 +19,5 @@ export interface UserServiceInterface {
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
   refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>;
   GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>;
+  findById(userId: MongoId): Promise<DocumentType<UserEntity> | null>;
 }

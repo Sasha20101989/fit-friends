@@ -58,4 +58,7 @@ export default class UserRdo {
 
   @Expose()
   public traningCount!: number;
+
+  @Expose()
+  public friends!: string[];
 }
