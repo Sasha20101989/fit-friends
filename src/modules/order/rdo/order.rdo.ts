@@ -6,6 +6,9 @@ import { Expose } from 'class-transformer';
 
 export default class OrderRdo {
   @Expose()
+  public id!: string;
+
+  @Expose()
   purchaseType!: PurchaseType;
 
   @IsNotEmpty({ message: 'Training id is required' })

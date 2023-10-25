@@ -1,7 +1,6 @@
-import typegoose, { defaultClasses } from '@typegoose/typegoose';
+import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
-import type { User } from '../../types/user.interface.js';
 import { Role } from '../../types/role.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { Gender } from '../../types/gender.enum..js';
@@ -9,6 +8,7 @@ import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import CreateUserDto from './dto/create-user.dto.js';
+import { BalanceEntity } from '../balance/balance.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -23,7 +23,7 @@ export interface UserEntity extends defaultClasses.Base {}
   }
 })
 
-export class UserEntity extends defaultClasses.TimeStamps implements User {
+export class UserEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public name: string;
 
@@ -72,11 +72,8 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({ required: true })
   public readinessForWorkout: boolean;
 
-  @prop({default: 0})
-  public traningCount!: number;
-
-  @prop()
-  public traningIds!: string[];
+  @prop({ required: true, ref: BalanceEntity })
+  public balance!: Ref<BalanceEntity[]>;
 
   @prop({ required: true })
   public friends!: string[];

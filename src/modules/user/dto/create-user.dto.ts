@@ -77,8 +77,4 @@ export default class CreateUserDto {
 
   @IsNotEmpty({ message: 'Readiness for workout is required' })
   public readinessForWorkout!: boolean;
-
-  @IsInt({ message: 'Comment count must be an integer' })
-  @Min(0, { message: 'Comment count cannot be negative' })
-  public traningCount!: number;
 }

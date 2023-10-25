@@ -10,6 +10,7 @@ import { createTokenContainer } from './modules/token/token.container.js';
 import { createTrainingContainer } from './modules/training/training.container.js';
 import { createOrderContainer } from './modules/order/order.container.js';
 import { createFriendContainer } from './modules/friend/friend.container.js';
+import { createBalanceContainer } from './modules/balance/balance.container.js';
 
 async function bootstrap() {
   const mainContainer = Container.merge(
@@ -20,6 +21,7 @@ async function bootstrap() {
     createFriendContainer(),
     createTrainingContainer(),
     createOrderContainer(),
+    createBalanceContainer(),
   );
 
   const application = mainContainer.get<RestApplication>(AppComponent.RestApplication);
