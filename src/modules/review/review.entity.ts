@@ -2,22 +2,22 @@
 import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
-import { Notify } from '../../types/notify.type.js';
+import { Review } from '../../types/review.type.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
-export interface NotifyEntity extends defaultClasses.Base {}
+export interface ReviewEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
-    collection: 'notify'
+    collection: 'review'
   },
   options: {
     allowMixed: 0
   }
 })
 
-export class NotifyEntity extends defaultClasses.TimeStamps implements Notify {
+export class ReviewEntity extends defaultClasses.TimeStamps implements Review {
   @prop({ required: true })
   public name: string;
 
@@ -27,10 +27,10 @@ export class NotifyEntity extends defaultClasses.TimeStamps implements Notify {
   @prop({ required: true, ref: BalanceEntity })
   public balance!: Ref<BalanceEntity[]>;
 
-  constructor(notifyData: CreateNotifyDto) {
+  constructor(reviewData: CreateReviewDto) {
     super();
 
-    this.name = notifyData.name;
+    this.name = reviewData.name;
   }
 
   public async setPassword(password: string, _saltRounds: string) {
@@ -56,4 +56,4 @@ export class NotifyEntity extends defaultClasses.TimeStamps implements Notify {
   }
 }
 
-export const NotifyModel = getModelForClass(NotifyEntity);
+export const ReviewModel = getModelForClass(ReviewEntity);

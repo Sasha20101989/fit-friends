@@ -23,4 +23,7 @@ export const AppComponent = {
   BalanceServiceInterface: Symbol.for('BalanceServiceInterface'),
   BalanceController: Symbol.for('BalanceController'),
   BalanceModel: Symbol.for('BalanceModel'),
+  ReviewServiceInterface: Symbol.for('ReviewServiceInterface'),
+  ReviewController: Symbol.for('ReviewController'),
+  ReviewModel: Symbol.for('ReviewModel'),
 } as const;

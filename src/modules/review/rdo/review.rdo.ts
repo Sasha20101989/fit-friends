@@ -1,18 +1,14 @@
-import { Expose } from 'class-transformer';
+
+import { Expose, Type } from 'class-transformer';
 
 export default class ReviewRdo {
   @Expose()
-  public user!: string;
+  public id!: string;
 
   @Expose()
-  public training!: string;
+  public trainingLevel!: TrainingLevel;
 
-  @Expose()
-  public rating!: number;
-
-  @Expose()
-  public text!: string;
-
-  @Expose()
-  public createdAt!: string;
+  @Expose({ name: 'trainer'})
+  @Type(() => TrainerRdo)
+  public trainer!: TrainerRdo;
 }

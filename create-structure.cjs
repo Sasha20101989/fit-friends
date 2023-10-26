@@ -241,29 +241,29 @@ export function create${capitalazedName}Container() {
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
-import { NotifyServiceInterface } from './notify-service.interface.js';
-import { NotifyEntity } from './notify.entity.js';
+import { ${capitalazedName}ServiceInterface } from './${name}-service.interface.js';
+import { ${capitalazedName}Entity } from './${name}.entity.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
-import CreateNotifyDto from './dto/create-notify.dto.js';
+import Create${capitalazedName}Dto from './dto/create-${name}.dto.js';
 import { MongoId } from './../../types/mongo-id.type';
 
 @injectable()
-export default class NotifyService implements NotifyServiceInterface {
+export default class ${capitalazedName}Service implements ${capitalazedName}ServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(AppComponent.NotifyModel) private readonly notifyModel: types.ModelType<NotifyEntity>
+    @inject(AppComponent.${capitalazedName}Model) private readonly ${name}Model: types.ModelType<${capitalazedName}Entity>
     ){}
 
-  public async create(dto: CreateNotifyDto, salt: string): Promise<DocumentType<NotifyEntity>> {
+  public async create(dto: Create${capitalazedName}Dto, salt: string): Promise<DocumentType<${capitalazedName}Entity>> {
     throw new Error('Method not implemented.');
   }
 
-  public async findById(notifyId: string): Promise<DocumentType<NotifyEntity> | null> {
+  public async findById(${name}Id: MongoId): Promise<DocumentType<${capitalazedName}Entity> | null> {
     throw new Error('Method not implemented.');
   }
 
-  public async exists(MongoId: string): Promise<boolean> {
+  public async exists(documentId: MongoId): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
 }
