@@ -19,11 +19,21 @@ export default class ReviewService implements ReviewServiceInterface {
     ){}
 
   public async GetReviewsByTrainingId(trainingId: MongoId): Promise<DocumentType<ReviewEntity>[]> {
-    return this.reviewModel.find({ training: trainingId });
+    return this.reviewModel.
+      find({ training: trainingId })
+      .populate([
+        { path: 'user' },
+        { path: 'training', populate: { path: 'trainer' } },
+      ]);
   }
 
   public async create(dto: CreateReviewDto, userId: MongoId): Promise<DocumentType<ReviewEntity>> {
     const review = await this.reviewModel.create({...dto, user: userId});
+    const populatedReview = await review
+      .populate([
+        { path: 'user' },
+        { path: 'training', populate: { path: 'trainer' } },
+      ]);
     const reviewsForTraining = await this.GetReviewsByTrainingId(dto.training);
     const totalRating = reviewsForTraining.reduce((total, review) => total + review.rating, 0);
     const averageRating = totalRating / reviewsForTraining.length;
@@ -33,10 +43,10 @@ export default class ReviewService implements ReviewServiceInterface {
       training.setRating(averageRating);
       await training.save();
 
-      this.logger.info('Пересчёт рейтинга тренировки завершён');
+      this.logger.info('Recalculation of training rating is completed');
     }
 
-    return review;
+    return populatedReview;
   }
 }
 

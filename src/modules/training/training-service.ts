@@ -86,8 +86,8 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.workoutDuration = { $in: workoutTypesArray };
     }
 
-    const users = await this.trainingModel.find(filter);
-    return users;
+    const trainings = await this.trainingModel.find(filter).populate('trainer');
+    return trainings;
   }
 
   public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {

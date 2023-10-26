@@ -1,5 +1,8 @@
 
-import typegoose, { defaultClasses } from '@typegoose/typegoose';
+import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
+
+import { UserEntity } from '../user/user.entity.js';
+import { TrainingEntity } from '../training/training.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -15,11 +18,11 @@ export interface ReviewEntity extends defaultClasses.Base {}
 })
 
 export class ReviewEntity extends defaultClasses.TimeStamps {
-  @prop({ required: true })
-  public user!: string;
+  @prop({ required: true, ref: UserEntity })
+  public user!: Ref<UserEntity[]>;
 
-  @prop({ required: true })
-  public training!: string;
+  @prop({ required: true, ref: TrainingEntity })
+  public training!: Ref<TrainingEntity>;
 
   @prop({ required: true })
   public rating!: number;
