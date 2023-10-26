@@ -2,9 +2,6 @@
 import { IsNotEmpty, MaxLength, MinLength, IsNumber, IsInt, Min, Max } from 'class-validator';
 
 export default class CreateReviewDto {
-  @IsNotEmpty({ message: 'User is required' })
-  public user!: string;
-
   @IsNotEmpty({ message: 'Training is required' })
   public training!: string;
 

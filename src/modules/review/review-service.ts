@@ -4,28 +4,39 @@ import { inject, injectable } from 'inversify';
 
 import { AppComponent } from '../../types/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
-import { MongoId } from './../../types/mongo-id.type';
 import CreateReviewDto from './dto/create-review.dto.js';
 import { ReviewServiceInterface } from './review-service.interface.js';
 import { ReviewEntity } from './review.entity.js';
+import { TrainingEntity } from '../training/training.entity.js';
+import { MongoId } from '../../types/mongo-id.type.js';
 
 @injectable()
 export default class ReviewService implements ReviewServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(AppComponent.ReviewModel) private readonly reviewModel: types.ModelType<ReviewEntity>
+    @inject(AppComponent.ReviewModel) private readonly reviewModel: types.ModelType<ReviewEntity>,
+    @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>,
     ){}
 
-  public async create(dto: CreateReviewDto, salt: string): Promise<DocumentType<ReviewEntity>> {
-    throw new Error('Method not implemented.');
+  public async GetReviewsByTrainingId(trainingId: MongoId): Promise<DocumentType<ReviewEntity>[]> {
+    return this.reviewModel.find({ training: trainingId });
   }
 
-  public async findById(reviewId: MongoId): Promise<DocumentType<ReviewEntity> | null> {
-    throw new Error('Method not implemented.');
-  }
+  public async create(dto: CreateReviewDto, userId: MongoId): Promise<DocumentType<ReviewEntity>> {
+    const review = await this.reviewModel.create({...dto, user: userId});
+    const reviewsForTraining = await this.GetReviewsByTrainingId(dto.training);
+    const totalRating = reviewsForTraining.reduce((total, review) => total + review.rating, 0);
+    const averageRating = totalRating / reviewsForTraining.length;
+    const training = await this.trainingModel.findById(dto.training);
 
-  public async exists(documentId: MongoId): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    if (training) {
+      training.setRating(averageRating);
+      await training.save();
+
+      this.logger.info('Пересчёт рейтинга тренировки завершён');
+    }
+
+    return review;
   }
 }
 

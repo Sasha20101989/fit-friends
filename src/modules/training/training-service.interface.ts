@@ -9,7 +9,7 @@ import { TrainingQueryParams } from '../../types/training-query-params.js';
 export interface TrainingServiceInterface{
   create(dto: CreateTrainingDto): Promise<DocumentType<TrainingEntity>>;
   getTrainingDetails(trainingId: MongoId): Promise<DocumentType<TrainingEntity> | null>;
-  exists(documentId: string): Promise<boolean>;
+  exists(trainingId: MongoId): Promise<boolean>;
   update(trainingId: MongoId, dto: UpdateTrainingDto): Promise<DocumentType<TrainingEntity> | null>;
   GetAllTrainings(query: TrainingQueryParams): Promise<DocumentType<TrainingEntity>[]>;
   findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]>;

@@ -1,8 +1,5 @@
 
-import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
-import bcrypt from 'bcrypt';
-
-import { Review } from '../../types/review.type.js';
+import typegoose, { defaultClasses } from '@typegoose/typegoose';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -10,50 +7,25 @@ export interface ReviewEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
-    collection: 'review'
+    collection: 'reviews'
   },
   options: {
     allowMixed: 0
   }
 })
 
-export class ReviewEntity extends defaultClasses.TimeStamps implements Review {
+export class ReviewEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
-  public name: string;
+  public user!: string;
 
-  @prop({ unique: true, required: true })
-  public email: string;
+  @prop({ required: true })
+  public training!: string;
 
-  @prop({ required: true, ref: BalanceEntity })
-  public balance!: Ref<BalanceEntity[]>;
+  @prop({ required: true })
+  public rating!: number;
 
-  constructor(reviewData: CreateReviewDto) {
-    super();
-
-    this.name = reviewData.name;
-  }
-
-  public async setPassword(password: string, _saltRounds: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    this.password = hashedPassword;
-  }
-
-  public getPassword() {
-    return this.password;
-  }
-
-  public async verifyPassword(password: string) {
-    if (this.password) {
-      return await bcrypt.compare(password, this.password);
-    }
-    return false;
-  }
-
-  public AddFriend(friendId: string) {
-    if (!this.friends.includes(friendId)) {
-      this.friends.push(friendId);
-    }
-  }
+  @prop({ required: true })
+  public text!: string;
 }
 
 export const ReviewModel = getModelForClass(ReviewEntity);

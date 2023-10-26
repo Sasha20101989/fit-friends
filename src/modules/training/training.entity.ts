@@ -57,8 +57,8 @@ export class TrainingEntity extends defaultClasses.TimeStamps {
   @prop()
   public specialOffer!: boolean;
 
-  public setRating(_rating: number){
-
+  public setRating(averageRating: number){
+    this.rating = averageRating;
   }
 }
 

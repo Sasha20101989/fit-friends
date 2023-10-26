@@ -28,8 +28,8 @@ export default class TrainingService implements TrainingServiceInterface {
     @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>
     ){}
 
-  public async exists(documentId: string): Promise<boolean> {
-    return this.trainingModel.exists({ _id: documentId }).then((v) => v !== null);
+  public async exists(trainingId: MongoId): Promise<boolean> {
+    return this.trainingModel.exists({ _id: trainingId }).then((v) => v !== null);
   }
 
   public async create(dto: CreateTrainingDto): Promise<DocumentType<TrainingEntity>> {

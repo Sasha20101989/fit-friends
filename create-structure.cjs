@@ -146,7 +146,7 @@ import Create${capitalazedName}Dto from './dto/create-${name}.dto.js';
 import { ${capitalazedName}Entity } from './${name}.entity.js';
 
 export interface ${capitalazedName}ServiceInterface {
-  create(dto: Create${capitalazedName}Dto, salt: string): Promise<DocumentType<${capitalazedName}Entity>>;
+  create(dto: Create${capitalazedName}Dto): Promise<DocumentType<${capitalazedName}Entity>>;
   findById(${name}Id: string): Promise<DocumentType<${capitalazedName}Entity> | null>;
   exists(documentId: string): Promise<boolean>;
 }
@@ -255,7 +255,7 @@ export default class ${capitalazedName}Service implements ${capitalazedName}Serv
     @inject(AppComponent.${capitalazedName}Model) private readonly ${name}Model: types.ModelType<${capitalazedName}Entity>
     ){}
 
-  public async create(dto: Create${capitalazedName}Dto, salt: string): Promise<DocumentType<${capitalazedName}Entity>> {
+  public async create(dto: Create${capitalazedName}Dto): Promise<DocumentType<${capitalazedName}Entity>> {
     throw new Error('Method not implemented.');
   }
 

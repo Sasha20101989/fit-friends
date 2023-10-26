@@ -8,7 +8,7 @@ import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 import { Role } from '../../../types/role.enum.js';
 
 export default class UserRdo {
-  @Expose()
+  @Expose({ name: 'id' })
   public id!: string;
 
   @Expose()

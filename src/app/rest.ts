@@ -82,7 +82,7 @@ export default class RestApplication {
     this.expressApplication.use('/friends', this.friendController.router);
     this.expressApplication.use('/balance', this.balanceController.router);
     this.expressApplication.use('/balance', this.balanceController.router);
-    this.expressApplication.use('/review', this.reviewController.router);
+    this.expressApplication.use('/reviews', this.reviewController.router);
 
     this.logger.info('Controller initialization completed');
   }
