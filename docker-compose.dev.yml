@@ -22,5 +22,13 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: admin
       ME_CONFIG_MONGODB_URL: mongodb://admin:admin@db:27017/
 
+  fit-friends.notify.fakesmtp:
+    image: gessnerfl/fake-smtp-server
+    container_name: "fit-friends.notify.fakesmtp"
+    hostname: "fakesmtp"
+    ports:
+      - "8025:8025"
+      - "1083:8080"
+
 volumes:
   fit-friends_data:
