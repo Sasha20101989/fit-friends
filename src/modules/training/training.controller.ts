@@ -66,9 +66,7 @@ export default class TrainingController extends Controller {
       );
     }
 
-    const { minPrice, maxPrice, minCalories, maxCalories, rating, workoutDuration } = req.query;
-
-    const trainingUqery: TrainingQueryParams = { minPrice, maxPrice, minCalories, maxCalories, rating, workoutDuration };
+    const trainingUqery: TrainingQueryParams = { ...req.query };
 
     const trainings = await this.trainingService.GetAllTrainings(trainingUqery);
 

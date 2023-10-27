@@ -1,4 +1,5 @@
 import { WorkoutDuration } from './workout-duration.enum.js';
+import { WorkoutType } from './workout-type.enum.js';
 
 export type TrainingQueryParams = {
   minPrice?: number;
@@ -7,4 +8,5 @@ export type TrainingQueryParams = {
   maxCalories?: number;
   rating?: number;
   workoutDuration?: WorkoutDuration[];
+  workoutType?: WorkoutType[];
 }

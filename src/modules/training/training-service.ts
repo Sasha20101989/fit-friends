@@ -19,6 +19,7 @@ type TrainingFilter = {
   workoutDuration?: { $in: string[] };
   price?: { $gte?: number; $lte?: number };
   calories?: { $gte?: number; $lte?: number };
+  workoutType?: { $in: string[] };
 }
 
 @injectable()
@@ -82,8 +83,13 @@ export default class TrainingService implements TrainingServiceInterface {
     }
 
     if (query.workoutDuration) {
-      const workoutTypesArray = query.workoutDuration.toString().toLowerCase().split(',').map(type => type.trim());
-      filter.workoutDuration = { $in: workoutTypesArray };
+      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map(duration => duration.trim());
+      filter.workoutDuration = { $in: workoutDurationsArray };
+    }
+
+    if (query.workoutType) {
+      const workoutTypesArray = query.workoutType.toString().toLowerCase().split(',').map(type => type.trim());
+      filter.workoutType = { $in: workoutTypesArray };
     }
 
     const trainings = await this.trainingModel.find(filter).populate('trainer');
