@@ -27,17 +27,17 @@ export default class ReviewService implements ReviewServiceInterface {
       ]);
   }
 
-  public async create(dto: CreateReviewDto, userId: MongoId): Promise<DocumentType<ReviewEntity>> {
+  public async create(dto: CreateReviewDto, trainingId: MongoId, userId: MongoId): Promise<DocumentType<ReviewEntity>> {
     const review = await this.reviewModel.create({...dto, user: userId});
     const populatedReview = await review
       .populate([
         { path: 'user' },
         { path: 'training', populate: { path: 'trainer' } },
       ]);
-    const reviewsForTraining = await this.GetReviewsByTrainingId(dto.training);
+    const reviewsForTraining = await this.GetReviewsByTrainingId(trainingId);
     const totalRating = reviewsForTraining.reduce((total, review) => total + review.rating, 0);
     const averageRating = totalRating / reviewsForTraining.length;
-    const training = await this.trainingModel.findById(dto.training);
+    const training = await this.trainingModel.findById(trainingId);
 
     if (training) {
       training.setRating(averageRating);

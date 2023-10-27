@@ -7,8 +7,8 @@ import CreateBalanceDto from './dto/create-balance.dto.js';
 
 export interface BalanceServiceInterface {
   exists(trainingId: MongoId): Promise<boolean>;
-  create(dto: CreateBalanceDto, userId: MongoId): Promise<DocumentType<BalanceEntity>>;
-  updateBalance(dto: UpdateBalanceDto): Promise<DocumentType<BalanceEntity> | null>;
+  create(dto: CreateBalanceDto, userId: MongoId, trainingId: MongoId): Promise<DocumentType<BalanceEntity>>;
+  updateBalance(dto: UpdateBalanceDto, trainingId: MongoId): Promise<DocumentType<BalanceEntity> | null>;
   findByUserId(userId: MongoId): Promise<DocumentType<BalanceEntity>[]>;
   deleteBalance(trainingId: MongoId): Promise<void>;
 }

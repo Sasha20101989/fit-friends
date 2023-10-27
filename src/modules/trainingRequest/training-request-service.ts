@@ -10,6 +10,7 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import CreateTrainingRequestDto from './dto/create-training-request.dto.js';
 import { MongoId } from '../../types/mongo-id.type.js';
 import UpdateTrainingRequestDto from './dto/update-training-request.dto.js';
+import { RequestStatus } from '../../types/request-status.enum.js';
 
 @injectable()
 export default class TrainingRequestService implements TrainingRequestServiceInterface {
@@ -47,8 +48,8 @@ export default class TrainingRequestService implements TrainingRequestServiceInt
     return this.trainingRequestModel.exists({initiator: initiatorId, user: userId, requestType: requestType}).then((v) => v !== null);
   }
 
-  public async create(dto: CreateTrainingRequestDto): Promise<DocumentType<TrainingRequestEntity>> {
-    const request = await this.trainingRequestModel.create(dto);
+  public async create(dto: CreateTrainingRequestDto, initiatorId: MongoId, userId: MongoId, requestStatus: RequestStatus): Promise<DocumentType<TrainingRequestEntity>> {
+    const request = await this.trainingRequestModel.create({...dto, initiator: initiatorId, user: userId, status: requestStatus});
     this.logger.info('Request created')
     return await request.populate(['user', 'initiator']);
   }

@@ -14,9 +14,8 @@ import { AppComponent } from '../../types/app-component.enum.js';
 import { Token } from '../../types/token.enum.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
-import { DEFAULT_MAX_AGE_TOKEN } from './user.const.js';
 import HttpError from '../../core/errors/http-error.js';
-import { fillDTO } from '../../core/helpers/index.js';
+import { clearCookie, fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
@@ -26,9 +25,6 @@ import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middl
 import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-by-email-middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
-import CreateTrainerDto from '../trainer/dto/create-trainer.dto.js';
-import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
-import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { Role } from '../../types/role.enum.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
@@ -39,21 +35,67 @@ export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
     this.logger.info('Register routes for UserController...');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.createUser, middlewares: [new RoleCheckMiddleware(Role.User), new ValidateDtoMiddleware(CreateUserDto)] });
-    this.addRoute({ path: '/register-trainer', method: HttpMethod.Post, handler: this.createTrainer, middlewares: [new RoleCheckMiddleware(Role.Trainer), new ValidateDtoMiddleware(CreateTrainerDto)] });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new UserExistsByEmailMiddleware(this.userService), new ValidateDtoMiddleware(LoginUserDto)] });
-    this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
-    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index, middlewares: [new PrivateRouteMiddleware(), new RoleCheckMiddleware(Role.User)] });
-    this.addRoute({ path: '/email', method: HttpMethod.Get, handler: this.findByEmail, middlewares: [new UserExistsByEmailMiddleware(this.userService)] });
-    this.addRoute({ path: '/:userId', method: HttpMethod.Put, handler: this.updateById, middlewares: [new ValidateObjectIdMiddleware('userId'), new DocumentExistsMiddleware(this.userService, 'User', 'userId'), new ValidateDtoMiddleware(UpdateUserDto)] });
-    this.addRoute({ path: '/refresh', method: HttpMethod.Get, handler: this.refreshToken, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
-    this.addRoute({ path: '/login', method: HttpMethod.Get, handler: this.checkAuthenticate, middlewares: [new PrivateRouteMiddleware()] });
+    this.addRoute({ path: '/register',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new ValidateDtoMiddleware(CreateUserDto)
+      ]
+    });
+    this.addRoute({ path: '/login',
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [
+        new UserExistsByEmailMiddleware(this.userService),
+        new ValidateDtoMiddleware(LoginUserDto)
+      ]
+    });
+    this.addRoute({ path: '/logout',
+      method: HttpMethod.Post,
+      handler: this.logout
+    });
+    this.addRoute({path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User)
+      ]
+    });
+    this.addRoute({ path: '/email',
+      method: HttpMethod.Get,
+      handler: this.findByEmail,
+      middlewares: [
+        new UserExistsByEmailMiddleware(this.userService)
+      ]
+    });
+    this.addRoute({ path: '/:userId',
+    method: HttpMethod.Put,
+    handler: this.updateById,
+    middlewares: [
+      new ValidateObjectIdMiddleware('userId'),
+      new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+      new ValidateDtoMiddleware(UpdateUserDto)
+    ]});
+    this.addRoute({ path: '/refresh',
+      method: HttpMethod.Get,
+      handler: this.refreshToken,
+      middlewares: [
+        new ValidateDtoMiddleware(LoginUserDto)
+      ]
+    });
+    this.addRoute({ path: '/login',
+      method: HttpMethod.Get,
+      handler: this.checkAuthenticate,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
+    });
   }
 
   public async index(
@@ -85,7 +127,7 @@ export default class UserController extends Controller {
       );
     }
 
-    this.setRefreshTokenCookie(res, userData.refreshToken);
+    setRefreshTokenCookie(res, userData.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.ok(res, { message: 'Token updated' });
   }
@@ -134,7 +176,7 @@ export default class UserController extends Controller {
       );
     }
 
-    this.setRefreshTokenCookie(res, result.refreshToken);
+    setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.ok(res, {
       ...fillDTO(LoggedUserRdo, result.user),
@@ -155,7 +197,7 @@ export default class UserController extends Controller {
     }
 
     await this.userService.logout(refreshToken);
-    this.clearCookie(res, Token.Refresh);
+    clearCookie(res, Token.Refresh);
     this.ok(res, { message: 'Logout successful' });
   }
 
@@ -186,25 +228,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, updatedUser));
   }
 
-  private setRefreshTokenCookie(res: Response, refreshToken: string) {
-    const expirationTime = this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME');
-    const numericValue = parseInt(expirationTime, 10);
-    let maxAge;
-
-    if (expirationTime.endsWith('d')) {
-      maxAge = numericValue * 24 * 60 * 60 * 1000;
-    } else {
-      maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
-    }
-
-    res.cookie(Token.Refresh, refreshToken, { maxAge, httpOnly: true });
-  }
-
-  private clearCookie(res: Response, token: Token) {
-    res.clearCookie(token);
-  }
-
-  public async createUser(
+  public async create(
     { body }: Request<UnknownRecord, UnknownRecord, CreateUserDto>,
     res: Response
   ): Promise<void> {
@@ -220,35 +244,11 @@ export default class UserController extends Controller {
 
     const result = await this.userService.create(body, this.configService.get('SALT'));
 
-    this.setRefreshTokenCookie(res, result.refreshToken);
+    setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.created(
       res,
       fillDTO(UserRdo, result.user)
-    );
-  }
-
-  public async createTrainer(
-    { body }: Request<UnknownRecord, UnknownRecord, CreateTrainerDto>,
-    res: Response
-  ): Promise<void> {
-    const existsTrainer = await this.trainerService.findByEmail(body.email);
-
-      if (existsTrainer) {
-        throw new HttpError(
-          StatusCodes.CONFLICT,
-          `Trainer with email «${body.email}» exists.`,
-          'TrainerController'
-        );
-      }
-
-    const result = await this.trainerService.create(body, this.configService.get('SALT'));
-
-    this.setRefreshTokenCookie(res, result.refreshToken);
-
-    this.created(
-      res,
-      fillDTO(TrainerRdo, result.user)
     );
   }
 }

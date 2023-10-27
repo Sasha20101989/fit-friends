@@ -1,4 +1,5 @@
 import { inject, injectable } from 'inversify';
+import * as core from 'express-serve-static-core';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
@@ -19,6 +20,11 @@ import CreateBalanceDto from './dto/create-balance.dto.js';
 import UpdateBalanceDto from './dto/update-balance.dto.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import BalanceRdo from './rdo/balance.rdo.js';
+import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { ParamsGetTraining } from '../../types/params-get-training.type.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { TrainingServiceInterface } from '../training/training-service.interface.js';
 
 
 @injectable()
@@ -26,6 +32,7 @@ export default class BalanceController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.BalanceServiceInterface) private readonly balanceService: BalanceServiceInterface,
+    @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
@@ -35,21 +42,35 @@ export default class BalanceController extends Controller {
       path: '/',
       method: HttpMethod.Get,
       handler: this.index,
-      middlewares: [new PrivateRouteMiddleware()],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User)
+      ],
     });
 
     this.addRoute({
-      path: '/',
+      path: '/training/:trainingId',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateBalanceDto)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('trainingId'),
+        new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
+        new ValidateDtoMiddleware(CreateBalanceDto)
+      ],
     });
 
     this.addRoute({
-      path: '/',
+      path: '/training/:trainingId',
       method: HttpMethod.Patch,
       handler: this.updateBalance,
-      middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(UpdateBalanceDto)],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User),
+        new ValidateObjectIdMiddleware('trainingId'),
+        new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
+        new ValidateDtoMiddleware(UpdateBalanceDto)
+      ],
     });
   }
 
@@ -57,23 +78,7 @@ export default class BalanceController extends Controller {
     req: Request,
     res: Response
   ) {
-
     const{ user } = req;
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'BalanceController'
-      );
-    }
-
-    if(user.role != Role.User){
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        'Access denied: You do not have the required role to perform this action.',
-        'BalanceController'
-      );
-    }
 
     const balance = await this.balanceService.findByUserId(user.id);
 
@@ -81,62 +86,42 @@ export default class BalanceController extends Controller {
   }
 
   public async create(
-    { body , user }: Request<UnknownRecord, UnknownRecord, CreateBalanceDto>,
+    { params, body , user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateBalanceDto>,
     res: Response
   ){
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'BalanceController'
-      );
-    }
+    const { trainingId } = params;
 
-    if(user.role != Role.User){
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        'Access denied: You do not have the required role to perform this action.',
-        'BalanceController'
-      );
-    }
-
-    if(await this.balanceService.exists(body.training)){
+    if(await this.balanceService.exists(trainingId)){
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Balance with training id ${body.training} exists.`,
+        `Balance with training id ${trainingId} exists.`,
         'BalanceController'
       );
     }
 
-    const balance = await this.balanceService.create({...body}, user.id);
+    const balance = await this.balanceService.create({...body}, user.id, trainingId);
     this.created(res, fillDTO(BalanceRdo, balance));
   }
 
   public async updateBalance(
-    { body, user }: Request<UnknownRecord, UnknownRecord, UpdateBalanceDto>,
+    { params, body }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateBalanceDto>,
     res: Response
   ) {
-    if (!user || user.role !== Role.User) {
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        'Access denied: You do not have the required role to perform this action.',
-        'BalanceController'
-      );
-    }
+    const { trainingId } = params;
 
-    if (await this.balanceService.exists(body.training) && body.availableQuantity === 0) {
-      await this.balanceService.deleteBalance(body.training);
+    if (await this.balanceService.exists(trainingId) && body.availableQuantity === 0) {
+      await this.balanceService.deleteBalance(trainingId);
       this.ok(res, { message: 'Balance deleted' });
     } else {
-      if (!await this.balanceService.exists(body.training)) {
+      if (!await this.balanceService.exists(trainingId)) {
         throw new HttpError(
           StatusCodes.CONFLICT,
-          `Balance with training id ${body.training} not exists.`,
+          `Balance with training id ${trainingId} not exists.`,
           'BalanceController'
         );
       }
 
-      const updatedBalance = await this.balanceService.updateBalance({ ...body });
+      const updatedBalance = await this.balanceService.updateBalance({ ...body }, trainingId);
       this.ok(res, fillDTO(BalanceRdo, updatedBalance));
     }
   }

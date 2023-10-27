@@ -21,10 +21,8 @@ import { ParamsGetTraining } from '../../types/params-get-training.type.js';
 import TrainingRdo from './rdo/training.rdo.js';
 import HttpError from '../../core/errors/http-error.js';
 import { StatusCodes } from 'http-status-codes';
-import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
-import { UserServiceInterface } from '../user/user-service.interface.js';
 import { TrainingQueryParams } from '../../types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 
@@ -33,18 +31,48 @@ export default class TrainingController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
-    @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
-    @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
     super(logger, configService);
 
     this.logger.info('Register routes for TrainingController...');
 
-    this.addRoute({path: '/', method: HttpMethod.Post, handler: this.createTraining, middlewares: [new PrivateRouteMiddleware(), new RoleCheckMiddleware(Role.Trainer), new ValidateDtoMiddleware(CreateTrainingDto)]});
-    this.addRoute({path: '/:trainingId', method: HttpMethod.Get, handler: this.showTrainingDetails, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
-    this.addRoute({path: '/:trainingId', method: HttpMethod.Put, handler: this.updateTraining, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingId'), new ValidateDtoMiddleware(UpdateTrainingDto), new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')]});
-    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index, middlewares: [new PrivateRouteMiddleware()]});
+    this.addRoute({ path: '/',
+      method: HttpMethod.Post,
+      handler: this.createTraining,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.Trainer),
+        new ValidateDtoMiddleware(CreateTrainingDto)
+      ]
+    });
+    this.addRoute({ path: '/:trainingId',
+      method: HttpMethod.Get,
+      handler: this.showTrainingDetails,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('trainingId'),
+        new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
+      ]
+    });
+    this.addRoute({ path: '/:trainingId',
+      method: HttpMethod.Put,
+      handler: this.updateTraining,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.Trainer),
+        new ValidateObjectIdMiddleware('trainingId'),
+        new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
+        new ValidateDtoMiddleware(UpdateTrainingDto)
+      ]
+    });
+    this.addRoute({ path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
+    });
   }
 
   public async index(
@@ -62,27 +90,9 @@ export default class TrainingController extends Controller {
   ): Promise<void> {
     const { trainingId } = params;
 
-    if (!await this.trainerService.exists(user.id)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Trainer with id ${user.id} not found.`,
-        'TrainingController'
-      );
-    }
-
-    const trainer = await this.userService.findByEmail(user.email);
-
-    if (trainer && trainer.role !== Role.Trainer) {
-      throw new HttpError(
-          StatusCodes.FORBIDDEN,
-          'Access denied: You do not have the required role to perform this action.',
-          'TrainingController'
-      );
-    }
-
     const training = await this.trainingService.getTrainingDetails(trainingId);
 
-    if(training?.trainer.id !== trainer?.id){
+    if(training && training.trainer.id !== user.id){
       throw new HttpError(
         StatusCodes.FORBIDDEN,
         'Access denied: You do not have permission to edit this training.',
@@ -98,15 +108,6 @@ export default class TrainingController extends Controller {
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
   ): Promise<void> {
-
-    if (!await this.trainerService.exists(user.id)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Trainer with id ${user.id} not found.`,
-        'TrainingController'
-      );
-    }
-
     const randomBackgroundImage= getRandomBackgroundImage();
 
     const createTrainingDto: CreateTrainingDto = {

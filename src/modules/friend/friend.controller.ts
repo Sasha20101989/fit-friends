@@ -14,14 +14,12 @@ import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
 import UserRdo from '../user/rdo/user.rdo.js';
 import { fillDTO } from '../../core/helpers/index.js';
-import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import CreateFriendDto from './dto/create-friend.dto.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ParamsGetFriend } from '../../types/params-get-friend.js';
+import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -34,23 +32,39 @@ export default class FriendController extends Controller {
     super(logger, configService);
     this.logger.info('Register routes for FriendController...');
 
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new ValidateDtoMiddleware(CreateFriendDto)] });
-    this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index, middlewares: [new PrivateRouteMiddleware()] });
-    this.addRoute({ path: '/:friendId', method: HttpMethod.Delete, handler: this.delete, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('friendId'), new DocumentExistsMiddleware(this.userService, 'User', 'friendId')] });
+    this.addRoute({ path: '/:friendId',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User),
+        new ValidateObjectIdMiddleware('friendId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
+      ]
+    });
+    this.addRoute({ path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User)
+      ]
+    });
+    this.addRoute({ path: '/:friendId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('friendId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
+      ]
+    });
   }
 
   public async delete(
     {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
   ): Promise<void> {
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'UserController'
-      );
-    }
-
     const {friendId} = params;
 
     if(!await this.friendService.exists(user.id, friendId)){
@@ -67,32 +81,15 @@ export default class FriendController extends Controller {
   }
 
   public async create(
-    { user, body }: Request<UnknownRecord, UnknownRecord, CreateFriendDto>,
+    {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
   ): Promise<void> {
-
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'UserController'
-      );
-    }
-
-    const { friendId } = body;
-
-    if (user.role !== Role.User) {
-      throw new HttpError(
-          StatusCodes.BAD_REQUEST,
-          'Access denied: You do not have the required role to perform this action.',
-          'FriendController'
-      );
-    }
+    const { friendId } = params;
 
     if(await this.friendService.exists(user.id, friendId)){
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `Friend with id ${friendId} exists.`,
+        `Friend with id ${friendId} exists in friend list.`,
         'FriendController'
       );
     }
@@ -103,26 +100,10 @@ export default class FriendController extends Controller {
   }
 
   public async index(
-    req: Request,
+    { user }: Request,
     res: Response
   ): Promise<void> {
-    if(!req.user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'UserController'
-      );
-    }
-
-    if(req.user.role != Role.User){
-      throw new HttpError(
-        StatusCodes.BAD_REQUEST,
-        'Access denied: You do not have the required role to perform this action.',
-        'UserController'
-      );
-    }
-
-    const friends = await this.friendService.getFriends(req.user.id);
+    const friends = await this.friendService.getFriends(user.id);
 
     this.created(res, fillDTO(UserRdo, friends));
   }

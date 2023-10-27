@@ -1,4 +1,5 @@
 # Тренеры
+
 ## Создать нового тренера
 
 POST http://localhost:4000/trainers/register HTTP/1.1
@@ -6,16 +7,16 @@ Content-Type: application/json
 
 {
   "name": "Sasha",
-  "email": "trainer@mail.net",
+  "email": "trainer111@mail.net",
   "avatar": "feliugin.jpg",
   "password": "123456",
   "gender": "мужской",
   "role": "тренер",
-  "location": "Звёздная",
+  "location": "звёздная",
   "backgroundImage": "image.png",
-  "trainingLevel": "профессионал",
-  "workoutTypes": ["бокс", "стрейчинг", "аэробика"],
-  "traningCount": 1,
+  "trainingLevel": "любитель",
+  "workoutTypes": ["стрейчинг", "аэробика"],
+  "traningCount": 0,
   "personalTraining": true,
   "certificate": "file.pdf",
   "trainerAchievements": "Ты будешь отжиматься пока я не вспотею"

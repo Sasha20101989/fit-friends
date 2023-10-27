@@ -1,4 +1,5 @@
-import typegoose, { defaultClasses } from '@typegoose/typegoose';
+import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
+import { TrainingEntity } from '../training/training.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -14,8 +15,8 @@ export class BalanceEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public user!: string;
 
-  @prop({ required: true })
-  public training!: string;
+  @prop({ required: true, ref: TrainingEntity })
+  public training!: Ref<TrainingEntity>;
 
   @prop({ required: true })
   public availableQuantity!: number;

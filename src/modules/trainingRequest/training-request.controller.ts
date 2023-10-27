@@ -39,8 +39,27 @@ export default class TrainingRequestController extends Controller {
     super(logger, configService);
     this.logger.info('Register routes for TrainingRequestController...');
 
-    this.addRoute({ path: '/user/:userId', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new RoleCheckMiddleware(Role.User), new ValidateObjectIdMiddleware('userId'), new ValidateDtoMiddleware(CreateTrainingRequestDto), new DocumentExistsMiddleware(this.userService, 'User', 'userId')] });
-    this.addRoute({path: '/:trainingRequestId', method: HttpMethod.Patch, handler: this.update, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingRequestId'), new ValidateDtoMiddleware(UpdateTrainingRequestDto), new DocumentExistsMiddleware(this.trainingRequestService, 'TrainingRequest', 'trainingRequestId')]});
+    this.addRoute({ path: '/user/:userId',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User),
+        new ValidateObjectIdMiddleware('userId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+        new ValidateDtoMiddleware(CreateTrainingRequestDto)
+      ]
+    });
+    this.addRoute({ path: '/:trainingRequestId',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('trainingRequestId'),
+        new DocumentExistsMiddleware(this.trainingRequestService, 'TrainingRequest', 'trainingRequestId'),
+        new ValidateDtoMiddleware(UpdateTrainingRequestDto)
+      ]
+    });
   }
 
   public async create(
@@ -48,14 +67,6 @@ export default class TrainingRequestController extends Controller {
     res: Response
   ): Promise<void> {
     const { userId } = params;
-
-    if (!await this.userService.exists(user.id)) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `Initiator with id ${user.id} not found.`,
-        'TrainingRequestController'
-      );
-    }
 
     const initiator = user;
 
@@ -67,12 +78,9 @@ export default class TrainingRequestController extends Controller {
       );
     }
 
-    const request = await this.trainingRequestService.create({
-      ...body,
-      initiator: initiator.id,
-      user: userId,
-      status: RequestStatus.Pending
-    });
+    const defaultStatus =  RequestStatus.Pending;
+
+    const request = await this.trainingRequestService.create({...body}, initiator.id, userId, defaultStatus);
 
     this.created(res, fillDTO(TrainingRequestRdo, request));
   }

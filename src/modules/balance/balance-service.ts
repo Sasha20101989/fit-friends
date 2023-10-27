@@ -18,14 +18,16 @@ export default class BalanceService implements BalanceServiceInterface{
     return this.balanceModel.exists({ training: trainingId }).then((v) => v !== null);
   }
 
-  public async create(dto: CreateBalanceDto, userId: MongoId): Promise<DocumentType<BalanceEntity>> {
-    const result = await this.balanceModel.create({...dto, user: userId});
-    return result;
+  public async create(dto: CreateBalanceDto, userId: MongoId, trainingId: MongoId): Promise<DocumentType<BalanceEntity>> {
+    const result = await this.balanceModel.create({...dto, user: userId, training: trainingId});
+    return await result.populate({ path: 'training', populate: { path: 'trainer' } });
   }
 
-  public async updateBalance(dto: UpdateBalanceDto): Promise<DocumentType<BalanceEntity> | null> {
-    const { training, availableQuantity } = dto;
-    const existingBalance = await this.balanceModel.findOne({ training: training });
+  public async updateBalance(dto: UpdateBalanceDto, trainingId: MongoId): Promise<DocumentType<BalanceEntity> | null> {
+    const { availableQuantity } = dto;
+    const existingBalance = await this.balanceModel
+    .findOne({ training: trainingId })
+    .populate({ path: 'training', populate: { path: 'trainer' } });
 
     if (existingBalance) {
       existingBalance.availableQuantity = availableQuantity;
@@ -37,7 +39,7 @@ export default class BalanceService implements BalanceServiceInterface{
   }
 
   public async findByUserId(userId: MongoId): Promise<DocumentType<BalanceEntity>[]>{
-    const balance = await this.balanceModel.find({ user: userId}).populate('training');
+    const balance = await this.balanceModel.find({ user: userId}).populate({ path: 'training', populate: { path: 'trainer' } });
     return balance;
   }
 

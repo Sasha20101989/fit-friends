@@ -30,7 +30,7 @@ export default class TrainingService implements TrainingServiceInterface {
     ){}
 
   public async exists(trainingId: MongoId): Promise<boolean> {
-    return this.trainingModel.exists({ _id: trainingId }).then((v) => v !== null);
+    return await this.trainingModel.exists({ _id: trainingId }).then((v) => v !== null);
   }
 
   public async create(dto: CreateTrainingDto): Promise<DocumentType<TrainingEntity>> {
@@ -39,15 +39,12 @@ export default class TrainingService implements TrainingServiceInterface {
     return training;
   }
 
-  public getTrainingDetails(trainingId: string): Promise<DocumentType<TrainingEntity> | null> {
-    return this.trainingModel
-    .findById(trainingId)
-    .populate(['trainer'])
-    .exec();
+  public async getTrainingDetails(trainingId: string): Promise<DocumentType<TrainingEntity> | null> {
+    return await this.trainingModel.findOne({ _id: trainingId}).populate(['trainer']);
   }
 
   public async update(trainingId: MongoId, dto: UpdateTrainingDto): Promise<DocumentType<TrainingEntity> | null> {
-    return this.trainingModel
+    return await this.trainingModel
       .findByIdAndUpdate(trainingId, dto, {new: true})
       .populate(['trainer'])
       .exec();
@@ -97,6 +94,6 @@ export default class TrainingService implements TrainingServiceInterface {
   }
 
   public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {
-    return this.trainingModel.find({ trainer: trainerId }).populate('trainer');
+    return await this.trainingModel.find({ trainer: trainerId }).populate('trainer');
   }
 }
