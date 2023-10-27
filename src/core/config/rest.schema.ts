@@ -18,6 +18,24 @@ export type RestSchema = {
   HOST: string;
   STATIC_DIRECTORY_PATH:string;
   UPLOAD_DIRECTORY: string;
+  NOTIFY_PORT: string;
+  NOTIFY_MONGO_HOST: string;
+  NOTIFY_MONGO_PORT: string;
+  NOTIFY_MONGO_DB_NAME: string;
+  NOTIFY_MONGO_INITDB_ROOT_USERNAME: string;
+  NOTIFY_MONGO_INITDB_ROOT_PASSWORD: string;
+  NOTIFY_MONGO_AUTH_BASE: string;
+  RABIT_HOST: string;
+  RABIT_USER: string;
+  RABIT_PASSWORD: string;
+  RABIT_PORT: string;
+  RABIT_QUEUE: string;
+  RABIT_EXCHANGE: string;
+  MAIL_SMTP_HOST: string;
+  MAIL_SMTP_PORT: string;
+  MAIL_USER_NAME: string;
+  MAIL_USER_PASSWORD: string;
+  MAIL_FROM: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -104,5 +122,113 @@ export const configRestSchema = convict<RestSchema>({
     format: String,
     env: 'UPLOAD_DIRECTORY',
     default: null
+  },
+  NOTIFY_PORT:{
+    doc: 'Port for notification connections',
+    format: 'port',
+    env: 'NOTIFY_PORT',
+    default: null
+  },
+  NOTIFY_MONGO_HOST:{
+    doc: 'Host wrere started notify service',
+    format: String,
+    env: 'NOTIFY_MONGO_HOST',
+    default: 'localhost'
+  },
+  NOTIFY_MONGO_PORT: {
+    doc: 'Port to connect to the database (MongoDB)',
+    format: 'port',
+    env: 'NOTIFY_MONGO_PORT',
+    default: '27017',
+  },
+  NOTIFY_MONGO_DB_NAME: {
+    doc: 'Database name (MongoDB)',
+    format: String,
+    env: 'NOTIFY_MONGO_DB_NAME',
+    default: null
+  },
+  NOTIFY_MONGO_INITDB_ROOT_USERNAME: {
+    doc: 'Username to connect to the database',
+    format: String,
+    env: 'NOTIFY_MONGO_INITDB_ROOT_USERNAME',
+    default: null,
+  },
+  NOTIFY_MONGO_INITDB_ROOT_PASSWORD: {
+    doc: 'Password to connect to the database',
+    format: String,
+    env: 'NOTIFY_MONGO_INITDB_ROOT_PASSWORD',
+    default: null,
+  },
+  NOTIFY_MONGO_AUTH_BASE: {
+    doc: 'User to connect to the database',
+    format: String,
+    env: 'NOTIFY_MONGO_AUTH_BASE',
+    default: null,
+  },
+  RABIT_HOST:{
+    doc: 'Host wrere started rabit service',
+    format: String,
+    env: 'RABIT_HOST',
+    default: 'localhost'
+  },
+  RABIT_USER: {
+    doc: 'Username to connect to the rabit',
+    format: String,
+    env: 'RABIT_USER',
+    default: null,
+  },
+  RABIT_PASSWORD: {
+    doc: 'Password to connect to the rabit',
+    format: String,
+    env: 'RABIT_PASSWORD',
+    default: null,
+  },
+  RABIT_PORT: {
+    doc: 'Port to connect to the rabit',
+    format: 'port',
+    env: 'RABIT_PORT',
+    default: '5672',
+  },
+  RABIT_QUEUE: {
+    doc: '',
+    format: String,
+    env: 'RABIT_QUEUE',
+    default: null,
+  },
+  RABIT_EXCHANGE: {
+    doc: '',
+    format: String,
+    env: 'RABIT_EXCHANGE',
+    default: null,
+  },
+  MAIL_SMTP_HOST: {
+    doc: 'Host wrere started smtp service',
+    format: String,
+    env: 'MAIL_SMTP_HOST',
+    default: 'localhost'
+  },
+  MAIL_SMTP_PORT: {
+    doc: 'Port to connect to the smtp',
+    format: 'port',
+    env: 'MAIL_SMTP_PORT',
+    default: '8025',
+  },
+  MAIL_USER_NAME: {
+    doc: 'Username to connect to the smtp',
+    format: String,
+    env: 'MAIL_USER_NAME',
+    default: null,
+  },
+  MAIL_USER_PASSWORD: {
+    doc: 'Password to connect to the smtp',
+    format: String,
+    env: 'MAIL_USER_PASSWORD',
+    default: null,
+  },
+  MAIL_FROM: {
+    doc: 'Email for sending letters',
+    format: String,
+    env: 'MAIL_FROM',
+    default: null,
   },
 });
