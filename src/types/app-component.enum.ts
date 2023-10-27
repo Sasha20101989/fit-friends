@@ -26,4 +26,7 @@ export const AppComponent = {
   ReviewServiceInterface: Symbol.for('ReviewServiceInterface'),
   ReviewController: Symbol.for('ReviewController'),
   ReviewModel: Symbol.for('ReviewModel'),
+  TrainingRequestServiceInterface: Symbol.for('TrainingRequestServiceInterface'),
+  TrainingRequestController: Symbol.for('TrainingRequestController'),
+  TrainingRequestModel: Symbol.for('TrainingRequestModel'),
 } as const;

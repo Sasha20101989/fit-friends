@@ -12,6 +12,7 @@ import { createOrderContainer } from './modules/order/order.container.js';
 import { createFriendContainer } from './modules/friend/friend.container.js';
 import { createBalanceContainer } from './modules/balance/balance.container.js';
 import { createReviewContainer } from './modules/review/review.container.js';
+import { createTrainingRequestContainer } from './modules/trainingRequest/training-request.container.js';
 
 async function bootstrap() {
   const mainContainer = Container.merge(
@@ -24,6 +25,7 @@ async function bootstrap() {
     createOrderContainer(),
     createBalanceContainer(),
     createReviewContainer(),
+    createTrainingRequestContainer(),
   );
 
   const application = mainContainer.get<RestApplication>(AppComponent.RestApplication);

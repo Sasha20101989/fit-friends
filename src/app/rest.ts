@@ -30,6 +30,7 @@ export default class RestApplication {
     @inject(AppComponent.FriendController) private readonly friendController: ControllerInterface,
     @inject(AppComponent.BalanceController) private readonly balanceController: ControllerInterface,
     @inject(AppComponent.ReviewController) private readonly reviewController: ControllerInterface,
+    @inject(AppComponent.TrainingRequestController) private readonly trainingRequestController: ControllerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -83,6 +84,7 @@ export default class RestApplication {
     this.expressApplication.use('/balance', this.balanceController.router);
     this.expressApplication.use('/balance', this.balanceController.router);
     this.expressApplication.use('/reviews', this.reviewController.router);
+    this.expressApplication.use('/requests', this.trainingRequestController.router);
 
     this.logger.info('Controller initialization completed');
   }

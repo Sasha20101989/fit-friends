@@ -1,0 +1,25 @@
+# Запросы на груповую или совместную тренировку
+
+## Создать запрос на персональную тренировку
+
+POST http://localhost:4000/requests/user/653780719b7a72b6ef1abc52 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MzdlNjU5YzM1YWJlZDc0ODgwYTEwMSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTgzOTQ1MjgsImV4cCI6MTY5OTY5MDUyOH0.BnYZAzrq130RbFD_8FgMAWBoEz6xEEy8G8dzqIhOGuM
+
+{
+  "requestType": "group"
+}
+
+###
+
+## изменить статус заявки
+
+PATCH http://localhost:4000/requests/653b72c2f5690ff2daaab0f4 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MzdlNjU5YzM1YWJlZDc0ODgwYTEwMSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTgzOTQ1MjgsImV4cCI6MTY5OTY5MDUyOH0.BnYZAzrq130RbFD_8FgMAWBoEz6xEEy8G8dzqIhOGuM
+
+{
+  "status": "отклонён"
+}
+
+###
