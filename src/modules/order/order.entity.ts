@@ -17,25 +17,24 @@ export interface OrderEntity extends defaultClasses.Base {}
   }
 })
 
-export class OrderEntity extends defaultClasses.TimeStamps
-{
+export class OrderEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
-  purchaseType!: PurchaseType;
+  public purchaseType!: PurchaseType;
 
   @prop({ ref: TrainingEntity, required: true })
   public training!: Ref<TrainingEntity>;
 
   @prop({ required: true })
-  price!: number;
+  public price!: number;
 
   @prop({ required: true })
-  quantity!: number;
+  public quantity!: number;
 
   @prop({ required: true })
-  totalAmount!: number;
+  public totalAmount!: number;
 
   @prop({ required: true })
-  paymentMethod!: PaymentMethod;
+  public paymentMethod!: PaymentMethod;
 }
 
 export const OrderModel = getModelForClass(OrderEntity);

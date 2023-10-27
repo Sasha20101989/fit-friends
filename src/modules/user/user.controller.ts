@@ -75,13 +75,14 @@ export default class UserController extends Controller {
       ]
     });
     this.addRoute({ path: '/:userId',
-    method: HttpMethod.Put,
-    handler: this.updateById,
-    middlewares: [
-      new ValidateObjectIdMiddleware('userId'),
-      new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
-      new ValidateDtoMiddleware(UpdateUserDto)
-    ]});
+      method: HttpMethod.Put,
+      handler: this.updateById,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+        new ValidateDtoMiddleware(UpdateUserDto)
+      ]
+    });
     this.addRoute({ path: '/refresh',
       method: HttpMethod.Get,
       handler: this.refreshToken,

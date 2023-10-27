@@ -27,7 +27,7 @@ export default class TrainingService implements TrainingServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>
-    ){}
+  ){}
 
   public async exists(trainingId: MongoId): Promise<boolean> {
     return await this.trainingModel.exists({ _id: trainingId }).then((v) => v !== null);
@@ -80,12 +80,12 @@ export default class TrainingService implements TrainingServiceInterface {
     }
 
     if (query.workoutDuration) {
-      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map(duration => duration.trim());
+      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
       filter.workoutDuration = { $in: workoutDurationsArray };
     }
 
     if (query.workoutType) {
-      const workoutTypesArray = query.workoutType.toString().toLowerCase().split(',').map(type => type.trim());
+      const workoutTypesArray = query.workoutType.toString().toLowerCase().split(',').map((type) => type.trim());
       filter.workoutType = { $in: workoutTypesArray };
     }
 

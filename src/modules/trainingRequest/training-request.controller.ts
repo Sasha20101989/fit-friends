@@ -78,7 +78,7 @@ export default class TrainingRequestController extends Controller {
       );
     }
 
-    const defaultStatus =  RequestStatus.Pending;
+    const defaultStatus = RequestStatus.Pending;
 
     const request = await this.trainingRequestService.create({...body}, initiator.id, userId, defaultStatus);
 

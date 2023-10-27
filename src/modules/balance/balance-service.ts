@@ -26,8 +26,8 @@ export default class BalanceService implements BalanceServiceInterface{
   public async updateBalance(dto: UpdateBalanceDto, trainingId: MongoId): Promise<DocumentType<BalanceEntity> | null> {
     const { availableQuantity } = dto;
     const existingBalance = await this.balanceModel
-    .findOne({ training: trainingId })
-    .populate({ path: 'training', populate: { path: 'trainer' } });
+      .findOne({ training: trainingId })
+      .populate({ path: 'training', populate: { path: 'trainer' } });
 
     if (existingBalance) {
       existingBalance.availableQuantity = availableQuantity;

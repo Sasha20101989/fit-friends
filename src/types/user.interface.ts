@@ -9,5 +9,5 @@ export interface User extends BaseUser {
   caloriesToBurn: number;
   caloriesToSpend: number;
   readinessForWorkout: boolean;
-  balance: UserBalance;
+  balance?: UserBalance;
 }

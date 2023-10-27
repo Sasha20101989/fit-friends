@@ -16,7 +16,7 @@ export default class ReviewService implements ReviewServiceInterface {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ReviewModel) private readonly reviewModel: types.ModelType<ReviewEntity>,
     @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>,
-    ){}
+  ){}
 
   public async GetReviewsByTrainingId(trainingId: MongoId): Promise<DocumentType<ReviewEntity>[]> {
     return this.reviewModel.
@@ -35,7 +35,7 @@ export default class ReviewService implements ReviewServiceInterface {
         { path: 'training', populate: { path: 'trainer' } },
       ]);
     const reviewsForTraining = await this.GetReviewsByTrainingId(trainingId);
-    const totalRating = reviewsForTraining.reduce((total, review) => total + review.rating, 0);
+    const totalRating = reviewsForTraining.reduce((total, reviewItem) => total + reviewItem.rating, 0);
     const averageRating = totalRating / reviewsForTraining.length;
     const training = await this.trainingModel.findById(trainingId);
 

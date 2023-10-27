@@ -41,13 +41,13 @@ export default class TrainerController extends Controller {
   ): Promise<void> {
     const existsTrainer = await this.trainerService.findByEmail(body.email);
 
-      if (existsTrainer) {
-        throw new HttpError(
-          StatusCodes.CONFLICT,
-          `Trainer with email «${body.email}» exists.`,
-          'TrainerController'
-        );
-      }
+    if (existsTrainer) {
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `Trainer with email «${body.email}» exists.`,
+        'TrainerController'
+      );
+    }
 
     const result = await this.trainerService.create(body, this.configService.get('SALT'));
 

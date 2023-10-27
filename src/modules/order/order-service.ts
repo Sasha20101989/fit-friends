@@ -20,27 +20,27 @@ export default class OrderService implements OrderServiceInterface {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.OrderModel) private readonly orderModel: ModelType<OrderEntity>,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
-    ){}
+  ){}
 
   private sortTrainingInfoList(trainingInfoList: TrainingOrderRdo[], query: OrderQueryParams): TrainingOrderRdo[] {
     const sortType = query.sortOrder || Sorting.Ascending;
 
     if (query.typeOrder === OrderSortingField.PurchasedQuantity) {
-        trainingInfoList.sort((a, b) => {
-            if (sortType === Sorting.Ascending) {
-                return (a.purchasedQuantity || 0) - (b.purchasedQuantity || 0);
-            } else {
-                return (b.purchasedQuantity || 0) - (a.purchasedQuantity || 0);
-            }
-        });
+      trainingInfoList.sort((a, b) => {
+        if (sortType === Sorting.Ascending) {
+          return (a.purchasedQuantity || 0) - (b.purchasedQuantity || 0);
+        } else {
+          return (b.purchasedQuantity || 0) - (a.purchasedQuantity || 0);
+        }
+      });
     } else if (query.typeOrder === OrderSortingField.TotalSalesAmount) {
-        trainingInfoList.sort((a, b) => {
-            if (sortType === Sorting.Ascending) {
-                return (a.totalSalesAmount || 0) - (b.totalSalesAmount || 0);
-            } else {
-                return (b.totalSalesAmount || 0) - (a.totalSalesAmount || 0);
-            }
-        });
+      trainingInfoList.sort((a, b) => {
+        if (sortType === Sorting.Ascending) {
+          return (a.totalSalesAmount || 0) - (b.totalSalesAmount || 0);
+        } else {
+          return (b.totalSalesAmount || 0) - (a.totalSalesAmount || 0);
+        }
+      });
     }
     return trainingInfoList;
   }

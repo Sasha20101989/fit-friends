@@ -112,15 +112,14 @@ export default class UserService implements UserServiceInterface {
 
   public async GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>{
     const filter: UserFilter = {};
-    let sort: { [key: string]: Sorting } = {};
+    const sort: { [key: string]: Sorting } = {};
 
     if (query.location) {
       filter.location = query.location.toLowerCase();
     }
 
     if (query.workoutTypes) {
-      const workoutTypesArray = query.workoutTypes.toString().toLowerCase().split(',').map(type => type.trim());
-      filter.workoutTypes = { $in: workoutTypesArray };
+      filter.workoutTypes = { $in: query.workoutTypes.toString().toLowerCase().split(',').map((type) => type.trim()) };
     }
 
     if (query.trainingLevel) {
@@ -128,12 +127,11 @@ export default class UserService implements UserServiceInterface {
     }
 
     if (query.sortBy) {
-      if (query.sortBy === Role.User) {
+      if (query.sortBy === Role.User){
         sort['role'] = Sorting.Ascending;
       }
-      else if (query.sortBy === Role.Trainer) {
-        sort['role'] = Sorting.Descending;
-      }
+
+      sort['role'] = Sorting.Descending;
     }
 
     const users = await this.userModel.find(filter).sort(sort);

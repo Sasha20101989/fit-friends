@@ -1,6 +1,6 @@
-import { DocumentType } from "@typegoose/typegoose";
-import { MongoId } from "../../types/mongo-id.type.js";
-import { UserEntity } from "../user/user.entity.js";
+import { DocumentType } from '@typegoose/typegoose';
+import { MongoId } from '../../types/mongo-id.type.js';
+import { UserEntity } from '../user/user.entity.js';
 
 export interface FriendServiceInterface{
   delete(userId: MongoId, friendId: MongoId): Promise<void>;

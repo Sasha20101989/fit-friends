@@ -17,7 +17,7 @@ export default class TrainingRequestService implements TrainingRequestServiceInt
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.TrainingRequestModel) private readonly trainingRequestModel: types.ModelType<TrainingRequestEntity>
-    ){}
+  ){}
 
   public async updateStatus(dto: UpdateTrainingRequestDto, requestId: MongoId): Promise<DocumentType<TrainingRequestEntity> | null> {
     const existingRequest = await this.trainingRequestModel
@@ -50,7 +50,7 @@ export default class TrainingRequestService implements TrainingRequestServiceInt
 
   public async create(dto: CreateTrainingRequestDto, initiatorId: MongoId, userId: MongoId, requestStatus: RequestStatus): Promise<DocumentType<TrainingRequestEntity>> {
     const request = await this.trainingRequestModel.create({...dto, initiator: initiatorId, user: userId, status: requestStatus});
-    this.logger.info('Request created')
+    this.logger.info('Request created');
     return await request.populate(['user', 'initiator']);
   }
 }

@@ -80,7 +80,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z
 
 ## Список пользователей
 
-GET http://localhost:4000/users?sortBy=тренер&workoutTypes=бокс HTTP/1.1
+GET http://localhost:4000/users?sortBy=тренер&workoutTypes=аэробика,бокс HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luQG1haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1MzdlNjU5YzM1YWJlZDc0ODgwYTEwMSIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTg0MDA4MzMsImV4cCI6MTY5OTY5NjgzM30.gTWNG7qbIDSZ6rw7-MKBzfQfGwfZ-22vdqfTMIGjeW8
 
 ###

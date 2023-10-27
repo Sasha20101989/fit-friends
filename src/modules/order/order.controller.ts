@@ -74,11 +74,11 @@ export default class OrderController extends Controller {
   ): Promise<void> {
     const { trainerId } = params as ParamsGetOrder;
 
-    if(trainerId != user.id){
+    if(trainerId !== user.id){
       throw new HttpError(
         StatusCodes.FORBIDDEN,
-        "Access denied: You cannot access another trainer's training list.",
-        "OrderController"
+        'Access denied: You cannot access another trainers training list.',
+        'OrderController'
       );
     }
 

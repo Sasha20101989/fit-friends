@@ -3,26 +3,25 @@ import { PaymentMethod } from '../../../types/payment-method.enum.js';
 import { PurchaseType } from '../../../types/purchase-type.enum.js';
 import { Expose } from 'class-transformer';
 
-
 export default class OrderRdo {
   @Expose()
   public id!: string;
 
   @Expose()
-  purchaseType!: PurchaseType;
+  public purchaseType!: PurchaseType;
 
   @IsNotEmpty({ message: 'Training id is required' })
-  training!: string;
+  public training!: string;
 
   @Expose()
-  price!: number;
+  public price!: number;
 
   @Expose()
-  quantity!: number;
+  public quantity!: number;
 
   @Expose()
-  totalAmount!: number;
+  public totalAmount!: number;
 
   @Expose()
-  paymentMethod!: PaymentMethod;
+  public paymentMethod!: PaymentMethod;
 }

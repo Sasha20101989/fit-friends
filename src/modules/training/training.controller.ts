@@ -108,12 +108,12 @@ export default class TrainingController extends Controller {
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
   ): Promise<void> {
-    const randomBackgroundImage= getRandomBackgroundImage();
+    const randomBackgroundImage = getRandomBackgroundImage();
 
     const createTrainingDto: CreateTrainingDto = {
-        ...body,
-        backgroundImage: randomBackgroundImage,
-        trainer: user?.id,
+      ...body,
+      backgroundImage: randomBackgroundImage,
+      trainer: user?.id,
     };
 
     const result = await this.trainingService.create(createTrainingDto);

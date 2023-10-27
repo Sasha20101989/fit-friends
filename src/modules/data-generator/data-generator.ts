@@ -25,9 +25,9 @@ const generateTrainigs = (trainers: Trainer[]) => {
         workoutDuration: generateRandomWorkoutDuration(),
         price: generateRandomPrice(),
         calories: 1003,
-        description: "Отжимания отжимания и только отжимания",
+        description: 'Отжимания отжимания и только отжимания',
         genderPreference: generateRandomGenderPreference(),
-        video: "video.mov",
+        video: 'video.mov',
         rating: generateRandomRating(),
         trainer: trainer,
         specialOffer: true
@@ -76,30 +76,26 @@ const generateUsers = () => {
       location: Location.Sportivnaya,
       backgroundImage: 'http.jpg',
       trainingLevel: TrainingLevel.Beginner,
-      workoutTypes: [WorkoutType.Boxing, WorkoutType.Pilates, WorkoutType.Stretching],
-      traningCount: 0
+      workoutTypes: [WorkoutType.Boxing, WorkoutType.Pilates, WorkoutType.Stretching]
     };
     users.push(user);
   }
   return users;
 };
 
-const generateTrainingOrders = (trainings: Training[]): TrainingOrder[] => {
-  return trainings.map((training) => {
+const generateTrainingOrders = (trainings: Training[]): TrainingOrder[] =>
+  trainings.map((training) => {
     const price = training.price;
     const quantity = generateRandomQuantity();
 
-    const order: TrainingOrder = {
+    return {
       purchaseType: PurchaseType.Subscription,
       training: training,
       price: price,
       quantity: quantity,
       paymentMethod: generateRandomPaymentMethod()
     };
-
-    return order;
   });
-};
 
 function generateRandomRating() {
   return Math.floor(Math.random() * 5) + 1;

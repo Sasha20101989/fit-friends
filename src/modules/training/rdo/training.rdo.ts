@@ -1,9 +1,9 @@
-import { Expose, Type } from "class-transformer";
-import { GenderPreference } from "../../../types/gender-preference.enum.js";
-import { TrainingLevel } from "../../../types/training-level.enum.js";
-import { WorkoutDuration } from "../../../types/workout-duration.enum.js";
-import { WorkoutType } from "../../../types/workout-type.enum.js";
-import TrainerRdo from "../../trainer/rdo/trainer.rdo.js";
+import { Expose, Type } from 'class-transformer';
+import { GenderPreference } from '../../../types/gender-preference.enum.js';
+import { TrainingLevel } from '../../../types/training-level.enum.js';
+import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
+import { WorkoutType } from '../../../types/workout-type.enum.js';
+import TrainerRdo from '../../trainer/rdo/trainer.rdo.js';
 
 export default class TrainingRdo {
   @Expose()
