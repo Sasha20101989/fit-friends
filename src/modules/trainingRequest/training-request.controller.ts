@@ -26,6 +26,7 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ParamsGetRequest } from '../../types/params-get-request.js';
 import { ParamsGetUser } from '../../types/params-get-user.type.js';
+import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 
 @injectable()
 export default class TrainingRequestController extends Controller {
@@ -38,23 +39,15 @@ export default class TrainingRequestController extends Controller {
     super(logger, configService);
     this.logger.info('Register routes for TrainingRequestController...');
 
-    this.addRoute({ path: '/user/:userId', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('userId'), new ValidateDtoMiddleware(CreateTrainingRequestDto), new DocumentExistsMiddleware(this.userService, 'User', 'userId')] });
+    this.addRoute({ path: '/user/:userId', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware(), new RoleCheckMiddleware(Role.User), new ValidateObjectIdMiddleware('userId'), new ValidateDtoMiddleware(CreateTrainingRequestDto), new DocumentExistsMiddleware(this.userService, 'User', 'userId')] });
     this.addRoute({path: '/:trainingRequestId', method: HttpMethod.Patch, handler: this.update, middlewares: [new PrivateRouteMiddleware(), new ValidateObjectIdMiddleware('trainingRequestId'), new ValidateDtoMiddleware(UpdateTrainingRequestDto), new DocumentExistsMiddleware(this.trainingRequestService, 'TrainingRequest', 'trainingRequestId')]});
   }
 
   public async create(
-    { params, body, user }: Request<core.ParamsDictionary, UnknownRecord, CreateTrainingRequestDto>,
+    { params, body, user }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateTrainingRequestDto>,
     res: Response
   ): Promise<void> {
-    const { userId } = params as ParamsGetUser;
-
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'TrainingRequestController'
-      );
-    }
+    const { userId } = params;
 
     if (!await this.userService.exists(user.id)) {
       throw new HttpError(
@@ -65,14 +58,6 @@ export default class TrainingRequestController extends Controller {
     }
 
     const initiator = user;
-
-    if (initiator.role !== Role.User) {
-      throw new HttpError(
-          StatusCodes.BAD_REQUEST,
-          'Access denied: You do not have the required role to perform this action.',
-          'TrainingRequestController'
-      );
-    }
 
     if (await this.trainingRequestService.existsRequestByType(initiator.id, userId, body.requestType)) {
       throw new HttpError(
@@ -93,18 +78,10 @@ export default class TrainingRequestController extends Controller {
   }
 
   public async update(
-    { params, body, user}: Request<core.ParamsDictionary, UnknownRecord, UpdateTrainingRequestDto>,
+    { params, body }: Request<core.ParamsDictionary | ParamsGetRequest, UnknownRecord, UpdateTrainingRequestDto>,
     res: Response
   ) {
-    if(!user){
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
-        'TrainingRequestController'
-      );
-    }
-
-    const { trainingRequestId } = params as ParamsGetRequest;
+    const { trainingRequestId } = params;
 
     const updatedRequest = await this.trainingRequestService.updateStatus({ ...body }, trainingRequestId);
     this.ok(res, fillDTO(TrainingRequestRdo, updatedRequest));

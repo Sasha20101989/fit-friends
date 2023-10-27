@@ -72,8 +72,8 @@ export class UserEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public readinessForWorkout: boolean;
 
-  @prop({ required: true, ref: BalanceEntity })
-  public balance!: Ref<BalanceEntity[]>;
+  @prop({ required: false, ref: BalanceEntity })
+  public balance?: Ref<BalanceEntity[]>;
 
   @prop({ required: true })
   public friends!: string[];
