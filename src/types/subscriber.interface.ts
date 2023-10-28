@@ -1,5 +1,7 @@
+import { User } from './user.interface.js';
+
 export interface Subscriber {
   id?: string;
-  email: string;
-  name: string;
+  user: User;
+  text: string;
 }
