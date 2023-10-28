@@ -1,5 +1,6 @@
 import { Channel } from "amqplib";
 import { inject, injectable } from "inversify";
+import EventEmitter from "events";
 
 import { AppComponent } from "../../../types/app-component.enum.js";
 import { LoggerInterface } from "../../logger/logger.interface.js";
@@ -12,6 +13,7 @@ import { RestSchema } from "../../config/rest.schema.js";
 export default class ClientProducer implements ClientProducerInterface {
   private channel!: Channel;
   private replyQueueName!: string;
+  private eventEmitter!: EventEmitter;
 
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
@@ -19,9 +21,10 @@ export default class ClientProducer implements ClientProducerInterface {
 
   ){}
 
-  public async initialize(channel: Channel, replyQueueName: string): Promise<void> {
+  public async initialize(channel: Channel, replyQueueName: string, eventEmitter: EventEmitter): Promise<void> {
     this.channel = channel;
     this.replyQueueName = replyQueueName;
+    this.eventEmitter = eventEmitter;
   }
 
   public async produceMessages(routingKey: RabbitRouting, data: any){
@@ -38,8 +41,19 @@ export default class ClientProducer implements ClientProducerInterface {
       Buffer.from(JSON.stringify(data)),
       {
         replyTo: this.replyQueueName,
-        correlationId: routingKey
+        correlationId: routingKey,
+        expiration: 10,
+        headers: {
+          function: data.operation,
+        },
       }
     );
+
+    return new Promise((resolve, _reject) => {
+      this.eventEmitter.once(routingKey, async (data) => {
+        const reply = JSON.parse(data.content.toString());
+        resolve(reply);
+      });
+    });
   }
 }

@@ -13,9 +13,13 @@ import { createFriendContainer } from './modules/friend/friend.container.js';
 import { createBalanceContainer } from './modules/balance/balance.container.js';
 import { createReviewContainer } from './modules/review/review.container.js';
 import { createTrainingRequestContainer } from './modules/trainingRequest/training-request.container.js';
+import { createRabbitClientContainer } from './core/rabit-client/rabit-client.container.js';
+import { createRabbitServerContainer } from './core/rabit-server/rabit-server.container.js';
 
 async function bootstrap() {
   const mainContainer = Container.merge(
+    createRabbitClientContainer(),
+    createRabbitServerContainer(),
     createRestApplicationContainer(),
     createTokenContainer(),
     createTrainerContainer(),

@@ -16,6 +16,8 @@ import { AuthenticateMiddleware } from '../core/middlewares/authenticate.middlew
 
 import { getFullServerPath } from '../core/helpers/common.js';
 import { getMongoURI } from '../core/helpers/db.js';
+import { RabbitServerInterface } from '../core/rabit-server/rabit-server.interface.js';
+import { getRabbitMQConnectionString } from '../core/helpers/index.js';
 
 @injectable()
 export default class RestApplication {
@@ -25,7 +27,6 @@ export default class RestApplication {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
-    @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface,
     @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
     @inject(AppComponent.TrainerController) private readonly trainerController: ControllerInterface,
     @inject(AppComponent.TrainingController) private readonly trainingController: ControllerInterface,
@@ -34,16 +35,41 @@ export default class RestApplication {
     @inject(AppComponent.BalanceController) private readonly balanceController: ControllerInterface,
     @inject(AppComponent.ReviewController) private readonly reviewController: ControllerInterface,
     @inject(AppComponent.TrainingRequestController) private readonly trainingRequestController: ControllerInterface,
+    @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface,
+    @inject(AppComponent.RabbitServerInterface) private readonly rabbitServer: RabbitServerInterface,
+
   ) {
     this.expressApplication = express();
   }
 
-  private async _initRabitMQ() {
-    this.logger.info('Init RabbitMQ...');
+  private async _initRabitMQClient() {
+    this.logger.info('Init RabbitMQ client...');
 
-    this.rabbitClient.initialize();
+    const rabbitConnectionString = getRabbitMQConnectionString(
+      this.config.get('RABIT_USER'),
+      this.config.get('RABIT_PASSWORD'),
+      this.config.get('RABIT_HOST'),
+      this.config.get('RABIT_PORT')
+    );
 
-    this.logger.info('Init RabbitMQ completed');
+    this.rabbitClient.initialize(rabbitConnectionString);
+
+    this.logger.info('Init RabbitMQ client completed');
+  }
+
+  private async _initRabitMQServer() {
+    this.logger.info('Init RabbitMQ server...');
+
+    const rabbitConnectionString = getRabbitMQConnectionString(
+      this.config.get('RABIT_USER'),
+      this.config.get('RABIT_PASSWORD'),
+      this.config.get('RABIT_HOST'),
+      this.config.get('RABIT_PORT')
+    );
+
+    this.rabbitServer.initialize(rabbitConnectionString);
+
+    this.logger.info('Init RabbitMQ server completed');
   }
 
   private async _initDb() {
@@ -125,8 +151,12 @@ export default class RestApplication {
       this.logger.error(`Error server initialization: ${error.message}`);
     });
 
-    await this._initRabitMQ().catch((error) => {
-      this.logger.error(`Error during notification initialization: ${error.message}`)
+    await this._initRabitMQClient().catch((error) => {
+      this.logger.error(`Error during rabbitMq client initialization: ${error.message}`)
+    })
+
+    await this._initRabitMQServer().catch((error) => {
+      this.logger.error(`Error during rabbitMq server initialization: ${error.message}`)
     })
   }
 }

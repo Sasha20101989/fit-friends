@@ -4,7 +4,6 @@ export const AppComponent = {
   LoggerInterface: Symbol.for('LoggerInterface'),
   ConfigInterface: Symbol.for('ConfigInterface'),
   DatabaseClientInterface: Symbol.for('DatabaseClientInterface'),
-  RabbitClientInterface: Symbol.for('RabbitClientInterface'),
   UserServiceInterface: Symbol.for('UserServiceInterface'),
   UserModel: Symbol.for('UserModel'),
   UserController: Symbol.for('UserController'),
@@ -33,6 +32,10 @@ export const AppComponent = {
   SubscriberServiceInterface: Symbol.for('SubscriberServiceInterface'),
   SubscriberController: Symbol.for('SubscriberController'),
   SubscriberModel: Symbol.for('SubscriberModel'),
+  RabbitClientInterface: Symbol.for('RabbitClientInterface'),
   ClientConsumerInterface: Symbol.for('ClientConsumerInterface'),
   ClientProducerInterface: Symbol.for('ClientProducerInterface'),
+  RabbitServerInterface: Symbol.for('RabbitServerInterface'),
+  ServerConsumerInterface: Symbol.for('ServerConsumerInterface'),
+  ServerProducerInterface: Symbol.for('ServerProducerInterface')
 } as const;
