@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@typegoose/typegoose": "^11.5.1",
+    "@types/amqplib": "^0.10.3",
     "@types/bcrypt": "^5.0.0",
     "@types/convict": "6.1.1",
     "@types/convict-format-with-validator": "6.0.2",
