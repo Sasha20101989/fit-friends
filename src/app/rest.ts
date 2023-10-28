@@ -1,7 +1,11 @@
 import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import type { DatabaseClientInterface } from '../core/database-client/mongo-client.interface.js';
+import { RabbitClientInterface } from '../core/rabit-client/rabit-client.interface.js';
+
 import type { LoggerInterface } from '../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../core/config/config.interface.js';
 import type { ControllerInterface } from '../core/controller/controller.interface.js';
@@ -12,8 +16,6 @@ import { AuthenticateMiddleware } from '../core/middlewares/authenticate.middlew
 
 import { getFullServerPath } from '../core/helpers/common.js';
 import { getMongoURI } from '../core/helpers/db.js';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
 
 @injectable()
 export default class RestApplication {
@@ -23,6 +25,7 @@ export default class RestApplication {
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.DatabaseClientInterface) private readonly databaseClient: DatabaseClientInterface,
+    @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface,
     @inject(AppComponent.UserController) private readonly userController: ControllerInterface,
     @inject(AppComponent.TrainerController) private readonly trainerController: ControllerInterface,
     @inject(AppComponent.TrainingController) private readonly trainingController: ControllerInterface,
@@ -33,6 +36,14 @@ export default class RestApplication {
     @inject(AppComponent.TrainingRequestController) private readonly trainingRequestController: ControllerInterface,
   ) {
     this.expressApplication = express();
+  }
+
+  private async _initRabitMQ() {
+    this.logger.info('Init RabitMQ...');
+
+    this.rabbitClient.initialize();
+
+    this.logger.info('Init RabitMQ completed');
   }
 
   private async _initDb() {
@@ -113,5 +124,9 @@ export default class RestApplication {
     await this._initServer().catch((error) => {
       this.logger.error(`Error server initialization: ${error.message}`);
     });
+
+    await this._initRabitMQ().catch((error) => {
+      this.logger.error(`Error during notification initialization: ${error.message}`)
+    })
   }
 }
