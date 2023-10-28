@@ -55,8 +55,11 @@ export default class RabbitClientService implements RabbitClientInterface {
   public async produce(routingKey: RabbitRouting, data: any): Promise<void> {
     if(!this.producer){
       this.logger.error('[RabbitClientService]: Client producer not initialized');
-    }else{
-      return await this.producer.produceMessages(routingKey, data);
+      this.logger.info('Try to init RabbitMQ...');
+      await this.initialize();
+      this.logger.info('Init RabbitMQ completed');
     }
+
+    return await this.producer.produceMessages(routingKey, data);
   }
 }

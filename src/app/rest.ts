@@ -39,11 +39,11 @@ export default class RestApplication {
   }
 
   private async _initRabitMQ() {
-    this.logger.info('Init RabitMQ...');
+    this.logger.info('Init RabbitMQ...');
 
     this.rabbitClient.initialize();
 
-    this.logger.info('Init RabitMQ completed');
+    this.logger.info('Init RabbitMQ completed');
   }
 
   private async _initDb() {

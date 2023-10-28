@@ -5,6 +5,8 @@ import { AppComponent } from "../../../types/app-component.enum.js";
 import { LoggerInterface } from "../../logger/logger.interface.js";
 import { ClientProducerInterface } from "./client-producer.interface.js";
 import { RabbitRouting } from "../../../types/rabbit-routing.enum.js";
+import { ConfigInterface } from "../../config/config.interface.js";
+import { RestSchema } from "../../config/rest.schema.js";
 
 @injectable()
 export default class ClientProducer implements ClientProducerInterface {
@@ -13,6 +15,8 @@ export default class ClientProducer implements ClientProducerInterface {
 
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
+    @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
+
   ){}
 
   public async initialize(channel: Channel, replyQueueName: string): Promise<void> {
@@ -27,8 +31,10 @@ export default class ClientProducer implements ClientProducerInterface {
       this.logger.error('[ClientProducer]: Channel not initialized');
     }
 
+    this.logger.info(`Routing key is ${routingKey}`);
+
     this.channel.sendToQueue(
-      'fit-friends.notify',
+      this.config.get('RABIT_QUEUE'),
       Buffer.from(JSON.stringify(data)),
       {
         replyTo: this.replyQueueName,

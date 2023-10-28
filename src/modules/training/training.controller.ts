@@ -105,6 +105,13 @@ export default class TrainingController extends Controller {
 
     const updatedTraining = await this.trainingService.update(trainingId, body);
     this.ok(res, fillDTO(TrainingRdo, updatedTraining));
+
+    const notification = {
+      type: 'training_updated',
+      message: `New training created: ${training?.name}`,
+    };
+
+    await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);
   }
 
   public async createTraining(
