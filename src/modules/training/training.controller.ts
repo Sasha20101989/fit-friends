@@ -25,6 +25,8 @@ import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
 import { TrainingQueryParams } from '../../types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { RabbitClientInterface } from '../../core/rabit-client/rabit-client.interface.js';
+import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -32,6 +34,7 @@ export default class TrainingController extends Controller {
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface
   ) {
     super(logger, configService);
 
@@ -119,6 +122,13 @@ export default class TrainingController extends Controller {
     const result = await this.trainingService.create(createTrainingDto);
     const training = await this.trainingService.getTrainingDetails(result.id);
     this.created(res, fillDTO(TrainingRdo, training));
+
+    const notification = {
+      type: 'training_created',
+      message: `New training created: ${training?.name}`,
+    };
+
+    await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);
   }
 
   public async showTrainingDetails(
