@@ -1,4 +1,4 @@
-import { Channel, ConsumeMessage } from "amqplib";
+import { Channel } from "amqplib";
 import { ClientConsumerInterface } from "./client-consumer.interface.js";
 import { inject, injectable } from "inversify";
 import { AppComponent } from "../../../types/app-component.enum.js";
@@ -22,26 +22,22 @@ export default class ClientConsumer implements ClientConsumerInterface {
   }
 
   public async consumeMessages(): Promise<void> {
-    this.logger.info('Ready to consume client messages...');
+    this.logger.info('[ClientConsumer]: Ready to consume messages...');
 
     if(!this.channel){
       this.logger.error('[ClientConsumer]: Channel not initialized');
     }
 
-    this.channel.consume(this.replyQueueName, (message: ConsumeMessage | null) => {
-      if(message){
-        this.logger.info('The reply is...', JSON.parse(message.content.toString()));
-
+    this.channel.consume(
+      this.replyQueueName,
+      (message) => {
         this.eventEmitter.emit(
-          message.properties.correlationId.toString(),
+          message?.properties.correlationId.toString(),
           message
         );
+      },{
+        noAck: true,
       }
-
-      this.logger.warn('Reply message is null');
-      return null;
-    },{
-      noAck: true,
-    });
+    );
   }
 }

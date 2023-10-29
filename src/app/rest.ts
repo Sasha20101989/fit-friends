@@ -18,6 +18,12 @@ import { getFullServerPath } from '../core/helpers/common.js';
 import { getMongoURI } from '../core/helpers/db.js';
 import { RabbitServerInterface } from '../core/rabit-server/rabit-server.interface.js';
 import { getRabbitMQConnectionString } from '../core/helpers/index.js';
+import { ServerConsumerInterface } from '../core/rabit-server/consumer/server-consumer.interface.js';
+import { ServerProducerInterface } from '../core/rabit-server/producer/server-producer.interface.js';
+import EventEmitter from 'events';
+import { ClientConsumerInterface } from '../core/rabit-client/consumer/client-consumer.interface.js';
+import { ClientProducerInterface } from '../core/rabit-client/producer/client-producer.interface.js';
+import { RabbitRouting } from '../types/rabbit-routing.enum.js';
 
 @injectable()
 export default class RestApplication {
@@ -37,7 +43,10 @@ export default class RestApplication {
     @inject(AppComponent.TrainingRequestController) private readonly trainingRequestController: ControllerInterface,
     @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface,
     @inject(AppComponent.RabbitServerInterface) private readonly rabbitServer: RabbitServerInterface,
-
+    @inject(AppComponent.ServerConsumerInterface) private readonly serverConsumer: ServerConsumerInterface,
+    @inject(AppComponent.ServerProducerInterface) private readonly serverProducer: ServerProducerInterface,
+    @inject(AppComponent.ClientConsumerInterface) private readonly clientConsumer: ClientConsumerInterface,
+    @inject(AppComponent.ClientProducerInterface) private readonly clientProducer: ClientProducerInterface,
   ) {
     this.expressApplication = express();
   }
@@ -52,7 +61,22 @@ export default class RestApplication {
       this.config.get('RABIT_PORT')
     );
 
-    this.rabbitClient.initialize(rabbitConnectionString);
+    const connection = await this.rabbitClient.initialize(rabbitConnectionString);
+
+    const producerChannel = await connection.createChannel();
+    const consumerChannel = await connection.createChannel();
+
+    const { queue: replyQueueName } = await consumerChannel.assertQueue(
+      RabbitRouting.AddTraining,
+      { exclusive: true }
+    );
+
+    const eventEmitter = new EventEmitter();
+
+    this.clientProducer.initialize(producerChannel, replyQueueName, eventEmitter);
+    this.clientConsumer.initialize(consumerChannel, replyQueueName, eventEmitter);
+
+    this.clientConsumer.consumeMessages();
 
     this.logger.info('Init RabbitMQ client completed');
   }
@@ -67,7 +91,22 @@ export default class RestApplication {
       this.config.get('RABIT_PORT')
     );
 
-    this.rabbitServer.initialize(rabbitConnectionString);
+    const connection = await this.rabbitServer.initialize(rabbitConnectionString);
+
+    if(!connection){
+      throw new Error('Connection rabbitmq not initialized.');
+    }
+    const producerChannel = await connection.createChannel();
+    const consumerChannel = await connection.createChannel();
+
+    const { queue: rpcQueue } = await consumerChannel.assertQueue(
+      this.config.get('RABIT_QUEUE'),
+      { exclusive: true }
+    );
+
+    this.serverProducer.initialize(producerChannel);
+    this.serverConsumer.initialize(consumerChannel, rpcQueue);
+    this.serverConsumer.consumeMessages();
 
     this.logger.info('Init RabbitMQ server completed');
   }

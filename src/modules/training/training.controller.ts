@@ -27,6 +27,7 @@ import { TrainingQueryParams } from '../../types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { RabbitClientInterface } from '../../core/rabit-client/rabit-client.interface.js';
 import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
+import { Subscriber } from '../../types/subscriber.interface.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -105,13 +106,6 @@ export default class TrainingController extends Controller {
 
     const updatedTraining = await this.trainingService.update(trainingId, body);
     this.ok(res, fillDTO(TrainingRdo, updatedTraining));
-
-    const notification = {
-      type: 'training_updated',
-      message: `New training created: ${training?.name}`,
-    };
-
-    await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);
   }
 
   public async createTraining(
@@ -130,9 +124,9 @@ export default class TrainingController extends Controller {
     const training = await this.trainingService.getTrainingDetails(result.id);
     this.created(res, fillDTO(TrainingRdo, training));
 
-    const notification = {
-      type: 'training_created',
-      message: `New training created: ${training?.name}`,
+    const notification: Subscriber = {
+      user: user.id,
+      text: `New training created: ${training?.name}`,
     };
 
     await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);

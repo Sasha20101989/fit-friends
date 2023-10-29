@@ -1,6 +1,8 @@
+import { Connection } from 'amqplib';
 import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
+import { Subscriber } from '../../types/subscriber.interface.js';
 
 export interface RabbitClientInterface {
-  initialize(rabbitConnectionString: string): Promise<void>;
-  produce(routingKey: RabbitRouting, data: any): Promise<unknown>;
+  initialize(rabbitConnectionString: string): Promise<Connection>;
+  produce(routingKey: RabbitRouting, data: Subscriber): Promise<Subscriber>;
 }

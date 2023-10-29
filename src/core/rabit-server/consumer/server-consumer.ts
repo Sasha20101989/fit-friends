@@ -1,9 +1,10 @@
-import { Channel, ConsumeMessage } from "amqplib";
+import { Channel } from "amqplib";
 import { ServerConsumerInterface } from "./server-consumer.interface.js";
 import { inject, injectable } from "inversify";
 import { AppComponent } from "../../../types/app-component.enum.js";
 import { LoggerInterface } from "../../logger/logger.interface.js";
 import { RabbitServerInterface } from "../rabit-server.interface.js";
+import MessageHandler from "../messageHandler.js";
 
 @injectable()
 export default class ServerConsumer implements ServerConsumerInterface {
@@ -21,35 +22,36 @@ export default class ServerConsumer implements ServerConsumerInterface {
   }
 
   public async consumeMessages(): Promise<void> {
-    this.logger.info('Ready to consume server messages...');
-
     if(!this.channel){
       this.logger.error('[ServerConsumer]: Channel not initialized');
     }
 
+    this.logger.info('[ServerConsumer]: Ready to consume messages...');
+
+    const messageHandler = new MessageHandler(this.rabbitServer);
+
     this.channel.consume(
       this.rpcQueue,
-      async (message: ConsumeMessage | null) => {
-        if(message){
-          const { correlationId, replyTo } = message.properties;
-          const operation = message.properties.headers.function;
+      async (msg) => {
+        if(msg){
+          const { correlationId, replyTo } = msg.properties;
+          const operation = msg.properties.headers.function;
 
           if(!correlationId || !replyTo){
             this.logger.error('[ServerConsumer]: Missing some properties');
           }
 
-          this.logger.info('Consumed', JSON.parse(message.content.toString()));
+          this.logger.info(`[ServerConsumer]: Consumed ${JSON.parse(msg.content.toString())}`);
 
-          await this.rabbitServer.handle(
+          await messageHandler.handle(
             operation,
-            JSON.parse(message.content.toString()),
+            JSON.parse(msg.content.toString()),
             correlationId,
             replyTo
           );
+        }else{
+          this.logger.warn('[ServerConsumer]: Reply message is null');
         }
-
-        this.logger.warn('Reply message is null');
-        return null;
       },
       {
         noAck: true,

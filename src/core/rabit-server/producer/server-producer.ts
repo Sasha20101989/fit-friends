@@ -4,6 +4,7 @@ import { inject, injectable } from "inversify";
 import { AppComponent } from "../../../types/app-component.enum.js";
 import { LoggerInterface } from "../../logger/logger.interface.js";
 import { ServerProducerInterface } from "./server-producer.interface.js";
+import { Subscriber } from "../../../types/subscriber.interface.js";
 
 @injectable()
 export default class ServerProducer implements ServerProducerInterface {
@@ -17,15 +18,14 @@ export default class ServerProducer implements ServerProducerInterface {
     this.channel = channel;
   }
 
-  public async produceMessages(correlationId: string, data: any, replyToQueue: string): Promise<void>{
-    this.logger.info('Ready to produce messages...');
-
+  public async produceMessages(correlationId: string, data: Subscriber, replyToQueue: string): Promise<void>{
     if(!this.channel){
       this.logger.error('[ServerProducer]: Channel not initialized');
     }
 
-    this.logger.info(`Correlation id is ${correlationId}`);
-    this.logger.info('Responding with...', data);
+    this.logger.info('[ServerProducer]: Ready to produce messages...');
+    this.logger.info(`[ServerProducer]: Correlation id is ${correlationId}`);
+    this.logger.info(`[ServerProducer]: Responding with...${JSON.stringify(data)}`);
 
     this.channel.sendToQueue(
       replyToQueue,
