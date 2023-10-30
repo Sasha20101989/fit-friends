@@ -21,7 +21,7 @@ export default class TrainingRequestService implements TrainingRequestServiceInt
 
   public async updateStatus(dto: UpdateTrainingRequestDto, requestId: MongoId): Promise<DocumentType<TrainingRequestEntity> | null> {
     const existingRequest = await this.trainingRequestModel
-      .findById({_id: requestId})
+      .findOne({_id: requestId})
       .populate(['user', 'initiator']);
 
     if(existingRequest){

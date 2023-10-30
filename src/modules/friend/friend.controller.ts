@@ -20,6 +20,9 @@ import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ParamsGetFriend } from '../../types/params-get-friend.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
+import { Notification } from '../../types/notification.type.js';
+import { NotificationType } from '../../types/notification-type.type.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -27,6 +30,7 @@ export default class FriendController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.FriendServiceInterface) private readonly friendService: FriendServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
+    @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
@@ -47,7 +51,7 @@ export default class FriendController extends Controller {
       handler: this.index,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.User)
+        new RoleCheckMiddleware(Role.User)//возможно убрать
       ]
     });
     this.addRoute({ path: '/:friendId',
@@ -97,13 +101,21 @@ export default class FriendController extends Controller {
     const result = await this.friendService.create(user.id, friendId);
 
     this.created(res, fillDTO(UserRdo, result));
+
+    const notification: Notification = {
+      user: friendId,
+      type: NotificationType.FriendRequest,
+      text: `${result?.name} добавил вас в свой список друзей.`
+    }
+
+    await this.notificationService.create(notification);
   }
 
   public async index(
     { user }: Request,
     res: Response
   ): Promise<void> {
-    const friends = await this.friendService.getFriends(user.id);
+    const friends = await this.friendService.find(user.id);
 
     this.created(res, fillDTO(UserRdo, friends));
   }

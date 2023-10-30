@@ -41,7 +41,7 @@ export default class ServerConsumer implements ServerConsumerInterface {
             this.logger.error('[ServerConsumer]: Missing some properties');
           }
 
-          this.logger.info(`[ServerConsumer]: Consumed ${JSON.parse(msg.content.toString())}`);
+          this.logger.info(`[ServerConsumer]: Consumed ${JSON.stringify(msg.content.toString())}`);
 
           await messageHandler.handle(
             operation,

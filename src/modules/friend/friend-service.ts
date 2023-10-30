@@ -28,7 +28,7 @@ export default class FriendService implements FriendServiceInterface {
     return await this.userModel.findById(userId).exec();
   }
 
-  public async getFriends(userId: MongoId): Promise<DocumentType<UserEntity>[]> {
+  public async find(userId: MongoId): Promise<DocumentType<UserEntity>[]> {
     const user = await this.findById(userId);
 
     if (!user) {

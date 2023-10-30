@@ -39,7 +39,6 @@ export default class ReviewController extends Controller {
       handler: this.index,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
       ]

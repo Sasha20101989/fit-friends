@@ -1,6 +1,5 @@
-
 import { inject, injectable } from 'inversify';
-import { StatusCodes } from 'http-status-codes';
+import * as core from 'express-serve-static-core';
 import { Request, Response } from 'express';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
@@ -10,36 +9,81 @@ import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/app-component.enum.js';
 import { HttpMethod } from '../../types/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
-import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
-import CreateSubscriberDto from './dto/create-subscriber.dto.js';
 import SubscriberRdo from './rdo/subscriber.rdo.js';
-import { SubscriberEntity } from './subscriber.entity.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { UserServiceInterface } from '../user/user-service.interface.js';
+import { ParamsGetTrainer } from '../../types/params-get-trainer.type.js';
+import { StatusCodes } from 'http-status-codes';
+import HttpError from '../../core/errors/http-error.js';
 
 @injectable()
 export default class SubscriberController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.SubscriberServiceInterface) private readonly subscriberService: SubscriberServiceInterface,
+    @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
     this.logger.info('Register routes for SubscriberController...');
 
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateSubscriberDto)] });
+    this.addRoute({ path: '/trainer/:trainerId',
+    method: HttpMethod.Post,
+    handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('trainerId'),
+        new DocumentExistsMiddleware(this.userService, 'Traininer', 'trainerId')
+      ]
+    });
+    this.addRoute({ path: '/trainer/:trainerId',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('trainerId'),
+        new DocumentExistsMiddleware(this.userService, 'Traininer', 'trainerId')
+      ]
+    });
   }
 
-  public async create(subscriber: CreateSubscriberDto) {
-    const { email } = subscriber;
-    const existsSubscriber = await this.subscriberService.findByEmail(email);
+  public async create(
+    { params, user }: Request<core.ParamsDictionary | ParamsGetTrainer>,
+    res: Response
+  ): Promise<void> {
+    const { trainerId } = params;
 
-    if (existsSubscriber) {
-      return existsSubscriber;
+    if(await this.subscriberService.exists(user.id, trainerId)){
+      throw new HttpError(
+        StatusCodes.CONFLICT,
+        `Trainer with id ${ trainerId } exists in subscribes.`,
+        'SubscriberController'
+      );
     }
 
-    return this.subscriberService.create(subscriber);
+    const subscribe = await this.subscriberService.create(user.id, trainerId);
+    this.created(res, fillDTO(SubscriberRdo, subscribe));
   }
 
+  public async delete(
+    {params, user}: Request<core.ParamsDictionary | ParamsGetTrainer>,
+    res: Response
+  ): Promise<void> {
+    const { trainerId } = params;
+
+    if(!await this.subscriberService.exists(user.id, trainerId)){
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Trainer with id ${ trainerId } not exists in subscribes.`,
+        'SubscriberController'
+      );
+    }
+
+    await this.subscriberService.destroy(user.id, trainerId);
+
+    this.ok(res, { message: 'Subscribe fo trainer deleted' });
+  }
 }

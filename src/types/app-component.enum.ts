@@ -37,5 +37,8 @@ export const AppComponent = {
   ClientProducerInterface: Symbol.for('ClientProducerInterface'),
   RabbitServerInterface: Symbol.for('RabbitServerInterface'),
   ServerConsumerInterface: Symbol.for('ServerConsumerInterface'),
-  ServerProducerInterface: Symbol.for('ServerProducerInterface')
+  ServerProducerInterface: Symbol.for('ServerProducerInterface'),
+  NotificationServiceInterface: Symbol.for('NotificationServiceInterface'),
+  NotificationController: Symbol.for('NotificationController'),
+  NotificationModel: Symbol.for('NotificationModel'),
 } as const;

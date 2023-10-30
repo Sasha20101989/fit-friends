@@ -24,6 +24,8 @@ import { TrainingOrder } from '../../types/training-order.type.js';
 import { DocumentType } from '@typegoose/typegoose';
 import OrderService from '../../modules/order/order-service.js';
 import { OrderModel } from '../../modules/order/order.entity.js';
+import { SubscriberServiceInterface } from '../../modules/subscriber/subscriber-service.interface.js';
+import { RabbitClientInterface } from '../rabbit-client/rabit-client.interface.js';
 
 const DEFAULT_USER_PASSWORD = '123456';
 
@@ -32,11 +34,13 @@ export default class ImportCommand implements CliCommandInterface {
   private userService!: UserServiceInterface;
   private trainerService!: TrainerServiceInterface;
   private trainingService!: TrainingServiceInterface;
+  private subscriberService!: SubscriberServiceInterface;
+  private rabbitClient!: RabbitClientInterface;
   private orderService!: OrderServiceInterface;
   private databaseService!: DatabaseClientInterface;
   private logger: LoggerInterface;
   private configService: ConfigService;
-  private salt!: string;
+  private saltRounds!: number;
 
   constructor(tokenService: TokenServiceInterface) {
 
@@ -44,7 +48,7 @@ export default class ImportCommand implements CliCommandInterface {
     this.configService = new ConfigService(this.logger);
     this.userService = new UserService(UserModel, tokenService);
     this.trainerService = new TrainerService(tokenService, TrainerModel);
-    this.trainingService = new TrainingService(this.logger, TrainingModel);
+    this.trainingService = new TrainingService(this.logger, TrainingModel, this.subscriberService, this.rabbitClient);
     this.orderService = new OrderService(this.logger, OrderModel, this.trainingService);
     this.databaseService = new MongoClientService(this.logger);
   }
@@ -53,14 +57,14 @@ export default class ImportCommand implements CliCommandInterface {
     await this.userService.create({
       ...user,
       password: DEFAULT_USER_PASSWORD
-    }, this.salt);
+    }, this.saltRounds);
   }
 
   private async saveTrainer(trainer: Trainer): Promise<DocumentType<TrainerEntity>> {
     const result = await this.trainerService.create({
       ...trainer,
       password: DEFAULT_USER_PASSWORD
-    }, this.salt);
+    }, this.saltRounds);
 
     if(!result.user){
       throw new Error('Failed to create trainer');
@@ -138,10 +142,10 @@ export default class ImportCommand implements CliCommandInterface {
     this.logger.info('All orders have been generated and saved.');
   }
 
-  public async execute(login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
+  public async execute(login: string, password: string, host: string, dbname: string, saltRounds: string): Promise<void> {
     const defaulDbPort = this.configService.get('DB_PORT');
     const uri = getMongoURI(login, password, host, defaulDbPort, dbname);
-    this.salt = salt;
+    this.saltRounds = parseInt(saltRounds, 10);
 
     await this.databaseService.connect(uri);
 

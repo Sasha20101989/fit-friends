@@ -49,7 +49,7 @@ export default class TrainerController extends Controller {
       );
     }
 
-    const result = await this.trainerService.create(body, this.configService.get('SALT'));
+    const result = await this.trainerService.create(body, this.configService.get('SALT_ROUNDS'));
 
     setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 

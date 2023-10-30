@@ -23,11 +23,11 @@ import LoggedUserRdo from './rdo/logged-user.rdo.js';
 import UserRdo from './rdo/user.rdo.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UserExistsByEmailMiddleware } from '../../core/middlewares/user-exists-by-email-middleware.js';
-import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
-import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { Role } from '../../types/role.enum.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
+import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 
 
 @injectable()
@@ -74,12 +74,11 @@ export default class UserController extends Controller {
         new UserExistsByEmailMiddleware(this.userService)
       ]
     });
-    this.addRoute({ path: '/:userId',
+    this.addRoute({ path: '/',
       method: HttpMethod.Put,
-      handler: this.updateById,
+      handler: this.update,
       middlewares: [
-        new ValidateObjectIdMiddleware('userId'),
-        new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
+        new PrivateRouteMiddleware(),
         new ValidateDtoMiddleware(UpdateUserDto)
       ]
     });
@@ -97,6 +96,25 @@ export default class UserController extends Controller {
         new PrivateRouteMiddleware()
       ]
     });
+    this.addRoute({ path: '/:userId',
+      method: HttpMethod.Get,
+      handler: this.showUserDetails,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateObjectIdMiddleware('userId'),
+        new DocumentExistsMiddleware(this.userService, 'User', 'userId')
+      ]
+    });
+  }
+
+  public async showUserDetails(
+    { params }: Request,
+    res: Response
+  ): Promise<void> {
+    const { userId } = params;
+    const user = await this.userService.findById(userId);
+
+    this.ok(res, fillDTO(UserRdo, user));
   }
 
   public async index(
@@ -159,15 +177,15 @@ export default class UserController extends Controller {
   }
 
   public async login(
-    req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
+    { user, body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
   ): Promise<void> {
-    if (req.user) {
+    if (user) {
       this.ok(res, {});
       return;
     }
 
-    const result = await this.userService.verifyUser(req.body, this.configService.get('SALT'));
+    const result = await this.userService.verifyUser(body, this.configService.get('SALT_ROUNDS'));
 
     if (!result?.user) {
       throw new HttpError(
@@ -202,29 +220,12 @@ export default class UserController extends Controller {
     this.ok(res, { message: 'Logout successful' });
   }
 
-  public async updateById(
-    req: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
+  public async update(
+    { body, user }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
     res: Response
   ): Promise<void> {
-    const { userId } = req.params;
 
-    if (req.user.id !== userId) {
-      throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'You are not authorized to update this profile.',
-        'UserController'
-      );
-    }
-
-    const updatedUser = await this.userService.updateById(userId, req.body);
-
-    if (!updatedUser) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `User with id ${userId} not found.`,
-        'UserController'
-      );
-    }
+    const updatedUser = await this.userService.updateById(user.id, body);
 
     this.ok(res, fillDTO(UserRdo, updatedUser));
   }
@@ -243,7 +244,7 @@ export default class UserController extends Controller {
       );
     }
 
-    const result = await this.userService.create(body, this.configService.get('SALT'));
+    const result = await this.userService.create(body, this.configService.get('SALT_ROUNDS'));
 
     setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 

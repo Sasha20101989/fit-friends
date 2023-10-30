@@ -13,4 +13,5 @@ export interface TrainingServiceInterface{
   update(trainingId: MongoId, dto: UpdateTrainingDto): Promise<DocumentType<TrainingEntity> | null>;
   GetAllTrainings(query: TrainingQueryParams): Promise<DocumentType<TrainingEntity>[]>;
   findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]>;
+  sendTrainingNotifications(trainerId: string, training: DocumentType<TrainingEntity>): Promise<void>;
 }

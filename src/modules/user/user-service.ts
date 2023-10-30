@@ -66,13 +66,13 @@ export default class UserService implements UserServiceInterface {
     return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
-  public async create(dto: CreateUserDto, salt: string): Promise<VerifyUserResponse<UserEntity>> {
+  public async create(dto: CreateUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity>> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
 
     const user = new UserEntity(dto);
-    await user.setPassword(dto.password, salt);
+    await user.setPassword(dto.password, saltRounds);
 
     const userResult = await this.userModel.create(user);
 
@@ -139,6 +139,6 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findById(userId);
+    return this.userModel.findOne({ _id: userId});
   }
 }

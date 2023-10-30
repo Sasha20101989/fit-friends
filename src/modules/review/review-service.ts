@@ -28,7 +28,7 @@ export default class ReviewService implements ReviewServiceInterface {
   }
 
   public async create(dto: CreateReviewDto, trainingId: MongoId, userId: MongoId): Promise<DocumentType<ReviewEntity>> {
-    const review = await this.reviewModel.create({...dto, user: userId});
+    const review = await this.reviewModel.create({...dto, user: userId, training: trainingId});
     const populatedReview = await review
       .populate([
         { path: 'user' },

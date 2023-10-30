@@ -6,6 +6,7 @@ convict.addFormats(validator);
 export type RestSchema = {
   PORT: number;
   SALT: string;
+  SALT_ROUNDS: number;
   DB_HOST: string;
   MONGO_INITDB_ROOT_USERNAME: string;
   MONGO_INITDB_ROOT_PASSWORD: string;
@@ -49,6 +50,12 @@ export const configRestSchema = convict<RestSchema>({
     doc: 'Salt for password hash',
     format: String,
     env: 'SALT',
+    default: null
+  },
+  SALT_ROUNDS: {
+    doc: 'Salt rounds for password hash',
+    format: Number,
+    env: 'SALT_ROUNDS',
     default: null
   },
   DB_HOST: {

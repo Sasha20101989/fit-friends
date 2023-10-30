@@ -13,8 +13,10 @@ import { createFriendContainer } from './modules/friend/friend.container.js';
 import { createBalanceContainer } from './modules/balance/balance.container.js';
 import { createReviewContainer } from './modules/review/review.container.js';
 import { createTrainingRequestContainer } from './modules/trainingRequest/training-request.container.js';
-import { createRabbitClientContainer } from './core/rabit-client/rabit-client.container.js';
+import { createRabbitClientContainer } from './core/rabbit-client/rabit-client.container.js';
 import { createRabbitServerContainer } from './core/rabit-server/rabit-server.container.js';
+import { createSubscriberContainer } from './modules/subscriber/subscriber.container.js';
+import { createNotificationContainer } from './modules/notification/notification.container.js';
 
 async function bootstrap() {
   const mainContainer = Container.merge(
@@ -30,6 +32,8 @@ async function bootstrap() {
     createBalanceContainer(),
     createReviewContainer(),
     createTrainingRequestContainer(),
+    createSubscriberContainer(),
+    createNotificationContainer(),
   );
 
   const application = mainContainer.get<RestApplication>(AppComponent.RestApplication);

@@ -27,12 +27,16 @@ import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists
 import { ParamsGetRequest } from '../../types/params-get-request.js';
 import { ParamsGetUser } from '../../types/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
+import { Notification } from '../../types/notification.type.js';
+import { NotificationType } from '../../types/notification-type.type.js';
 
 @injectable()
 export default class TrainingRequestController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.TrainingRequestServiceInterface) private readonly trainingRequestService: TrainingRequestServiceInterface,
+    @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
@@ -63,12 +67,10 @@ export default class TrainingRequestController extends Controller {
   }
 
   public async create(
-    { params, body, user }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateTrainingRequestDto>,
+    { params, body, user: initiator }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateTrainingRequestDto>,
     res: Response
   ): Promise<void> {
     const { userId } = params;
-
-    const initiator = user;
 
     if (await this.trainingRequestService.existsRequestByType(initiator.id, userId, body.requestType)) {
       throw new HttpError(
@@ -83,6 +85,14 @@ export default class TrainingRequestController extends Controller {
     const request = await this.trainingRequestService.create({...body}, initiator.id, userId, defaultStatus);
 
     this.created(res, fillDTO(TrainingRequestRdo, request));
+
+    const notification: Notification = {
+      user: userId,
+      type: NotificationType.PersonalTrainingRequest,
+      text: 'Вас приглашают тренировку'
+    }
+
+    await this.notificationService.create(notification);
   }
 
   public async update(

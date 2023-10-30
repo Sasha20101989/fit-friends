@@ -11,10 +11,10 @@ import CreateTrainerDto from '../trainer/dto/create-trainer.dto.js';
 
 export interface UserServiceInterface {
   logout(refreshToken: string): Promise<void>;
-  create(dto: CreateUserDto | CreateTrainerDto, salt: string): Promise<VerifyUserResponse<UserEntity>>;
+  create(dto: CreateUserDto | CreateTrainerDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity>>;
   findByEmail(email: string): Promise<DocumentType<UserEntity> | null>;
   exists(documentId: string): Promise<boolean>;
-  verifyUser(dto: LoginUserDto, salt: string): Promise<VerifyUserResponse<UserEntity> | null>;
+  verifyUser(dto: LoginUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity> | null>;
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
   refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>;
   GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>;

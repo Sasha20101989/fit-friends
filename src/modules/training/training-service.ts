@@ -9,6 +9,11 @@ import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { MongoId } from '../../types/mongo-id.type.js';
 import UpdateTrainingDto from './dto/update-training.dto.js';
 import { TrainingQueryParams } from '../../types/training-query-params.js';
+import { SubscriberServiceInterface } from '../subscriber/subscriber-service.interface.js';
+import { Subscriber } from '../../types/subscriber.interface.js';
+import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
+import { RabbitClientInterface } from '../../core/rabbit-client/rabit-client.interface.js';
+import { User } from '../../types/user.interface.js';
 
 type TrainingFilter = {
   minPrice?: number;
@@ -26,7 +31,9 @@ type TrainingFilter = {
 export default class TrainingService implements TrainingServiceInterface {
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
-    @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>
+    @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>,
+    @inject(AppComponent.SubscriberServiceInterface) private readonly subscriberService: SubscriberServiceInterface,
+    @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface
   ){}
 
   public async exists(trainingId: MongoId): Promise<boolean> {
@@ -36,7 +43,8 @@ export default class TrainingService implements TrainingServiceInterface {
   public async create(dto: CreateTrainingDto): Promise<DocumentType<TrainingEntity>> {
     const training = await this.trainingModel.create(dto);
     this.logger.info(`New training created: ${dto.name}`);
-    return training;
+
+    return training.populate(['trainer']);
   }
 
   public async getTrainingDetails(trainingId: string): Promise<DocumentType<TrainingEntity> | null> {
@@ -95,5 +103,21 @@ export default class TrainingService implements TrainingServiceInterface {
 
   public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {
     return await this.trainingModel.find({ trainer: trainerId }).populate('trainer');
+  }
+
+  public async sendTrainingNotifications(trainerId: string, training: DocumentType<TrainingEntity>): Promise<void>{
+    const subscribes = await this.subscriberService.findByTrainerId(trainerId);
+    const users: User[] = subscribes.map((subscribe) => {
+      return subscribe.user as User;
+    });
+
+    for (const user of users) {
+      const notification: Subscriber = {
+        user: user,
+        text: `New training created: ${training.name}`,
+      };
+
+      await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);
+    }
   }
 }

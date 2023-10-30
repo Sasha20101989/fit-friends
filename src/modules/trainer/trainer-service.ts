@@ -17,13 +17,13 @@ export default class TrainerService implements TrainerServiceInterface {
     @inject(AppComponent.TrainerModel) private readonly trainerModel: types.ModelType<TrainerEntity>
   ) {}
 
-  public async create(dto: CreateTrainerDto, salt: string): Promise<VerifyUserResponse<TrainerEntity>> {
+  public async create(dto: CreateTrainerDto, saltRounds: number): Promise<VerifyUserResponse<TrainerEntity>> {
     if (dto.password.length < PASSWORD_CONSTRAINTS.MIN_LENGTH || dto.password.length > PASSWORD_CONSTRAINTS.MAX_LENGTH) {
       throw new Error(`Password should be between ${PASSWORD_CONSTRAINTS.MIN_LENGTH} and ${PASSWORD_CONSTRAINTS.MAX_LENGTH} characters.`);
     }
 
     const trainer = new TrainerEntity(dto);
-    await trainer.setPassword(dto.password, salt);
+    await trainer.setPassword(dto.password, saltRounds);
 
     const trainerResult = await this.trainerModel.create(trainer);
 

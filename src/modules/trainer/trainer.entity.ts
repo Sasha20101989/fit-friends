@@ -89,8 +89,8 @@ export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer 
     this.personalTraining = trainerData.personalTraining;
   }
 
-  public async setPassword(password: string, _saltRounds: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  public async setPassword(password: string, saltRounds: number) {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     this.password = hashedPassword;
   }
 

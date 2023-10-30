@@ -98,8 +98,8 @@ export class UserEntity extends defaultClasses.TimeStamps {
     this.readinessForWorkout = userData.readinessForWorkout;
   }
 
-  public async setPassword(password: string, _saltRounds: string) {
-    const hashedPassword = await bcrypt.hash(password, 10);
+  public async setPassword(password: string, saltRounds: number) {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     this.password = hashedPassword;
   }
 

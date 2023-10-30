@@ -1,7 +1,7 @@
-import { User } from './user.interface.js';
+import { User } from "./user.interface.js";
 
 export interface Subscriber {
   id?: string;
-  user: string;
+  user: User;
   text: string;
 }

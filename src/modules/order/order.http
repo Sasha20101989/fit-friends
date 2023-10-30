@@ -1,7 +1,7 @@
 # Заказы
 
 ## Список заказов
-GET http://localhost:4000/orders/653780719b7a72b6ef1abc57?typeOrder=totalSalesAmount
+GET http://localhost:4000/orders?typeOrder=totalSalesAmount&sortOrder=asc
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXIxQGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1Mzc4MDcxOWI3YTcyYjZlZjFhYmM1NyIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJpYXQiOjE2OTgxMzYyOTIsImV4cCI6MTY5OTQzMjI5Mn0._WhGcVgNjZlOuCA3UiEcbSCo2GWzPRB7lJlyU-TQCsg
 
 ###
