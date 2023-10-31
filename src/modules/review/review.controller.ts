@@ -56,17 +56,20 @@ export default class ReviewController extends Controller {
     });
   }
 
+  //TODO: Общее
   public async index(
-    { params }: Request<core.ParamsDictionary | ParamsGetTraining>,
+    { query, params }: Request<core.ParamsDictionary | ParamsGetTraining>,
     res: Response
   ) {
     const { trainingId } = params;
+    const { limit } = query;
 
-    const reviews = await this.reviewService.GetReviewsByTrainingId(trainingId);
+    const reviews = await this.reviewService.GetReviewsByTrainingId(trainingId, Number(limit));
 
     this.ok(res, fillDTO(ReviewRdo, reviews));
   }
 
+  //TODO: Общее
   public async create(
     { params, body, user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateReviewDto>,
     res: Response

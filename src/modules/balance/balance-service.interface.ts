@@ -9,6 +9,6 @@ export interface BalanceServiceInterface {
   exists(trainingId: MongoId): Promise<boolean>;
   create(dto: CreateBalanceDto, userId: MongoId, trainingId: MongoId): Promise<DocumentType<BalanceEntity>>;
   updateBalance(dto: UpdateBalanceDto, trainingId: MongoId): Promise<DocumentType<BalanceEntity> | null>;
-  findByUserId(userId: MongoId): Promise<DocumentType<BalanceEntity>[]>;
+  findByUserId(userId: MongoId, limit?: number): Promise<DocumentType<BalanceEntity>[]>;
   deleteBalance(trainingId: MongoId): Promise<void>;
 }

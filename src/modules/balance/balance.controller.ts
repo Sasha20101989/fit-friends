@@ -74,17 +74,19 @@ export default class BalanceController extends Controller {
     });
   }
 
+  //TODO:Кабинет пользователь
   public async index(
-    req: Request,
+    { query, user }: Request,
     res: Response
   ) {
-    const{ user } = req;
+    const { limit } = query;
 
-    const balance = await this.balanceService.findByUserId(user.id);
+    const balance = await this.balanceService.findByUserId(user.id, Number(limit));
 
     this.ok(res, fillDTO(BalanceRdo, balance));
   }
 
+  //TODO:Кабинет пользователь
   public async create(
     { params, body , user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateBalanceDto>,
     res: Response
@@ -103,6 +105,7 @@ export default class BalanceController extends Controller {
     this.created(res, fillDTO(BalanceRdo, balance));
   }
 
+  //TODO:Кабинет пользователь
   public async updateBalance(
     { params, body }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateBalanceDto>,
     res: Response

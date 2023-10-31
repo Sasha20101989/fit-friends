@@ -1,0 +1,1 @@
+export const DEFAULT_BALANCE_COUNT = 50;

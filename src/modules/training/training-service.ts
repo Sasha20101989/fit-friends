@@ -16,9 +16,10 @@ import { RabbitClientInterface } from '../../core/rabbit-client/rabit-client.int
 import { User } from '../user/types/user.interface.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
+import { DEFAULT_TRAINING_COUNT } from './training.const.js';
 
 type TrainingFilter = {
-  trainer: string;
+  trainer?: string;
   minPrice?: number;
   maxPrice?: number;
   minCalories?: number;
@@ -62,9 +63,14 @@ export default class TrainingService implements TrainingServiceInterface {
       .exec();
   }
 
-  public async find(query: TrainingQueryParams, trainerId: MongoId): Promise<DocumentType<TrainingEntity>[]>{
-    const filter: TrainingFilter = { trainer: trainerId };
+  public async find(query: TrainingQueryParams, trainerId?: MongoId): Promise<DocumentType<TrainingEntity>[]>{
+    const trainingLimit = Math.min(query.limit || DEFAULT_TRAINING_COUNT, DEFAULT_TRAINING_COUNT);
+    const filter: TrainingFilter = {};
     const sort: { [key: string]: Sorting } = {};
+
+    if(trainerId){
+      filter.trainer = trainerId;
+    }
 
     if (query.minPrice !== undefined) {
       filter.price = { $gte: query.minPrice };
@@ -117,7 +123,10 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.workoutType = { $in: workoutTypesArray };
     }
 
-    let queryResult = this.trainingModel.find(filter).populate('trainer');
+    let queryResult = this.trainingModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .populate('trainer');
 
     if (query.sortByPrice) {
       if (query.sortByPrice === Sorting.Ascending) {

@@ -11,7 +11,7 @@ export interface TrainingServiceInterface{
   getTrainingDetails(trainingId: MongoId): Promise<DocumentType<TrainingEntity> | null>;
   exists(trainingId: MongoId): Promise<boolean>;
   update(trainingId: MongoId, dto: UpdateTrainingDto): Promise<DocumentType<TrainingEntity> | null>;
-  find(query: TrainingQueryParams, trainerId: MongoId): Promise<DocumentType<TrainingEntity>[]>;
+  find(query: TrainingQueryParams, trainerId?: MongoId): Promise<DocumentType<TrainingEntity>[]>;
   findByTrainerId(trainerId: MongoId): Promise<DocumentType<TrainingEntity>[]>;
   sendTrainingNotifications(trainerId: MongoId, training: DocumentType<TrainingEntity>): Promise<void>;
   findById(documentId: MongoId): Promise<DocumentType<TrainingEntity> | null>;

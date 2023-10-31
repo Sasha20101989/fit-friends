@@ -5,6 +5,7 @@ import { AppComponent } from '../../types/common/app-component.enum.js';
 import { FriendServiceInterface } from './friend-service.interface.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import { UserEntity } from '../user/user.entity.js';
+import { DEFAULT_FRIEND_COUNT } from './friend.const.js';
 
 @injectable()
 export default class FriendService implements FriendServiceInterface {
@@ -28,7 +29,8 @@ export default class FriendService implements FriendServiceInterface {
     return await this.userModel.findById(userId).exec();
   }
 
-  public async find(userId: MongoId): Promise<DocumentType<UserEntity>[]> {
+  public async find(userId: MongoId, limit?: number): Promise<DocumentType<UserEntity>[]> {
+    const friendLimit = Math.min(limit || DEFAULT_FRIEND_COUNT, DEFAULT_FRIEND_COUNT);
     const user = await this.findById(userId);
 
     if (!user) {
@@ -36,7 +38,11 @@ export default class FriendService implements FriendServiceInterface {
     }
 
     const friendIds = user.friends;
-    const friends = await this.userModel.find({ _id: { $in: friendIds } }).exec();
+    const friends = await this.userModel
+      .find({ _id: { $in: friendIds } })
+      .sort({ createdAt: -1 })
+      .limit(friendLimit)
+      .exec();
 
     return friends;
   }

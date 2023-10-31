@@ -49,8 +49,7 @@ export default class FriendController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.User)//возможно убрать
+        new PrivateRouteMiddleware()
       ]
     });
     this.addRoute({ path: '/:friendId',
@@ -58,12 +57,14 @@ export default class FriendController extends Controller {
       handler: this.delete,
       middlewares: [
         new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
       ]
     });
   }
 
+  //TODO:Кабинет пользователь
   public async delete(
     {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
@@ -83,6 +84,7 @@ export default class FriendController extends Controller {
     this.ok(res, { message: 'Friend deleted' });
   }
 
+  //TODO:Кабинет пользователь
   public async create(
     {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
@@ -110,11 +112,14 @@ export default class FriendController extends Controller {
     await this.notificationService.create(notification);
   }
 
+  //TODO:Кабинет тренер
+  //TODO:Кабинет пользователь
   public async index(
-    { user }: Request,
+    { query, user }: Request,
     res: Response
   ): Promise<void> {
-    const friends = await this.friendService.find(user.id);
+    const { limit } = query;
+    const friends = await this.friendService.find(user.id, Number(limit));
 
     this.created(res, fillDTO(UserRdo, friends));
   }

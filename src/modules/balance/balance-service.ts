@@ -6,6 +6,7 @@ import { BalanceEntity } from './balance.entity.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import CreateBalanceDto from './dto/create-balance.dto.js';
 import UpdateBalanceDto from './dto/update-balance.dto.js';
+import { DEFAULT_BALANCE_COUNT } from './balance.const.js';
 
 @injectable()
 export default class BalanceService implements BalanceServiceInterface{
@@ -38,8 +39,14 @@ export default class BalanceService implements BalanceServiceInterface{
     return null;
   }
 
-  public async findByUserId(userId: MongoId): Promise<DocumentType<BalanceEntity>[]>{
-    const balance = await this.balanceModel.find({ user: userId}).populate({ path: 'training', populate: { path: 'trainer' } });
+  public async findByUserId(userId: MongoId, limit?: number): Promise<DocumentType<BalanceEntity>[]>{
+    const balanceLimit = Math.min(limit || DEFAULT_BALANCE_COUNT, DEFAULT_BALANCE_COUNT);
+    const balance = await this.balanceModel
+      .find({ user: userId})
+      .limit(balanceLimit)
+      .populate({ path: 'training', populate: { path: 'trainer' } })
+      .exec();
+
     return balance;
   }
 

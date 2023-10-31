@@ -65,6 +65,7 @@ export default class TrainingRequestController extends Controller {
     });
   }
 
+  //TODO: Общее
   public async create(
     { params, body, user: initiator }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateTrainingRequestDto>,
     res: Response
@@ -94,6 +95,7 @@ export default class TrainingRequestController extends Controller {
     await this.notificationService.create(notification);
   }
 
+  //TODO: Общее
   public async update(
     { params, body }: Request<core.ParamsDictionary | ParamsGetRequest, UnknownRecord, UpdateTrainingRequestDto>,
     res: Response

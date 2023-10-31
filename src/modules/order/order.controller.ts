@@ -25,6 +25,8 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
+import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
+import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 
 @injectable()
 export default class OrderController extends Controller {
@@ -32,17 +34,20 @@ export default class OrderController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.OrderServiceInterface) private readonly orderService: OrderServiceInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
+    @inject(AppComponent.TrainerServiceInterface) private readonly traininerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
     this.logger.info('Register routes for OrderController...');
 
-    this.addRoute({ path: '/',
+    this.addRoute({ path: '/trainer-room/:trainerId',
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.Trainer)
+        new RoleCheckMiddleware(Role.Trainer),
+        new ValidateObjectIdMiddleware('trainerId'),
+        new DocumentExistsMiddleware(this.traininerService, 'Trainer', 'trainerId'),
       ]
     });
     this.addRoute({ path: '/:trainingId',
@@ -58,6 +63,7 @@ export default class OrderController extends Controller {
     });
   }
 
+  //TODO: добавить того кто оформил
   public async create(
     { params, body }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateOrderDto>,
     res: Response
@@ -78,10 +84,21 @@ export default class OrderController extends Controller {
     this.created(res, fillDTO(OrderRdo, order));
   }
 
+  //TODO:Кабинет тренер
   public async index(
-    { user: trainer, query }: Request<UnknownRecord, UnknownRecord, UnknownRecord, OrderQueryParams>,
+    { params, user: trainer, query }: Request<core.ParamsDictionary | ParamsGetTrainer, UnknownRecord, UnknownRecord, OrderQueryParams>,
     res: Response
   ): Promise<void> {
+
+    const { trainerId } = params;
+
+    if(trainerId !== trainer.id){
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'Access denied: You do not have permission.',
+        'OrderController'
+      );
+    }
     const orders = await this.orderService.findByTrainerId(trainer.id, query);
 
     this.ok(res, fillDTO(TrainingOrderRdo, orders));

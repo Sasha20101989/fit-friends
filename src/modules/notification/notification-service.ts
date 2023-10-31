@@ -7,6 +7,7 @@ import { NotificationEntity } from './notification.entity.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import { Notification } from './types/notification.type.js';
+import { DEFAULT_NOTIFICATION_COUNT } from './notification.const.js';
 
 @injectable()
 export default class NotificationService implements NotificationServiceInterface {
@@ -23,7 +24,12 @@ export default class NotificationService implements NotificationServiceInterface
     }
 
     public async findByUserId(userId: MongoId): Promise<DocumentType<NotificationEntity>[]> {
-      return await this.notificationModel.find({ user: userId }).populate('user');
+      const notificationLimit = DEFAULT_NOTIFICATION_COUNT;
+      return await this.notificationModel
+        .find({ user: userId })
+        .sort({ createdAt: -1 })
+        .limit(notificationLimit)
+        .populate('user');
     }
 
     public async create(notification: Notification): Promise<DocumentType<NotificationEntity>> {

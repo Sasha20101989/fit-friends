@@ -5,6 +5,6 @@ import { MongoId } from '../../types/common/mongo-id.type.js';
 import { DocumentType } from '@typegoose/typegoose';
 
 export interface ReviewServiceInterface {
-  GetReviewsByTrainingId(trainingId: MongoId): Promise<DocumentType<ReviewEntity>[]>;
+  GetReviewsByTrainingId(trainingId: MongoId, limit?: number): Promise<DocumentType<ReviewEntity>[]>;
   create(dto: CreateReviewDto, trainingId: MongoId, userId: MongoId): Promise<DocumentType<ReviewEntity>>;
 }

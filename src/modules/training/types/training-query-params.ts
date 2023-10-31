@@ -11,4 +11,5 @@ export type TrainingQueryParams = {
   workoutDuration?: WorkoutDuration[];
   workoutType?: WorkoutType[];
   sortByPrice?: Sorting;
+  limit?: number;
 }

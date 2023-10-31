@@ -107,6 +107,7 @@ export default class UserController extends Controller {
     });
   }
 
+  //TODO: Общее
   public async showUserDetails(
     { params }: Request,
     res: Response
@@ -117,6 +118,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, user));
   }
 
+  //TODO: Общее
   public async index(
     req: Request<UnknownRecord, UnknownRecord, UnknownRecord, UserQueryParams>,
     res: Response
@@ -130,6 +132,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, users || []));
   }
 
+  //TODO: Общее
   public async refreshToken(
     req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
@@ -151,6 +154,7 @@ export default class UserController extends Controller {
     this.ok(res, { message: 'Token updated' });
   }
 
+  //TODO: Общее
   public async checkAuthenticate(req: Request, res: Response) {
     const { user: { email } } = req;
     const foundedUser = await this.userService.findByEmail(email);
@@ -166,6 +170,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
+  //TODO: Общее
   public async findByEmail(
     { body }: Request<core.ParamsDictionary | ParamsGetUser>,
     res: Response
@@ -176,6 +181,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, user));
   }
 
+  //TODO: Общее
   public async login(
     { user, body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
@@ -204,6 +210,7 @@ export default class UserController extends Controller {
     });
   }
 
+  //TODO: Общее
   public async logout(req: Request, res: Response) {
     const { refreshToken } = req.cookies;
 
@@ -220,6 +227,7 @@ export default class UserController extends Controller {
     this.ok(res, { message: 'Logout successful' });
   }
 
+  //TODO: Общее
   public async update(
     { body, user }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateUserDto>,
     res: Response
@@ -230,6 +238,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, updatedUser));
   }
 
+  //TODO: Общее
   public async create(
     { body }: Request<UnknownRecord, UnknownRecord, CreateUserDto>,
     res: Response

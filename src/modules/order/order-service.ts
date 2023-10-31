@@ -14,6 +14,7 @@ import TrainingOrderRdo from './rdo/training-order.rdo.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { calculateSum } from '../../core/helpers/index.js';
 import { TrainingEntity } from '../training/training.entity.js';
+//import { DEFAULT_ORDER_COUNT } from './order.const.js';
 
 @injectable()
 export default class OrderService implements OrderServiceInterface {
@@ -22,6 +23,13 @@ export default class OrderService implements OrderServiceInterface {
     @inject(AppComponent.OrderModel) private readonly orderModel: ModelType<OrderEntity>,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
   ){}
+
+  public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null> {
+    const totalAmount = training.price * dto.quantity;
+    const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price});
+    this.logger.info(`New order created: ${dto.purchaseType}`);
+    return result;
+  }
 
   private sortTrainingInfoList(trainingInfoList: TrainingOrderRdo[], query: OrderQueryParams): TrainingOrderRdo[] {
     const sortType = query.sortOrder || Sorting.Ascending;
@@ -46,15 +54,9 @@ export default class OrderService implements OrderServiceInterface {
     return trainingInfoList;
   }
 
-  public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null> {
-    const totalAmount = training.price * dto.quantity;
-    const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price});
-    this.logger.info(`New order created: ${dto.purchaseType}`);
-    return result;
-  }
-
-  public async findByTrainerId(trainerId: string, query: OrderQueryParams): Promise<TrainingOrderRdo[]> {
+  public async findByTrainerId(trainerId: string, query: OrderQueryParams, _limit?: number): Promise<TrainingOrderRdo[]> {
     const trainingInfoList: TrainingOrderRdo[] = [];
+    //const orderLimit = Math.min(limit || DEFAULT_ORDER_COUNT, DEFAULT_ORDER_COUNT).sort({ createdAt: -1 });
 
     const trainings = await this.trainingService.findByTrainerId(trainerId);
 

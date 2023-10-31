@@ -12,3 +12,5 @@ export const DESCRIPTION_CONSTRAINTS = {
   MIN_LENGTH: 10,
   MAX_LENGTH: 140,
 };
+
+export const DEFAULT_TRAINING_COUNT = 50;

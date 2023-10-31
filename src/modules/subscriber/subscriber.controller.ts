@@ -50,6 +50,7 @@ export default class SubscriberController extends Controller {
     });
   }
 
+  //TODO:Кабинет пользователь
   public async create(
     { params, user }: Request<core.ParamsDictionary | ParamsGetTrainer>,
     res: Response
@@ -68,6 +69,7 @@ export default class SubscriberController extends Controller {
     this.created(res, fillDTO(SubscriberRdo, subscribe));
   }
 
+  //TODO:Кабинет пользователь
   public async delete(
     {params, user}: Request<core.ParamsDictionary | ParamsGetTrainer>,
     res: Response

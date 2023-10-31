@@ -9,5 +9,5 @@ import { TrainingEntity } from '../training/training.entity.js';
 export interface OrderServiceInterface{
   create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null>;
   exists(documentId: MongoId): Promise<boolean>;
-  findByTrainerId(trainerId: MongoId, query: OrderQueryParams): Promise<TrainingOrderRdo[]>;
+  findByTrainerId(trainerId: MongoId, query: OrderQueryParams, limit?: number): Promise<TrainingOrderRdo[]>;
 }

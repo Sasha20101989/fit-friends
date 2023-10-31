@@ -25,19 +25,22 @@ import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
 import { TrainingQueryParams } from './types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
+import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 
 @injectable()
 export default class TrainingController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) logger: LoggerInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
+    @inject(AppComponent.TrainerServiceInterface) private readonly traininerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
   ) {
     super(logger, configService);
 
     this.logger.info('Register routes for TrainingController...');
 
-    this.addRoute({ path: '/',
+    this.addRoute({ path: '/trainer-room/',
       method: HttpMethod.Post,
       handler: this.createTraining,
       middlewares: [
@@ -46,7 +49,7 @@ export default class TrainingController extends Controller {
         new ValidateDtoMiddleware(CreateTrainingDto)
       ]
     });
-    this.addRoute({ path: '/:trainingId',
+    this.addRoute({ path: '/trainer-room/:trainingId',
       method: HttpMethod.Get,
       handler: this.showTrainingDetails,
       middlewares: [
@@ -55,7 +58,7 @@ export default class TrainingController extends Controller {
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
       ]
     });
-    this.addRoute({ path: '/:trainingId',
+    this.addRoute({ path: '/trainer-room/:trainingId',
       method: HttpMethod.Put,
       handler: this.updateTraining,
       middlewares: [
@@ -66,25 +69,56 @@ export default class TrainingController extends Controller {
         new ValidateDtoMiddleware(UpdateTrainingDto)
       ]
     });
+    this.addRoute({ path: '/trainer-room/:trainerId',
+      method: HttpMethod.Get,
+      handler: this.indexForTrainer,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.Trainer),
+        new ValidateObjectIdMiddleware('trainerId'),
+        new DocumentExistsMiddleware(this.traininerService, 'Trainer', 'trainerId'),
+      ]
+    });
     this.addRoute({ path: '/',
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.Trainer),
+        new PrivateRouteMiddleware()
       ]
     });
   }
 
+  //TODO:Общее
   public async index(
-    { query, user: trainer }: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
+    { query }: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
     res: Response
   ) {
-    const trainings = await this.trainingService.find(query, trainer.id);
+    const trainings = await this.trainingService.find(query);
 
-    this.ok(res, fillDTO(TrainingRdo, trainings || []));
+    this.ok(res, fillDTO(TrainingRdo, trainings));
   }
 
+  //TODO:Кабинет тренер
+  public async indexForTrainer(
+    { params, query, user: trainer }: Request<core.ParamsDictionary | ParamsGetTrainer, UnknownRecord, TrainingQueryParams>,
+    res: Response
+  ) {
+    const { trainerId } = params;
+
+    if(trainerId !== trainer.id){
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'Access denied: You do not have permission to edit this training.',
+        'TrainingController'
+      );
+    }
+
+    const trainings = await this.trainingService.find(query, trainer.id);
+
+    this.ok(res, fillDTO(TrainingRdo, trainings));
+  }
+
+  //TODO:Кабинет тренер
   public async updateTraining(
     {params, body, user}: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateTrainingDto>,
     res: Response
@@ -105,6 +139,7 @@ export default class TrainingController extends Controller {
     this.ok(res, fillDTO(TrainingRdo, updatedTraining));
   }
 
+  //TODO:Кабинет тренер
   public async createTraining(
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
@@ -123,6 +158,7 @@ export default class TrainingController extends Controller {
     await this.trainingService.sendTrainingNotifications(user.id, training);
   }
 
+  //TODO:Кабинет тренер
   public async showTrainingDetails(
     { params }: Request<core.ParamsDictionary | ParamsGetTraining>,
     res: Response
