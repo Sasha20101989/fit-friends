@@ -1,7 +1,7 @@
 import typegoose, { defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
-import type { Trainer } from '../../types/trainer.interface.js';
+import type { Trainer } from './types/trainer.interface.js';
 
 import { Role } from '../../types/role.enum.js';
 import { Gender } from '../../types/gender.enum..js';

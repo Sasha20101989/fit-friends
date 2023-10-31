@@ -4,12 +4,12 @@ import * as core from 'express-serve-static-core';
 
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
-import { HttpMethod } from '../../types/http-method.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
+import { HttpMethod } from '../../types/common/http-method.enum.js';
 
 import { fillDTO, getRandomBackgroundImage } from '../../core/helpers/common.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { ConfigInterface } from '../../core/config/config.interface.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { TrainingServiceInterface } from './training-service.interface.js';
@@ -17,13 +17,13 @@ import CreateTrainingDto from './dto/create-training.dto.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
-import { ParamsGetTraining } from '../../types/params-get-training.type.js';
+import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import TrainingRdo from './rdo/training.rdo.js';
 import HttpError from '../../core/errors/http-error.js';
 import { StatusCodes } from 'http-status-codes';
 import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
-import { TrainingQueryParams } from '../../types/training-query-params.js';
+import { TrainingQueryParams } from './types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 
 @injectable()
@@ -70,16 +70,17 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(),
+        new RoleCheckMiddleware(Role.Trainer),
       ]
     });
   }
 
   public async index(
-    { query }: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
+    { query, user: trainer }: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
     res: Response
   ) {
-    const trainings = await this.trainingService.GetAllTrainings(query);
+    const trainings = await this.trainingService.find(query, trainer.id);
 
     this.ok(res, fillDTO(TrainingRdo, trainings || []));
   }

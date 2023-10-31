@@ -1,4 +1,4 @@
-import type { Training } from './training.type.js';
+import type { Training } from '../../training/types/training.type.js';
 import { PaymentMethod } from './payment-method.enum.js';
 import { PurchaseType } from './purchase-type.enum.js';
 

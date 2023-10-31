@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
-import { PaymentMethod } from '../../../types/payment-method.enum.js';
-import { PurchaseType } from '../../../types/purchase-type.enum.js';
+import { PaymentMethod } from '../types/payment-method.enum.js';
+import { PurchaseType } from '../types/purchase-type.enum.js';
 import { Expose } from 'class-transformer';
 
 export default class OrderRdo {

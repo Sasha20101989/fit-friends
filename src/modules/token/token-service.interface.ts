@@ -1,4 +1,4 @@
-import type { Auth } from '../../types/auth.js';
+import type { Auth } from './types/auth.js';
 import LoginUserDto from '../user/dto/login-user.dto.js';
 import { TokenEntity } from './token.entity.js';
 import { UserEntity } from '../user/user.entity.js';

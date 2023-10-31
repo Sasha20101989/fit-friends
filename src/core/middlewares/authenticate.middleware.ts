@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { jwtVerify } from 'jose';
 import { StatusCodes } from 'http-status-codes';
 import { createSecretKey } from 'node:crypto';
-import { MiddlewareInterface } from './middleware.interface.js';
+import { MiddlewareInterface } from './types/middleware.interface.js';
 import HttpError from '../errors/http-error.js';
 
 export class AuthenticateMiddleware implements MiddlewareInterface {

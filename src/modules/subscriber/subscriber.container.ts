@@ -4,7 +4,7 @@ import { Container } from 'inversify';
 
 import type { ControllerInterface } from '../../core/controller/controller.interface.js';
 import type { SubscriberServiceInterface } from './subscriber-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import SubscriberService from './subscriber-service.js';
 import { SubscriberEntity, SubscriberModel } from './subscriber.entity.js';
 import SubscriberController from './subscriber.controller.js';

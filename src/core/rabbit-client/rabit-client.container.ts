@@ -1,6 +1,6 @@
 
 import { Container } from 'inversify';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { ClientConsumerInterface } from './consumer/client-consumer.interface.js';
 import ClientConsumer from './consumer/client-consumer.js';
 import { ClientProducerInterface } from './producer/client-producer.interface.js';

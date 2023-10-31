@@ -1,6 +1,6 @@
 
 import { Container } from 'inversify';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { RabbitServerInterface } from './rabit-server.interface.js';
 import RabbitServerService from './rabit-server.service.js';
 import { ServerConsumerInterface } from './consumer/server-consumer.interface.js';

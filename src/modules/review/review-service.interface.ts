@@ -1,7 +1,7 @@
 
 import CreateReviewDto from './dto/create-review.dto.js';
 import { ReviewEntity } from './review.entity.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import { DocumentType } from '@typegoose/typegoose';
 
 export interface ReviewServiceInterface {

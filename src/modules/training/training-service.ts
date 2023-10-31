@@ -4,18 +4,21 @@ import { inject, injectable } from 'inversify';
 import { TrainingServiceInterface } from './training-service.interface.js';
 import { TrainingEntity } from './training.entity.js';
 import CreateTrainingDto from './dto/create-training.dto.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import UpdateTrainingDto from './dto/update-training.dto.js';
-import { TrainingQueryParams } from '../../types/training-query-params.js';
+import { TrainingQueryParams } from './types/training-query-params.js';
 import { SubscriberServiceInterface } from '../subscriber/subscriber-service.interface.js';
-import { Subscriber } from '../../types/subscriber.interface.js';
+import { Subscriber } from '../subscriber/types/subscriber.interface.js';
 import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
 import { RabbitClientInterface } from '../../core/rabbit-client/rabit-client.interface.js';
-import { User } from '../../types/user.interface.js';
+import { User } from '../user/types/user.interface.js';
+import { Sorting } from '../../types/sorting.enum.js';
+import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 
 type TrainingFilter = {
+  trainer: string;
   minPrice?: number;
   maxPrice?: number;
   minCalories?: number;
@@ -25,6 +28,7 @@ type TrainingFilter = {
   price?: { $gte?: number; $lte?: number };
   calories?: { $gte?: number; $lte?: number };
   workoutType?: { $in: string[] };
+  sortByPrice?: Sorting;
 }
 
 @injectable()
@@ -58,8 +62,9 @@ export default class TrainingService implements TrainingServiceInterface {
       .exec();
   }
 
-  public async GetAllTrainings(query: TrainingQueryParams): Promise<DocumentType<TrainingEntity>[]>{
-    const filter: TrainingFilter = {};
+  public async find(query: TrainingQueryParams, trainerId: MongoId): Promise<DocumentType<TrainingEntity>[]>{
+    const filter: TrainingFilter = { trainer: trainerId };
+    const sort: { [key: string]: Sorting } = {};
 
     if (query.minPrice !== undefined) {
       filter.price = { $gte: query.minPrice };
@@ -84,12 +89,27 @@ export default class TrainingService implements TrainingServiceInterface {
     }
 
     if (query.rating !== undefined) {
-      filter.rating = query.rating;
+      const rating = parseInt(query.rating, 10);
+      if(Number.isInteger(rating) && rating >= 0 && rating <= 5){
+        filter.rating = rating;
+      }
     }
 
     if (query.workoutDuration) {
       const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
-      filter.workoutDuration = { $in: workoutDurationsArray };
+
+      const durationFilters: { [key in WorkoutDuration]: string } = {
+        [WorkoutDuration.Short]: WorkoutDuration.Short,
+        [WorkoutDuration.Medium]: WorkoutDuration.Medium,
+        [WorkoutDuration.Long]: WorkoutDuration.Long,
+        [WorkoutDuration.ExtraLong]: WorkoutDuration.ExtraLong,
+      };
+
+      const filterValues = workoutDurationsArray
+        .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
+        .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
+
+      filter.workoutDuration = { $in: filterValues };
     }
 
     if (query.workoutType) {
@@ -97,12 +117,28 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.workoutType = { $in: workoutTypesArray };
     }
 
-    const trainings = await this.trainingModel.find(filter).populate('trainer');
+    let queryResult = this.trainingModel.find(filter).populate('trainer');
+
+    if (query.sortByPrice) {
+      if (query.sortByPrice === Sorting.Ascending) {
+        sort['price'] = Sorting.Ascending;
+      } else {
+        sort['price'] = Sorting.Descending;
+      }
+
+      queryResult = queryResult.sort(sort);
+    }
+
+    const trainings = await queryResult;
     return trainings;
   }
 
-  public async findByTrainerId(trainerId: string): Promise<DocumentType<TrainingEntity>[]> {
+  public async findByTrainerId(trainerId: MongoId): Promise<DocumentType<TrainingEntity>[]> {
     return await this.trainingModel.find({ trainer: trainerId }).populate('trainer');
+  }
+
+  public async findById(documentId: MongoId): Promise<DocumentType<TrainingEntity> | null> {
+    return await this.trainingModel.findOne({ _id: documentId }).populate('trainer');
   }
 
   public async sendTrainingNotifications(trainerId: string, training: DocumentType<TrainingEntity>): Promise<void>{

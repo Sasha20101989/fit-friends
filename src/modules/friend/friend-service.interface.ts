@@ -1,5 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import { UserEntity } from '../user/user.entity.js';
 
 export interface FriendServiceInterface{

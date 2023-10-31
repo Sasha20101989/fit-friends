@@ -6,8 +6,8 @@ import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { SubscriberServiceInterface } from './subscriber-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
-import { AppComponent } from '../../types/app-component.enum.js';
-import { HttpMethod } from '../../types/http-method.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
+import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import SubscriberRdo from './rdo/subscriber.rdo.js';
@@ -15,7 +15,7 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { UserServiceInterface } from '../user/user-service.interface.js';
-import { ParamsGetTrainer } from '../../types/params-get-trainer.type.js';
+import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
 

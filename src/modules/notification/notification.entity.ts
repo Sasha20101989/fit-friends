@@ -2,7 +2,7 @@
 import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 
 import { UserEntity } from '../user/user.entity.js';
-import { NotificationType } from '../../types/notification-type.type.js';
+import { NotificationType } from './types/notification.type.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 

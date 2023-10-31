@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 import { OrderServiceInterface } from './order-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { ModelType } from '@typegoose/typegoose/lib/types.js';
 import { ControllerInterface } from '../../core/controller/controller.interface.js';
 import { OrderEntity, OrderModel } from './order.entity.js';

@@ -1,9 +1,9 @@
 import { DocumentType, ModelType } from '@typegoose/typegoose/lib/types.js';
 import { inject, injectable } from 'inversify';
 
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { FriendServiceInterface } from './friend-service.interface.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import { UserEntity } from '../user/user.entity.js';
 
 @injectable()

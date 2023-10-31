@@ -1,7 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
 
-import type { UserQueryParams } from '../../types/user-query-params.js';
-import type { MongoId } from '../../types/mongo-id.type.js';
+import type { UserQueryParams } from './types/user-query-params.js';
+import type { MongoId } from '../../types/common/mongo-id.type.js';
 import { UserEntity } from './user.entity.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/login-user.dto.js';

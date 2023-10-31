@@ -1,9 +1,9 @@
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 import { BalanceServiceInterface } from './balance-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { BalanceEntity } from './balance.entity.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import CreateBalanceDto from './dto/create-balance.dto.js';
 import UpdateBalanceDto from './dto/update-balance.dto.js';
 

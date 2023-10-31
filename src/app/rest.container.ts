@@ -4,7 +4,7 @@ import type { LoggerInterface } from '../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../core/config/config.interface.js';
 import type { DatabaseClientInterface } from '../core/database-client/mongo-client.interface.js';
 
-import { AppComponent } from '../types/app-component.enum.js';
+import { AppComponent } from '../types/common/app-component.enum.js';
 import PinoService from '../core/logger/pino.service.js';
 import RestApplication from './rest.js';
 import { RestSchema } from '../core/config/rest.schema.js';

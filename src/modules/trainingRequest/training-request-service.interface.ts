@@ -2,10 +2,10 @@
 import { DocumentType } from '@typegoose/typegoose';
 import CreateTrainingRequestDto from './dto/create-training-request.dto.js';
 import { TrainingRequestEntity } from './training-request.entity.js';
-import { MongoId } from '../../types/mongo-id.type.js';
-import { RequestType } from '../../types/request-type.enum.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
+import { RequestType } from './types/request-type.enum.js';
 import UpdateTrainingRequestDto from './dto/update-training-request.dto.js';
-import { RequestStatus } from '../../types/request-status.enum.js';
+import { RequestStatus } from './types/request-status.enum.js';
 
 export interface TrainingRequestServiceInterface {
   updateStatus(dto: UpdateTrainingRequestDto, requestId: MongoId): Promise<DocumentType<TrainingRequestEntity> | null>;

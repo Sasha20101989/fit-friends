@@ -1,11 +1,11 @@
 import * as crypto from 'node:crypto';
 import * as jose from 'jose';
 import { plainToInstance, ClassConstructor } from 'class-transformer';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 import { Response } from 'express';
 import { DEFAULT_MAX_AGE_TOKEN } from '../../modules/user/user.const.js';
-import { Token } from '../../types/token.enum.js';
+import { Token } from '../../modules/token/types/token.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;

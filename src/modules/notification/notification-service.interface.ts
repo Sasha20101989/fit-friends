@@ -1,8 +1,8 @@
 
 import { DocumentType } from '@typegoose/typegoose';
 import { NotificationEntity } from './notification.entity.js';
-import { MongoId } from '../../types/mongo-id.type.js';
-import { Notification } from '../../types/notification.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
+import { Notification } from './types/notification.type.js';
 
 export interface NotificationServiceInterface {
   findByUserId(userId: MongoId): Promise<DocumentType<NotificationEntity>[]>;

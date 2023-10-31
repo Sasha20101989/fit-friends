@@ -1,5 +1,5 @@
-import type { BaseUser } from './base-user.type.js';
-import { Role } from './role.enum.js';
+import type { BaseUser } from '../../../types/base-user.type.js';
+import { Role } from '../../../types/role.enum.js';
 
 export interface Trainer extends BaseUser {
   role: Role;

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import HttpError from '../errors/http-error.js';
-import type{ MiddlewareInterface } from './middleware.interface.js';
+import type{ MiddlewareInterface } from './types/middleware.interface.js';
 import type{ UserServiceInterface } from '../../modules/user/user-service.interface.js';
 
 

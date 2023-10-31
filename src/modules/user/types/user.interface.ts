@@ -1,7 +1,7 @@
-import type { BaseUser } from './base-user.type.js';
-import { Role } from './role.enum.js';
+import type { BaseUser } from '../../../types/base-user.type.js';
+import { Role } from '../../../types/role.enum.js';
 import { UserBalance } from './user-balance.type.js';
-import { WorkoutDuration } from './workout-duration.enum.js';
+import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
 
 export interface User extends BaseUser {
   role: Role;

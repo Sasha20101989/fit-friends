@@ -11,7 +11,7 @@ import type { ConfigInterface } from '../core/config/config.interface.js';
 import type { ControllerInterface } from '../core/controller/controller.interface.js';
 
 import { RestSchema } from '../core/config/rest.schema.js';
-import { AppComponent } from '../types/app-component.enum.js';
+import { AppComponent } from '../types/common/app-component.enum.js';
 import { AuthenticateMiddleware } from '../core/middlewares/authenticate.middleware.js';
 
 import { getFullServerPath } from '../core/helpers/common.js';

@@ -2,13 +2,13 @@
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import CreateReviewDto from './dto/create-review.dto.js';
 import { ReviewServiceInterface } from './review-service.interface.js';
 import { ReviewEntity } from './review.entity.js';
 import { TrainingEntity } from '../training/training.entity.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 
 @injectable()
 export default class ReviewService implements ReviewServiceInterface {

@@ -7,11 +7,11 @@ import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { ReviewServiceInterface } from './review-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
-import { AppComponent } from '../../types/app-component.enum.js';
-import { HttpMethod } from '../../types/http-method.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
+import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateReviewDto from './dto/create-review.dto.js';
 import ReviewRdo from './rdo/review.rdo.js';
@@ -20,7 +20,7 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
-import { ParamsGetTraining } from '../../types/params-get-training.type.js';
+import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 
 @injectable()

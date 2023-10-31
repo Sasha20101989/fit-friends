@@ -5,9 +5,9 @@ import { ModelType } from '@typegoose/typegoose/lib/types.js';
 
 import { SubscriberServiceInterface } from './subscriber-service.interface.js';
 import { SubscriberEntity } from './subscriber.entity.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 
 @injectable()
 export default class SubscriberService implements SubscriberServiceInterface {

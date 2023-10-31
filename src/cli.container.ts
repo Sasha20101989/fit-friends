@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { AppComponent } from './types/app-component.enum.js';
+import { AppComponent } from './types/common/app-component.enum.js';
 import { ConfigInterface } from './core/config/config.interface.js';
 import { RestSchema } from './core/config/rest.schema.js';
 import ConfigService from './core/config/config.service.js';

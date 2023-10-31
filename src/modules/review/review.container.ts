@@ -4,7 +4,7 @@ import { Container } from 'inversify';
 
 import type { ControllerInterface } from '../../core/controller/controller.interface.js';
 import type { ReviewServiceInterface } from './review-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import ReviewService from './review-service.js';
 import { ReviewEntity, ReviewModel } from './review.entity.js';
 import ReviewController from './review.controller.js';

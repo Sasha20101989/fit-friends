@@ -1,8 +1,8 @@
 
 import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 
-import { RequestStatus } from '../../types/request-status.enum.js';
-import { RequestType } from '../../types/request-type.enum.js';
+import { RequestStatus } from './types/request-status.enum.js';
+import { RequestType } from './types/request-type.enum.js';
 import { UserEntity } from '../user/user.entity.js';
 import { TrainerEntity } from '../trainer/trainer.entity.js';
 

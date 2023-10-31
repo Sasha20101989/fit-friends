@@ -2,7 +2,7 @@ import { ModelType } from '@typegoose/typegoose/lib/types.js';
 import { Container } from 'inversify';
 
 import type { ControllerInterface } from '../../core/controller/controller.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { BalanceServiceInterface } from './balance-service.interface.js';
 import BalanceService from './balance-service.js';
 import { BalanceEntity, BalanceModel } from './balance.entity.js';

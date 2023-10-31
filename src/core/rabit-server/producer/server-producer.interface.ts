@@ -1,5 +1,5 @@
 import { Channel } from "amqplib";
-import { Subscriber } from "../../../types/subscriber.interface.js";
+import { Subscriber } from "../../../modules/subscriber/types/subscriber.interface.js";
 
 export interface ServerProducerInterface {
   initialize(channel: Channel): Promise<void>;

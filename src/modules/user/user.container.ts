@@ -4,7 +4,7 @@ import { Container } from 'inversify';
 
 import type { ControllerInterface } from '../../core/controller/controller.interface.js';
 import type { UserServiceInterface } from './user-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import UserService from './user-service.js';
 import { UserEntity, UserModel } from './user.entity.js';
 import UserController from './user.controller.js';

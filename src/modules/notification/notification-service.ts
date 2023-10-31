@@ -4,9 +4,9 @@ import { inject, injectable } from 'inversify';
 
 import { NotificationServiceInterface } from './notification-service.interface.js';
 import { NotificationEntity } from './notification.entity.js';
-import { AppComponent } from '../../types/app-component.enum.js';
-import { MongoId } from './../../types/mongo-id.type';
-import { Notification } from '../../types/notification.type.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
+import { Notification } from './types/notification.type.js';
 
 @injectable()
 export default class NotificationService implements NotificationServiceInterface {

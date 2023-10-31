@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import type { ConfigInterface } from './config.interface.js';
 import type { LoggerInterface } from '../logger/logger.interface';
 import { RestSchema, configRestSchema } from './rest.schema.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 
 @injectable()
 export default class ConfigService implements ConfigInterface<RestSchema> {

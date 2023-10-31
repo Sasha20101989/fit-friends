@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { ControllerInterface } from '../../core/controller/controller.interface.js';
 import { FriendServiceInterface } from './friend-service.interface.js';
 import FriendService from './friend-service.js';

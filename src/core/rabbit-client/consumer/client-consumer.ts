@@ -1,7 +1,7 @@
 import { Channel } from "amqplib";
 import { ClientConsumerInterface } from "./client-consumer.interface.js";
 import { inject, injectable } from "inversify";
-import { AppComponent } from "../../../types/app-component.enum.js";
+import { AppComponent } from "../../../types/common/app-component.enum.js";
 import { LoggerInterface } from "../../logger/logger.interface.js";
 import EventEmitter from "events";
 

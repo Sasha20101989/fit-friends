@@ -5,7 +5,7 @@ import mongoose, { Mongoose } from 'mongoose';
 
 import type { DatabaseClientInterface } from './mongo-client.interface.js';
 import type { LoggerInterface } from '../logger/logger.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { RETRY_COUNT, RETRY_TIMEOUT } from './database-client.const.js';
 
 @injectable()

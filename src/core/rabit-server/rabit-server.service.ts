@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { Connection, connect } from 'amqplib';
 import { RabbitServerInterface } from './rabit-server.interface.js';
 import { ServerProducerInterface } from './producer/server-producer.interface.js';
-import { Subscriber } from '../../types/subscriber.interface.js';
+import { Subscriber } from '../../modules/subscriber/types/subscriber.interface.js';
 
 @injectable()
 export default class RabbitServerService implements RabbitServerInterface {

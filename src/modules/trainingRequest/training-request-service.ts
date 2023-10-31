@@ -1,16 +1,16 @@
-import { RequestType } from './../../types/request-type.enum';
+import { RequestType } from './types/request-type.enum';
 
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
 import { TrainingRequestServiceInterface } from './training-request-service.interface.js';
 import { TrainingRequestEntity } from './training-request.entity.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import CreateTrainingRequestDto from './dto/create-training-request.dto.js';
-import { MongoId } from '../../types/mongo-id.type.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 import UpdateTrainingRequestDto from './dto/update-training-request.dto.js';
-import { RequestStatus } from '../../types/request-status.enum.js';
+import { RequestStatus } from './types/request-status.enum.js';
 
 @injectable()
 export default class TrainingRequestService implements TrainingRequestServiceInterface {

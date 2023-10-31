@@ -1,5 +1,5 @@
 import { Connection } from "amqplib";
-import { Subscriber } from "../../types/subscriber.interface.js";
+import { Subscriber } from "../../modules/subscriber/types/subscriber.interface.js";
 
 export interface RabbitServerInterface {
   initialize(rabbitConnectionString: string): Promise<Connection | undefined>;

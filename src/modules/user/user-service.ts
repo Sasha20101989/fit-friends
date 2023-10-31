@@ -1,11 +1,11 @@
 import {DocumentType, types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
-import type { MongoId } from '../../types/mongo-id.type.js';
+import type { MongoId } from '../../types/common/mongo-id.type.js';
 import type {UserServiceInterface} from './user-service.interface.js';
 import type { TokenServiceInterface } from '../token/token-service.interface.js';
-import type { UserQueryParams } from '../../types/user-query-params.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import type { UserQueryParams } from './types/user-query-params.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { UserEntity } from './user.entity.js';
 import { PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
@@ -14,12 +14,7 @@ import CreateUserDto from './dto/create-user.dto.js';
 import { VerifyUserResponse } from './response/verify-user.response.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { Role } from '../../types/role.enum.js';
-
-type UserFilter = {
-  location?: string;
-  workoutTypes?: { $in: string[] };
-  trainingLevel?: string;
-}
+import { UserFilter } from './types/user-filter.type.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {

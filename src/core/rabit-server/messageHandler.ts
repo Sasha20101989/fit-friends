@@ -1,5 +1,5 @@
 import { RabbitRouting } from "../../types/rabbit-routing.enum.js";
-import { Subscriber } from "../../types/subscriber.interface.js";
+import { Subscriber } from "../../modules/subscriber/types/subscriber.interface.js";
 import { RabbitServerInterface } from "./rabit-server.interface.js";
 import nodemailer from 'nodemailer';
 

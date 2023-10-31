@@ -8,28 +8,27 @@ import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { TrainingRequestServiceInterface } from './training-request-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
-import { AppComponent } from '../../types/app-component.enum.js';
-import { HttpMethod } from '../../types/http-method.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
+import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateTrainingRequestDto from './dto/create-training-request.dto.js';
 import TrainingRequestRdo from './rdo/trainingRequest.rdo.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { Role } from '../../types/role.enum.js';
-import { RequestStatus } from '../../types/request-status.enum.js';
+import { RequestStatus } from './types/request-status.enum.js';
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import UpdateTrainingRequestDto from './dto/update-training-request.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
-import { ParamsGetRequest } from '../../types/params-get-request.js';
-import { ParamsGetUser } from '../../types/params-get-user.type.js';
+import { ParamsGetRequest } from '../../types/params/params-get-request.type.js';
+import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
-import { Notification } from '../../types/notification.type.js';
-import { NotificationType } from '../../types/notification-type.type.js';
+import { Notification, NotificationType } from '../notification/types/notification.type.js';
 
 @injectable()
 export default class TrainingRequestController extends Controller {

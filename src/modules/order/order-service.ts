@@ -2,17 +2,18 @@ import {DocumentType } from '@typegoose/typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types.js';
 import { inject, injectable } from 'inversify';
 
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { OrderServiceInterface } from './order-service.interface.js';
 import { OrderEntity } from './order.entity.js';
 import CreateOrderDto from './dto/create-order.dto.js';
 import { Sorting } from '../../types/sorting.enum.js';
-import { OrderQueryParams } from '../../types/order-query-params.js';
-import { OrderSortingField } from '../../types/order-sorting-field.enum.js';
+import { OrderQueryParams } from './types/order-query-params.js';
+import { OrderSortingField } from './types/order-sorting-field.enum.js';
 import TrainingOrderRdo from './rdo/training-order.rdo.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { calculateSum } from '../../core/helpers/index.js';
+import { TrainingEntity } from '../training/training.entity.js';
 
 @injectable()
 export default class OrderService implements OrderServiceInterface {
@@ -45,9 +46,9 @@ export default class OrderService implements OrderServiceInterface {
     return trainingInfoList;
   }
 
-  public async create(dto: CreateOrderDto): Promise<DocumentType<OrderEntity>> {
-    const totalAmount = dto.price * dto.quantity;
-    const result = await this.orderModel.create({...dto, totalAmount});
+  public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null> {
+    const totalAmount = training.price * dto.quantity;
+    const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price});
     this.logger.info(`New order created: ${dto.purchaseType}`);
     return result;
   }

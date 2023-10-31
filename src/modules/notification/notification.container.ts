@@ -4,7 +4,7 @@ import { Container } from 'inversify';
 
 import type { ControllerInterface } from '../../core/controller/controller.interface.js';
 import type { NotificationServiceInterface } from './notification-service.interface.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import NotificationService from './notification-service.js';
 import { NotificationEntity, NotificationModel } from './notification.entity.js';
 import NotificationController from './notification.controller.js';

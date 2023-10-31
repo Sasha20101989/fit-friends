@@ -1,16 +1,16 @@
-import { GenderPreference } from './../../types/gender-preference.enum.js';
+import { GenderPreference } from '../../types/gender-preference.enum.js';
 import { Gender } from '../../types/gender.enum..js';
 import { Location } from '../../types/location.enum.js';
 import { Role } from '../../types/role.enum.js';
-import { Trainer } from '../../types/trainer.interface.js';
+import { Trainer } from '../trainer/types/trainer.interface.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
-import { Training } from '../../types/training.type.js';
+import { Training } from '../training/types/training.type.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
-import { User } from './../../types/user.interface.js';
-import { TrainingOrder } from '../../types/training-order.type.js';
-import { PurchaseType } from '../../types/purchase-type.enum.js';
-import { PaymentMethod } from '../../types/payment-method.enum.js';
+import { User } from '../user/types/user.interface.js';
+import { TrainingOrder } from '../order/types/training-order.type.js';
+import { PurchaseType } from '../order/types/purchase-type.enum.js';
+import { PaymentMethod } from '../order/types/payment-method.enum.js';
 
 const generateTrainigs = (trainers: Trainer[]) => {
   const trainings: Training[] = [];

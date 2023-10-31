@@ -4,10 +4,10 @@ import * as core from 'express-serve-static-core';
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
-import { AppComponent } from '../../types/app-component.enum.js';
+import { AppComponent } from '../../types/common/app-component.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { FriendServiceInterface } from './friend-service.interface.js';
-import { HttpMethod } from '../../types/http-method.enum.js';
+import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { Request, Response } from 'express';
 import { Role } from '../../types/role.enum.js';
 import { StatusCodes } from 'http-status-codes';
@@ -18,11 +18,10 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { UserServiceInterface } from '../user/user-service.interface.js';
-import { ParamsGetFriend } from '../../types/params-get-friend.js';
+import { ParamsGetFriend } from '../../types/params/params-get-friend.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
-import { Notification } from '../../types/notification.type.js';
-import { NotificationType } from '../../types/notification-type.type.js';
+import { Notification, NotificationType } from '../notification/types/notification.type.js';
 
 @injectable()
 export default class FriendController extends Controller {

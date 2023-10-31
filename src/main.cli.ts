@@ -5,7 +5,7 @@ import CLIApplication from './app/cli.js';
 import HelpCommand from './core/cli-command/helper.command.js';
 import ImportCommand from './core/cli-command/import.command.js';
 import { createCLIApplicationContainer } from './cli.container.js';
-import { AppComponent } from './types/app-component.enum.js';
+import { AppComponent } from './types/common/app-component.enum.js';
 import { TokenServiceInterface } from './modules/token/token-service.interface.js';
 
 async function bootstrap() {

@@ -5,10 +5,10 @@ import asyncHandler from 'express-async-handler';
 
 import type { ControllerInterface } from './controller.interface.js';
 import type { LoggerInterface } from '../logger/logger.interface.js';
-import type { RouteInterface } from '../../types/route.interface.js';
+import type { RouteInterface } from '../../types/common/route.interface.js';
 import { ConfigInterface } from '../config/config.interface.js';
 import { RestSchema } from '../config/rest.schema.js';
-import { UnknownRecord } from '../../types/unknown-record.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { getFullServerPath, transformObject } from '../helpers/index.js';
 import { STATIC_RESOURCE_FIELDS } from '../../app/rest.const.js';
 
