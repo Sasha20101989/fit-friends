@@ -22,6 +22,7 @@ import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
+import { ReviewQueryParams } from './types/review-query-params.js';
 
 @injectable()
 export default class ReviewController extends Controller {
@@ -58,13 +59,12 @@ export default class ReviewController extends Controller {
 
   //TODO: Общее
   public async index(
-    { query, params }: Request<core.ParamsDictionary | ParamsGetTraining>,
+    { query, params }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, ReviewQueryParams>,
     res: Response
   ) {
     const { trainingId } = params;
-    const { limit } = query;
 
-    const reviews = await this.reviewService.GetReviewsByTrainingId(trainingId, Number(limit));
+    const reviews = await this.reviewService.GetReviewsByTrainingId(trainingId, query);
 
     this.ok(res, fillDTO(ReviewRdo, reviews));
   }

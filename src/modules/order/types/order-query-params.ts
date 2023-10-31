@@ -5,4 +5,5 @@ export type OrderQueryParams = {
   typeOrder?: OrderSortingField
   sortOrder?: Sorting
   limit?: number;
+  page?: number;
 }

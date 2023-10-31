@@ -67,6 +67,8 @@ export default class TrainingService implements TrainingServiceInterface {
     const trainingLimit = Math.min(query.limit || DEFAULT_TRAINING_COUNT, DEFAULT_TRAINING_COUNT);
     const filter: TrainingFilter = {};
     const sort: { [key: string]: Sorting } = {};
+    const page = query.page || 1;
+    const skip = (page - 1) * trainingLimit;
 
     if(trainerId){
       filter.trainer = trainerId;
@@ -139,7 +141,7 @@ export default class TrainingService implements TrainingServiceInterface {
       sort['createdAt'] = Sorting.Descending;
     }
 
-    const trainings = await queryResult.limit(trainingLimit);
+    const trainings = await queryResult.skip(skip).limit(trainingLimit);
     return trainings;
   }
 

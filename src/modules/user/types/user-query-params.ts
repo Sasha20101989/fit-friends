@@ -9,4 +9,5 @@ export type UserQueryParams = {
   trainingLevel?: TrainingLevel;
   sortBy?: Role;
   limit?: number;
+  page?: number;
 }

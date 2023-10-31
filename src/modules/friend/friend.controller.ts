@@ -22,6 +22,8 @@ import { ParamsGetFriend } from '../../types/params/params-get-friend.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
 import { Notification, NotificationType } from '../notification/types/notification.type.js';
+import { UnknownRecord } from '../../types/common/unknown-record.type.js';
+import { FriendQueryParams } from './types/friend-query-params.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -115,11 +117,10 @@ export default class FriendController extends Controller {
   //TODO:Кабинет тренер
   //TODO:Кабинет пользователь
   public async index(
-    { query, user }: Request,
+    { query, user }: Request<core.ParamsDictionary, UnknownRecord, FriendQueryParams>,
     res: Response
   ): Promise<void> {
-    const { limit } = query;
-    const friends = await this.friendService.find(user.id, Number(limit));
+    const friends = await this.friendService.find(user.id, query);
 
     this.created(res, fillDTO(UserRdo, friends));
   }

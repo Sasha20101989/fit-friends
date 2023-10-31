@@ -25,6 +25,7 @@ import { ParamsGetTraining } from '../../types/params/params-get-training.type.j
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
+import { BalanceQueryParams } from './types/balance-query-params.js';
 
 
 @injectable()
@@ -76,12 +77,10 @@ export default class BalanceController extends Controller {
 
   //TODO:Кабинет пользователь
   public async index(
-    { query, user }: Request,
+    { query, user }: Request<core.ParamsDictionary, UnknownRecord, BalanceQueryParams>,
     res: Response
   ) {
-    const { limit } = query;
-
-    const balance = await this.balanceService.findByUserId(user.id, Number(limit));
+    const balance = await this.balanceService.findByUserId(user.id, query);
 
     this.ok(res, fillDTO(BalanceRdo, balance));
   }

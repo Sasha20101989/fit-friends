@@ -7,6 +7,8 @@ import { MongoId } from '../../types/common/mongo-id.type.js';
 import CreateBalanceDto from './dto/create-balance.dto.js';
 import UpdateBalanceDto from './dto/update-balance.dto.js';
 import { DEFAULT_BALANCE_COUNT } from './balance.const.js';
+import { BalanceQueryParams } from './types/balance-query-params.js';
+import { getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
 
 @injectable()
 export default class BalanceService implements BalanceServiceInterface{
@@ -39,13 +41,19 @@ export default class BalanceService implements BalanceServiceInterface{
     return null;
   }
 
-  public async findByUserId(userId: MongoId, limit?: number): Promise<DocumentType<BalanceEntity>[]>{
-    const balanceLimit = Math.min(limit || DEFAULT_BALANCE_COUNT, DEFAULT_BALANCE_COUNT);
+  public async findByUserId(userId: MongoId, query: BalanceQueryParams): Promise<DocumentType<BalanceEntity>[]>{
+    const balanceLimit = Math.min(query?.limit || DEFAULT_BALANCE_COUNT, DEFAULT_BALANCE_COUNT);
+    const page = query?.page || 1;
+    const skip = (page - 1) * balanceLimit;
+
+    const sort = getSortOptionsForCreatedAt(query.sortDirection);
+
     const balance = await this.balanceModel
       .find({ user: userId})
+      .sort(sort)
+      .skip(skip)
       .limit(balanceLimit)
-      .populate({ path: 'training', populate: { path: 'trainer' } })
-      .exec();
+      .populate({ path: 'training', populate: { path: 'trainer' } });
 
     return balance;
   }

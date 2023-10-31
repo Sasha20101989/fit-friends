@@ -57,6 +57,8 @@ export default class OrderService implements OrderServiceInterface {
   public async findByTrainerId(trainerId: string, query: OrderQueryParams, _limit?: number): Promise<TrainingOrderRdo[]> {
     const trainingInfoList: TrainingOrderRdo[] = [];
     const orderLimit = Math.min(query.limit || DEFAULT_ORDER_COUNT, DEFAULT_ORDER_COUNT);
+    const page = query?.page || 1;
+    const skip = (page - 1) * orderLimit;
 
     const trainings = await this.trainingService.findByTrainerId(trainerId);
 
@@ -75,7 +77,7 @@ export default class OrderService implements OrderServiceInterface {
 
     trainingInfoList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    return trainingInfoList.slice(0, orderLimit);
+    return trainingInfoList.slice(skip, skip + orderLimit);
   }
 
   public async exists(documentId: string): Promise<boolean> {

@@ -120,12 +120,10 @@ export default class UserController extends Controller {
 
   //TODO: Общее
   public async index(
-    req: Request<UnknownRecord, UnknownRecord, UnknownRecord, UserQueryParams>,
+    req: Request<UnknownRecord, UnknownRecord, UserQueryParams>,
     res: Response
   ) {
-    const { location, workoutTypes, trainingLevel, sortBy } = req.query;
-
-    const userUqery: UserQueryParams = { location, workoutTypes, trainingLevel, sortBy };
+    const userUqery: UserQueryParams = req.query;
 
     const users = await this.userService.GetAllUsers(userUqery);
 

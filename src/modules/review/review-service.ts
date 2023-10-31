@@ -10,6 +10,7 @@ import { ReviewEntity } from './review.entity.js';
 import { TrainingEntity } from '../training/training.entity.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import { DEFAULT_REVIEW_COUNT } from './review.const.js';
+import { ReviewQueryParams } from './types/review-query-params.js';
 
 @injectable()
 export default class ReviewService implements ReviewServiceInterface {
@@ -19,11 +20,14 @@ export default class ReviewService implements ReviewServiceInterface {
     @inject(AppComponent.TrainingModel) private readonly trainingModel: types.ModelType<TrainingEntity>,
   ){}
 
-  public async GetReviewsByTrainingId(trainingId: MongoId, limit?: number): Promise<DocumentType<ReviewEntity>[]> {
-    const reviewLimit = Math.min(limit || DEFAULT_REVIEW_COUNT, DEFAULT_REVIEW_COUNT);
-    return this.reviewModel.
-      find({ training: trainingId })
+  public async GetReviewsByTrainingId(trainingId: MongoId, query?: ReviewQueryParams): Promise<DocumentType<ReviewEntity>[]> {
+    const reviewLimit = Math.min(query?.limit || DEFAULT_REVIEW_COUNT, DEFAULT_REVIEW_COUNT);
+    const page = query?.page || 1;
+    const skip = (page - 1) * reviewLimit;
+    return this.reviewModel
+      .find({ training: trainingId })
       .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(reviewLimit)
       .populate([
         { path: 'user' },

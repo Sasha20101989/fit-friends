@@ -109,6 +109,8 @@ export default class UserService implements UserServiceInterface {
     const filter: UserFilter = {};
     const sort: { [key: string]: Sorting } = {};
     const userLimit = Math.min(query.limit || DEFAULT_USER_COUNT, DEFAULT_USER_COUNT);
+    const page = query.page || 1;
+    const skip = (page - 1) * userLimit;
 
     if (query.location) {
       filter.location = query.location.toLowerCase();
@@ -135,6 +137,7 @@ export default class UserService implements UserServiceInterface {
     const users = await this.userModel
       .find(filter)
       .sort(sort)
+      .skip(skip)
       .limit(userLimit);
     return users;
   }

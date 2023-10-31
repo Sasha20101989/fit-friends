@@ -49,7 +49,7 @@ export default class TrainingController extends Controller {
         new ValidateDtoMiddleware(CreateTrainingDto)
       ]
     });
-    this.addRoute({ path: '/trainer-room/:trainingId',
+    this.addRoute({ path: '/:trainingId',
       method: HttpMethod.Get,
       handler: this.showTrainingDetails,
       middlewares: [

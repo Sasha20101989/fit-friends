@@ -6,6 +6,7 @@ import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 import { Response } from 'express';
 import { DEFAULT_MAX_AGE_TOKEN } from '../../modules/user/user.const.js';
 import { Token } from '../../modules/token/types/token.enum.js';
+import { Sorting } from '../../types/sorting.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -76,4 +77,20 @@ export function setRefreshTokenCookie(res: Response, refreshToken: string, expir
 
 export function clearCookie(res: Response, token: Token) {
   res.clearCookie(token);
+}
+
+export function getSortOptionsForCreatedAt(querySortDirection?: Sorting, defaultSortDirection: Sorting = Sorting.Descending): { [key: string]: Sorting } {
+  const sort: { [key: string]: Sorting } = {};
+
+  if (querySortDirection) {
+      if (querySortDirection === Sorting.Ascending) {
+          sort['createdAt'] = Sorting.Ascending;
+      } else {
+          sort['createdAt'] = Sorting.Descending;
+      }
+  } else {
+      sort['createdAt'] = defaultSortDirection;
+  }
+
+  return sort;
 }
