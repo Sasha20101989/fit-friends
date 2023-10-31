@@ -14,7 +14,7 @@ import TrainingOrderRdo from './rdo/training-order.rdo.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { calculateSum } from '../../core/helpers/index.js';
 import { TrainingEntity } from '../training/training.entity.js';
-//import { DEFAULT_ORDER_COUNT } from './order.const.js';
+import { DEFAULT_ORDER_COUNT } from './order.const.js';
 
 @injectable()
 export default class OrderService implements OrderServiceInterface {
@@ -56,7 +56,7 @@ export default class OrderService implements OrderServiceInterface {
 
   public async findByTrainerId(trainerId: string, query: OrderQueryParams, _limit?: number): Promise<TrainingOrderRdo[]> {
     const trainingInfoList: TrainingOrderRdo[] = [];
-    //const orderLimit = Math.min(limit || DEFAULT_ORDER_COUNT, DEFAULT_ORDER_COUNT).sort({ createdAt: -1 });
+    const orderLimit = Math.min(query.limit || DEFAULT_ORDER_COUNT, DEFAULT_ORDER_COUNT);
 
     const trainings = await this.trainingService.findByTrainerId(trainerId);
 
@@ -73,7 +73,9 @@ export default class OrderService implements OrderServiceInterface {
       return sortedTrainingInfoList;
     }
 
-    return trainingInfoList;
+    trainingInfoList.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return trainingInfoList.slice(0, orderLimit);
   }
 
   public async exists(documentId: string): Promise<boolean> {

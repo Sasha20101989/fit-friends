@@ -75,7 +75,7 @@ export default class NotificationController extends Controller {
       );
     }
 
-    if (notification.user.toString() !== user.id) {
+    if (notification.user.id !== user.id) {
       throw new HttpError(
         StatusCodes.FORBIDDEN,
         'Access denied: You do not have permission to delete this notification.',
@@ -83,8 +83,8 @@ export default class NotificationController extends Controller {
       );
     }
 
-    await this.notificationService.destroy(notificationId);
+    const notifications = await this.notificationService.destroy(notificationId, user.id);
 
-    this.ok(res, { message: 'Notification deleted' });
+    this.ok(res, fillDTO(NotificationRdo, notifications));
   }
 }

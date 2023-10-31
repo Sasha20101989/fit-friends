@@ -7,5 +7,6 @@ export type UserQueryParams = {
   location?: Location;
   workoutTypes?: WorkoutType[];
   trainingLevel?: TrainingLevel;
-  sortBy?: Role
+  sortBy?: Role;
+  limit?: number;
 }

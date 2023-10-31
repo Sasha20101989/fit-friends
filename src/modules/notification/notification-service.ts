@@ -16,11 +16,14 @@ export default class NotificationService implements NotificationServiceInterface
     ){}
 
     public async find(documentId: string): Promise<DocumentType<NotificationEntity> | null> {
-      return await this.notificationModel.findOne({ _id: documentId });
+      return await this.notificationModel
+        .findOne({ _id: documentId })
+        .populate('user');;
     }
 
-    public async destroy(documentId: string): Promise<void> {
+    public async destroy(documentId: string, userId: MongoId): Promise<NotificationEntity[]> {
       await this.notificationModel.deleteOne({ _id: documentId });
+      return await this.findByUserId(userId);
     }
 
     public async findByUserId(userId: MongoId): Promise<DocumentType<NotificationEntity>[]> {

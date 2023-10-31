@@ -54,4 +54,7 @@ export default class TrainingOrderRdo {
 
   @Expose()
   public totalSalesAmount!: number;
+
+  @Expose()
+  public createdAt!: Date;
 }

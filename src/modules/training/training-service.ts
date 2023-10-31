@@ -125,7 +125,6 @@ export default class TrainingService implements TrainingServiceInterface {
 
     let queryResult = this.trainingModel
       .find(filter)
-      .sort({ createdAt: -1 })
       .populate('trainer');
 
     if (query.sortByPrice) {
@@ -136,9 +135,11 @@ export default class TrainingService implements TrainingServiceInterface {
       }
 
       queryResult = queryResult.sort(sort);
+    }else{
+      sort['createdAt'] = Sorting.Descending;
     }
 
-    const trainings = await queryResult;
+    const trainings = await queryResult.limit(trainingLimit);
     return trainings;
   }
 

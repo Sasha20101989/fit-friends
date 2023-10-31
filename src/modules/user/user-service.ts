@@ -7,7 +7,7 @@ import type { TokenServiceInterface } from '../token/token-service.interface.js'
 import type { UserQueryParams } from './types/user-query-params.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
 import { UserEntity } from './user.entity.js';
-import { PASSWORD_CONSTRAINTS } from './user.const.js';
+import { DEFAULT_USER_COUNT, PASSWORD_CONSTRAINTS } from './user.const.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import CreateUserDto from './dto/create-user.dto.js';
@@ -108,6 +108,7 @@ export default class UserService implements UserServiceInterface {
   public async GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>{
     const filter: UserFilter = {};
     const sort: { [key: string]: Sorting } = {};
+    const userLimit = Math.min(query.limit || DEFAULT_USER_COUNT, DEFAULT_USER_COUNT);
 
     if (query.location) {
       filter.location = query.location.toLowerCase();
@@ -127,9 +128,14 @@ export default class UserService implements UserServiceInterface {
       }
 
       sort['role'] = Sorting.Descending;
+    }else{
+      sort['createdAt'] = Sorting.Descending;
     }
 
-    const users = await this.userModel.find(filter).sort(sort);
+    const users = await this.userModel
+      .find(filter)
+      .sort(sort)
+      .limit(userLimit);
     return users;
   }
 
