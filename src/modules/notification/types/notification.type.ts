@@ -1,4 +1,4 @@
-import { RequestType } from "../../trainingRequest/types/request-type.enum.js";
+import { RequestType } from '../../request/types/request-type.enum.js';
 
 export type Notification = {
   user?: string;

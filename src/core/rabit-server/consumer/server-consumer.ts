@@ -1,10 +1,10 @@
-import { Channel } from "amqplib";
-import { ServerConsumerInterface } from "./server-consumer.interface.js";
-import { inject, injectable } from "inversify";
-import { AppComponent } from "../../../types/common/app-component.enum.js";
-import { LoggerInterface } from "../../logger/logger.interface.js";
-import { RabbitServerInterface } from "../rabit-server.interface.js";
-import MessageHandler from "../messageHandler.js";
+import { Channel } from 'amqplib';
+import { injectable, inject } from 'inversify';
+import { AppComponent } from '../../../types/common/app-component.enum.js';
+import { LoggerInterface } from '../../logger/logger.interface.js';
+import MessageHandler from '../messageHandler.js';
+import { RabbitServerInterface } from '../rabit-server.interface.js';
+import { ServerConsumerInterface } from './server-consumer.interface.js';
 
 @injectable()
 export default class ServerConsumer implements ServerConsumerInterface {

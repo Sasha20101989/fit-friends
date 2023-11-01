@@ -1,4 +1,4 @@
-import { RequestType } from "../../trainingRequest/types/request-type.enum.js";
+import { RequestType } from '../../request/types/request-type.enum.js';
 
 export const notificationMessages: { [key in RequestType]: string } = {
   [RequestType.Friend]: 'запрос в друзья',

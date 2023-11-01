@@ -1,14 +1,13 @@
-import { Channel } from "amqplib";
-import { inject, injectable } from "inversify";
-import EventEmitter from "events";
-
-import { AppComponent } from "../../../types/common/app-component.enum.js";
-import { LoggerInterface } from "../../logger/logger.interface.js";
-import { ClientProducerInterface } from "./client-producer.interface.js";
-import { RabbitRouting } from "../../../types/rabbit-routing.enum.js";
-import { Subscriber } from "../../../modules/subscriber/types/subscriber.interface.js";
-import { RestSchema } from "../../config/rest.schema.js";
-import { ConfigInterface } from "../../config/config.interface.js";
+import EventEmitter from 'node:events';
+import { Channel } from 'amqplib';
+import { inject, injectable } from 'inversify';
+import { Subscriber } from '../../../modules/subscriber/types/subscriber.interface.js';
+import { AppComponent } from '../../../types/common/app-component.enum.js';
+import { RabbitRouting } from '../../../types/rabbit-routing.enum.js';
+import { ConfigInterface } from '../../config/config.interface.js';
+import { RestSchema } from '../../config/rest.schema.js';
+import { LoggerInterface } from '../../logger/logger.interface.js';
+import { ClientProducerInterface } from './client-producer.interface.js';
 
 @injectable()
 export default class ClientProducer implements ClientProducerInterface {
@@ -51,12 +50,12 @@ export default class ClientProducer implements ClientProducerInterface {
           }
         );
 
-        this.eventEmitter.once(routingKey, async (data) => {
-          const reply = JSON.parse(data.content.toString());
+        this.eventEmitter.once(routingKey, async (dataItem) => {
+          const reply = JSON.parse(dataItem.content.toString());
           resolve(reply);
         });
       }catch(error){
-        reject(error)
+        reject(error);
       }
     });
   }

@@ -1,14 +1,13 @@
-import { GenderPreference } from "../../types/gender-preference.enum.js";
-import { Gender } from "../../types/gender.enum..js";
-import { Location } from "../../types/location.enum.js";
-import { TrainingLevel } from "../../types/training-level.enum.js";
-import { WorkoutDuration } from "../../types/workout-duration.enum.js";
-import { WorkoutType } from "../../types/workout-type.enum.js";
-import { PaymentMethod } from "../order/types/payment-method.enum.js";
-import { Trainer } from "../trainer/types/trainer.interface.js";
-import { RequestStatus } from "../trainingRequest/types/request-status.enum.js";
-import { RequestType } from "../trainingRequest/types/request-type.enum.js";
-import { User } from "../user/types/user.interface.js";
+import { GenderPreference } from '../../types/gender-preference.enum.js';
+import { Gender } from '../../types/gender.enum.js';
+import { Location } from '../../types/location.enum.js';
+import { TrainingLevel } from '../../types/training-level.enum.js';
+import { WorkoutDuration } from '../../types/workout-duration.enum.js';
+import { WorkoutType } from '../../types/workout-type.enum.js';
+import { PaymentMethod } from '../order/types/payment-method.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
+import { Trainer } from '../trainer/types/trainer.interface.js';
+import { User } from '../user/types/user.interface.js';
 
 const reviews = [
   'Отличная тренировка! Рекомендую всем!',
@@ -29,14 +28,14 @@ export function generateRandomUserNamesAndEmails(numberOfUsers: number, typeUser
   const usedNames: Set<string> = new Set();
   const usedEmails: Set<string> = new Set();
   while (names.length < numberOfUsers) {
-      const name = `${typeUser}${Math.floor(Math.random() * 10000)}`;
-      const email = `${name}@example.com`;
-      if (!usedNames.has(name) && !usedEmails.has(email)) {
-          usedNames.add(name);
-          usedEmails.add(email);
-          names.push(name);
-          emails.push(email);
-      }
+    const name = `${typeUser}${Math.floor(Math.random() * 10000)}`;
+    const email = `${name}@example.com`;
+    if (!usedNames.has(name) && !usedEmails.has(email)) {
+      usedNames.add(name);
+      usedEmails.add(email);
+      names.push(name);
+      emails.push(email);
+    }
   }
   return { names, emails };
 }
@@ -49,11 +48,11 @@ export function generateRandomWorkoutTypes(): WorkoutType[] {
   const uniqueWorkoutTypes: WorkoutType[] = [];
 
   while (uniqueWorkoutTypes.length < count) {
-      const randomIndex = Math.floor(Math.random() * availableCount);
-      const randomWorkoutType = workoutTypeValues[randomIndex] as WorkoutType;
-      if (!uniqueWorkoutTypes.includes(randomWorkoutType)) {
-          uniqueWorkoutTypes.push(randomWorkoutType);
-      }
+    const randomIndex = Math.floor(Math.random() * availableCount);
+    const randomWorkoutType = workoutTypeValues[randomIndex] as WorkoutType;
+    if (!uniqueWorkoutTypes.includes(randomWorkoutType)) {
+      uniqueWorkoutTypes.push(randomWorkoutType);
+    }
   }
 
   return uniqueWorkoutTypes;
@@ -89,11 +88,6 @@ export function generateRandomWorkoutDuration() {
 export function generateRandomWorkoutType() {
   const workoutTypes = Object.values(WorkoutType);
   return workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
-}
-
-export function generateRandomRequestStatus() {
-  const requests = Object.values(RequestStatus);
-  return requests[Math.floor(Math.random() * requests.length)];
 }
 
 export function generateRandomRequestType() {

@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
-import { Gender } from '../../../types/gender.enum..js';
+import { Gender } from '../../../types/gender.enum.js';
 import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';

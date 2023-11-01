@@ -3,7 +3,7 @@ import { DocumentType } from '@typegoose/typegoose';
 import { NotificationEntity } from './notification.entity.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import { Notification } from './types/notification.type.js';
-import { RequestType } from '../trainingRequest/types/request-type.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
 
 export interface NotificationServiceInterface {
   findByUserId(userId: MongoId): Promise<DocumentType<NotificationEntity>[]>;

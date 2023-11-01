@@ -17,7 +17,7 @@ import { User } from '../user/types/user.interface.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { DEFAULT_TRAINING_COUNT } from './training.const.js';
-import { applyWorkoutTypesFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
+import { applyWorkoutTypesFilter, durationFilters, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
 import { TrainingFilter } from './types/training-filter.type.js';
 
 @injectable()
@@ -97,9 +97,7 @@ export default class TrainingService implements TrainingServiceInterface {
 
   public async sendTrainingNotifications(trainerId: string, training: DocumentType<TrainingEntity>): Promise<void>{
     const subscribes = await this.subscriberService.findByTrainerId(trainerId);
-    const users: User[] = subscribes.map((subscribe) => {
-      return subscribe.user as User;
-    });
+    const users: User[] = subscribes.map((subscribe) => subscribe.user as User);
 
     for (const user of users) {
       const notification: Subscriber = {
@@ -113,51 +111,42 @@ export default class TrainingService implements TrainingServiceInterface {
 
   private applyFilters(query: TrainingQueryParams, filter: TrainingFilter): void {
     if (query.minPrice !== undefined) {
-        filter.price = { $gte: query.minPrice };
+      filter.price = { $gte: query.minPrice };
     }
 
     if (query.maxPrice !== undefined) {
       if (!filter.price) {
-          filter.price = {};
+        filter.price = {};
       }
       filter.price.$lte = query.maxPrice;
     }
 
     if (query.minCalories !== undefined) {
-        filter.calories = { $gte: query.minCalories };
+      filter.calories = { $gte: query.minCalories };
     }
 
     if (query.maxCalories !== undefined) {
       if (!filter.calories) {
-          filter.calories = {};
+        filter.calories = {};
       }
       filter.calories.$lte = query.maxCalories;
     }
 
     if (query.rating !== undefined) {
-        const rating = parseInt(query.rating, 10);
-        if (Number.isInteger(rating) && rating >= 0 && rating <= 5) {
-            filter.rating = rating;
-        }
+      const rating = parseInt(query.rating, 10);
+      if (Number.isInteger(rating) && rating >= 0 && rating <= 5) {
+        filter.rating = rating;
+      }
     }
   }
 
   private applyWorkoutDurationFilter(query: TrainingQueryParams, filter: TrainingFilter): void {
     if (query.workoutDuration) {
-        const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
-
-        const durationFilters: { [key in WorkoutDuration]: string } = {
-            [WorkoutDuration.Short]: WorkoutDuration.Short,
-            [WorkoutDuration.Medium]: WorkoutDuration.Medium,
-            [WorkoutDuration.Long]: WorkoutDuration.Long,
-            [WorkoutDuration.ExtraLong]: WorkoutDuration.ExtraLong,
-        };
-
-        const filterValues = workoutDurationsArray
-            .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
-            .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
-
-        filter.workoutDuration = { $in: filterValues };
+      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
+      const filterValues = workoutDurationsArray
+        .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
+        .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
+      filter.workoutDuration = { $in: filterValues };
     }
   }
 }

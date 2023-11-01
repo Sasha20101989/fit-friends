@@ -63,7 +63,7 @@ export default class OrderController extends Controller {
     });
   }
 
-  //TODO: добавить того кто оформил
+  //TODO: Общее
   public async create(
     { params, body, user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateOrderDto>,
     res: Response

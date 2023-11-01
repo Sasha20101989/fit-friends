@@ -6,31 +6,31 @@ import { TrainingOrder } from '../order/types/training-order.type.js';
 import { PurchaseType } from '../order/types/purchase-type.enum.js';
 import { UserBalance } from '../user/types/user-balance.type.js';
 import { generateRandomUser,
-        generateRandomPaymentMethod,
-        generateRandomTrainingLevel,
-        generateRandomWorkoutType,
-        generateRandomWorkoutDuration,
-        generateRandomPrice,
-        generateRandomGenderPreference,
-        generateRandomRating,
-        generateRandomUserNamesAndEmails,
-        generateRandomGender,
-        generateRandomLocation,
-        generateRandomWorkoutTypes,
-        generateRandomBoolean,
-        generateRandomNumber,
-        generateRandomRequestStatus,
-        generateRandomRequestType,
-        generateRandomQuantity,
-        generateRandomReview,
-        } from './random.js';
-import { TrainingRequest } from '../trainingRequest/types/training-request.type.js';
+  generateRandomPaymentMethod,
+  generateRandomTrainingLevel,
+  generateRandomWorkoutType,
+  generateRandomWorkoutDuration,
+  generateRandomPrice,
+  generateRandomGenderPreference,
+  generateRandomRating,
+  generateRandomUserNamesAndEmails,
+  generateRandomGender,
+  generateRandomLocation,
+  generateRandomWorkoutTypes,
+  generateRandomBoolean,
+  generateRandomNumber,
+  generateRandomRequestType,
+  generateRandomQuantity,
+  generateRandomReview,
+} from './random.js';
+import { Request } from '../request/types/request.type.js';
 import { Review } from '../review/types/review.type.js';
 import { Notification } from '../notification/types/notification.type.js';
 import { generateNotification } from '../../core/helpers/index.js';
+import { RequestStatus } from '../request/types/request-status.enum.js';
 
 const generateTrainingOrders = (trainings: Training[], users: User[]): TrainingOrder[] =>
-    trainings.map((training) => {
+  trainings.map((training) => {
     const price = training.price;
     const quantity = generateRandomQuantity();
     const user = generateRandomUser(users);
@@ -121,19 +121,19 @@ const generateUsers = (numberOfUsers: number) => {
 };
 
 const generateBalances = (trainings: Training[]): UserBalance[] =>
-    trainings.map((_training) => {
+  trainings.map((_training) => {
     const quantity = generateRandomQuantity();
     return {
       availableQuantity: quantity,
     };
   });
 
-const generateRequests = (numberOfRequests: number): TrainingRequest[] => {
-  const requests: TrainingRequest[] = [];
+const generateRequests = (numberOfRequests: number): Request[] => {
+  const requests: Request[] = [];
   for (let i = 0; i < numberOfRequests; i++) {
-    const status = generateRandomRequestStatus();
+    const status = RequestStatus.Pending;
     const requestType = generateRandomRequestType();
-    const request: TrainingRequest = {
+    const request: Request = {
       status,
       requestType,
     };

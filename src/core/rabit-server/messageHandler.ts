@@ -1,7 +1,8 @@
-import { RabbitRouting } from "../../types/rabbit-routing.enum.js";
-import { Subscriber } from "../../modules/subscriber/types/subscriber.interface.js";
-import { RabbitServerInterface } from "./rabit-server.interface.js";
+import { Subscriber } from '../../modules/subscriber/types/subscriber.interface.js';
+import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
 import nodemailer from 'nodemailer';
+import { RabbitServerInterface } from './rabit-server.interface.js';
+import { EmailData } from './types/email-data.js';
 
 export default class MessageHandler {
   private rabbitClient!: RabbitServerInterface;
@@ -10,7 +11,7 @@ export default class MessageHandler {
     this.rabbitClient = rabbitClient;
   }
 
-  private async sendEmail(emailData: any){
+  private async sendEmail(emailData: EmailData){
     try {
       const transporter = nodemailer.createTransport({
         host: 'localhost',
@@ -24,14 +25,16 @@ export default class MessageHandler {
     } catch (error) {
       console.error('Email sending failed:', error);
     }
-  };
+  }
 
   async handle(operation: string, data: Subscriber, correlationId: string, replyTo: string) {
     console.log('Operation is', operation, correlationId, replyTo);
 
+    let emailData: EmailData;
+
     switch (correlationId){
       case RabbitRouting.AddTraining:
-        const emailData = {
+        emailData = {
           from: 'a@felyugin.me',
           to: data.user.email,
           subject: `Hello ${data.user.name}` ,

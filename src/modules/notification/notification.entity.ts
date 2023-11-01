@@ -2,7 +2,7 @@
 import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 
 import { UserEntity } from '../user/user.entity.js';
-import { RequestType } from '../trainingRequest/types/request-type.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 

@@ -11,7 +11,8 @@ import { QueryTypes } from '../../types/query-types.interface.js';
 import { FilterTypes } from '../../types/filter-types.interface.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import { notificationMessages } from '../../modules/notification/types/notification-messages.type.js';
-import { RequestType } from '../../modules/trainingRequest/types/request-type.enum.js';
+import { RequestType } from '../../modules/request/types/request-type.enum.js';
+import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -88,13 +89,13 @@ export function getSortOptionsForCreatedAt(querySortDirection?: Sorting, default
   const sort: { [key: string]: Sorting } = {};
 
   if (querySortDirection) {
-      if (querySortDirection === Sorting.Ascending) {
-          sort['createdAt'] = Sorting.Ascending;
-      } else {
-          sort['createdAt'] = Sorting.Descending;
-      }
+    if (querySortDirection === Sorting.Ascending) {
+      sort['createdAt'] = Sorting.Ascending;
+    } else {
+      sort['createdAt'] = Sorting.Descending;
+    }
   } else {
-      sort['createdAt'] = defaultSortDirection;
+    sort['createdAt'] = defaultSortDirection;
   }
 
   return sort;
@@ -106,13 +107,13 @@ export function applyWorkoutTypesFilter<TQuery extends QueryTypes, TFilter exten
 ): void {
   if (query.workoutTypes) {
     const workoutTypeValues = Object.values(WorkoutType) as string[];
-      const workoutTypesArray = query.workoutTypes.toString().toLowerCase().split(',').map((type) => type.trim()) as WorkoutType[];
+    const workoutTypesArray = query.workoutTypes.toString().toLowerCase().split(',').map((type) => type.trim()) as WorkoutType[];
 
-      const isValidWorkoutType = workoutTypesArray.every((type) => workoutTypeValues.includes(type));
+    const isValidWorkoutType = workoutTypesArray.every((type) => workoutTypeValues.includes(type));
 
-      if (isValidWorkoutType) {
-          filter.workoutTypes = { $in: workoutTypesArray };
-      }
+    if (isValidWorkoutType) {
+      filter.workoutTypes = { $in: workoutTypesArray };
+    }
   }
 }
 
@@ -123,3 +124,10 @@ export function generateNotification(requestType: RequestType): string {
     return 'Новое уведомление';
   }
 }
+
+export const durationFilters: { [key in WorkoutDuration]: string } = {
+  [WorkoutDuration.Short]: WorkoutDuration.Short,
+  [WorkoutDuration.Medium]: WorkoutDuration.Medium,
+  [WorkoutDuration.Long]: WorkoutDuration.Long,
+  [WorkoutDuration.ExtraLong]: WorkoutDuration.ExtraLong,
+};

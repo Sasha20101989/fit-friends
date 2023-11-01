@@ -12,7 +12,7 @@ import { createOrderContainer } from './modules/order/order.container.js';
 import { createFriendContainer } from './modules/friend/friend.container.js';
 import { createBalanceContainer } from './modules/balance/balance.container.js';
 import { createReviewContainer } from './modules/review/review.container.js';
-import { createTrainingRequestContainer } from './modules/trainingRequest/training-request.container.js';
+import { createRequestContainer } from './modules/request/request.container.js';
 import { createRabbitClientContainer } from './core/rabbit-client/rabit-client.container.js';
 import { createRabbitServerContainer } from './core/rabit-server/rabit-server.container.js';
 import { createSubscriberContainer } from './modules/subscriber/subscriber.container.js';
@@ -31,7 +31,7 @@ async function bootstrap() {
     createOrderContainer(),
     createBalanceContainer(),
     createReviewContainer(),
-    createTrainingRequestContainer(),
+    createRequestContainer(),
     createSubscriberContainer(),
     createNotificationContainer(),
   );

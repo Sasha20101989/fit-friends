@@ -1,4 +1,4 @@
-import { WorkoutType } from "../../../types/workout-type.enum.js";
+import { WorkoutType } from '../../../types/workout-type.enum.js';
 
 export type UserFilter = {
   location?: string;

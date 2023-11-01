@@ -8,7 +8,7 @@ import { TrainerEntity } from '../trainer/trainer.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
-export interface TrainingRequestEntity extends defaultClasses.Base {}
+export interface RequestEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
@@ -19,7 +19,7 @@ export interface TrainingRequestEntity extends defaultClasses.Base {}
   }
 })
 
-export class TrainingRequestEntity extends defaultClasses.TimeStamps {
+export class RequestEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, ref: UserEntity })
   public initiator!: Ref<UserEntity>;
 
@@ -33,4 +33,4 @@ export class TrainingRequestEntity extends defaultClasses.TimeStamps {
   public requestType!: RequestType;
 }
 
-export const TrainingRequestModel = getModelForClass(TrainingRequestEntity);
+export const RequestModel = getModelForClass(RequestEntity);

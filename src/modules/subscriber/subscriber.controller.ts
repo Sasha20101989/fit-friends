@@ -31,8 +31,8 @@ export default class SubscriberController extends Controller {
     this.logger.info('Register routes for SubscriberController...');
 
     this.addRoute({ path: '/trainer/:trainerId',
-    method: HttpMethod.Post,
-    handler: this.create,
+      method: HttpMethod.Post,
+      handler: this.create,
       middlewares: [
         new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('trainerId'),

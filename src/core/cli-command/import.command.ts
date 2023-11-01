@@ -31,11 +31,11 @@ import { BalanceServiceInterface } from '../../modules/balance/balance-service.i
 import BalanceService from '../../modules/balance/balance-service.js';
 import { BalanceModel } from '../../modules/balance/balance.entity.js';
 import { generateRandomUserId, generateRandomUserOrTrainerId } from '../../modules/data-generator/random.js';
-import { TrainingRequestServiceInterface } from '../../modules/trainingRequest/training-request-service.interface.js';
-import TrainingRequestService from '../../modules/trainingRequest/training-request-service.js';
-import { TrainingRequestModel } from '../../modules/trainingRequest/training-request.entity.js';
-import { RequestStatus } from '../../modules/trainingRequest/types/request-status.enum.js';
-import { TrainingRequest } from '../../modules/trainingRequest/types/training-request.type.js';
+import { RequestServiceInterface } from '../../modules/request/request-service.interface.js';
+import RequestService from '../../modules/request/request-service.js';
+import { RequestModel } from '../../modules/request/request.entity.js';
+import { RequestStatus } from '../../modules/request/types/request-status.enum.js';
+import { Request } from '../../modules/request/types/request.type.js';
 import { ReviewServiceInterface } from '../../modules/review/review-service.interface.js';
 import ReviewService from '../../modules/review/review-service.js';
 import { ReviewModel } from '../../modules/review/review.entity.js';
@@ -56,7 +56,7 @@ export default class ImportCommand implements CliCommandInterface {
   private rabbitClient!: RabbitClientInterface;
   private orderService!: OrderServiceInterface;
   private balanceService!: BalanceServiceInterface;
-  private requestService!: TrainingRequestServiceInterface;
+  private requestService!: RequestServiceInterface;
   private reviewService!: ReviewServiceInterface;
   private notificationService!: NotificationServiceInterface;
   private databaseService!: DatabaseClientInterface;
@@ -74,7 +74,7 @@ export default class ImportCommand implements CliCommandInterface {
     this.orderService = new OrderService(this.logger, OrderModel, this.trainingService);
     this.databaseService = new MongoClientService(this.logger);
     this.balanceService = new BalanceService(BalanceModel);
-    this.requestService = new TrainingRequestService(this.logger, TrainingRequestModel);
+    this.requestService = new RequestService(this.logger, RequestModel);
     this.reviewService = new ReviewService(this.logger, ReviewModel, TrainingModel);
     this.notificationService = new NotificationService(NotificationModel);
   }
@@ -87,7 +87,7 @@ export default class ImportCommand implements CliCommandInterface {
     await this.reviewService.create({...review}, trainingId, userId);
   }
 
-  private async saveRequest(request: TrainingRequest, initiatorId: string, userId: string, requestStatus: RequestStatus) {
+  private async saveRequest(request: Request, initiatorId: string, userId: string, requestStatus: RequestStatus) {
     await this.requestService.create({...request}, initiatorId, userId, requestStatus);
   }
 
@@ -135,15 +135,14 @@ export default class ImportCommand implements CliCommandInterface {
     const userIds: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
-        const user = users[i];
-
-        const result = await this.saveUser(user);
-        userIds.push(result.id);
+      const user = users[i];
+      const result = await this.saveUser(user);
+      userIds.push(result.id);
     }
 
     this.logger.info('All users have been generated and saved.');
     return userIds;
-}
+  }
 
   private async generateAndSaveTrainers(): Promise<string[]> {
     const trainerIds: string[] = [];
@@ -213,21 +212,18 @@ export default class ImportCommand implements CliCommandInterface {
     const promises: Promise<void>[] = [];
     const usedPairs: Set<string> = new Set();
 
-    for (let i = 0; i < requests.length; i++) {
-      const request = requests[i];
+    for (const request of requests) {
       let initiatorId: string;
       let userId: string;
+      let pairKey: string;
 
       do {
         initiatorId = generateRandomUserId(userIds);
         userId = generateRandomUserOrTrainerId([...trainerIds, ...userIds]);
-        const pairKey = `${initiatorId}-${userId}`;
+        pairKey = `${initiatorId}-${userId}`;
+      } while (usedPairs.has(pairKey));
 
-        if (!usedPairs.has(pairKey)) {
-          usedPairs.add(pairKey);
-          break;
-        }
-      } while (true);
+      usedPairs.add(pairKey);
 
       await this.saveRequest(request, initiatorId, userId, request.status);
 

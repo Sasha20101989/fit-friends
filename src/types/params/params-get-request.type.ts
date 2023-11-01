@@ -1,3 +1,3 @@
 export type ParamsGetRequest = {
-  trainingRequestId: string;
+  requestId: string;
 }

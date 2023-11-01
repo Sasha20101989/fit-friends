@@ -14,7 +14,7 @@ export default class RabbitClientService implements RabbitClientInterface {
   ) {}
 
   public async initialize(rabbitConnectionString: string): Promise<Connection>{
-      return await connect(rabbitConnectionString);
+    return await connect(rabbitConnectionString);
   }
 
   public async produce(routingKey: RabbitRouting, data: Subscriber): Promise<Subscriber> {

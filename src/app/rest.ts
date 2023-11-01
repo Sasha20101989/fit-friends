@@ -1,3 +1,5 @@
+import EventEmitter from 'node:events';
+
 import express, { Express } from 'express';
 import { inject, injectable } from 'inversify';
 import cors from 'cors';
@@ -20,7 +22,6 @@ import { RabbitServerInterface } from '../core/rabit-server/rabit-server.interfa
 import { getRabbitMQConnectionString } from '../core/helpers/index.js';
 import { ServerConsumerInterface } from '../core/rabit-server/consumer/server-consumer.interface.js';
 import { ServerProducerInterface } from '../core/rabit-server/producer/server-producer.interface.js';
-import EventEmitter from 'events';
 import { ClientConsumerInterface } from '../core/rabbit-client/consumer/client-consumer.interface.js';
 import { ClientProducerInterface } from '../core/rabbit-client/producer/client-producer.interface.js';
 import { RabbitRouting } from '../types/rabbit-routing.enum.js';
@@ -41,7 +42,7 @@ export default class RestApplication {
     @inject(AppComponent.BalanceController) private readonly balanceController: ControllerInterface,
     @inject(AppComponent.ReviewController) private readonly reviewController: ControllerInterface,
     @inject(AppComponent.SubscriberController) private readonly subscriberController: ControllerInterface,
-    @inject(AppComponent.TrainingRequestController) private readonly trainingRequestController: ControllerInterface,
+    @inject(AppComponent.RequestController) private readonly requestController: ControllerInterface,
     @inject(AppComponent.NotificationController) private readonly notificationController: ControllerInterface,
     @inject(AppComponent.RabbitClientInterface) private readonly rabbitClient: RabbitClientInterface,
     @inject(AppComponent.RabbitServerInterface) private readonly rabbitServer: RabbitServerInterface,
@@ -162,7 +163,7 @@ export default class RestApplication {
     this.expressApplication.use('/balance', this.balanceController.router);
     this.expressApplication.use('/balance', this.balanceController.router);
     this.expressApplication.use('/reviews', this.reviewController.router);
-    this.expressApplication.use('/requests', this.trainingRequestController.router);
+    this.expressApplication.use('/requests', this.requestController.router);
     this.expressApplication.use('/subscribes', this.subscriberController.router);
     this.expressApplication.use('/notifications', this.notificationController.router);
 
@@ -195,11 +196,11 @@ export default class RestApplication {
     });
 
     await this._initRabitMQClient().catch((error) => {
-      this.logger.error(`Error during rabbitMq client initialization: ${error.message}`)
-    })
+      this.logger.error(`Error during rabbitMq client initialization: ${error.message}`);
+    });
 
     await this._initRabitMQServer().catch((error) => {
-      this.logger.error(`Error during rabbitMq server initialization: ${error.message}`)
-    })
+      this.logger.error(`Error during rabbitMq server initialization: ${error.message}`);
+    });
   }
 }

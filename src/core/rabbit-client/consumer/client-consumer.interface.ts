@@ -1,5 +1,5 @@
-import { Channel } from "amqplib";
-import { EventEmitter } from "events";
+import EventEmitter from 'node:events';
+import { Channel } from 'amqplib';
 
 export interface ClientConsumerInterface {
   initialize(channel: Channel, replyQueueName: string, eventEmitter: EventEmitter): Promise<void>;

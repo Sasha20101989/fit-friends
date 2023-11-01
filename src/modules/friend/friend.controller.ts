@@ -23,7 +23,7 @@ import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middlewar
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { FriendQueryParams } from './types/friend-query-params.js';
-import { RequestType } from '../trainingRequest/types/request-type.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
 
 @injectable()
 export default class FriendController extends Controller {

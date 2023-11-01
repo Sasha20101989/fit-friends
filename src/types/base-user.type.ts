@@ -1,4 +1,4 @@
-import { Gender } from './gender.enum..js';
+import { Gender } from './gender.enum.js';
 import { Location } from './location.enum.js';
 import { TrainingLevel } from './training-level.enum.js';
 import { WorkoutType } from './workout-type.enum.js';

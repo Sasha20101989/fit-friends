@@ -139,13 +139,13 @@ export default class UserService implements UserServiceInterface {
 
   private applyLocationFilter(query: UserQueryParams, filter: UserFilter): void {
     if (query.location && Object.values(Location).includes(query.location)) {
-        filter.location = query.location.toLowerCase();
+      filter.location = query.location.toLowerCase();
     }
   }
 
   private applyTrainingLevelFilter(query: UserQueryParams, filter: UserFilter): void {
     if (query.trainingLevel && Object.values(TrainingLevel).includes(query.trainingLevel)) {
-        filter.trainingLevel = query.trainingLevel.toLowerCase();
+      filter.trainingLevel = query.trainingLevel.toLowerCase();
     }
   }
 }

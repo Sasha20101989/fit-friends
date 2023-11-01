@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import * as core from 'express-serve-static-core';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
-import type { TrainingRequestServiceInterface } from './training-request-service.interface.js';
+import type { RequestServiceInterface } from './request-service.interface.js';
 import type { ConfigInterface } from '../../core/config/config.interface.js';
 import { Controller } from '../../core/controller/controller.abstract.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
@@ -13,14 +13,14 @@ import { RestSchema } from '../../core/config/rest.schema.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
-import CreateTrainingRequestDto from './dto/create-training-request.dto.js';
-import TrainingRequestRdo from './rdo/trainingRequest.rdo.js';
+import CreateRequestDto from './dto/create-request.dto.js';
+import RequestRdo from './rdo/request.rdo.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { Role } from '../../types/role.enum.js';
 import { RequestStatus } from './types/request-status.enum.js';
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
-import UpdateTrainingRequestDto from './dto/update-training-request.dto.js';
+import UpdateRequestDto from './dto/update-request.dto.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ParamsGetRequest } from '../../types/params/params-get-request.type.js';
@@ -29,16 +29,16 @@ import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middlewar
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
 
 @injectable()
-export default class TrainingRequestController extends Controller {
+export default class RequestController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
-    @inject(AppComponent.TrainingRequestServiceInterface) private readonly trainingRequestService: TrainingRequestServiceInterface,
+    @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
-    this.logger.info('Register routes for TrainingRequestController...');
+    this.logger.info('Register routes for RequestController...');
 
     this.addRoute({ path: '/user/:userId',
       method: HttpMethod.Post,
@@ -48,53 +48,53 @@ export default class TrainingRequestController extends Controller {
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('userId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
-        new ValidateDtoMiddleware(CreateTrainingRequestDto)
+        new ValidateDtoMiddleware(CreateRequestDto)
       ]
     });
-    this.addRoute({ path: '/:trainingRequestId',
+    this.addRoute({ path: '/:requestId',
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new ValidateObjectIdMiddleware('trainingRequestId'),
-        new DocumentExistsMiddleware(this.trainingRequestService, 'TrainingRequest', 'trainingRequestId'),
-        new ValidateDtoMiddleware(UpdateTrainingRequestDto)
+        new ValidateObjectIdMiddleware('requestId'),
+        new DocumentExistsMiddleware(this.requestService, 'Request', 'requestId'),
+        new ValidateDtoMiddleware(UpdateRequestDto)
       ]
     });
   }
 
   //TODO: Общее
   public async create(
-    { params, body, user: initiator }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateTrainingRequestDto>,
+    { params, body, user: initiator }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateRequestDto>,
     res: Response
   ): Promise<void> {
     const { userId } = params;
 
-    if (await this.trainingRequestService.existsRequestByType(initiator.id, userId, body.requestType)) {
+    if (await this.requestService.existsRequestByType(initiator.id, userId, body.requestType)) {
       throw new HttpError(
         StatusCodes.CONFLICT,
         `${body.requestType} request with initiator id ${initiator.id} and user id ${userId} exists.`,
-        'TrainingRequestController'
+        'RequestController'
       );
     }
 
     const defaultStatus = RequestStatus.Pending;
 
-    const request = await this.trainingRequestService.create({...body}, initiator.id, userId, defaultStatus);
+    const request = await this.requestService.create({...body}, initiator.id, userId, defaultStatus);
 
-    this.created(res, fillDTO(TrainingRequestRdo, request));
+    this.created(res, fillDTO(RequestRdo, request));
 
     await this.notificationService.createNotification(userId, body.requestType);
   }
 
   //TODO: Общее
   public async update(
-    { params, body }: Request<core.ParamsDictionary | ParamsGetRequest, UnknownRecord, UpdateTrainingRequestDto>,
+    { params, body }: Request<core.ParamsDictionary | ParamsGetRequest, UnknownRecord, UpdateRequestDto>,
     res: Response
   ) {
-    const { trainingRequestId } = params;
+    const { requestId } = params;
 
-    const updatedRequest = await this.trainingRequestService.updateStatus({ ...body }, trainingRequestId);
-    this.ok(res, fillDTO(TrainingRequestRdo, updatedRequest));
+    const updatedRequest = await this.requestService.updateStatus({ ...body }, requestId);
+    this.ok(res, fillDTO(RequestRdo, updatedRequest));
   }
 }

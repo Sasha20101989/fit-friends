@@ -1,10 +1,9 @@
-import { Channel } from "amqplib";
-import { inject, injectable } from "inversify";
-
-import { AppComponent } from "../../../types/common/app-component.enum.js";
-import { LoggerInterface } from "../../logger/logger.interface.js";
-import { ServerProducerInterface } from "./server-producer.interface.js";
-import { Subscriber } from "../../../modules/subscriber/types/subscriber.interface.js";
+import { Channel } from 'amqplib';
+import { injectable, inject } from 'inversify';
+import { Subscriber } from '../../../modules/subscriber/types/subscriber.interface.js';
+import { AppComponent } from '../../../types/common/app-component.enum.js';
+import { LoggerInterface } from '../../logger/logger.interface.js';
+import { ServerProducerInterface } from './server-producer.interface.js';
 
 @injectable()
 export default class ServerProducer implements ServerProducerInterface {

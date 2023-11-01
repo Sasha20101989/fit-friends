@@ -1,4 +1,4 @@
-import { User } from "../../user/types/user.interface.js";
+import { User } from '../../user/types/user.interface.js';
 
 export interface Subscriber {
   id?: string;

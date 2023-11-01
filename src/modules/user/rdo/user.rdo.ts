@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-import { Gender } from '../../../types/gender.enum..js';
+import { Gender } from '../../../types/gender.enum.js';
 import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';

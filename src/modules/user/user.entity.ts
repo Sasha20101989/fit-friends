@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import { Role } from '../../types/role.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
-import { Gender } from '../../types/gender.enum..js';
+import { Gender } from '../../types/gender.enum.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';

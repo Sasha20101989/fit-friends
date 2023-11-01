@@ -1,5 +1,5 @@
-import { Sorting } from "../../../types/sorting.enum.js";
-import { WorkoutType } from "../../../types/workout-type.enum.js";
+import { Sorting } from '../../../types/sorting.enum.js';
+import { WorkoutType } from '../../../types/workout-type.enum.js';
 
 export type TrainingFilter = {
   trainer?: string;
