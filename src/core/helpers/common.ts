@@ -7,6 +7,9 @@ import { Response } from 'express';
 import { DEFAULT_MAX_AGE_TOKEN } from '../../modules/user/user.const.js';
 import { Token } from '../../modules/token/types/token.enum.js';
 import { Sorting } from '../../types/sorting.enum.js';
+import { QueryTypes } from '../../types/query-types.interface.js';
+import { FilterTypes } from '../../types/filter-types.interface.js';
+import { WorkoutType } from '../../types/workout-type.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -93,4 +96,20 @@ export function getSortOptionsForCreatedAt(querySortDirection?: Sorting, default
   }
 
   return sort;
+}
+
+export function applyWorkoutTypesFilter<TQuery extends QueryTypes, TFilter extends FilterTypes>(
+  query: TQuery,
+  filter: TFilter
+): void {
+  if (query.workoutTypes) {
+    const workoutTypeValues = Object.values(WorkoutType) as string[];
+      const workoutTypesArray = query.workoutTypes.toString().toLowerCase().split(',').map((type) => type.trim()) as WorkoutType[];
+
+      const isValidWorkoutType = workoutTypesArray.every((type) => workoutTypeValues.includes(type));
+
+      if (isValidWorkoutType) {
+          filter.workoutTypes = { $in: workoutTypesArray };
+      }
+  }
 }

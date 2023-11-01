@@ -65,7 +65,7 @@ export default class OrderController extends Controller {
 
   //TODO: добавить того кто оформил
   public async create(
-    { params, body }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateOrderDto>,
+    { params, body, user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateOrderDto>,
     res: Response
   ): Promise<void> {
     const { trainingId } = params;
@@ -79,7 +79,7 @@ export default class OrderController extends Controller {
       );
     }
 
-    const order = await this.orderService.create({...body}, training);
+    const order = await this.orderService.create({...body}, training, user.id);
 
     this.created(res, fillDTO(OrderRdo, order));
   }

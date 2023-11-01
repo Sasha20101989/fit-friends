@@ -15,6 +15,9 @@ import { VerifyUserResponse } from './response/verify-user.response.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { Role } from '../../types/role.enum.js';
 import { UserFilter } from './types/user-filter.type.js';
+import { applyWorkoutTypesFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
+import { Location } from '../../types/location.enum.js';
+import { TrainingLevel } from '../../types/training-level.enum.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
@@ -107,31 +110,19 @@ export default class UserService implements UserServiceInterface {
 
   public async GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>{
     const filter: UserFilter = {};
-    const sort: { [key: string]: Sorting } = {};
+    let sort: { [key: string]: Sorting } = {};
     const userLimit = Math.min(query.limit || DEFAULT_USER_COUNT, DEFAULT_USER_COUNT);
     const page = query.page || 1;
     const skip = (page - 1) * userLimit;
 
-    if (query.location) {
-      filter.location = query.location.toLowerCase();
-    }
+    this.applyLocationFilter(query, filter);
+    applyWorkoutTypesFilter<UserQueryParams, UserFilter>(query, filter);
+    this.applyTrainingLevelFilter(query, filter);
 
-    if (query.workoutTypes) {
-      filter.workoutTypes = { $in: query.workoutTypes.toString().toLowerCase().split(',').map((type) => type.trim()) };
-    }
-
-    if (query.trainingLevel) {
-      filter.trainingLevel = query.trainingLevel.toLowerCase();
-    }
-
-    if (query.sortBy) {
-      if (query.sortBy === Role.User){
-        sort['role'] = Sorting.Ascending;
-      }
-
-      sort['role'] = Sorting.Descending;
-    }else{
-      sort['createdAt'] = Sorting.Descending;
+    if (query.sortBy && Object.values(Role).includes(query.sortBy)) {
+      sort['role'] = (query.sortBy === Role.User) ? Sorting.Ascending : Sorting.Descending;
+    } else {
+      sort = getSortOptionsForCreatedAt(query.createdAtDirection);
     }
 
     const users = await this.userModel
@@ -144,5 +135,17 @@ export default class UserService implements UserServiceInterface {
 
   public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({ _id: userId});
+  }
+
+  private applyLocationFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.location && Object.values(Location).includes(query.location)) {
+        filter.location = query.location.toLowerCase();
+    }
+  }
+
+  private applyTrainingLevelFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.trainingLevel && Object.values(TrainingLevel).includes(query.trainingLevel)) {
+        filter.trainingLevel = query.trainingLevel.toLowerCase();
+    }
   }
 }

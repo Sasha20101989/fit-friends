@@ -9,8 +9,9 @@ export type TrainingQueryParams = {
   maxCalories?: number;
   rating?: string;
   workoutDuration?: WorkoutDuration[];
-  workoutType?: WorkoutType[];
+  workoutTypes?: WorkoutType[];
   sortByPrice?: Sorting;
   limit?: number;
   page?: number;
+  createdAtDirection?: Sorting;
 }

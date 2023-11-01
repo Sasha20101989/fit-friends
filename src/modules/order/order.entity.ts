@@ -3,6 +3,7 @@ import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 import { PaymentMethod } from './types/payment-method.enum.js';
 import { PurchaseType } from './types/purchase-type.enum.js';
 import { TrainingEntity } from '../training/training.entity.js';
+import { UserEntity } from '../user/user.entity.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -18,6 +19,9 @@ export interface OrderEntity extends defaultClasses.Base {}
 })
 
 export class OrderEntity extends defaultClasses.TimeStamps {
+  @prop({ ref: UserEntity, required: true })
+  public user!: Ref<UserEntity>;
+
   @prop({ required: true })
   public purchaseType!: PurchaseType;
 

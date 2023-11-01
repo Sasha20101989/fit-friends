@@ -24,4 +24,7 @@ export default class OrderRdo {
 
   @Expose()
   public paymentMethod!: PaymentMethod;
+
+  @Expose()
+  public createdAt!: string;
 }

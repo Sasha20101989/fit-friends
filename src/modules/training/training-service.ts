@@ -17,20 +17,8 @@ import { User } from '../user/types/user.interface.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { DEFAULT_TRAINING_COUNT } from './training.const.js';
-
-type TrainingFilter = {
-  trainer?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  minCalories?: number;
-  maxCalories?: number;
-  rating?: number;
-  workoutDuration?: { $in: string[] };
-  price?: { $gte?: number; $lte?: number };
-  calories?: { $gte?: number; $lte?: number };
-  workoutType?: { $in: string[] };
-  sortByPrice?: Sorting;
-}
+import { applyWorkoutTypesFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
+import { TrainingFilter } from './types/training-filter.type.js';
 
 @injectable()
 export default class TrainingService implements TrainingServiceInterface {
@@ -66,7 +54,7 @@ export default class TrainingService implements TrainingServiceInterface {
   public async find(query: TrainingQueryParams, trainerId?: MongoId): Promise<DocumentType<TrainingEntity>[]>{
     const trainingLimit = Math.min(query.limit || DEFAULT_TRAINING_COUNT, DEFAULT_TRAINING_COUNT);
     const filter: TrainingFilter = {};
-    const sort: { [key: string]: Sorting } = {};
+    let sort: { [key: string]: Sorting } = {};
     const page = query.page || 1;
     const skip = (page - 1) * trainingLimit;
 
@@ -74,56 +62,9 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.trainer = trainerId;
     }
 
-    if (query.minPrice !== undefined) {
-      filter.price = { $gte: query.minPrice };
-    }
-
-    if (query.maxPrice !== undefined) {
-      if (!filter.price) {
-        filter.price = {};
-      }
-      filter.price.$lte = query.maxPrice;
-    }
-
-    if (query.minCalories !== undefined) {
-      filter.calories = { $gte: query.minCalories };
-    }
-
-    if (query.maxCalories !== undefined) {
-      if (!filter.calories) {
-        filter.calories = {};
-      }
-      filter.calories.$lte = query.maxCalories;
-    }
-
-    if (query.rating !== undefined) {
-      const rating = parseInt(query.rating, 10);
-      if(Number.isInteger(rating) && rating >= 0 && rating <= 5){
-        filter.rating = rating;
-      }
-    }
-
-    if (query.workoutDuration) {
-      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
-
-      const durationFilters: { [key in WorkoutDuration]: string } = {
-        [WorkoutDuration.Short]: WorkoutDuration.Short,
-        [WorkoutDuration.Medium]: WorkoutDuration.Medium,
-        [WorkoutDuration.Long]: WorkoutDuration.Long,
-        [WorkoutDuration.ExtraLong]: WorkoutDuration.ExtraLong,
-      };
-
-      const filterValues = workoutDurationsArray
-        .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
-        .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
-
-      filter.workoutDuration = { $in: filterValues };
-    }
-
-    if (query.workoutType) {
-      const workoutTypesArray = query.workoutType.toString().toLowerCase().split(',').map((type) => type.trim());
-      filter.workoutType = { $in: workoutTypesArray };
-    }
+    this.applyFilters(query, filter);
+    this.applyWorkoutDurationFilter(query, filter);
+    applyWorkoutTypesFilter<TrainingQueryParams, TrainingFilter>(query, filter);
 
     let queryResult = this.trainingModel
       .find(filter)
@@ -138,7 +79,8 @@ export default class TrainingService implements TrainingServiceInterface {
 
       queryResult = queryResult.sort(sort);
     }else{
-      sort['createdAt'] = Sorting.Descending;
+      sort = getSortOptionsForCreatedAt(query.createdAtDirection);
+      queryResult = queryResult.sort(sort);
     }
 
     const trainings = await queryResult.skip(skip).limit(trainingLimit);
@@ -166,6 +108,56 @@ export default class TrainingService implements TrainingServiceInterface {
       };
 
       await this.rabbitClient.produce(RabbitRouting.AddTraining, notification);
+    }
+  }
+
+  private applyFilters(query: TrainingQueryParams, filter: TrainingFilter): void {
+    if (query.minPrice !== undefined) {
+        filter.price = { $gte: query.minPrice };
+    }
+
+    if (query.maxPrice !== undefined) {
+      if (!filter.price) {
+          filter.price = {};
+      }
+      filter.price.$lte = query.maxPrice;
+    }
+
+    if (query.minCalories !== undefined) {
+        filter.calories = { $gte: query.minCalories };
+    }
+
+    if (query.maxCalories !== undefined) {
+      if (!filter.calories) {
+          filter.calories = {};
+      }
+      filter.calories.$lte = query.maxCalories;
+    }
+
+    if (query.rating !== undefined) {
+        const rating = parseInt(query.rating, 10);
+        if (Number.isInteger(rating) && rating >= 0 && rating <= 5) {
+            filter.rating = rating;
+        }
+    }
+  }
+
+  private applyWorkoutDurationFilter(query: TrainingQueryParams, filter: TrainingFilter): void {
+    if (query.workoutDuration) {
+        const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
+
+        const durationFilters: { [key in WorkoutDuration]: string } = {
+            [WorkoutDuration.Short]: WorkoutDuration.Short,
+            [WorkoutDuration.Medium]: WorkoutDuration.Medium,
+            [WorkoutDuration.Long]: WorkoutDuration.Long,
+            [WorkoutDuration.ExtraLong]: WorkoutDuration.ExtraLong,
+        };
+
+        const filterValues = workoutDurationsArray
+            .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
+            .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
+
+        filter.workoutDuration = { $in: filterValues };
     }
   }
 }

@@ -7,7 +7,7 @@ import { MongoId } from '../../types/common/mongo-id.type.js';
 import { TrainingEntity } from '../training/training.entity.js';
 
 export interface OrderServiceInterface{
-  create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null>;
+  create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>, userId: MongoId): Promise<DocumentType<OrderEntity> | null>;
   exists(documentId: MongoId): Promise<boolean>;
-  findByTrainerId(trainerId: MongoId, query: OrderQueryParams, limit?: number): Promise<TrainingOrderRdo[]>;
+  findByTrainerId(trainerId: MongoId, query: OrderQueryParams): Promise<TrainingOrderRdo[]>;
 }

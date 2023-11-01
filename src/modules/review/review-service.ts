@@ -11,6 +11,7 @@ import { TrainingEntity } from '../training/training.entity.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
 import { DEFAULT_REVIEW_COUNT } from './review.const.js';
 import { ReviewQueryParams } from './types/review-query-params.js';
+import { getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
 
 @injectable()
 export default class ReviewService implements ReviewServiceInterface {
@@ -24,9 +25,12 @@ export default class ReviewService implements ReviewServiceInterface {
     const reviewLimit = Math.min(query?.limit || DEFAULT_REVIEW_COUNT, DEFAULT_REVIEW_COUNT);
     const page = query?.page || 1;
     const skip = (page - 1) * reviewLimit;
+
+    const sort = getSortOptionsForCreatedAt(query?.sortDirection);
+
     return this.reviewModel
       .find({ training: trainingId })
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(reviewLimit)
       .populate([

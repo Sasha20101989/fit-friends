@@ -15,6 +15,7 @@ import { TrainingServiceInterface } from '../training/training-service.interface
 import { calculateSum } from '../../core/helpers/index.js';
 import { TrainingEntity } from '../training/training.entity.js';
 import { DEFAULT_ORDER_COUNT } from './order.const.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
 
 @injectable()
 export default class OrderService implements OrderServiceInterface {
@@ -24,9 +25,9 @@ export default class OrderService implements OrderServiceInterface {
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
   ){}
 
-  public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>): Promise<DocumentType<OrderEntity> | null> {
+  public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>, userId: MongoId): Promise<DocumentType<OrderEntity> | null> {
     const totalAmount = training.price * dto.quantity;
-    const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price});
+    const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price, user: userId});
     this.logger.info(`New order created: ${dto.purchaseType}`);
     return result;
   }
@@ -54,7 +55,7 @@ export default class OrderService implements OrderServiceInterface {
     return trainingInfoList;
   }
 
-  public async findByTrainerId(trainerId: string, query: OrderQueryParams, _limit?: number): Promise<TrainingOrderRdo[]> {
+  public async findByTrainerId(trainerId: MongoId, query: OrderQueryParams): Promise<TrainingOrderRdo[]> {
     const trainingInfoList: TrainingOrderRdo[] = [];
     const orderLimit = Math.min(query.limit || DEFAULT_ORDER_COUNT, DEFAULT_ORDER_COUNT);
     const page = query?.page || 1;
@@ -80,11 +81,11 @@ export default class OrderService implements OrderServiceInterface {
     return trainingInfoList.slice(skip, skip + orderLimit);
   }
 
-  public async exists(documentId: string): Promise<boolean> {
+  public async exists(documentId: MongoId): Promise<boolean> {
     return this.orderModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public async findByTrainingId(trainingId: string): Promise<DocumentType<OrderEntity>[]> {
+  public async findByTrainingId(trainingId: MongoId): Promise<DocumentType<OrderEntity>[]> {
     return this.orderModel.find({ training: trainingId }).populate('training');
   }
 }
