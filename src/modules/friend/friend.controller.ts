@@ -21,9 +21,9 @@ import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ParamsGetFriend } from '../../types/params/params-get-friend.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
-import { Notification, NotificationType } from '../notification/types/notification.type.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { FriendQueryParams } from './types/friend-query-params.js';
+import { RequestType } from '../trainingRequest/types/request-type.enum.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -105,13 +105,7 @@ export default class FriendController extends Controller {
 
     this.created(res, fillDTO(UserRdo, result));
 
-    const notification: Notification = {
-      user: friendId,
-      type: NotificationType.FriendRequest,
-      text: `${result?.name} добавил вас в свой список друзей.`
-    }
-
-    await this.notificationService.create(notification);
+    await this.notificationService.createNotification(friendId, RequestType.Friend);
   }
 
   //TODO:Кабинет тренер

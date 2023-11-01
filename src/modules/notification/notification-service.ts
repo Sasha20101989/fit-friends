@@ -6,8 +6,10 @@ import { NotificationServiceInterface } from './notification-service.interface.j
 import { NotificationEntity } from './notification.entity.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
-import { Notification } from './types/notification.type.js';
 import { DEFAULT_NOTIFICATION_COUNT } from './notification.const.js';
+import { Notification } from './types/notification.type.js';
+import { generateNotification } from '../../core/helpers/common.js';
+import { RequestType } from '../trainingRequest/types/request-type.enum.js';
 
 @injectable()
 export default class NotificationService implements NotificationServiceInterface {
@@ -42,5 +44,15 @@ export default class NotificationService implements NotificationServiceInterface
 
     public async exists(documentId: string): Promise<boolean> {
       return this.notificationModel.exists({ _id: documentId }).then((v) => v !== null);
+    }
+
+    public async createNotification(targetUserId: string, requestType: RequestType): Promise<void> {
+        const notification: Notification = {
+          user: targetUserId,
+          type: requestType,
+          text: generateNotification(requestType),
+        };
+
+        await this.create(notification);
     }
 }

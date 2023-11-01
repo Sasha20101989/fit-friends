@@ -1,5 +1,5 @@
 import { OrderServiceInterface } from './../../modules/order/order-service.interface';
-import { orders, trainers, trainings, users } from '../../modules/data-generator/data-generator.js';
+import { balances, notifications, orders, requests, reviews, trainers, trainings, users } from '../../modules/data-generator/data-generator.js';
 import { TrainerServiceInterface } from '../../modules/trainer/trainer-service.interface.js';
 import TrainerService from '../../modules/trainer/trainer-service.js';
 import { TrainerEntity, TrainerModel } from '../../modules/trainer/trainer.entity.js';
@@ -26,6 +26,24 @@ import OrderService from '../../modules/order/order-service.js';
 import { OrderModel } from '../../modules/order/order.entity.js';
 import { SubscriberServiceInterface } from '../../modules/subscriber/subscriber-service.interface.js';
 import { RabbitClientInterface } from '../rabbit-client/rabit-client.interface.js';
+import { UserBalance } from '../../modules/user/types/user-balance.type.js';
+import { BalanceServiceInterface } from '../../modules/balance/balance-service.interface.js';
+import BalanceService from '../../modules/balance/balance-service.js';
+import { BalanceModel } from '../../modules/balance/balance.entity.js';
+import { generateRandomUserId, generateRandomUserOrTrainerId } from '../../modules/data-generator/random.js';
+import { TrainingRequestServiceInterface } from '../../modules/trainingRequest/training-request-service.interface.js';
+import TrainingRequestService from '../../modules/trainingRequest/training-request-service.js';
+import { TrainingRequestModel } from '../../modules/trainingRequest/training-request.entity.js';
+import { RequestStatus } from '../../modules/trainingRequest/types/request-status.enum.js';
+import { TrainingRequest } from '../../modules/trainingRequest/types/training-request.type.js';
+import { ReviewServiceInterface } from '../../modules/review/review-service.interface.js';
+import ReviewService from '../../modules/review/review-service.js';
+import { ReviewModel } from '../../modules/review/review.entity.js';
+import { Review } from '../../modules/review/types/review.type.js';
+import { NotificationServiceInterface } from '../../modules/notification/notification-service.interface.js';
+import NotificationService from '../../modules/notification/notification-service.js';
+import { NotificationModel } from '../../modules/notification/notification.entity.js';
+import { Notification } from '../../modules/notification/types/notification.type.js';
 
 const DEFAULT_USER_PASSWORD = '123456';
 
@@ -37,6 +55,10 @@ export default class ImportCommand implements CliCommandInterface {
   private subscriberService!: SubscriberServiceInterface;
   private rabbitClient!: RabbitClientInterface;
   private orderService!: OrderServiceInterface;
+  private balanceService!: BalanceServiceInterface;
+  private requestService!: TrainingRequestServiceInterface;
+  private reviewService!: ReviewServiceInterface;
+  private notificationService!: NotificationServiceInterface;
   private databaseService!: DatabaseClientInterface;
   private logger: LoggerInterface;
   private configService: ConfigService;
@@ -51,13 +73,38 @@ export default class ImportCommand implements CliCommandInterface {
     this.trainingService = new TrainingService(this.logger, TrainingModel, this.subscriberService, this.rabbitClient);
     this.orderService = new OrderService(this.logger, OrderModel, this.trainingService);
     this.databaseService = new MongoClientService(this.logger);
+    this.balanceService = new BalanceService(BalanceModel);
+    this.requestService = new TrainingRequestService(this.logger, TrainingRequestModel);
+    this.reviewService = new ReviewService(this.logger, ReviewModel, TrainingModel);
+    this.notificationService = new NotificationService(NotificationModel);
+  }
+
+  private async saveNotification(notification: Notification) {
+    await this.notificationService.create({...notification});
+  }
+
+  private async saveReview(review: Review, trainingId: string, userId: string) {
+    await this.reviewService.create({...review}, trainingId, userId);
+  }
+
+  private async saveRequest(request: TrainingRequest, initiatorId: string, userId: string, requestStatus: RequestStatus) {
+    await this.requestService.create({...request}, initiatorId, userId, requestStatus);
   }
 
   private async saveUser(user: User) {
-    await this.userService.create({
+    const result = await this.userService.create({
       ...user,
       password: DEFAULT_USER_PASSWORD
     }, this.saltRounds);
+
+    if(!result.user){
+      throw new Error('Failed to create trainer');
+    }
+    return result.user;
+  }
+
+  private async saveBalance(balance: UserBalance, trainingId: string, userId: string) {
+    await this.balanceService.create({...balance}, userId, trainingId);
   }
 
   private async saveTrainer(trainer: Trainer): Promise<DocumentType<TrainerEntity>> {
@@ -77,25 +124,26 @@ export default class ImportCommand implements CliCommandInterface {
     return await this.trainingService.create({...training, trainer: trainerId});
   }
 
-  private async saveOrder(order: TrainingOrder, trainingId: string) {
-    await this.orderService.create({...order, training: trainingId});
+  private async saveOrder(order: TrainingOrder, trainingId: string, userId: string) {
+    const training = await this.trainingService.findById(trainingId);
+    if(training){
+      await this.orderService.create({...order}, training, userId);
+    }
   }
 
-  private async generateAndSaveUsers() {
-    const promises: Promise<void>[] = [];
+  private async generateAndSaveUsers(): Promise<string[]> {
+    const userIds: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
-      const user = users[i];
+        const user = users[i];
 
-      const savePromise = this.saveUser(user);
-
-      promises.push(savePromise);
+        const result = await this.saveUser(user);
+        userIds.push(result.id);
     }
 
-    await Promise.all(promises);
-
     this.logger.info('All users have been generated and saved.');
-  }
+    return userIds;
+}
 
   private async generateAndSaveTrainers(): Promise<string[]> {
     const trainerIds: string[] = [];
@@ -125,14 +173,15 @@ export default class ImportCommand implements CliCommandInterface {
     return trainingIds;
   }
 
-  private async generateAndSaveOrders(trainingIds: string[]): Promise<void> {
+  private async generateAndSaveOrders(trainingIds: string[], userIds: string[]): Promise<void> {
     const promises: Promise<void>[] = [];
 
     for (let i = 0; i < orders.length; i++) {
       const order = orders[i];
       const trainingId = trainingIds[i % trainingIds.length];
+      const userId = userIds[i % userIds.length];
 
-      await this.saveOrder(order, trainingId);
+      await this.saveOrder(order, trainingId, userId);
 
       promises.push(Promise.resolve());
     }
@@ -142,18 +191,105 @@ export default class ImportCommand implements CliCommandInterface {
     this.logger.info('All orders have been generated and saved.');
   }
 
+  private async generateAndSaveBalances(trainingIds: string[], userIds: string[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    for (let i = 0; i < balances.length; i++) {
+      const balance = balances[i];
+      const trainingId = trainingIds[i % trainingIds.length];
+      const userId = userIds[i % userIds.length];
+
+      await this.saveBalance(balance, trainingId, userId);
+
+      promises.push(Promise.resolve());
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info('All balances have been generated and saved.');
+  }
+
+  private async generateAndSaveRequests(trainerIds: string[], userIds: string[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+    const usedPairs: Set<string> = new Set();
+
+    for (let i = 0; i < requests.length; i++) {
+      const request = requests[i];
+      let initiatorId: string;
+      let userId: string;
+
+      do {
+        initiatorId = generateRandomUserId(userIds);
+        userId = generateRandomUserOrTrainerId([...trainerIds, ...userIds]);
+        const pairKey = `${initiatorId}-${userId}`;
+
+        if (!usedPairs.has(pairKey)) {
+          usedPairs.add(pairKey);
+          break;
+        }
+      } while (true);
+
+      await this.saveRequest(request, initiatorId, userId, request.status);
+
+      promises.push(Promise.resolve());
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info('All requests have been generated and saved.');
+  }
+
+  private async generateAndSaveReviews(trainingIds: string[], userIds: string[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    for (let i = 0; i < reviews.length; i++) {
+      const review = reviews[i];
+      const trainingId = trainingIds[i % trainingIds.length];
+      const userId = userIds[i % userIds.length];
+
+      await this.saveReview(review, trainingId, userId);
+
+      promises.push(Promise.resolve());
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info('All reviews have been generated and saved.');
+  }
+
+  private async generateAndSaveNotifications(userIds: string[]): Promise<void> {
+    const promises: Promise<void>[] = [];
+
+    for (let i = 0; i < notifications.length; i++) {
+      const notification = notifications[i];
+      const userId = userIds[i % userIds.length];
+      notification.user = userId;
+      await this.saveNotification(notification);
+
+      promises.push(Promise.resolve());
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info('All notifications have been generated and saved.');
+  }
+
   public async execute(login: string, password: string, host: string, dbname: string, saltRounds: string): Promise<void> {
     const defaulDbPort = this.configService.get('DB_PORT');
     const uri = getMongoURI(login, password, host, defaulDbPort, dbname);
-    this.saltRounds = parseInt(saltRounds, 10);
+    this.saltRounds = parseInt(saltRounds, this.configService.get('SALT_ROUNDS'));
 
     await this.databaseService.connect(uri);
 
     try{
-      await this.generateAndSaveUsers();
+      const userIds = await this.generateAndSaveUsers();
       const trainerIds = await this.generateAndSaveTrainers();
       const trainingIds = await this.generateAndSaveTrainings(trainerIds);
-      await this.generateAndSaveOrders(trainingIds);
+      await this.generateAndSaveOrders(trainingIds, userIds);
+      await this.generateAndSaveBalances(trainingIds, userIds);
+      await this.generateAndSaveRequests(trainingIds, userIds);
+      await this.generateAndSaveReviews(trainingIds, userIds);
+      await this.generateAndSaveNotifications(userIds);
     }catch(exception){
       this.logger.info(`User generation failed with an error: ${exception}`);
     }

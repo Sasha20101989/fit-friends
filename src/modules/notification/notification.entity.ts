@@ -2,7 +2,7 @@
 import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
 
 import { UserEntity } from '../user/user.entity.js';
-import { NotificationType } from './types/notification.type.js';
+import { RequestType } from '../trainingRequest/types/request-type.enum.js';
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -25,7 +25,7 @@ export class NotificationEntity extends defaultClasses.TimeStamps {
   public text!: string;
 
   @prop({ required: true })
-  public type!: NotificationType;
+  public type!: RequestType;
 }
 
 export const NotificationModel = getModelForClass(NotificationEntity);

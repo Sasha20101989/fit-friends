@@ -1,4 +1,3 @@
-
 import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
 import { Request, Response } from 'express';
@@ -28,7 +27,6 @@ import { ParamsGetRequest } from '../../types/params/params-get-request.type.js'
 import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
-import { Notification, NotificationType } from '../notification/types/notification.type.js';
 
 @injectable()
 export default class TrainingRequestController extends Controller {
@@ -86,13 +84,7 @@ export default class TrainingRequestController extends Controller {
 
     this.created(res, fillDTO(TrainingRequestRdo, request));
 
-    const notification: Notification = {
-      user: userId,
-      type: NotificationType.PersonalTrainingRequest,
-      text: 'Вас приглашают тренировку'
-    }
-
-    await this.notificationService.create(notification);
+    await this.notificationService.createNotification(userId, body.requestType);
   }
 
   //TODO: Общее

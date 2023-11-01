@@ -1,4 +1,5 @@
 export enum RequestType {
   Personal = 'personal',
-  Group = 'group'
+  Group = 'group',
+  Friend = 'friend'
 }

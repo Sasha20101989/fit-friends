@@ -10,6 +10,8 @@ import { Sorting } from '../../types/sorting.enum.js';
 import { QueryTypes } from '../../types/query-types.interface.js';
 import { FilterTypes } from '../../types/filter-types.interface.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
+import { notificationMessages } from '../../modules/notification/types/notification-messages.type.js';
+import { RequestType } from '../../modules/trainingRequest/types/request-type.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -111,5 +113,13 @@ export function applyWorkoutTypesFilter<TQuery extends QueryTypes, TFilter exten
       if (isValidWorkoutType) {
           filter.workoutTypes = { $in: workoutTypesArray };
       }
+  }
+}
+
+export function generateNotification(requestType: RequestType): string {
+  if (notificationMessages[requestType]) {
+    return notificationMessages[requestType];
+  } else {
+    return 'Новое уведомление';
   }
 }
