@@ -15,6 +15,7 @@ import HttpError from '../../core/errors/http-error.js';
 import { fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
 import TrainerRdo from './rdo/trainer.rdo.js';
+import { Role } from '../../types/role.enum.js';
 
 @injectable()
 export default class TrainerController extends Controller {
@@ -49,7 +50,7 @@ export default class TrainerController extends Controller {
       );
     }
 
-    const result = await this.trainerService.create(body, this.configService.get('SALT_ROUNDS'));
+    const result = await this.trainerService.create({...body, role: Role.Trainer}, this.configService.get('SALT_ROUNDS'));
 
     setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 

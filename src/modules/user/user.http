@@ -10,7 +10,6 @@ Content-Type: application/json
   "password": "123456",
   "gender": "мужской",
   "location": "звёздная",
-  "role": "пользователь",
   "backgroundImage": "image.png",
   "trainingLevel": "любитель",
   "workoutTypes": ["стрейчинг", "аэробика"],

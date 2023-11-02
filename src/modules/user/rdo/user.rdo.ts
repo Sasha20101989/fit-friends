@@ -57,8 +57,5 @@ export default class UserRdo {
   public readinessForWorkout!: boolean;
 
   @Expose()
-  public traningCount!: number;
-
-  @Expose()
   public friends!: string[];
 }

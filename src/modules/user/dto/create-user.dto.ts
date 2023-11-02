@@ -31,7 +31,6 @@ export default class CreateUserDto {
   @IsEnum(Gender, { message: 'Invalid gender' })
   public gender!: Gender;
 
-  @IsEnum(Role, { message: 'Invalid role' })
   public role!: Role;
 
   @IsOptional()

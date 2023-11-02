@@ -251,7 +251,7 @@ export default class UserController extends Controller {
       );
     }
 
-    const result = await this.userService.create(body, this.configService.get('SALT_ROUNDS'));
+    const result = await this.userService.create({...body, role: Role.User}, this.configService.get('SALT_ROUNDS'));
 
     setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
