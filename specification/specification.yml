@@ -34,7 +34,7 @@ paths:
   /trainers/register:
     post:
       tags:
-          - trainers
+        - trainers
       summary: Создание нового тренера
       description: Создает нового тренера.
 
@@ -51,13 +51,15 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/trainerRdo'
+          '400':
+            description: Ошибка запроса. Некорректные данные создания для нового тренера.
           '409':
             description: Пользователь с таким email уже существует.
 
   /users/register:
     post:
       tags:
-          - users
+        - users
       summary: Создание нового пользователя
       description: Создает нового пользователя.
 
@@ -74,11 +76,278 @@ paths:
               application/json:
                 schema:
                   $ref: '#/components/schemas/userWithFriendsRdo'
+          '400':
+            description: Ошибка запроса. Некорректные данные создания для нового пользователя.
           '409':
             description: Пользователь с таким email уже существует.
 
+  users/login:
+    get:
+      tags:
+        - users
+      summary: Проверка Access Token пользователя
+      description: Проверяет Access Token пользователя.
+
+      responses:
+        '200':
+          description: Успешная аутентификация. Возвращается информация о пользователе.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/checkedUserRdo'
+        '401':
+          description: Ошибка аутентификации.
+
+    post:
+      tags:
+        - users
+      summary: Вход в закрытую часть приложения
+      description: Авторизовывает пользователя.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+      responses:
+        '200':
+          description: Успешная аутентификация. Возвращается токен.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loggedUserRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при аутентификации.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Пользователь не найден
+
+  users/logout:
+    post:
+      tags:
+        - users
+      summary: Выход из закрытой части приложения
+      description: Выходит из закрытой части приложения
+
+      responses:
+        '200':
+          description: Успешное завершение сеанса пользователя.
+        '401':
+          description: Ошибка аутентификации. Токен не действителен или отсутствует.
+
+  users/refresh:
+    get:
+      tags:
+        - users
+      summary: Обновление Refresh Token
+      description: Обновляет Refresh Token.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+      responses:
+        '200':
+          description: Успешное обновление токена.
+        '400':
+          description: Ошибка запроса. Некорректные данные при аутентификации.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+
+  users/:
+    get:
+      tags:
+        - users
+      summary: Получение списка пользователей
+      description: Получает список пользователей.
+
+      parameters:
+      - in: query
+        name: location
+        description: Фильтрация пользователей по местоположению.
+        schema:
+          type: string
+        example: пионерская
+      - in: query
+        name: workoutTypes
+        description: Фильтрация пользователей по типам тренировок.
+        schema:
+          type: array
+          items:
+            type: string
+        example: аэробика,бокс
+      - in: query
+        name: trainingLevel
+        description: Фильтрация пользователей по уровню тренировок.
+        schema:
+          type: string
+        example: профессионал
+      - in: query
+        name: sortBy
+        description: Сортировка пользователей по роли.
+        schema:
+          type: string
+        example: тренер
+      - in: query
+        name: limit
+        description: Ограничение количества результатов на странице.
+        schema:
+          type: integer
+          minimum: 1
+        example: 3
+      - in: query
+        name: page
+        description: Номер страницы для пагинации.
+        schema:
+          type: integer
+          minimum: 1
+        example: 3
+      - in: query
+        name: createdAtDirection
+        description: Сортировка по дате создания.
+        schema:
+          type: string
+        example: desc
+
+
+    put:
+      tags:
+        - users
+      summary: Обновление пользователя
+      description: Обновляет пользователя.
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/userWithoutPrivateRows'
+                - $ref: '#/components/schemas/trainerWithoutPrivateRows'
+
+      responses:
+        '200':
+          description: Успешное обновление пользователя
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/userRdo'
+                  - $ref: '#/components/schemas/trainerRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при обновлении пользователя.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Пользователь не найден.
+
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Детальная информация о пользователе
+      description: Получает детельную информацию по id пользователя.
+
+      parameters:
+        - in: path
+          name: userId
+          description: Id пользователя
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: Успешное обновление пользователя
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/userRdo'
+                  - $ref: '#/components/schemas/trainerRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при запросе информации пользователя.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Пользователь не найден.
+
 components:
   schemas:
+
+    trainerWithoutPrivateRows:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Александр Петров
+          minLength: 1
+          maxLength: 15
+          description: Имя пользователя.
+        avatar:
+          type: string
+          example: avatar.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на аватар пользователя (в форматах jpg или png).
+        gender:
+          type: string
+          enum: [женский, мужской, неважно]
+          example: мужской
+          description: Пол пользователя.
+        birthDate:
+          type: string
+          example: 1990-01-01
+          format: date
+          description: Дата рождения пользователя.
+        description:
+          type: string
+          example: Опытный тренер
+          minLength: 10
+          maxLength: 140
+          description: Описание пользователя.
+        location:
+          type: string
+          enum: [пионерская, петроградская, удельная, звёздная. спортивная]
+          example: удельная
+          description: Местоположение пользователя.
+        backgroundImage:
+          type: string
+          example: background.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на фоновое изображение пользователя (в форматах jpg или png).
+        trainingLevel:
+          type: string
+          enum: [новичок, любитель, профессионал]
+          example: профессионал
+          description: Уровень тренировок пользователя.
+        workoutTypes:
+          type: array
+          items:
+            type: string
+            enum: [йога, бег, бокс, стрейчинг, кроссфит, аэробика, пилатес]
+          minItems: 1
+          maxItems: 3
+          example: [бокс, аэробика, кроссфит]
+          description: Типы тренировок, которые предпочитает пользователь (не более 3).
+        personalTraining:
+          type: boolean
+          example: true
+          description: Флаг готовности проводить индивидуальные тренировки
+        trainerAchievements:
+          type: string
+          example: Множество наград и сертификатов
+          minLength: 10
+          maxLength: 140
+          description: Заслуги тренера
+        certificate:
+          type: string
+          example: certificate.pdf
+          pattern: '^.+\.pdf$'
+          description: Сертификат пользователя
 
     trainer:
       type: object
@@ -88,6 +357,7 @@ components:
           example: Александр Петров
           minLength: 1
           maxLength: 15
+          description: Имя пользователя.
         email:
           type: string
           format: email
@@ -96,37 +366,43 @@ components:
           type: string
           example: avatar.jpg
           pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на аватар пользователя (в форматах jpg или png).
         password:
           type: string
           example: 123456
           minLength: 6
           maxLength: 12
-
         gender:
           type: string
           enum: [женский, мужской, неважно]
+          description: Пол пользователя.
           example: мужской
         birthDate:
           type: string
           example: 1990-01-01
           format: date
+          description: Дата рождения пользователя.
         description:
           type: string
           example: Опытный тренер
           minLength: 10
           maxLength: 140
+          description: Описание пользователя.
         location:
           type: string
           enum: [пионерская, петроградская, удельная, звёздная. спортивная]
           example: удельная
+          description: Местоположение пользователя.
         backgroundImage:
           type: string
           example: background.jpg
           pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на фоновое изображение пользователя (в форматах jpg или png).
         trainingLevel:
           type: string
           enum: [новичок, любитель, профессионал]
           example: профессионал
+          description: Уровень тренировок пользователя.
         workoutTypes:
           type: array
           items:
@@ -135,18 +411,177 @@ components:
           minItems: 1
           maxItems: 3
           example: [бокс, аэробика, кроссфит]
+          description: Типы тренировок, которые предпочитает пользователь (не более 3).
         personalTraining:
           type: boolean
           example: true
+          description: Флаг готовности проводить индивидуальные тренировки
         trainerAchievements:
           type: string
           example: Множество наград и сертификатов
           minLength: 10
           maxLength: 140
+          description: Заслуги тренера
         certificate:
           type: string
           example: certificate.pdf
           pattern: '^.+\.pdf$'
+          description: Сертификат пользователя
+
+    userWithoutPrivateRows:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Александр Петров
+          minLength: 1
+          maxLength: 15
+          description: Имя пользователя.
+        avatar:
+          type: string
+          example: avatar.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на аватар пользователя (в форматах jpg или png).
+        gender:
+          type: string
+          enum: [женский, мужской, неважно]
+          description: Пол пользователя.
+          example: мужской
+        birthDate:
+          type: string
+          example: 1990-01-01
+          format: date
+          description: Дата рождения пользователя.
+        description:
+          type: string
+          example: Опытный тренер
+          minLength: 10
+          maxLength: 140
+          description: Описание пользователя.
+        location:
+          type: string
+          enum: [пионерская, петроградская, удельная, звёздная. спортивная]
+          example: удельная
+          description: Местоположение пользователя.
+        backgroundImage:
+          type: string
+          example: background.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на фоновое изображение пользователя (в форматах jpg или png).
+        trainingLevel:
+          type: string
+          enum: [новичок, любитель, профессионал]
+          example: профессионал
+          description: Уровень тренировок пользователя.
+        workoutTypes:
+          type: array
+          items:
+            type: string
+            enum: [йога, бег, бокс, стрейчинг, кроссфит, аэробика, пилатес]
+          minItems: 1
+          maxItems: 3
+          example: [стрейчинг, бег, аэробика]
+          description: Типы тренировок, которые предпочитает пользователь (не более 3).
+        workoutDuration:
+          type: string
+          enum: [10-30 мин, 30-50 мин, 50-80 мин, 80-100 мин]
+          description: Длительность тренировок, выбранная пользователем.
+        caloriesToBurn:
+          type: integer
+          minLength: 1000
+          maxLength: 5000
+          example: 1345
+          description: Количество калорий, которые пользователь хочет сжечь (целое число).
+        caloriesToSpend:
+          type: integer
+          minLength: 1000
+          maxLength: 5000
+          example: 3564
+          description: Количество калорий, которые пользователь хочет потратить (целое число).
+        readinessForWorkout:
+          type: boolean
+          description: Готовность к тренировкам пользователя.
+
+    user:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Александр Петров
+          minLength: 1
+          maxLength: 15
+          description: Имя пользователя.
+        email:
+          type: string
+          format: email
+          description: Email пользователя.
+        avatar:
+          type: string
+          example: avatar.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на аватар пользователя (в форматах jpg или png).
+        password:
+          type: string
+          description: Пароль пользователя.
+        gender:
+          type: string
+          enum: [женский, мужской, неважно]
+          example: мужской
+          description: Пол пользователя.
+        birthDate:
+          type: string
+          example: 1990-01-01
+          format: date
+          description: Дата рождения пользователя.
+        description:
+          type: string
+          example: Опытный тренер
+          minLength: 10
+          maxLength: 140
+          description: Описание пользователя.
+        location:
+          type: string
+          enum: [пионерская, петроградская, удельная, звёздная. спортивная]
+          example: удельная
+          description: Местоположение пользователя.
+        backgroundImage:
+          type: string
+          example: background.jpg
+          pattern: '^.+\.(jpg|png)$'
+          description: Ссылка на фоновое изображение пользователя (в форматах jpg или png).
+        trainingLevel:
+          type: string
+          enum: [новичок, любитель, профессионал]
+          example: профессионал
+          description: Уровень тренировок пользователя.
+        workoutTypes:
+          type: array
+          items:
+            type: string
+            enum: [йога, бег, бокс, стрейчинг, кроссфит, аэробика, пилатес]
+          minItems: 1
+          maxItems: 3
+          example: [стрейчинг, бег, аэробика]
+          description: Типы тренировок, которые предпочитает пользователь (не более 3).
+        workoutDuration:
+          type: string
+          enum: [10-30 мин, 30-50 мин, 50-80 мин, 80-100 мин]
+          description: Длительность тренировок, выбранная пользователем.
+        caloriesToBurn:
+          type: integer
+          minLength: 1000
+          maxLength: 5000
+          example: 1345
+          description: Количество калорий, которые пользователь хочет сжечь (целое число).
+        caloriesToSpend:
+          type: integer
+          minLength: 1000
+          maxLength: 5000
+          example: 3564
+          description: Количество калорий, которые пользователь хочет потратить (целое число).
+        readinessForWorkout:
+          type: boolean
+          description: Готовность к тренировкам пользователя.
 
     trainerRdo:
       type: object
@@ -163,7 +598,8 @@ components:
           description: Email тренера.
         avatar:
           type: string
-          description: Ссылка на аватар тренера.
+          example: avatar.jpg
+          description: Ссылка на аватар пользователя (в форматах jpg или png).
         gender:
           type: string
           enum: [женский, мужской, неважно]
@@ -205,73 +641,6 @@ components:
         certificate:
           type: string
           description: Ссылка на сертификат тренера.
-
-    user:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Имя пользователя.
-        email:
-          type: string
-          format: email
-          description: Email пользователя.
-        avatar:
-          type: string
-          description: Ссылка на аватар пользователя (в форматах jpg или png).
-        password:
-          type: string
-          description: Пароль пользователя.
-        gender:
-          type: string
-          enum: [женский, мужской, неважно]
-          description: Пол пользователя.
-        birthDate:
-          type: string
-          format: date
-          description: Дата рождения пользователя.
-        description:
-          type: string
-          description: Описание пользователя.
-        location:
-          type: string
-          enum: [пионерская, петроградская, удельная, звёздная. спортивная]
-          description: Местоположение пользователя.
-        backgroundImage:
-          type: string
-          description: Ссылка на фоновое изображение пользователя (в форматах jpg или png).
-        trainingLevel:
-          type: string
-          enum: [новичок, любитель, профессионал]
-          description: Уровень тренировок пользователя.
-        workoutTypes:
-          type: array
-          items:
-            type: string
-            enum: [йога, бег, бокс, стрейчинг, кроссфит, аэробика, пилатес]
-          minItems: 1
-          maxItems: 3
-          example: [стрейчинг, бег, аэробика]
-          description: Типы тренировок, которые предпочитает пользователь (не более 3).
-        workoutDuration:
-          type: string
-          enum: [10-30 мин, 30-50 мин, 50-80 мин, 80-100 мин]
-          description: Длительность тренировок, выбранная пользователем.
-        caloriesToBurn:
-          type: integer
-          minLength: 1000
-          maxLength: 5000
-          example: 1345
-          description: Количество калорий, которые пользователь хочет сжечь (целое число).
-        caloriesToSpend:
-          type: integer
-          minLength: 1000
-          maxLength: 5000
-          example: 3564
-          description: Количество калорий, которые пользователь хочет потратить (целое число).
-        readinessForWorkout:
-          type: boolean
-          description: Готовность к тренировкам пользователя.
 
     userRdo:
       type: object
@@ -419,3 +788,42 @@ components:
           items:
             $ref: '#/components/schemas/userRdo'
           description: Список друзей пользователя.
+
+    loginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+          maxLength: 12
+
+    loggedUserRdo:
+      type: object
+      properties:
+        id:
+          type: string
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [пользователь, тренер]
+
+    checkedUserRdo:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [пользователь, тренер]

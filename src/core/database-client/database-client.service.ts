@@ -27,9 +27,9 @@ export default class MongoClientService implements DatabaseClientInterface {
       }
 
       return mongoose.connect(uri)
-        .catch(async () => {
+        .catch(async (error) => {
           attempt++;
-          this.logger.error(`Failed to connect to the database. Attempt ${attempt}`);
+          this.logger.error(`Failed to connect to the database. ${error} Attempt ${attempt}`);
           await setTimeout(RETRY_TIMEOUT);
           return tryConnect();
         });
@@ -45,7 +45,7 @@ export default class MongoClientService implements DatabaseClientInterface {
         this.isConnected = true;
       })
       .catch((error) => {
-        this.logger.error('Failed to connect to the database in _connect function');
+        this.logger.error(`Failed to connect to the database in _connect function ${error}`);
         throw error;
       });
   }

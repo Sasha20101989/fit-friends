@@ -28,6 +28,7 @@ import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middlewar
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
+import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
 
 
 @injectable()
@@ -65,13 +66,6 @@ export default class UserController extends Controller {
       middlewares: [
         new PrivateRouteMiddleware(),
         new RoleCheckMiddleware(Role.User)
-      ]
-    });
-    this.addRoute({ path: '/email',
-      method: HttpMethod.Get,
-      handler: this.findByEmail,
-      middlewares: [
-        new UserExistsByEmailMiddleware(this.userService)
       ]
     });
     this.addRoute({ path: '/',
@@ -113,9 +107,13 @@ export default class UserController extends Controller {
     res: Response
   ): Promise<void> {
     const { userId } = params;
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findUserOrTrainerById(userId);
 
-    this.ok(res, fillDTO(UserRdo, user));
+    if(user?.role == Role.User){
+      this.ok(res, fillDTO(UserRdo, user));
+    }else{
+      this.ok(res, fillDTO(TrainerRdo, user));
+    }
   }
 
   //TODO: Общее
@@ -169,17 +167,6 @@ export default class UserController extends Controller {
   }
 
   //TODO: Общее
-  public async findByEmail(
-    { body }: Request<core.ParamsDictionary | ParamsGetUser>,
-    res: Response
-  ): Promise<void> {
-    const { email } = body;
-    const user = await this.userService.findByEmail(email);
-
-    this.ok(res, fillDTO(UserRdo, user));
-  }
-
-  //TODO: Общее
   public async login(
     { user, body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
@@ -214,7 +201,7 @@ export default class UserController extends Controller {
 
     if (!refreshToken || typeof refreshToken !== 'string') {
       throw new HttpError(
-        StatusCodes.BAD_REQUEST,
+        StatusCodes.UNAUTHORIZED,
         'Invalid refreshToken provided in the request.',
         'UserController'
       );
@@ -232,6 +219,14 @@ export default class UserController extends Controller {
   ): Promise<void> {
 
     const updatedUser = await this.userService.updateById(user.id, body);
+
+    if (!updatedUser) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `User with email ${user.email} not found.`,
+        'UserController'
+      );
+    }
 
     this.ok(res, fillDTO(UserRdo, updatedUser));
   }

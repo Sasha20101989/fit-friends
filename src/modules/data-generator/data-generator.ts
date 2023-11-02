@@ -85,7 +85,7 @@ const generateTrainers = (numberOfTrainers: number): Trainer[] => {
       location: generateRandomLocation(),
       backgroundImage: 'http.jpg',
       trainingLevel: generateRandomTrainingLevel(),
-      workoutTypes: generateRandomWorkoutTypes(),
+      workoutTypes: generateRandomWorkoutTypes(3),
       certificate: 'http1.pdf',
       trainerAchievements: 'Моя любимая фраза: Ты будешь тренироваться до тех пор пока я не вспотею.',
       personalTraining: generateRandomBoolean()
@@ -112,7 +112,7 @@ const generateUsers = (numberOfUsers: number) => {
       location: generateRandomLocation(),
       backgroundImage: 'http.jpg',
       trainingLevel: generateRandomTrainingLevel(),
-      workoutTypes: generateRandomWorkoutTypes()
+      workoutTypes: generateRandomWorkoutTypes(3)
     };
     users.push(user);
   }

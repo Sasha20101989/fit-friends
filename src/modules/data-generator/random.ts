@@ -40,9 +40,8 @@ export function generateRandomUserNamesAndEmails(numberOfUsers: number, typeUser
   return { names, emails };
 }
 
-export function generateRandomWorkoutTypes(): WorkoutType[] {
+export function generateRandomWorkoutTypes(availableCount: number): WorkoutType[] {
   const workoutTypeValues = Object.values(WorkoutType);
-  const availableCount = workoutTypeValues.length;
 
   const count = Math.floor(Math.random() * availableCount) + 1;
   const uniqueWorkoutTypes: WorkoutType[] = [];

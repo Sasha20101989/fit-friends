@@ -277,6 +277,7 @@ export default class ImportCommand implements CliCommandInterface {
 
     await this.databaseService.connect(uri);
 
+
     try{
       const userIds = await this.generateAndSaveUsers();
       const trainerIds = await this.generateAndSaveTrainers();

@@ -1,4 +1,4 @@
-import {DocumentType, types } from '@typegoose/typegoose';
+import {DocumentType } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
 
 import type { MongoId } from '../../types/common/mongo-id.type.js';
@@ -18,13 +18,25 @@ import { UserFilter } from './types/user-filter.type.js';
 import { applyWorkoutTypesFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
+import { TrainerEntity } from '../trainer/trainer.entity.js';
+import { ModelType } from '@typegoose/typegoose/lib/types.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
-    @inject(AppComponent.UserModel) private readonly userModel: types.ModelType<UserEntity>,
+    @inject(AppComponent.UserModel) private readonly userModel: ModelType<UserEntity>,
+    @inject(AppComponent.TrainerModel) private readonly trainerModel: ModelType<TrainerEntity>,
     @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
   ) {}
+
+  public async findUserOrTrainerById(userId: string): Promise<DocumentType<UserEntity> | DocumentType<TrainerEntity> | null> {
+    let foundedUser = await this.userModel.findOne({ _id: userId});
+    if(foundedUser?.role == Role.User){
+      return foundedUser;
+    }
+
+    return await this.trainerModel.findOne({ _id: userId});
+  }
 
   public async logout(refreshToken: string): Promise<void> {
     await this.tokenService.removeToken(refreshToken);

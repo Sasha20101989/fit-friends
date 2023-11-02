@@ -8,6 +8,7 @@ import LoginUserDto from './dto/login-user.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import { VerifyUserResponse } from './response/verify-user.response.js';
 import CreateTrainerDto from '../trainer/dto/create-trainer.dto.js';
+import { TrainerEntity } from '../trainer/trainer.entity.js';
 
 export interface UserServiceInterface {
   logout(refreshToken: string): Promise<void>;
@@ -19,4 +20,5 @@ export interface UserServiceInterface {
   refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>;
   GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>;
   findById(userId: MongoId): Promise<DocumentType<UserEntity> | null>;
+  findUserOrTrainerById(userId: string): Promise<DocumentType<UserEntity> | DocumentType<TrainerEntity> | null>;
 }
