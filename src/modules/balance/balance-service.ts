@@ -46,7 +46,7 @@ export default class BalanceService implements BalanceServiceInterface{
     const page = query?.page || 1;
     const skip = (page - 1) * balanceLimit;
 
-    const sort = getSortOptionsForCreatedAt(query.sortDirection);
+    const sort = getSortOptionsForCreatedAt(query.createdAtDirection);
 
     const balance = await this.balanceModel
       .find({ user: userId})

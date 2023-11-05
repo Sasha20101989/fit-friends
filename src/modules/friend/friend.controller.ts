@@ -66,7 +66,6 @@ export default class FriendController extends Controller {
     });
   }
 
-  //TODO:Кабинет пользователь
   public async delete(
     {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
@@ -86,12 +85,21 @@ export default class FriendController extends Controller {
     this.ok(res, { message: 'Friend deleted' });
   }
 
-  //TODO:Кабинет пользователь
   public async create(
     {params, user}: Request<core.ParamsDictionary | ParamsGetFriend>,
     res: Response
   ): Promise<void> {
     const { friendId } = params;
+
+    const existingUser = await this.friendService.findById(user.id);
+
+    if(!existingUser){
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `User with email ${user.email} not found.`,
+        'FriendController'
+      );
+    }
 
     if(await this.friendService.exists(user.id, friendId)){
       throw new HttpError(
@@ -100,7 +108,7 @@ export default class FriendController extends Controller {
         'FriendController'
       );
     }
-
+    //TODO: Добавить или отправить запрос?
     const result = await this.friendService.create(user.id, friendId);
 
     this.created(res, fillDTO(UserRdo, result));
@@ -108,14 +116,12 @@ export default class FriendController extends Controller {
     await this.notificationService.createNotification(friendId, RequestType.Friend);
   }
 
-  //TODO:Кабинет тренер
-  //TODO:Кабинет пользователь
   public async index(
     { query, user }: Request<core.ParamsDictionary, UnknownRecord, FriendQueryParams>,
     res: Response
   ): Promise<void> {
     const friends = await this.friendService.find(user.id, query);
 
-    this.created(res, fillDTO(UserRdo, friends));
+    this.ok(res, fillDTO(UserRdo, friends));
   }
 }

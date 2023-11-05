@@ -41,7 +41,7 @@ export default class FriendService implements FriendServiceInterface {
       return [];
     }
 
-    const sort = getSortOptionsForCreatedAt(query.sortDirection);
+    const sort = getSortOptionsForCreatedAt(query.createdAtDirection);
 
     const friendIds = user.friends;
     const friends = await this.userModel
