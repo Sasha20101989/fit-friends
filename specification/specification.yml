@@ -15,8 +15,6 @@ tags:
   - name: trainers
     description: Действия с тренерами
   - name: users
-    description: Действия с пользователями
-  - name: balances
     description: Действия с балансом пользователя
   - name: notifications
     description: Действия с уведомлениями
@@ -486,6 +484,50 @@ paths:
           description: Ошибка аутентификации.
         '404':
           description: Баланс с такой тренировкой не найден.
+
+
+  /notifications:
+    get:
+      tags:
+        - notifications
+      summary: Список уведомлений
+      description: Получает список уведомлений для пользователя.
+
+      responses:
+        '200':
+          description: Успешное получение списка уведомлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                - $ref: '#/components/schemas/notificationRdo'
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+
+    delete:
+      tags:
+        - notifications
+      summary: Удалить уведомление
+      description: Удаляет уведомления и возвращает список последних уведомлений
+
+      responses:
+        '200':
+          description: Успешное удаление уведомления и получения списка уведомлений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                - $ref: '#/components/schemas/notificationRdo'
+        '400':
+          description: Ошибка в параметрах. Уведомление не найдено.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '403':
+          description: Ошибка удаления уведомления. Нет доступа на удаление уведомления.
+        '404':
+          description: Уведомление не найдено.
 
 components:
   schemas:
@@ -1046,8 +1088,30 @@ components:
           type: string
           description: Уникальный идентификатор баланса.
         training:
-          type: string
-          description: Тренировка.
+          $ref: '#/components/schemas/trainingRdo'
         availableQuantity:
           type: integer
           description: Доступный баланс.
+
+    notificationRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор уведомления.
+        createdAt:
+          type: string
+          format: date
+          description: Дата создания.
+        text:
+          type: string
+          description: Текс уведомления
+        user:
+          $ref: '#/components/schemas/userRdo'
+
+    trainingRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор тренировки.

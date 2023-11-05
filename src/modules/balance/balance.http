@@ -19,7 +19,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z
 ###
 
 ## Обновит баланс пользователя
-PATCH http://localhost:4000/balance/training/653baa8d019057648a332049
+PATCH http://localhost:4000/balance/training/65436ea167322ac60741effe
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2luMTJAbWFpbC5uZXQiLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjUzY2ZiMzkxNGY2ZGE5NDkwYThlNmZjIiwicm9sZSI6ItC_0L7Qu9GM0LfQvtCy0LDRgtC10LvRjCIsImlhdCI6MTY5ODY4NzI3MSwiZXhwIjoxNjk5OTgzMjcxfQ.9EX3fnQ-rUsn4Gtupk-kq06hqL_5GFBr96VlN1c-7_s
 
