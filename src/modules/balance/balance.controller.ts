@@ -117,7 +117,7 @@ export default class BalanceController extends Controller {
     } else {
       if (!await this.balanceService.exists(trainingId)) {
         throw new HttpError(
-          StatusCodes.CONFLICT,
+          StatusCodes.NOT_FOUND,
           `Balance with training id ${trainingId} not exists.`,
           'BalanceController'
         );

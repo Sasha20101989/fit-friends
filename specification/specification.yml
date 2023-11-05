@@ -429,6 +429,64 @@ paths:
         '401':
           description: Ошибка аутентификации. Неверный логин или пароль.
 
+  /balance/training/{trainingId}:
+    post:
+      tags:
+        - Кабинет пользователя
+      summary: Добавление тренировки в баланс пользователя
+      description: Добавляет тренировку в баланс пользователя
+
+      parameters:
+        - in: path
+          name: trainingId
+          description: Id добавляемой тренировки
+          schema:
+            type: string
+          required: true
+      responses:
+        '201':
+          description: Успешное добавление тренировки в баланс
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при сохранении тренировки в баланс пользователя.
+        '401':
+          description: Ошибка аутентификации.
+        '404':
+          description: Тренировка не найдена.
+        '409':
+          description: Баланс с тренировкой уже существует.
+
+    patch:
+      tags:
+        - Кабинет пользователя
+      summary: Обновление баланса тренировок
+      description: Обновляет баланс тренировок
+
+      parameters:
+        - in: path
+          name: trainingId
+          description: Id обновляемой тренировки
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: Успешное Обновление баланса тренировки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при обновлении баланса тренировки.
+        '401':
+          description: Ошибка аутентификации.
+        '404':
+          description: Баланс с такой тренировкой не найден.
+
 components:
   schemas:
 
@@ -980,3 +1038,16 @@ components:
         role:
           type: string
           enum: [пользователь, тренер]
+
+    balanceRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор баланса.
+        training:
+          type: string
+          description: Тренировка.
+        availableQuantity:
+          type: integer
+          description: Доступный баланс.
