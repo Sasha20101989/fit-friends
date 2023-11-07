@@ -58,10 +58,10 @@ export default class RestApplication {
     this.logger.info('Init RabbitMQ client...');
 
     const rabbitConnectionString = getRabbitMQConnectionString(
-      this.config.get('RABIT_USER'),
-      this.config.get('RABIT_PASSWORD'),
-      this.config.get('RABIT_HOST'),
-      this.config.get('RABIT_PORT')
+      this.config.get('RABBIT_USER'),
+      this.config.get('RABBIT_PASSWORD'),
+      this.config.get('RABBIT_HOST'),
+      this.config.get('RABBIT_PORT')
     );
 
     const connection = await this.rabbitClient.initialize(rabbitConnectionString);
@@ -88,10 +88,10 @@ export default class RestApplication {
     this.logger.info('Init RabbitMQ server...');
 
     const rabbitConnectionString = getRabbitMQConnectionString(
-      this.config.get('RABIT_USER'),
-      this.config.get('RABIT_PASSWORD'),
-      this.config.get('RABIT_HOST'),
-      this.config.get('RABIT_PORT')
+      this.config.get('RABBIT_USER'),
+      this.config.get('RABBIT_PASSWORD'),
+      this.config.get('RABBIT_HOST'),
+      this.config.get('RABBIT_PORT')
     );
 
     const connection = await this.rabbitServer.initialize(rabbitConnectionString);
@@ -103,7 +103,7 @@ export default class RestApplication {
     const consumerChannel = await connection.createChannel();
 
     const { queue: rpcQueue } = await consumerChannel.assertQueue(
-      this.config.get('RABIT_QUEUE'),
+      this.config.get('RABBIT_QUEUE'),
       { exclusive: true }
     );
 

@@ -38,7 +38,7 @@ export default class ClientProducer implements ClientProducerInterface {
     return new Promise<Subscriber>((resolve, reject) => {
       try{
         this.channel.sendToQueue(
-          this.config.get('RABIT_QUEUE'),
+          this.config.get('RABBIT_QUEUE'),
           Buffer.from(JSON.stringify(data)),
           {
             replyTo: this.replyQueueName,

@@ -26,12 +26,11 @@ export type RestSchema = {
   NOTIFY_MONGO_INITDB_ROOT_USERNAME: string;
   NOTIFY_MONGO_INITDB_ROOT_PASSWORD: string;
   NOTIFY_MONGO_AUTH_BASE: string;
-  RABIT_HOST: string;
-  RABIT_USER: string;
-  RABIT_PASSWORD: string;
-  RABIT_PORT: string;
-  RABIT_QUEUE: string;
-  RABIT_EXCHANGE: string;
+  RABBIT_HOST: string;
+  RABBIT_USER: string;
+  RABBIT_PASSWORD: string;
+  RABBIT_PORT: string;
+  RABBIT_QUEUE: string;
   MAIL_SMTP_HOST: string;
   MAIL_SMTP_PORT: string;
   MAIL_USER_NAME: string;
@@ -172,40 +171,34 @@ export const configRestSchema = convict<RestSchema>({
     env: 'NOTIFY_MONGO_AUTH_BASE',
     default: null,
   },
-  RABIT_HOST:{
+  RABBIT_HOST:{
     doc: 'Host wrere started rabit service',
     format: String,
-    env: 'RABIT_HOST',
+    env: 'RABBIT_HOST',
     default: 'localhost'
   },
-  RABIT_USER: {
+  RABBIT_USER: {
     doc: 'Username to connect to the rabit',
     format: String,
-    env: 'RABIT_USER',
+    env: 'RABBIT_USER',
     default: null,
   },
-  RABIT_PASSWORD: {
+  RABBIT_PASSWORD: {
     doc: 'Password to connect to the rabit',
     format: String,
-    env: 'RABIT_PASSWORD',
+    env: 'RABBIT_PASSWORD',
     default: null,
   },
-  RABIT_PORT: {
+  RABBIT_PORT: {
     doc: 'Port to connect to the rabit',
     format: 'port',
-    env: 'RABIT_PORT',
+    env: 'RABBIT_PORT',
     default: '5672',
   },
-  RABIT_QUEUE: {
+  RABBIT_QUEUE: {
     doc: '',
     format: String,
-    env: 'RABIT_QUEUE',
-    default: null,
-  },
-  RABIT_EXCHANGE: {
-    doc: '',
-    format: String,
-    env: 'RABIT_EXCHANGE',
+    env: 'RABBIT_QUEUE',
     default: null,
   },
   MAIL_SMTP_HOST: {

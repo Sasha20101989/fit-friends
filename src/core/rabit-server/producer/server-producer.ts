@@ -24,7 +24,7 @@ export default class ServerProducer implements ServerProducerInterface {
 
     this.logger.info('[ServerProducer]: Ready to produce messages...');
     this.logger.info(`[ServerProducer]: Correlation id is ${correlationId}`);
-    this.logger.info(`[ServerProducer]: Responding with...${JSON.stringify(data)}`);
+    this.logger.info('[ServerProducer]: Responding');
 
     this.channel.sendToQueue(
       replyToQueue,

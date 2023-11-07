@@ -76,19 +76,7 @@ npm install
 Шаг 2: Конфигурация переменных окружения
 Проект "FIT FRIENDS" использует переменные окружения для конфигурации. Для запуска проекта вам потребуется сконфигурировать следующие переменные окружения:
 
-Создайте файл с именем .env в корневой папке проекта и укажите значения переменных окружения в следующем формате:
-
-PORT= your_port
-SALT= your_salt
-DB_HOST= your_db_host
-MONGO_INITDB_ROOT_USERNAME= your_root_user_name
-MONGO_INITDB_ROOT_PASSWORD= your_root_password
-DB_PORT= your_db_port
-DB_NAME= your_db_name
-JWT_ACCESS_SECRET= your_secret
-JWT_REFRESH_SECRET= your_secret
-ACCESS_TOKEN_EXPIRATION_TIME= your_expiration_time
-REFRESH_TOKEN_EXPIRATION_TIME= your_expiration_time
+Создайте файл с именем .env в корневой папке проекта
 
 Шаг 3: Сборка проекта
 Перед запуском проекта необходимо выполнить сборку, чтобы скомпилировать TypeScript код в JavaScript.
@@ -108,17 +96,38 @@ npm start
 
 ### Список всех переменных окружения 
 
-PORT - порт, на котором будет работать сервер
-SALT - соль, используемая для шифрования
-DB_HOST - хост базы данных
-MONGO_INITDB_ROOT_USERNAME - имя пользователя базы данных
-MONGO_INITDB_ROOT_PASSWORD - пароль пользователя базы данных
-DB_PORT - порт базы данных
-DB_NAME - название базы данных
-JWT_ACCESS_SECRET - секретный ключ для подписи и верификации JWT-токенов
-JWT_REFRESH_SECRET - секретный ключ для восстановления  JWT_ACCESS-токенов
-ACCESS_TOKEN_EXPIRATION_TIME - срок действия для токена аутентификации
-REFRESH_TOKEN_EXPIRATION_TIME - срок действия для токена djccnfyjdktybz
+PORT - Порт, на котором будет работать сервер
+SALT - Соль, используемая для шифрования
+DB_HOST - Хост базы данных
+MONGO_INITDB_ROOT_USERNAME - Имя пользователя базы данных
+MONGO_INITDB_ROOT_PASSWORD - Пароль пользователя базы данных
+DB_PORT - Порт базы данных
+DB_NAME - Название базы данных
+JWT_ACCESS_SECRET - Секретный ключ для подписи и верификации JWT-токенов
+JWT_REFRESH_SECRET - Секретный ключ для восстановления JWT_ACCESS-токенов
+ACCESS_TOKEN_EXPIRATION_TIME - Срок действия для токена аутентификации
+REFRESH_TOKEN_EXPIRATION_TIME - Срок действия для токена восстановления
+HOST - Хост
+STATIC_DIRECTORY_PATH - Путь к каталогу для статических файлов
+UPLOAD_DIRECTORY - Путь к каталогу для загружаемых файлов
+NOTIFY_PORT - Порт уведомлений
+NOTIFY_MONGO_HOST - Хост базы данных для уведомлений
+NOTIFY_MONGO_PORT - Порт базы данных для уведомлений
+NOTIFY_MONGO_DB_NAME - Название базы данных для уведомлений
+NOTIFY_MONGO_INITDB_ROOT_USERNAME - Имя пользователя базы данных для уведомлений
+NOTIFY_MONGO_INITDB_ROOT_PASSWORD - Пароль пользователя базы данных для уведомлений
+NOTIFY_MONGO_AUTH_BASE - Базовая настройка аутентификации для уведомлений
+RABBIT_HOST - Хост RabbitMQ
+RABBIT_USER - Имя пользователя для RabbitMQ
+RABBIT_PASSWORD - Пароль для RabbitMQ
+RABBIT_PORT - Порт для RabbitMQ
+RABBIT_QUEUE - Имя очереди для RabbitMQ
+MAIL_SMTP_HOST - Хост сервера SMTP для почтовых уведомлений
+MAIL_SMTP_PORT - Порт сервера SMTP
+MAIL_USER_NAME - Имя пользователя для отправки почты
+MAIL_USER_PASSWORD - Пароль пользователя для отправки почты
+MAIL_FROM - Адрес отправителя почты
+
 
 ### Наполнение базы первоначальными данными
 
