@@ -5,6 +5,8 @@ import { LoggerInterface } from '../../logger/logger.interface.js';
 import MessageHandler from '../messageHandler.js';
 import { RabbitServerInterface } from '../rabit-server.interface.js';
 import { ServerConsumerInterface } from './server-consumer.interface.js';
+import { ConfigInterface } from '../../config/config.interface.js';
+import { RestSchema } from '../../config/rest.schema.js';
 
 @injectable()
 export default class ServerConsumer implements ServerConsumerInterface {
@@ -13,6 +15,7 @@ export default class ServerConsumer implements ServerConsumerInterface {
 
   constructor(
     @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
+    @inject(AppComponent.ConfigInterface) private readonly config: ConfigInterface<RestSchema>,
     @inject(AppComponent.RabbitServerInterface) private readonly rabbitServer: RabbitServerInterface,
   ){}
 
@@ -28,7 +31,7 @@ export default class ServerConsumer implements ServerConsumerInterface {
 
     this.logger.info('[ServerConsumer]: Ready to consume messages...');
 
-    const messageHandler = new MessageHandler(this.rabbitServer);
+    const messageHandler = new MessageHandler(this.rabbitServer, this.config);
 
     this.channel.consume(
       this.rpcQueue,
