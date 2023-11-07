@@ -24,12 +24,8 @@ tags:
     description: Действия с запросами
   - name: reviews
     description: Действия с отзывами
-  - name: subscribers
-    description: Действия с подписчиками
   - name: trainings
     description: Действия с тренировками
-  - name: tokens
-    description: Действия с токенами
 
 paths:
 
@@ -842,6 +838,105 @@ paths:
         '404':
           description: Тренер не найден.
 
+  /trainings:
+    get:
+      tags:
+        - trainings
+      summary: Получение списка тренировок
+      description: Получает список тренировок
+
+    parameters:
+      - in: query
+        name: minPrice
+        schema:
+          type: integer
+        description: Минимальная стоимость тренировки.
+      - in: query
+        name: maxPrice
+        schema:
+          type: integer
+        description: Максимальная стоимость тренировки.
+      - in: query
+        name: minCalories
+        schema:
+          type: integer
+        description: Минимальное количество калорий, которое нужно сжечь в тренировке.
+      - in: query
+        name: maxCalories
+        schema:
+          type: integer
+        description: Максимальное количество калорий, которое нужно сжечь в тренировке.
+      - in: query
+        name: rating
+        schema:
+          type: string
+        description: Рейтинг тренировок.
+      - in: query
+        name: workoutDuration
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+              - 10-30 мин
+              - 30-50 мин
+              - 50-80 мин
+              - 80-100 мин
+        description: Продолжительность тренировки.
+      - in: query
+        name: workoutTypes
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+              - йога
+              - бег
+              - бокс
+              - стрейчинг
+              - кроссфит
+              - аэробика
+              - пилатес
+        description: Типы тренировок.
+      - in: query
+        name: sortByPrice
+        schema:
+          type: string
+          enum:
+            - asc
+            - desc
+        description: Сортировка по цене (asc - по возрастанию, desc - по убыванию).
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: Ограничение количества тренировок на странице.
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: Номер страницы.
+      - in: query
+        name: createdAtDirection
+        schema:
+          type: string
+          enum:
+            - asc
+            - desc
+        description: Сортировка по дате создания (asc - по возрастанию, desc - по убыванию).
+
+    responses:
+      '200':
+        description: Успешное получение списка тренировок
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+              - $ref: '#/components/schemas/userRdo'
+      '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+
 components:
   schemas:
 
@@ -1476,7 +1571,7 @@ components:
           pattern: \.(mov|avi|mp4)$
           description: Видео файл с демонстрацией тренировки.
         rating:
-          type: number
+          type: integer
           description: Рейтинг тренировки.
         specialOffer:
           type: boolean
@@ -1543,7 +1638,7 @@ components:
           pattern: \.(mov|avi|mp4)$
           description: Видео файл с демонстрацией тренировки.
         rating:
-          type: number
+          type: integer
           description: Рейтинг тренировки.
         specialOffer:
           type: boolean
@@ -1551,10 +1646,10 @@ components:
         trainer:
           $ref: '#/components/schemas/trainerRdo'
         purchasedQuantity:
-          type: number
+          type: integer
           description: Количество купленных тренировок.
         totalSalesAmount:
-          type: number
+          type: integer
           description: Общая сумма продаж.
         createdAt:
           type: string
