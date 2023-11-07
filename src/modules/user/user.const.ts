@@ -28,3 +28,5 @@ export const ARCHIEVEMENTS_CONSTRAINTS = {
 export const DEFAULT_MAX_AGE_TOKEN = 30;
 
 export const DEFAULT_USER_COUNT = 50;
+
+export const MAX_FILE_SIZE = 1024;

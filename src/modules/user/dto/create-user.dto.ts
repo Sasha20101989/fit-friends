@@ -4,9 +4,10 @@ import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
-import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
+import { CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, MAX_FILE_SIZE, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../user.const.js';
 import { IsThreeWorkoutTypes } from '../../trainer/validators/is-three-workout-types.js';
 import { Role } from '../../../types/role.enum.js';
+import { IsFileValidSize } from '../validators/is-file-size-valid.validator.js';
 
 export default class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required' })
@@ -21,6 +22,7 @@ export default class CreateUserDto {
 
   @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
   @IsOptional()
+  @IsFileValidSize(MAX_FILE_SIZE)
   public avatar?: string;
 
   @IsNotEmpty({ message: 'Password is required' })
