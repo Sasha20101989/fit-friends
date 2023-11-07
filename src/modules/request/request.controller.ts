@@ -40,7 +40,7 @@ export default class RequestController extends Controller {
     super(logger, configService);
     this.logger.info('Register routes for RequestController...');
 
-    this.addRoute({ path: '/user/:userId',
+    this.addRoute({ path: '/users/:userId',
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
@@ -63,7 +63,6 @@ export default class RequestController extends Controller {
     });
   }
 
-  //TODO: Общее
   public async create(
     { params, body, user: initiator }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, CreateRequestDto>,
     res: Response

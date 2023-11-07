@@ -441,6 +441,14 @@ paths:
           schema:
             type: string
           required: true
+
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceDto'
+
       responses:
         '201':
           description: Успешное добавление тренировки в баланс
@@ -471,6 +479,13 @@ paths:
             type: string
           required: true
 
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/balanceDto'
+
       responses:
         '200':
           description: Успешное Обновление баланса тренировки
@@ -484,7 +499,6 @@ paths:
           description: Ошибка аутентификации.
         '404':
           description: Баланс с такой тренировкой не найден.
-
 
   /notifications:
     get:
@@ -537,7 +551,7 @@ paths:
         '404':
           description: Уведомление не найдено.
 
-  orders/trainer-room/{trainerId}:
+  /orders/trainer-room/{trainerId}:
     get:
       tags:
         -  Кабинет тренера
@@ -547,7 +561,7 @@ paths:
       parameters:
         - in: path
           name: trainerId
-          description: Id тренера дял получения заказов
+          description: Id тренера для получения заказов
           schema:
             type: string
             required: true
@@ -599,7 +613,7 @@ paths:
         '403':
           description: Ошибка получения списка заказов. Нет доступа к тренировкам тренера.
 
-  orders/{trainingId}:
+  /orders/{trainingId}:
     post:
       tags:
         - orders
@@ -614,21 +628,219 @@ paths:
             type: string
             required: true
 
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/orderDto'
+
       responses:
         '201':
           description: Успешное Добавление заказа
           content:
             application/json:
               schema:
-                type: array
-                items:
-                - $ref: '#/components/schemas/orderRdo'
+                $ref: '#/components/schemas/orderRdo'
         '401':
           description: Ошибка аутентификации. Неверный логин или пароль.
         '403':
           description: Ошибка добавления заказа. Нет доступа.
         '404':
           description: Тренировка не найдена.
+
+  /requests/users/{userId}:
+    post:
+      tags:
+        - requests
+      summary: Создание запроса
+      description: Создает запрос
+
+      parameters:
+        - in: path
+          name: userId
+          description: Id приглашаемого пользователя
+          schema:
+            type: string
+            required: true
+
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestDto'
+
+      responses:
+        '201':
+          description: Успешное добавление запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestRdo'
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '403':
+          description: Ошибка добавления запроса. Нет доступа.
+        '404':
+          description: Пользователь не найден.
+        '409':
+          description: Запрос существует.
+
+  /requests/{requestId}:
+    patch:
+      tags:
+        - requests
+      summary: Обновление статуса запроса
+      description: Обновляет статус запроса
+
+      parameters:
+        - in: path
+          name: requestId
+          description: Id обновляемого запроса
+          schema:
+            type: string
+            required: true
+
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/update-requestDto'
+
+      responses:
+        '200':
+          description: Успешное обновление статуса запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/requestRdo'
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '403':
+          description: Ошибка обновления запроса. Нет доступа.
+        '404':
+          description: Запрос не найден.
+
+  /reviews/training/{trainingId}:
+    post:
+      tags:
+        - reviews
+      summary: Добавление отзыва к тренировке
+      description: Добавляет отзыв к тренировке.
+
+      requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reviewDto'
+
+      parameters:
+        - in: path
+          name: trainingId
+          description: Id коментируемой тренировки
+          schema:
+            type: string
+            required: true
+
+      responses:
+        '201':
+          description: Успешное добавление комментария
+          schema:
+            $ref: '#/components/schemas/reviewRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при добавлении комментария.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '403':
+          description: Ошибка добавления отзыва для тренировки. Нет доступа.
+        '404':
+          description: Тренировка не найдена.
+
+    get:
+      tags:
+        - reviews
+      summary: Получение списка отзывов для тренировки
+      description: Получает список отзывов для тренировки.
+
+      parameters:
+        - in: path
+          name: trainingId
+          description: Id тренировки для которой необзодимо получить отзывы
+          schema:
+            type: string
+            required: true
+
+      responses:
+        '200':
+          description: Успешное получение списка отзывов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                - $ref: '#/components/schemas/reviewRdo'
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Запрос не найден.
+
+  /subscribes/trainer/{trainerId}:
+    post:
+      tags:
+        - Кабинет пользователя
+      summary: Оформление подписки на тренера
+      description: Оформляет подписку на тренера
+
+      parameters:
+        - in: path
+          name: trainerId
+          description: Id тренера для оформления подписки
+          schema:
+            type: string
+            required: true
+
+      responses:
+        '201':
+          description: Успешная подписка на тренера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/subscribeRdo'
+        '400':
+          description: Ошибка запроса. Некорректные данные при оформлении подписки.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Тренер не найден.
+        '409':
+          description: Ошибка оформления подписки. Подписка на тренера уже существует.
+
+    delete:
+      tags:
+        - Кабинет пользователя
+      summary: Отмена подписки на тренера
+      description: Отменяет подписку на тренера
+
+      parameters:
+        - in: path
+          name: trainerId
+          description: Id тренера для отмены подписки
+          schema:
+            type: string
+            required: true
+
+      responses:
+        '200':
+          description: Успешная отмена подписки на тренера
+        '400':
+          description: Ошибка запроса. Некорректные данные при отмене подписки.
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '404':
+          description: Тренер не найден.
 
 components:
   schemas:
@@ -1383,3 +1595,124 @@ components:
           type: string
           format: date
           description: Дата создания заказа.
+
+    requestRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор запроса.
+        initiator:
+          $ref: '#/components/schemas/userRdo'
+          description: Пользователь, инициировавший запрос.
+        user:
+          $ref: '#/components/schemas/userRdo'
+          description: Пользователь, к которому направлен запрос.
+        status:
+          type: string
+          enum:
+            - на рассмотрении
+            - отклонён
+            - принят
+          description: Статус запроса.
+        requestType:
+          type: string
+          enum:
+            - personal
+            - group
+            - friend
+          description: Тип запроса.
+
+    reviewRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор отзыва.
+        user:
+          $ref: '#/components/schemas/userRdo'
+          description: Пользователь, оставивший отзыв.
+        training:
+          $ref: '#/components/schemas/trainingRdo'
+          description: Тренировка, к которой относится отзыв.
+        rating:
+          type: integer
+          description: Рейтинг отзыва.
+        text:
+          type: string
+          description: Текст отзыва.
+        createdAt:
+          type: string
+          format: date
+          description: Дата создания отзыва.
+
+    reviewDto:
+      type: object
+      properties:
+        rating:
+          type: integer
+          minLength: 1
+          maxLength: 5
+        text:
+          type: string
+          minLength: 100
+          maxLength: 1024
+
+    requestDto:
+      type: object
+      properties:
+        requestType:
+          type: string
+          enum:
+            - personal
+            - group
+            - friend
+          description: Тип запроса.
+
+    update-requestDto:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - на рассмотрении
+            - отклонён
+            - принят
+          description: Статус запроса.
+
+    orderDto:
+      type: object
+      properties:
+        purchaseType:
+          type: string
+          enum:
+            - абонемент
+          description: Тип покупки.
+        quantity:
+          type: integer
+          description: Количество заказанных товаров.
+        paymentMethod:
+          type: string
+          enum:
+            - visa
+            - mir
+            - umoney
+          description: Способ оплаты заказа.
+
+    balanceDto:
+      type: object
+      properties:
+        availableQuantity:
+          type: integer
+          description: Доступный баланс.
+
+    subscribeRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор подписки.
+        user:
+          $ref: '#/components/schemas/userRdo'
+        trainer:
+          $ref: '#/components/schemas/trainerRdo'
