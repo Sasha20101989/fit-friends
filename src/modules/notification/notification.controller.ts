@@ -48,7 +48,6 @@ export default class NotificationController extends Controller {
     });
   }
 
-  //TODO:Общее
   public async index(
     { user }: Request,
     res: Response
@@ -58,7 +57,6 @@ export default class NotificationController extends Controller {
     this.ok(res, fillDTO(NotificationRdo, notifications));
   }
 
-  //TODO:Общее
   public async delete(
     { params, user }: Request<core.ParamsDictionary | ParamsGetNotification>,
     res: Response

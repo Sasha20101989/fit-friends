@@ -15,7 +15,7 @@ import { Role } from '../../types/role.enum.js';
 import CreateOrderDto from './dto/create-order.dto.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import OrderRdo from './rdo/order.rdo.js';
+
 import TrainingOrderRdo from './rdo/training-order.rdo.js';
 import { OrderQueryParams } from './types/order-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
@@ -27,6 +27,7 @@ import { StatusCodes } from 'http-status-codes';
 import HttpError from '../../core/errors/http-error.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
+import OrderRdo from './rdo/order.rdo.js';
 
 @injectable()
 export default class OrderController extends Controller {
@@ -84,7 +85,6 @@ export default class OrderController extends Controller {
     this.created(res, fillDTO(OrderRdo, order));
   }
 
-  //TODO:Кабинет тренер
   public async index(
     { params, user: trainer, query }: Request<core.ParamsDictionary | ParamsGetTrainer, UnknownRecord, UnknownRecord, OrderQueryParams>,
     res: Response
