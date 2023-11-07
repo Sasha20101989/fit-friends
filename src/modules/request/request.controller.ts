@@ -86,7 +86,6 @@ export default class RequestController extends Controller {
     await this.notificationService.createNotification(userId, body.requestType);
   }
 
-  //TODO: Общее
   public async update(
     { params, body }: Request<core.ParamsDictionary | ParamsGetRequest, UnknownRecord, UpdateRequestDto>,
     res: Response

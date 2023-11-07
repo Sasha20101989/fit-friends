@@ -57,7 +57,6 @@ export default class ReviewController extends Controller {
     });
   }
 
-  //TODO: Общее
   public async index(
     { query, params }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, ReviewQueryParams>,
     res: Response
@@ -69,7 +68,6 @@ export default class ReviewController extends Controller {
     this.ok(res, fillDTO(ReviewRdo, reviews));
   }
 
-  //TODO: Общее
   public async create(
     { params, body, user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateReviewDto>,
     res: Response

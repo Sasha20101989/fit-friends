@@ -30,8 +30,8 @@ export default class UserService implements UserServiceInterface {
   ) {}
 
   public async findUserOrTrainerById(userId: string): Promise<DocumentType<UserEntity> | DocumentType<TrainerEntity> | null> {
-    let foundedUser = await this.userModel.findOne({ _id: userId});
-    if(foundedUser?.role == Role.User){
+    const foundedUser = await this.userModel.findOne({ _id: userId});
+    if(foundedUser?.role === Role.User){
       return foundedUser;
     }
 

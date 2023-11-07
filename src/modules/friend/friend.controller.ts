@@ -108,7 +108,7 @@ export default class FriendController extends Controller {
         'FriendController'
       );
     }
-    //TODO: Добавить или отправить запрос?
+
     const result = await this.friendService.create(user.id, friendId);
 
     this.created(res, fillDTO(UserRdo, result));

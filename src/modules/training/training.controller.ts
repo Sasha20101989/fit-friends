@@ -88,7 +88,6 @@ export default class TrainingController extends Controller {
     });
   }
 
-  //TODO:Общее
   public async index(
     { query }: Request<UnknownRecord, UnknownRecord, UnknownRecord, TrainingQueryParams>,
     res: Response
@@ -98,7 +97,6 @@ export default class TrainingController extends Controller {
     this.ok(res, fillDTO(TrainingRdo, trainings));
   }
 
-  //TODO:Кабинет тренер
   public async indexForTrainer(
     { params, query, user: trainer }: Request<core.ParamsDictionary | ParamsGetTrainer, UnknownRecord, TrainingQueryParams>,
     res: Response
@@ -118,7 +116,6 @@ export default class TrainingController extends Controller {
     this.ok(res, fillDTO(TrainingRdo, trainings));
   }
 
-  //TODO:Кабинет тренер
   public async updateTraining(
     {params, body, user}: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateTrainingDto>,
     res: Response
@@ -139,7 +136,6 @@ export default class TrainingController extends Controller {
     this.ok(res, fillDTO(TrainingRdo, updatedTraining));
   }
 
-  //TODO:Кабинет тренер
   public async createTraining(
     { body, user }: Request<UnknownRecord, UnknownRecord, CreateTrainingDto>,
     res: Response
@@ -158,7 +154,6 @@ export default class TrainingController extends Controller {
     await this.trainingService.sendTrainingNotifications(user.id, training);
   }
 
-  //TODO:Кабинет тренер
   public async showTrainingDetails(
     { params }: Request<core.ParamsDictionary | ParamsGetTraining>,
     res: Response

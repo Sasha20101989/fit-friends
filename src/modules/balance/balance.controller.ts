@@ -75,7 +75,6 @@ export default class BalanceController extends Controller {
     });
   }
 
-  //TODO:Кабинет пользователь
   public async index(
     { query, user }: Request<core.ParamsDictionary, UnknownRecord, BalanceQueryParams>,
     res: Response
@@ -85,7 +84,6 @@ export default class BalanceController extends Controller {
     this.ok(res, fillDTO(BalanceRdo, balance));
   }
 
-  //TODO:Кабинет пользователь
   public async create(
     { params, body , user }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, CreateBalanceDto>,
     res: Response
@@ -104,7 +102,6 @@ export default class BalanceController extends Controller {
     this.created(res, fillDTO(BalanceRdo, balance));
   }
 
-  //TODO:Кабинет пользователь
   public async updateBalance(
     { params, body }: Request<core.ParamsDictionary | ParamsGetTraining, UnknownRecord, UpdateBalanceDto>,
     res: Response
