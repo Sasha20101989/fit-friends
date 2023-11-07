@@ -3,7 +3,6 @@ import { ModelType } from '@typegoose/typegoose/lib/types.js';
 import { inject, injectable } from 'inversify';
 
 import { AppComponent } from '../../types/common/app-component.enum.js';
-import { LoggerInterface } from '../../core/logger/logger.interface.js';
 import { OrderServiceInterface } from './order-service.interface.js';
 import { OrderEntity } from './order.entity.js';
 import CreateOrderDto from './dto/create-order.dto.js';
@@ -20,7 +19,6 @@ import { MongoId } from '../../types/common/mongo-id.type.js';
 @injectable()
 export default class OrderService implements OrderServiceInterface {
   constructor(
-    @inject(AppComponent.LoggerInterface) private readonly logger: LoggerInterface,
     @inject(AppComponent.OrderModel) private readonly orderModel: ModelType<OrderEntity>,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
   ){}
@@ -28,8 +26,7 @@ export default class OrderService implements OrderServiceInterface {
   public async create(dto: CreateOrderDto, training: DocumentType<TrainingEntity>, userId: MongoId): Promise<DocumentType<OrderEntity> | null> {
     const totalAmount = training.price * dto.quantity;
     const result = await this.orderModel.create({...dto, totalAmount, training: training.id, price: training.price, user: userId});
-    this.logger.info(`New order created: ${dto.purchaseType}`);
-    return result;
+    return result.populate({ path: 'training', populate: { path: 'trainer' } });
   }
 
   private sortTrainingInfoList(trainingInfoList: TrainingOrderRdo[], query: OrderQueryParams): TrainingOrderRdo[] {

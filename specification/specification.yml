@@ -599,6 +599,37 @@ paths:
         '403':
           description: Ошибка получения списка заказов. Нет доступа к тренировкам тренера.
 
+  orders/{trainingId}:
+    post:
+      tags:
+        - orders
+      summary: Создание заказа
+      description: Добавляет заказ в список пользькователя
+
+      parameters:
+        - in: path
+          name: trainingId
+          description: Id добавляемой тренировки в заказ
+          schema:
+            type: string
+            required: true
+
+      responses:
+        '201':
+          description: Успешное Добавление заказа
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                - $ref: '#/components/schemas/orderRdo'
+        '401':
+          description: Ошибка аутентификации. Неверный логин или пароль.
+        '403':
+          description: Ошибка добавления заказа. Нет доступа.
+        '404':
+          description: Тренировка не найдена.
+
 components:
   schemas:
 
@@ -1316,4 +1347,39 @@ components:
         createdAt:
           type: string
           format: date-time
+          description: Дата создания заказа.
+
+    orderRdo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Уникальный идентификатор заказа.
+        purchaseType:
+          type: string
+          enum:
+            - абонемент
+          description: Тип покупки.
+        training:
+          $ref: '#/components/schemas/trainingRdo'
+          description: Информация о тренировке, на которую сделан заказ.
+        price:
+          type: integer
+          description: Стоимость заказа.
+        quantity:
+          type: integer
+          description: Количество заказанных товаров.
+        totalAmount:
+          type: integer
+          description: Общая сумма заказа.
+        paymentMethod:
+          type: string
+          enum:
+            - visa
+            - mir
+            - umoney
+          description: Способ оплаты заказа.
+        createdAt:
+          type: string
+          format: date
           description: Дата создания заказа.

@@ -1,17 +1,15 @@
-# Заказы(кабинет тренера)
-
+# Заказы
 ## Список заказов
 GET http://localhost:4000/orders/trainer-room/653b987ece78ce7270b47d0f?limit=12&page=3
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXIxMTFAbWFpbC5uZXQiLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjUzYjk4N2VjZTc4Y2U3MjcwYjQ3ZDBmIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTY5ODc3MzUzOSwiZXhwIjoxNjk4Nzc0NDM5fQ.T2nDdSfQHfPSiCI2AuNhzGWyFmCpjwup-yL7hHzRb_Y
 
 ###
 
-# Заказы(?)
 ## Создать заказ
 
-POST http://localhost:4000/orders/653780719b7a72b6ef1abc60 HTTP/1.1
+POST http://localhost:4000/orders/65436ea167322ac60741effe HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRyYWluZXIxQGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1Mzc4MDcxOWI3YTcyYjZlZjFhYmM1NyIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJpYXQiOjE2OTg3NTY3MDcsImV4cCI6MTY5ODc1NzYwN30.cIW181g5fEChn8jmF3VF1eskCfEj9xLCgM8sN-t6vTo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlRyYWluZXIyNDI1QGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1NDM2ZWExNjczMjJhYzYwNzQxZWZmNCIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJpYXQiOjE2OTkzMzY3NTUsImV4cCI6MTY5OTMzNzY1NX0.3e_RSmR1QQ0WFfoaSuBAw46b04rBAY4-0oU8fMbr7FE
 
 {
   "purchaseType": "абонемент",
