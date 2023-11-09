@@ -6,16 +6,14 @@ import HelpCommand from './core/cli-command/helper.command.js';
 import ImportCommand from './core/cli-command/import.command.js';
 import { createCLIApplicationContainer } from './cli.container.js';
 import { AppComponent } from './types/common/app-component.enum.js';
-import { TokenServiceInterface } from './modules/token/token-service.interface.js';
 
 async function bootstrap() {
   const cliContainer = createCLIApplicationContainer();
 
   const application = cliContainer.get<CLIApplication>(AppComponent.CLIApplication);
-  const tokenService = cliContainer.get<TokenServiceInterface>(AppComponent.TokenServiceInterface);
 
   application.registerCommands([
-    new HelpCommand(), new ImportCommand(tokenService)
+    new HelpCommand(), new ImportCommand()
   ]);
 
   application.processCommand(process.argv);

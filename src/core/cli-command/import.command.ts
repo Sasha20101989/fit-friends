@@ -44,6 +44,8 @@ import { NotificationServiceInterface } from '../../modules/notification/notific
 import NotificationService from '../../modules/notification/notification-service.js';
 import { NotificationModel } from '../../modules/notification/notification.entity.js';
 import { Notification } from '../../modules/notification/types/notification.type.js';
+import TokenService from '../../modules/token/token-service.js';
+import { TokenModel } from '../../modules/token/token.entity.js';
 
 const DEFAULT_USER_PASSWORD = '123456';
 
@@ -60,16 +62,17 @@ export default class ImportCommand implements CliCommandInterface {
   private reviewService!: ReviewServiceInterface;
   private notificationService!: NotificationServiceInterface;
   private databaseService!: DatabaseClientInterface;
+  private tokenService!: TokenServiceInterface;
   private logger: LoggerInterface;
   private configService: ConfigService;
   private saltRounds!: number;
 
-  constructor(tokenService: TokenServiceInterface) {
-
+  constructor() {
     this.logger = new ConsoleLoggerService();
     this.configService = new ConfigService(this.logger);
-    this.userService = new UserService(UserModel, TrainerModel, tokenService);
-    this.trainerService = new TrainerService(tokenService, TrainerModel);
+    this.tokenService = new TokenService(this.logger, this.configService, TokenModel);
+    this.userService = new UserService(UserModel, TrainerModel, this.tokenService);
+    this.trainerService = new TrainerService(this.tokenService, TrainerModel);
     this.trainingService = new TrainingService(this.logger, TrainingModel, this.subscriberService, this.rabbitClient);
     this.orderService = new OrderService(OrderModel, this.trainingService);
     this.databaseService = new MongoClientService(this.logger);
