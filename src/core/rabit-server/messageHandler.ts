@@ -18,7 +18,7 @@ export default class MessageHandler {
   private async sendEmail(emailData: EmailData){
     try {
       const host = this.config.get('MAIL_SMTP_HOST');
-      const port = parseInt(this.config.get('MAIL_SMTP_PORT'), 10)
+      const port = parseInt(this.config.get('MAIL_SMTP_PORT'), 10);
       const transporter = nodemailer.createTransport({
         host,
         port,

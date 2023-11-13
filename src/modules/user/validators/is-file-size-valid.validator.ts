@@ -1,16 +1,13 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
 
-const isFileSizeValid = (sizeLimit: number) => {
-  return (value: any) => {
-    if (value && value.size <= sizeLimit) {
-      return true;
-    }
-    return false;
-  };
-};
+interface FileWithSize {
+  size: number;
+}
+
+const isFileSizeValid = (sizeLimit: number) => (value: FileWithSize) => value && value.size <= sizeLimit;
 
 export function IsFileValidSize(sizeLimit: number, validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: FileWithSize, propertyName: string) {
     registerDecorator({
       name: 'isFileValidSize',
       target: object.constructor,
@@ -18,7 +15,7 @@ export function IsFileValidSize(sizeLimit: number, validationOptions?: Validatio
       constraints: [sizeLimit],
       options: validationOptions,
       validator: {
-        validate: isFileSizeValid(sizeLimit),
+        validate: (value: FileWithSize) => isFileSizeValid(sizeLimit)(value),
         defaultMessage: () => 'Размер файла превышает допустимый предел',
       },
     });

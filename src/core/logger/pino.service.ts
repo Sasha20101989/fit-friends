@@ -1,7 +1,8 @@
+import path from 'node:path';
+import fs from 'node:fs';
 import { Logger, pino } from 'pino';
 import { injectable } from 'inversify';
-import path from 'path';
-import fs from 'fs';
+
 
 import type { LoggerInterface } from './logger.interface.js';
 
