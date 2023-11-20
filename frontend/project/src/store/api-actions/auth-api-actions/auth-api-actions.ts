@@ -4,7 +4,7 @@ import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance } from 'axios';
 import { APIRoute, AuthorizationStatus } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
-import { saveToken } from '../../../services/token';
+import { saveTokens } from '../../../services/token';
 import { CustomError, errorHandle } from '../../../services/error-handler';
 import { setAuthorizationStatus } from '../../user-process/user-process.slice';
 
@@ -37,15 +37,15 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
   'user/login',
   async ({ login: email, password }, { dispatch, extra: api }) => {
     try {
-      const result = await api.post<UserData>(APIRoute.Login, { email, password });
+      const { data } = await api.post<UserData>(APIRoute.Login, { email, password });
 
-      if (result.data.token) {
-        saveToken(result.data.token);
+      if (data.accessToken && data.refreshToken) {
+        saveTokens(data.accessToken, data.refreshToken);
       }
 
       dispatch(checkAuthAction());
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
-      return result.data;
+      return data;
     } catch (error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       errorHandle(error as CustomError);

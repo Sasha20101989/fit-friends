@@ -27,10 +27,17 @@ export enum AuthorizationStatus {
   Unknown = 'UNKNOWN'
 }
 
+
 export enum AppRoute {
-  Main = '/',
+  Main = '/main',
   Login = '/login',
   Register = '/register',
   Logout = '/logout',
-  NotFound = '*'
+  NotFound = '*',
+  Parent = '/'
 }
+
+export const isValidPassword = (password: string): boolean => {
+  const regex = /^.{6,12}$/;
+  return regex.test(password);
+};

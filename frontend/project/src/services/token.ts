@@ -7,8 +7,9 @@ export const getToken = (): Token => {
   return token ?? '';
 };
 
-export const saveToken = (token: Token): void => {
-  localStorage.setItem(AUTH_TOKEN_KEY_NAME, token);
+export const saveTokens = (accessToken: Token, refreshToken: Token): void => {
+  localStorage.setItem(AUTH_TOKEN_KEY_NAME, accessToken);
+  document.cookie = `refreshToken=${refreshToken}; path=/;`;
 };
 
 export const dropToken = (): void => {
