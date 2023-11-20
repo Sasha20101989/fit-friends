@@ -7,6 +7,7 @@ import { getSubmittingStatus } from '../../store/user-process/user-process.selec
 function LoginScreen() : JSX.Element {
   const { loginRef, passwordRef, handleSubmit } = useLoginForm();
   const isSubmitting = useAppSelector(getSubmittingStatus);
+
   return(
     <Layout>
       <BackgroundLogo/>
