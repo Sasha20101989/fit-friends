@@ -22,6 +22,8 @@ function useRegisterForm(){
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
 
+  const descriptionCoachRef = useRef<HTMLTextAreaElement | null>(null);
+
   const [selectedLocation, setLocation] = useState<Location | null>(null);
   const [selectedSex, setGenderType] = useState<Gender | null>(Gender.Other);
   const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
@@ -29,6 +31,8 @@ function useRegisterForm(){
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<TrainingLevel>(TrainingLevel.Beginner);
   const [selectedSpecializations, setSelectedSpecializations] = useState<WorkoutType[]>([]);
+  const [selectedCoachDescription, setSelectedCoachDescription] = useState<string | null>(null);
+  const [isPersonalTrainingSelected, setIsPersonalTrainingSelected] = useState(false);
 
   const handleRole = (roleData: Role) => {
     const handlers: Record<Role, () => void> = {
@@ -119,12 +123,20 @@ function useRegisterForm(){
 
   const isDisabled = (type: WorkoutType): boolean => selectedSpecializations.length >= MAX_SPECIALIZATIONS_COUNT && !selectedSpecializations.includes(type);
 
+  const handleDescriptionCoachChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSelectedCoachDescription(event.target.value);
+  };
+
+  const handleIsPersonalTrainingChange = () => {
+    setIsPersonalTrainingSelected(!isPersonalTrainingSelected);
+  };
 
   return {
     nameRef,
     emailRef,
     passwordRef,
     birthdayRef,
+    descriptionCoachRef,
     selectedLocation,
     selectedSex,
     selectedRole,
@@ -132,6 +144,8 @@ function useRegisterForm(){
     isDropdownOpen,
     selectedLevel,
     selectedSpecializations,
+    selectedCoachDescription,
+    isPersonalTrainingSelected,
     isDisabled,
     handleSubmit,
     handleLocationChange,
@@ -140,7 +154,9 @@ function useRegisterForm(){
     handleAgreementChange,
     handleToggleDropdown,
     handleLevelChange,
-    handleSpecializationChange
+    handleSpecializationChange,
+    handleDescriptionCoachChange,
+    handleIsPersonalTrainingChange
   };
 }
 

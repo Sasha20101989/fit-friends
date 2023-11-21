@@ -2,9 +2,16 @@ import BackgroundLogo from '../../components/background-logo/background-logo';
 import Layout from '../../components/layout/layout';
 import LevelRadio from '../../components/level-radio/level-radio';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
+import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { Role } from '../../types/role.enum';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
+  const {
+    descriptionCoachRef,
+    selectedCoachDescription,
+    isPersonalTrainingSelected,
+    handleDescriptionCoachChange,
+    handleIsPersonalTrainingChange } = useRegisterForm();
   return(
     <Layout>
       <BackgroundLogo/>
@@ -34,12 +41,25 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       <span className="questionnaire-coach__legend">Расскажите о своём опыте, который мы сможем проверить</span>
                       <div className="custom-textarea questionnaire-coach__textarea">
                         <label>
-                          <textarea name="description" placeholder=" "></textarea>
+                          <textarea
+                            name="description"
+                            placeholder=" "
+                            ref={descriptionCoachRef}
+                            defaultValue={selectedCoachDescription ?? ''}
+                            onChange={handleDescriptionCoachChange}
+                          >
+                          </textarea>
                         </label>
                       </div>
                       <div className="questionnaire-coach__checkbox">
                         <label>
-                          <input type="checkbox" value="individual-training" name="individual-training"/>
+                          <input
+                            type="checkbox"
+                            value="individual-training"
+                            name="individual-training"
+                            checked={isPersonalTrainingSelected}
+                            onChange={handleIsPersonalTrainingChange}
+                          />
                           <span className="questionnaire-coach__checkbox-icon">
                             <svg width="9" height="6" aria-hidden="true">
                               <use xlinkHref="#arrow-check"></use>
