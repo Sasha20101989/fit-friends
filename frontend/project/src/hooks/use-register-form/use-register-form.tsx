@@ -1,47 +1,108 @@
-import { FormEvent, useRef, useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
+import { RegisterTransferData } from '../../types/register-transfer-data';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute } from '../../const';
+
 //import { useAppDispatch } from '..';
 //import { AppRoute, isValidPassword } from '../../const';
 //import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
-//import { toast } from 'react-toastify';
-//import { RegisterData } from '../../types/register-data';
+import { toast } from 'react-toastify';
+import { Role } from '../../types/role.enum';
+import { Gender } from '../../types/gender.enum';
+import { Location } from '../../types/location.enum';
+import { TrainingLevel } from '../../types/training-level.enum';
 
 function useRegisterForm(){
   //const dispatch = useAppDispatch();
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
-  const locationRef = useRef<HTMLSelectElement>(null);
 
-  const [location, setLocation] = useState<string>('');
+  const [selectedLocation, setLocation] = useState<Location | null>(null);
+  const [selectedSex, setGenderType] = useState<Gender | null>(Gender.Other);
+  const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
+  const [isAgreementChecked, setIsAgreementChecked] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<TrainingLevel>(TrainingLevel.Beginner);
 
-  // const onSubmit = (authData: RegisterData) => {
-  //   if (!isValidPassword(authData.password)) {
-  //     toast.warn('Password must contain at least one letter and one number.');
-  //     return;
-  //   }
-  //   dispatch(registerAction(authData));
-  //   navigate(AppRoute.Login);
-  // };
+  const handleRole = (roleData: Role) => {
+    const handlers: Record<Role, () => void> = {
+      [Role.Trainer]: () => navigate(AppRoute.RegisterTrainer),
+      [Role.User]: () => navigate(AppRoute.RegisterUser),
+    };
+
+    const errorHandler = () => {
+      toast.error('Некорректная роль пользователя');
+    };
+
+    (handlers[roleData] || errorHandler)();
+  };
+
+  const onSubmit = (registerData: RegisterTransferData) => {
+    handleRole(registerData.role);
+  };
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    if (nameRef.current !== null && passwordRef.current !== null && emailRef.current !== null) {
-      // onSubmit({
-      //   name: nameRef.current.value,
-      //   login: emailRef.current.value,
-      //   password: passwordRef.current.value,
-      // });
+
+    if(!isAgreementChecked){
+      toast.error('Подтвердите согласие с политикой конфиденциальности');
+      return;
+    }
+
+    if (nameRef.current !== null &&
+        passwordRef.current !== null &&
+        emailRef.current !== null &&
+        birthdayRef.current !== null &&
+        selectedSex !== null &&
+        selectedRole !== null) {
+
+      const formData: RegisterTransferData = {
+        name: nameRef.current.value,
+        email: emailRef.current.value,
+        password: passwordRef.current.value,
+        location: Location.Zvezdnaya,
+        gender: selectedSex,
+        role: selectedRole,
+      };
+
+      if (birthdayRef.current !== null) {
+        formData.birthDate = birthdayRef.current.value;
+      }
+
+      onSubmit(formData);
     }
   };
 
-  const handleLocationChange = () => {
-    if (locationRef.current) {
-      setLocation(locationRef.current.value);
-    }
+  const handleLocationChange = (event: MouseEvent<HTMLLIElement>) => {
+    const location: Location = event.currentTarget.textContent as Location;
+    setLocation(location);
+    setIsDropdownOpen(false);
+  };
+
+  const handleRoleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const role: Role = event.target.value as Role;
+    setRole(role);
+  };
+
+  const handleSexChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedGender: Gender = event.target.value as Gender;
+
+    setGenderType(selectedGender);
+  };
+
+  const handleAgreementChange = () => {
+    setIsAgreementChecked(!isAgreementChecked);
+  };
+
+  const handleToggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  const handleLevelChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newLevel = event.target.value as TrainingLevel;
+    setSelectedLevel(newLevel);
   };
 
   return {
@@ -49,9 +110,19 @@ function useRegisterForm(){
     emailRef,
     passwordRef,
     birthdayRef,
-    location,
+    selectedLocation,
+    selectedSex,
+    selectedRole,
+    isAgreementChecked,
+    isDropdownOpen,
+    selectedLevel,
     handleSubmit,
-    handleLocationChange
+    handleLocationChange,
+    handleSexChange,
+    handleRoleChange,
+    handleAgreementChange,
+    handleToggleDropdown,
+    handleLevelChange
   };
 }
 

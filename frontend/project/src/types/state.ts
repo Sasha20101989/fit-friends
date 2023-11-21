@@ -1,5 +1,5 @@
-import { Training } from '../../../../backend/src/modules/training/types/training.type.js';
 import {store} from '../store/index.js';
+import { Training } from './training.type.js';
 
 export type UserState = {
   authorizationStatus: string;

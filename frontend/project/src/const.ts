@@ -27,14 +27,15 @@ export enum AuthorizationStatus {
   Unknown = 'UNKNOWN'
 }
 
-
 export enum AppRoute {
   Main = '/main',
   Login = '/login',
-  Register = '/register',
+  ParentRegister = '/register',
   Logout = '/logout',
   NotFound = '*',
-  Parent = '/'
+  Parent = '/',
+  RegisterTrainer = '/register/questionnaire/trainer',
+  RegisterUser = '/register/questionnaire/user'
 }
 
 export const isValidPassword = (password: string): boolean => {

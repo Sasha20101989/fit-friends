@@ -5,7 +5,7 @@ export const useGoToRegister = (): ((event: React.MouseEvent<HTMLAnchorElement> 
   const navigate = useNavigate();
   const handleGoRegisterClick = (evt: React.MouseEvent<HTMLAnchorElement> | React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
-    navigate(AppRoute.Register);
+    navigate(AppRoute.ParentRegister);
   };
   return handleGoRegisterClick;
 };
