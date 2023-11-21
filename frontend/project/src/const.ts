@@ -44,3 +44,11 @@ export const isValidPassword = (password: string): boolean => {
 };
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
+
+export const isAuthorization = (status: AuthorizationStatus) =>
+  status === AuthorizationStatus.Auth;
+
+export const isAuthorizationUnknown = (status: AuthorizationStatus) =>
+  status === AuthorizationStatus.Unknown;
+
+export const RING_LOADER_COLOR = '#123abc';

@@ -33,6 +33,7 @@ function useRegisterForm(){
   const [selectedSpecializations, setSelectedSpecializations] = useState<WorkoutType[]>([]);
   const [selectedCoachDescription, setSelectedCoachDescription] = useState<string | null>(null);
   const [isPersonalTrainingSelected, setIsPersonalTrainingSelected] = useState(false);
+  const [selectedCertificate, setCertificate] = useState<string | null>(null);
 
   const handleRole = (roleData: Role) => {
     const handlers: Record<Role, () => void> = {
@@ -131,6 +132,22 @@ function useRegisterForm(){
     setIsPersonalTrainingSelected(!isPersonalTrainingSelected);
   };
 
+  const handleCertificateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    const isJpegOrPngOrPdf = file?.type === 'image/jpeg' || file?.type === 'image/png' || file?.type === 'application/pdf';
+
+    if (isJpegOrPngOrPdf) {
+      const fileUrl = URL.createObjectURL(file);
+      setCertificate(fileUrl);
+    } else {
+      toast.warn('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).', {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 5000,
+      });
+    }
+  };
+
   return {
     nameRef,
     emailRef,
@@ -146,6 +163,7 @@ function useRegisterForm(){
     selectedSpecializations,
     selectedCoachDescription,
     isPersonalTrainingSelected,
+    selectedCertificate,
     isDisabled,
     handleSubmit,
     handleLocationChange,
@@ -156,7 +174,8 @@ function useRegisterForm(){
     handleLevelChange,
     handleSpecializationChange,
     handleDescriptionCoachChange,
-    handleIsPersonalTrainingChange
+    handleIsPersonalTrainingChange,
+    handleCertificateChange
   };
 }
 

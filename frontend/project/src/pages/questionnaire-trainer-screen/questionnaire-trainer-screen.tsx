@@ -11,7 +11,9 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     selectedCoachDescription,
     isPersonalTrainingSelected,
     handleDescriptionCoachChange,
-    handleIsPersonalTrainingChange } = useRegisterForm();
+    handleIsPersonalTrainingChange,
+    handleCertificateChange } = useRegisterForm();
+
   return(
     <Layout>
       <BackgroundLogo/>
@@ -33,7 +35,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                               <use xlinkHref="#icon-import"></use>
                             </svg>
                           </span>
-                          <input type="file" name="import" tabIndex={-1} accept=".pdf, .jpg, .png"/>
+                          <input type="file" name="import" tabIndex={-1} accept=".pdf, .jpg, .png" onChange={handleCertificateChange}/>
                         </label>
                       </div>
                     </div>
