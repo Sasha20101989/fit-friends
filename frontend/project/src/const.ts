@@ -42,3 +42,5 @@ export const isValidPassword = (password: string): boolean => {
   const regex = /^.{6,12}$/;
   return regex.test(password);
 };
+
+export const MAX_SPECIALIZATIONS_COUNT = 3;

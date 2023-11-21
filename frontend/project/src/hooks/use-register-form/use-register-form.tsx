@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import { RegisterTransferData } from '../../types/register-transfer-data';
 import { useNavigate } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { AppRoute, MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 //import { useAppDispatch } from '..';
 //import { AppRoute, isValidPassword } from '../../const';
@@ -11,6 +11,7 @@ import { Role } from '../../types/role.enum';
 import { Gender } from '../../types/gender.enum';
 import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
+import { WorkoutType } from '../../types/workout-type.enum.js';
 
 function useRegisterForm(){
   //const dispatch = useAppDispatch();
@@ -27,6 +28,7 @@ function useRegisterForm(){
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<TrainingLevel>(TrainingLevel.Beginner);
+  const [selectedSpecializations, setSelectedSpecializations] = useState<WorkoutType[]>([]);
 
   const handleRole = (roleData: Role) => {
     const handlers: Record<Role, () => void> = {
@@ -105,6 +107,19 @@ function useRegisterForm(){
     setSelectedLevel(newLevel);
   };
 
+  const handleSpecializationChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = event.target.value as WorkoutType;
+
+    if (event.target.checked) {
+      setSelectedSpecializations((prevSelected) => [...prevSelected, selectedType]);
+    } else {
+      setSelectedSpecializations((prevSelected) => prevSelected.filter((type) => type !== selectedType));
+    }
+  };
+
+  const isDisabled = (type: WorkoutType): boolean => selectedSpecializations.length >= MAX_SPECIALIZATIONS_COUNT && !selectedSpecializations.includes(type);
+
+
   return {
     nameRef,
     emailRef,
@@ -116,13 +131,16 @@ function useRegisterForm(){
     isAgreementChecked,
     isDropdownOpen,
     selectedLevel,
+    selectedSpecializations,
+    isDisabled,
     handleSubmit,
     handleLocationChange,
     handleSexChange,
     handleRoleChange,
     handleAgreementChange,
     handleToggleDropdown,
-    handleLevelChange
+    handleLevelChange,
+    handleSpecializationChange
   };
 }
 
