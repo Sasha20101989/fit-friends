@@ -28,9 +28,11 @@ export default class CreateTrainerDto {
   @MaxLength(PASSWORD_CONSTRAINTS.MAX_LENGTH, { message: `Maximum password length must be ${PASSWORD_CONSTRAINTS.MAX_LENGTH}` })
   public password!: string;
 
+  @IsNotEmpty({ message: 'Gender is required' })
   @IsEnum(Gender, { message: 'Invalid gender' })
   public gender!: Gender;
 
+  @IsNotEmpty({ message: 'Role is required' })
   public role!: Role;
 
   @IsOptional()
@@ -46,19 +48,19 @@ export default class CreateTrainerDto {
   public location!: Location;
 
   @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
-  @IsNotEmpty({ message: 'Background image is required' })
+  @IsOptional()
   public backgroundImage!: string;
 
-  @IsNotEmpty({ message: 'Training level is required' })
+  @IsOptional()
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
   public trainingLevel!: TrainingLevel;
 
-  @IsNotEmpty({ message: 'Workout types are required' })
+  @IsOptional()
   @IsEnum(WorkoutType, { each: true, message: 'Invalid workout type(s)' })
   @IsThreeWorkoutTypes({ message: 'Workout types array must not have more than 3 elements' })
   public workoutTypes!: WorkoutType[];
 
-  @IsNotEmpty({ message: 'Readiness Personal Training is required' })
+  @IsOptional()
   public personalTraining!: boolean;
 
   @MinLength(ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH, { message: `Minimum achievements length must be ${ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH}` })
@@ -66,7 +68,7 @@ export default class CreateTrainerDto {
   @IsOptional()
   public trainerAchievements?: string;
 
-  @IsNotEmpty({ message: 'Trainer certificate is required' })
+  @IsOptional()
   @IsSinglePDF({ message: 'Trainer certificate must be a single PDF file' })
   public certificate!: string;
 }

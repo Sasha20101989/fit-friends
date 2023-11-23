@@ -11,14 +11,23 @@ Content-Type: application/json
   "avatar": "feliugin.jpg",
   "password": "123456",
   "gender": "мужской",
-  "location": "звёздная",
-  "backgroundImage": "image.png",
-  "trainingLevel": "любитель",
-  "workoutTypes": ["стрейчинг", "аэробика"],
-  "traningCount": 0,
-  "personalTraining": true,
-  "certificate": "file.pdf",
-  "trainerAchievements": "Ты будешь отжиматься пока я не вспотею"
+  "role": "тренер",
+  "location": "звёздная"
 }
 
+###
+
+## Обновление тренера по id
+
+PUT http://localhost:4000/trainers HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlRyYWluZXIzMjBAZXhhbXBsZS5jb20iLCJwYXNzd29yZCI6IjEyMzQ1NiIsImlkIjoiNjU0MzZlYTE2NzMyMmFjNjA3NDFlZmVmIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTcwMDc3MTQyMSwiZXhwIjoxNzAwNzcyMzIxfQ.vPV6BhG_wAfuB4TvUXJJFUZMIWfe4qVBfjQh2HhD0Po
+
+{
+  "personalTraining": true,
+  "workoutTypes": ["йога", "бег", "бокс"],
+  "trainingLevel": "профессионал",
+  "description": "TestTestTestTestTest",
+  "certificate": "none.pdf"
+}
 ###

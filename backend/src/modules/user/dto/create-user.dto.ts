@@ -30,9 +30,11 @@ export default class CreateUserDto {
   @MaxLength(PASSWORD_CONSTRAINTS.MAX_LENGTH, { message: `Maximum password length must be ${PASSWORD_CONSTRAINTS.MAX_LENGTH}` })
   public password!: string;
 
+  @IsNotEmpty({ message: 'Gender is required' })
   @IsEnum(Gender, { message: 'Invalid gender' })
   public gender!: Gender;
 
+  @IsNotEmpty({ message: 'Role is required' })
   public role!: Role;
 
   @IsOptional()
@@ -48,34 +50,34 @@ export default class CreateUserDto {
   public location!: Location;
 
   @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
-  @IsNotEmpty({ message: 'Background image is required' })
-  public backgroundImage!: string;
+  @IsOptional()
+  public backgroundImage?: string;
 
-  @IsNotEmpty({ message: 'Training level is required' })
+  @IsOptional()
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
   public trainingLevel!: TrainingLevel;
 
-  @IsNotEmpty({ message: 'Workout types are required' })
+  @IsOptional()
   @IsEnum(WorkoutType, { each: true, message: 'Invalid workout type(s)' })
   @IsThreeWorkoutTypes({ message: 'Workout types array must not have more than 3 elements' })
   public workoutTypes!: WorkoutType[];
 
-  @IsNotEmpty({ message: 'Workout duration is required' })
+  @IsOptional()
   @IsEnum(WorkoutDuration, { message: 'Invalid workout duration' })
   public workoutDuration!: WorkoutDuration;
 
-  @IsNotEmpty({ message: 'Calories to burn are required' })
+  @IsOptional()
   @IsInt({ message: 'Calories to burn must be a number' })
   @Min(CALORIES_CONSTRAINTS.MIN_TO_BURN, { message: `Minimum calories to burn must be ${CALORIES_CONSTRAINTS.MIN_TO_BURN}` })
   @Max(CALORIES_CONSTRAINTS.MAX_TO_BURN, { message: `Maximum calories to burn must be ${CALORIES_CONSTRAINTS.MAX_TO_BURN}` })
   public caloriesToBurn!: number;
 
-  @IsNotEmpty({ message: 'Calories to spend are required' })
+  @IsOptional()
   @IsInt({ message: 'Calories to spend must be a number' })
   @Min(CALORIES_CONSTRAINTS.MIN_TO_SPEND, { message: `Minimum calories to spend must be ${CALORIES_CONSTRAINTS.MIN_TO_SPEND}` })
   @Max(CALORIES_CONSTRAINTS.MAX_TO_SPEND, { message: `Maximum calories to spend must be ${CALORIES_CONSTRAINTS.MAX_TO_SPEND}` })
   public caloriesToSpend!: number;
 
-  @IsNotEmpty({ message: 'Readiness for workout is required' })
+  @IsOptional()
   public readinessForWorkout!: boolean;
 }

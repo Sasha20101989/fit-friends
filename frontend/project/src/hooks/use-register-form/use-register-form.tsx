@@ -1,25 +1,39 @@
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
-import { RegisterTransferData } from '../../types/register-transfer-data';
+import { RegisterUserTransferData } from '../../types/register-transfer-data';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
-//import { useAppDispatch } from '..';
-//import { AppRoute, isValidPassword } from '../../const';
-//import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
+import { useAppDispatch, useAppSelector } from '..';
+import { editTrainerAction, editUserAction, registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 import { toast } from 'react-toastify';
 import { Role } from '../../types/role.enum';
 import { Gender } from '../../types/gender.enum';
 import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
-import { WorkoutType } from '../../types/workout-type.enum.js';
+import { WorkoutType } from '../../types/workout-type.enum';
+import { useIsError } from '../use-is-logged-in/use-is-logged-in';
+import { WorkoutDuration } from '../../types/workout-duration.enum';
+import { getDuration, getLevel, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { addSpecialization, changeDuration, changeLevel, removeSpecialization } from '../../store/main-process/main-process.slice';
+import UpdateUserDto from '../../dto/update-user.dto';
+import UpdateTrainerDto from '../../dto/update-trainer.dto';
 
 function useRegisterForm(){
-  //const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const isRegisterBlocked = useIsError(false);
+  //const isLoggedIn = useIsLoggedIn(AuthorizationStatus.Auth);
+
+  const specializations = useAppSelector(getSpecializations);
+  const selectedLevel = useAppSelector(getLevel);
+  const selectedDuration = useAppSelector(getDuration);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const caloriesLoseRef = useRef<HTMLInputElement | null>(null);
+  const caloriesWaste = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
 
   const descriptionCoachRef = useRef<HTMLTextAreaElement | null>(null);
@@ -29,8 +43,6 @@ function useRegisterForm(){
   const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState<TrainingLevel>(TrainingLevel.Beginner);
-  const [selectedSpecializations, setSelectedSpecializations] = useState<WorkoutType[]>([]);
   const [selectedCoachDescription, setSelectedCoachDescription] = useState<string | null>(null);
   const [isPersonalTrainingSelected, setIsPersonalTrainingSelected] = useState(false);
   const [selectedCertificate, setCertificate] = useState<string | null>(null);
@@ -48,11 +60,28 @@ function useRegisterForm(){
     (handlers[roleData] || errorHandler)();
   };
 
-  const onSubmit = (registerData: RegisterTransferData) => {
-    handleRole(registerData.role);
+  const onSubmit = (registerData: RegisterUserTransferData) => {
+    dispatch(registerAction(registerData));
+    if(!isRegisterBlocked){
+      handleRole(registerData.role);
+    }
   };
 
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const onUserQuestion = (userData: UpdateUserDto) => {
+    dispatch(editUserAction(userData));
+    if(!isRegisterBlocked){
+      navigate(AppRoute.Main);
+    }
+  };
+
+  const onTrainerQuestion = (userData: UpdateTrainerDto) => {
+    dispatch(editTrainerAction(userData));
+    if(!isRegisterBlocked){
+      navigate(AppRoute.Main);
+    }
+  };
+
+  const handleRegister = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     if(!isAgreementChecked){
@@ -64,14 +93,15 @@ function useRegisterForm(){
         passwordRef.current !== null &&
         emailRef.current !== null &&
         birthdayRef.current !== null &&
+        selectedLocation !== null &&
         selectedSex !== null &&
         selectedRole !== null) {
 
-      const formData: RegisterTransferData = {
+      const formData: RegisterUserTransferData = {
         name: nameRef.current.value,
         email: emailRef.current.value,
         password: passwordRef.current.value,
-        location: Location.Zvezdnaya,
+        location: selectedLocation,
         gender: selectedSex,
         role: selectedRole,
       };
@@ -81,6 +111,46 @@ function useRegisterForm(){
       }
 
       onSubmit(formData);
+    }
+  };
+
+  const handleUserQuestion = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (caloriesLoseRef.current !== null &&
+        caloriesWaste.current !== null &&
+        specializations.length > 0 &&
+        selectedLevel !== null &&
+        selectedDuration !== null) {
+
+      const userData: UpdateUserDto = {
+        caloriesToBurn: parseInt(caloriesLoseRef.current.value, 10),
+        caloriesToSpend: parseInt(caloriesWaste.current.value, 10),
+        workoutTypes: specializations,
+        trainingLevel: selectedLevel,
+        workoutDuration: selectedDuration
+      };
+
+      onUserQuestion(userData);
+    }
+  };
+
+  const handleTrainerQuestion = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (descriptionCoachRef.current !== null &&
+        specializations.length > 0 &&
+        selectedLevel !== null) {
+
+      const userData: UpdateTrainerDto = {
+        description: descriptionCoachRef.current.value,
+        workoutTypes: specializations,
+        trainingLevel: selectedLevel,
+        readinessForWorkout: isPersonalTrainingSelected,
+        certificate: 'null'
+      };
+
+      onTrainerQuestion(userData);
     }
   };
 
@@ -109,20 +179,25 @@ function useRegisterForm(){
 
   const handleLevelChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newLevel = event.target.value as TrainingLevel;
-    setSelectedLevel(newLevel);
+    dispatch(changeLevel(newLevel));
+  };
+
+  const handleDurationChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newDuration = event.target.value as WorkoutDuration;
+    dispatch(changeDuration(newDuration));
   };
 
   const handleSpecializationChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedType = event.target.value as WorkoutType;
 
     if (event.target.checked) {
-      setSelectedSpecializations((prevSelected) => [...prevSelected, selectedType]);
+      dispatch(addSpecialization(selectedType));
     } else {
-      setSelectedSpecializations((prevSelected) => prevSelected.filter((type) => type !== selectedType));
+      dispatch(removeSpecialization(selectedType));
     }
   };
 
-  const isDisabled = (type: WorkoutType): boolean => selectedSpecializations.length >= MAX_SPECIALIZATIONS_COUNT && !selectedSpecializations.includes(type);
+  const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
 
   const handleDescriptionCoachChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setSelectedCoachDescription(event.target.value);
@@ -153,6 +228,8 @@ function useRegisterForm(){
     emailRef,
     passwordRef,
     birthdayRef,
+    caloriesLoseRef,
+    caloriesWaste,
     descriptionCoachRef,
     selectedLocation,
     selectedSex,
@@ -160,12 +237,13 @@ function useRegisterForm(){
     isAgreementChecked,
     isDropdownOpen,
     selectedLevel,
-    selectedSpecializations,
+    specializations,
     selectedCoachDescription,
     isPersonalTrainingSelected,
     selectedCertificate,
+    selectedDuration,
     isDisabled,
-    handleSubmit,
+    handleRegister,
     handleLocationChange,
     handleSexChange,
     handleRoleChange,
@@ -175,7 +253,10 @@ function useRegisterForm(){
     handleSpecializationChange,
     handleDescriptionCoachChange,
     handleIsPersonalTrainingChange,
-    handleCertificateChange
+    handleCertificateChange,
+    handleUserQuestion,
+    handleTrainerQuestion,
+    handleDurationChange
   };
 }
 

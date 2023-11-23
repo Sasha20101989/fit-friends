@@ -8,6 +8,8 @@ import { PASSWORD_CONSTRAINTS } from '.././user/user.const.js';
 import { TrainerEntity } from './trainer.entity.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
 import { VerifyUserResponse } from '../user/response/verify-user.response.js';
+import { MongoId } from '../../types/common/mongo-id.type.js';
+import UpdateTrainerDto from './dto/update-trainer.dto.js';
 
 
 @injectable()
@@ -43,5 +45,11 @@ export default class TrainerService implements TrainerServiceInterface {
 
   public async exists(documentId: string): Promise<boolean> {
     return this.trainerModel.exists({ _id: documentId }).then((v) => v !== null);
+  }
+
+  public async updateById(trainerId: MongoId, dto: UpdateTrainerDto): Promise<DocumentType<TrainerEntity> | null> {
+    return this.trainerModel
+      .findByIdAndUpdate(trainerId, dto, {new: true})
+      .exec();
   }
 }

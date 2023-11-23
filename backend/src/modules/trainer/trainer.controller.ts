@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { StatusCodes } from 'http-status-codes';
+import * as core from 'express-serve-static-core';
 import { Request, Response } from 'express';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
@@ -16,6 +17,9 @@ import { fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
 import TrainerRdo from './rdo/trainer.rdo.js';
 import { Role } from '../../types/role.enum.js';
+import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
+import UpdateTrainerDto from './dto/update-trainer.dto.js';
+import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 
 @injectable()
 export default class TrainerController extends Controller {
@@ -32,6 +36,14 @@ export default class TrainerController extends Controller {
       handler: this.create,
       middlewares: [
         new ValidateDtoMiddleware(CreateTrainerDto)
+      ]
+    });
+    this.addRoute({ path: '/',
+      method: HttpMethod.Put,
+      handler: this.update,
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(UpdateTrainerDto)
       ]
     });
   }
@@ -55,5 +67,23 @@ export default class TrainerController extends Controller {
     setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.created(res, fillDTO(TrainerRdo, result.user));
+  }
+
+  public async update(
+    { body, user }: Request<core.ParamsDictionary | ParamsGetUser, UnknownRecord, UpdateTrainerDto>,
+    res: Response
+  ): Promise<void> {
+
+    const updatedUser = await this.trainerService.updateById(user.id, body);
+
+    if (!updatedUser) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Trainer with email ${user.email} not found.`,
+        'TrainerController'
+      );
+    }
+
+    this.ok(res, fillDTO(TrainerRdo, updatedUser));
   }
 }

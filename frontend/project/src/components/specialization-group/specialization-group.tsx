@@ -8,7 +8,7 @@ type SpecializationGroupProps = {
 
 function SpecializationGroup({ role }: SpecializationGroupProps): JSX.Element {
   const name = role === Role.Trainer ? 'coach' : 'user';
-  const { selectedSpecializations, isDisabled, handleSpecializationChange } = useRegisterForm();
+  const { specializations, isDisabled, handleSpecializationChange } = useRegisterForm();
 
   return(
     <div className={`questionnaire-${name}__block`}><span className={`questionnaire-${name}__legend`}>Ваша специализация (тип) тренировок</span>
@@ -21,7 +21,7 @@ function SpecializationGroup({ role }: SpecializationGroupProps): JSX.Element {
                 type="checkbox"
                 name="specialisation"
                 value={type}
-                checked={selectedSpecializations.includes(type)}
+                checked={specializations.includes(type)}
                 onChange={handleSpecializationChange}
                 disabled={isDisabled(type)}
               />

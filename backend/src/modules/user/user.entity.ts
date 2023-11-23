@@ -51,25 +51,25 @@ export class UserEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, enum: Location })
   public location: Location;
 
-  @prop({ required: true })
-  public backgroundImage: string;
+  @prop({ required: false })
+  public backgroundImage?: string;
 
-  @prop({ required: true, enum: TrainingLevel })
+  @prop({ required: false, enum: TrainingLevel })
   public trainingLevel: TrainingLevel;
 
   @prop({ required: true, type: String, enum: WorkoutType })
   public workoutTypes: WorkoutType[];
 
-  @prop({ required: true, enum: WorkoutDuration })
+  @prop({ required: false, enum: WorkoutDuration })
   public workoutDuration: WorkoutDuration;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public caloriesToBurn: number;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public caloriesToSpend: number;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public readinessForWorkout: boolean;
 
   @prop({ required: false, ref: BalanceEntity })

@@ -52,22 +52,22 @@ export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer 
   @prop({ required: true, enum: Location })
   public location: Location;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public backgroundImage: string;
 
-  @prop({ required: true, enum: TrainingLevel })
+  @prop({ required: false, enum: TrainingLevel })
   public trainingLevel: TrainingLevel;
 
-  @prop({ required: true, type: String, enum: WorkoutType })
+  @prop({ required: false, type: String, enum: WorkoutType })
   public workoutTypes: WorkoutType[];
 
-  @prop({ required: true })
+  @prop({ required: false })
   public certificate: string;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public trainerAchievements?: string;
 
-  @prop({ required: true })
+  @prop({ required: false })
   public personalTraining: boolean;
 
   constructor(trainerData: CreateTrainerDto) {

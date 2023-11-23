@@ -5,11 +5,7 @@ import { AppRoute, AuthorizationStatus, isValidPassword } from '../../const';
 import { loginAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 import { toast } from 'react-toastify';
 import { useIsLoggedIn } from '../use-is-logged-in/use-is-logged-in';
-
-type AuthData = {
-  login: string;
-  password: string;
-}
+import { AuthData } from '../../types/auth-data.js';
 
 function useLoginForm(){
   const dispatch = useAppDispatch();
@@ -38,7 +34,7 @@ function useLoginForm(){
 
     if (loginRef.current !== null && passwordRef.current !== null) {
       onSubmit({
-        login: loginRef.current.value,
+        email: loginRef.current.value,
         password: passwordRef.current.value,
       });
     }

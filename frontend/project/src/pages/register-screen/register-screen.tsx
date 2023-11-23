@@ -4,11 +4,11 @@ import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
 import { Role } from '../../types/role.enum';
-//import { useAppSelector } from '../../hooks/index';
-//import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import { useAppSelector } from '../../hooks/index';
+import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 
 function RegisterScreen() : JSX.Element {
-  //const isSubmitting = useAppSelector(getSubmittingStatus);
+  const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
     nameRef,
@@ -19,7 +19,8 @@ function RegisterScreen() : JSX.Element {
     selectedLocation,
     selectedRole,
     isAgreementChecked,
-    handleSubmit,
+    isDropdownOpen,
+    handleRegister,
     handleSexChange,
     handleRoleChange,
     handleAgreementChange,
@@ -36,7 +37,7 @@ function RegisterScreen() : JSX.Element {
               <h1 className="popup-form__title">Регистрация</h1>
             </div>
             <div className="popup-form__form">
-              <form method="get" onSubmit={handleSubmit}>
+              <form method="get" onSubmit={handleRegister}>
                 <div className="sign-up">
                   <div className="sign-up__load-photo">
                     <div className="input-load-avatar">
@@ -79,7 +80,7 @@ function RegisterScreen() : JSX.Element {
                         </span>
                       </label>
                     </div>
-                    <div className="custom-select select--not-selected">
+                    <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
                       <span className="custom-select__label">Ваша локация</span>
                       <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
                         <span className="custom-select__text">{selectedLocation}</span>
@@ -93,8 +94,8 @@ function RegisterScreen() : JSX.Element {
                         {Object.values(Location).map((loc) => (
                           <li
                             key={loc}
-                            role="option"
-                            aria-selected={loc === selectedLocation}
+                            value={selectedLocation ?? ''}
+                            className={loc === selectedLocation ? 'selected' : ''}
                             onClick={handleLocationChange}
                           >
                             {loc}
@@ -175,7 +176,7 @@ function RegisterScreen() : JSX.Element {
                       <span className="sign-up__checkbox-label">Я соглашаюсь с <span>политикой конфиденциальности</span> компании</span>
                     </label>
                   </div>
-                  <button className="btn sign-up__button" type="submit">Продолжить</button>
+                  <button className="btn sign-up__button" type="submit" disabled={isSubmitting}>Продолжить</button>
                 </div>
               </form>
             </div>

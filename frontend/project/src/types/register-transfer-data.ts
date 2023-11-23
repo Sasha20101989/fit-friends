@@ -3,7 +3,7 @@ import { Location } from './location.enum';
 import { Role } from './role.enum';
 
 
-export type RegisterTransferData = {
+export type RegisterUserTransferData = {
   name: string;
   email: string;
   avatar?: string;

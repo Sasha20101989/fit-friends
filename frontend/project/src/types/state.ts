@@ -1,13 +1,20 @@
 import {store} from '../store/index.js';
+import { TrainingLevel } from './training-level.enum.js';
 import { Training } from './training.type.js';
+import { WorkoutDuration } from './workout-duration.enum.js';
+import { WorkoutType } from './workout-type.enum.js';
 
 export type UserState = {
   authorizationStatus: string;
+  isError: boolean;
   isSubmitting: boolean;
 }
 
 export type MainState = {
   sortingOrderMethod: string;
+  specializations: WorkoutType[];
+  level: TrainingLevel;
+  duration: WorkoutDuration;
 }
 
 export type DataState = {
