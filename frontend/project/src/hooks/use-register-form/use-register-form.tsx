@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import { RegisterUserTransferData } from '../../types/register-transfer-data';
-import { useNavigate } from 'react-router-dom';
-import { AppRoute, MAX_SPECIALIZATIONS_COUNT } from '../../const';
+import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 import { useAppDispatch, useAppSelector } from '..';
 import { editTrainerAction, editUserAction, registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
@@ -11,23 +10,21 @@ import { Gender } from '../../types/gender.enum';
 import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
-import { useIsError } from '../use-is-logged-in/use-is-logged-in';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDuration, getLevel, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { addSpecialization, changeDuration, changeLevel, removeSpecialization } from '../../store/main-process/main-process.slice';
+import { getDuration, getFile, getLevel, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { addSpecialization, changeDuration, changeFile, changeLevel, removeSpecialization } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 
 function useRegisterForm(){
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
-  const isRegisterBlocked = useIsError(false);
   //const isLoggedIn = useIsLoggedIn(AuthorizationStatus.Auth);
 
   const specializations = useAppSelector(getSpecializations);
   const selectedLevel = useAppSelector(getLevel);
   const selectedDuration = useAppSelector(getDuration);
+  const selectedFile = useAppSelector(getFile);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -45,40 +42,30 @@ function useRegisterForm(){
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCoachDescription, setSelectedCoachDescription] = useState<string | null>(null);
   const [isPersonalTrainingSelected, setIsPersonalTrainingSelected] = useState(false);
-  const [selectedCertificate, setCertificate] = useState<string | null>(null);
 
-  const handleRole = (roleData: Role) => {
-    const handlers: Record<Role, () => void> = {
-      [Role.Trainer]: () => navigate(AppRoute.RegisterTrainer),
-      [Role.User]: () => navigate(AppRoute.RegisterUser),
-    };
+  // const handleRole = (roleData: Role) => {
+  //   const handlers: Record<Role, () => void> = {
+  //     [Role.Trainer]: () => navigate(AppRoute.RegisterTrainer),
+  //     [Role.User]: () => navigate(AppRoute.RegisterUser),
+  //   };
 
-    const errorHandler = () => {
-      toast.error('Некорректная роль пользователя');
-    };
+  //   const errorHandler = () => {
+  //     toast.error('Некорректная роль пользователя');
+  //   };
 
-    (handlers[roleData] || errorHandler)();
-  };
+  //   (handlers[roleData] || errorHandler)();
+  // };
 
   const onSubmit = (registerData: RegisterUserTransferData) => {
     dispatch(registerAction(registerData));
-    if(!isRegisterBlocked){
-      handleRole(registerData.role);
-    }
   };
 
   const onUserQuestion = (userData: UpdateUserDto) => {
     dispatch(editUserAction(userData));
-    if(!isRegisterBlocked){
-      navigate(AppRoute.Main);
-    }
   };
 
   const onTrainerQuestion = (userData: UpdateTrainerDto) => {
     dispatch(editTrainerAction(userData));
-    if(!isRegisterBlocked){
-      navigate(AppRoute.Main);
-    }
   };
 
   const handleRegister = (evt: FormEvent<HTMLFormElement>) => {
@@ -140,14 +127,15 @@ function useRegisterForm(){
 
     if (descriptionCoachRef.current !== null &&
         specializations.length > 0 &&
-        selectedLevel !== null) {
+        selectedLevel !== null &&
+        selectedFile !== '') {
 
       const userData: UpdateTrainerDto = {
         description: descriptionCoachRef.current.value,
         workoutTypes: specializations,
         trainingLevel: selectedLevel,
         readinessForWorkout: isPersonalTrainingSelected,
-        certificate: 'null'
+        certificate: selectedFile
       };
 
       onTrainerQuestion(userData);
@@ -213,8 +201,9 @@ function useRegisterForm(){
     const isJpegOrPngOrPdf = file?.type === 'image/jpeg' || file?.type === 'image/png' || file?.type === 'application/pdf';
 
     if (isJpegOrPngOrPdf) {
-      const fileUrl = URL.createObjectURL(file);
-      setCertificate(fileUrl);
+      const fileName = file.name;
+      //const fileUrl = URL.createObjectURL(file);
+      dispatch(changeFile(fileName));
     } else {
       toast.warn('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).', {
         position: toast.POSITION.TOP_RIGHT,
@@ -240,8 +229,8 @@ function useRegisterForm(){
     specializations,
     selectedCoachDescription,
     isPersonalTrainingSelected,
-    selectedCertificate,
     selectedDuration,
+    selectedFile,
     isDisabled,
     handleRegister,
     handleLocationChange,

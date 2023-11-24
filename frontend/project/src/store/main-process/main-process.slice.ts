@@ -4,12 +4,15 @@ import { Sorting } from '../../types/sorting.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
+import browserHistory from '../../browser-history';
+import { AppRoute } from '../../const';
 
 const initialState: MainState = {
   sortingOrderMethod: Sorting.Ascending,
   specializations: [],
   level: TrainingLevel.Beginner,
-  duration: WorkoutDuration.Short
+  duration: WorkoutDuration.Short,
+  file: ''
 };
 
 export const mainProcess = createSlice({
@@ -22,6 +25,9 @@ export const mainProcess = createSlice({
     changeLevel: (state, action: PayloadAction<TrainingLevel>) => {
       state.level = action.payload;
     },
+    changeFile: (state, action: PayloadAction<string>) => {
+      state.file = action.payload;
+    },
     changeDuration: (state, action: PayloadAction<WorkoutDuration>) => {
       state.duration = action.payload;
     },
@@ -29,11 +35,14 @@ export const mainProcess = createSlice({
       state.specializations.push(action.payload);
     },
     removeSpecialization: (state, action: PayloadAction<WorkoutType>) => {
-      state.specializations = state.specializations.filter(spec => spec !== action.payload);
+      state.specializations = state.specializations.filter((spec) => spec !== action.payload);
     },
     clearSpecializations: (state) => {
       state.specializations = [];
     },
+    redirectToRoute: (state, action: PayloadAction<AppRoute>) => {
+      browserHistory.push(action.payload);
+    },
   },
 });
-export const { changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { redirectToRoute, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, changeLevel, changeDuration } = mainProcess.actions;

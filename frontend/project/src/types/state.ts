@@ -6,7 +6,7 @@ import { WorkoutType } from './workout-type.enum.js';
 
 export type UserState = {
   authorizationStatus: string;
-  isError: boolean;
+  registerStatus: string;
   isSubmitting: boolean;
 }
 
@@ -15,6 +15,7 @@ export type MainState = {
   specializations: WorkoutType[];
   level: TrainingLevel;
   duration: WorkoutDuration;
+  file: string;
 }
 
 export type DataState = {

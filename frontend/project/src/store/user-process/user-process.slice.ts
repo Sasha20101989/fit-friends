@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AuthorizationStatus } from '../../const';
+import { AuthorizationStatus, RegisterStatus } from '../../const';
 import { UserState } from '../../types/state';
-import { loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
+import { loginAction, registerAction, updateRefreshToken } from '../api-actions/auth-api-actions/auth-api-actions';
 
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
-  isError: false,
+  registerStatus: RegisterStatus.Unknown,
   isSubmitting: false,
 };
 
@@ -16,11 +16,11 @@ export const userProcess = createSlice({
     setIsSubmitting: (state, action: PayloadAction<boolean>) => {
       state.isSubmitting = action.payload;
     },
-    setIsError: (state, action: PayloadAction<boolean>) => {
-      state.isError = action.payload;
-    },
     setAuthorizationStatus: (state, action: PayloadAction<AuthorizationStatus>) => {
       state.authorizationStatus = action.payload;
+    },
+    setRegisterStatus: (state, action: PayloadAction<RegisterStatus>) => {
+      state.registerStatus = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -36,21 +36,27 @@ export const userProcess = createSlice({
       })
       .addCase(registerAction.pending, (state, _action) => {
         state.isSubmitting = true;
-        state.isError = false;
       })
       .addCase(registerAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.isError = false;
       })
       .addCase(registerAction.rejected, (state, _action) => {
         state.isSubmitting = false;
-        state.isError = true;
+      })
+      .addCase(updateRefreshToken.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(updateRefreshToken.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(updateRefreshToken.rejected, (state, _action) => {
+        state.isSubmitting = false;
       });
   },
 });
 
 export const {
   setIsSubmitting,
-  setIsError,
-  setAuthorizationStatus
+  setAuthorizationStatus,
+  setRegisterStatus
 } = userProcess.actions;

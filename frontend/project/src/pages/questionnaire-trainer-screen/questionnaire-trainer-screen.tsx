@@ -2,17 +2,22 @@ import BackgroundLogo from '../../components/background-logo/background-logo';
 import Layout from '../../components/layout/layout';
 import LevelRadio from '../../components/level-radio/level-radio';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
+import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Role } from '../../types/role.enum';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
+  const isSubmitting = useAppSelector(getSubmittingStatus);
   const {
     descriptionCoachRef,
     selectedCoachDescription,
     isPersonalTrainingSelected,
+    selectedFile,
     handleDescriptionCoachChange,
     handleIsPersonalTrainingChange,
-    handleCertificateChange } = useRegisterForm();
+    handleCertificateChange,
+    handleTrainerQuestion } = useRegisterForm();
 
   return(
     <Layout>
@@ -21,13 +26,13 @@ function QuestionnaireTrainerScreen(): JSX.Element {
         <div className="popup-form__wrapper">
           <div className="popup-form__content">
             <div className="popup-form__form">
-              <form method="get">
+              <form method="get" onSubmit={handleTrainerQuestion}>
                 <div className="questionnaire-coach">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-coach__wrapper">
                     <SpecializationGroup role={Role.Trainer}/>
                     <LevelRadio role={Role.Trainer}/>
-                    <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">Ваши дипломы и сертификаты</span>
+                    <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>
                           <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
@@ -49,6 +54,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             ref={descriptionCoachRef}
                             defaultValue={selectedCoachDescription ?? ''}
                             onChange={handleDescriptionCoachChange}
+                            required
                           >
                           </textarea>
                         </label>
@@ -72,7 +78,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <button className="btn questionnaire-coach__button" type="submit">Продолжить</button>
+                  <button className="btn questionnaire-coach__button" type="submit" disabled={isSubmitting}>Продолжить</button>
                 </div>
               </form>
             </div>

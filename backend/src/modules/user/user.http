@@ -37,18 +37,17 @@ Content-Type: application/json
 
 ## Проверить токен пользователя
 GET http://localhost:4000/users/login HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlVzZXI1NDU2QGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1NDM2ZWEwNjczMjJhYzYwNzQxZWZjYyIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTg5MjM5MTMsImV4cCI6MTY5ODkyNDgxM30.GvcpA8fTt2E1g9nFzR1_5hZbXA3RPgZGN3Y25j5MsIc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZlbGl1Z2lld2Y0MzQzd2Vmd25AZ21haWwubmV0IiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1NjA5ZDQ4MTM5YWQ0ODY0MDUyN2YyNyIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE3MDA4MzA1MzYsImV4cCI6MTcwMDgzMTQzNn0.tF7Ge1oSGbxtFtMUkg7QvmU7otyiUdpbJGSc4sWUilk
 
 ###
 
 ## Обновление токена
 
-GET http://localhost:4000/users/refresh HTTP/1.1
+POST http://localhost:4000/users/refresh HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "feliugin@mail.net",
-  "password": "123456"
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlVzZXIzMjNyMjMyNTQ1NkBleGFtcGxlLmNvbSIsInBhc3N3b3JkIjoiZjQzZjM0MyIsImlkIjoiNjU2MDc3NDllZGE1YWQ1MzExZjAwNjZjIiwicm9sZSI6ItGC0YDQtdC90LXRgCIsImlhdCI6MTcwMDgyMDgwOSwiZXhwIjoxNzAxNDI1NjA5fQ.EJzURlvBUE-b768MPVn_3A5Sxs2FcIVXRYqX-EycCWQ"
 }
 ###
 

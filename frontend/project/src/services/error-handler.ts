@@ -30,7 +30,7 @@ export const errorHandle = (error: CustomError): void => {
       toast.error('Not Found');
     } else if (status === 409) {
       toast.error('Conflict');
-    } else {
+    } else if (status === 500) {
       toast.error('Server Error');
     }
   } else {

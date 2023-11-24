@@ -1,17 +1,18 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
-import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, AuthorizationStatus } from '../../../const';
-import { AuthData } from '../../../types/auth-data';
-import { saveTokens } from '../../../services/token';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { APIRoute, AppRoute, AuthorizationStatus, RegisterStatus, roleRegisterRoutes } from '../../../const';
+import { AuthData, RefreshData } from '../../../types/auth-data';
+import { dropToken, saveTokens } from '../../../services/token';
 import { CustomError, errorHandle } from '../../../services/error-handler';
-import { setAuthorizationStatus, setIsError } from '../../user-process/user-process.slice';
+import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/user-process.slice';
 import CreateUserDto from '../../../dto/create-user.dto';
 import { RegisterUserTransferData } from '../../../types/register-transfer-data';
 import { Role } from '../../../types/role.enum';
-import UpdateUserDto from '../../../dto/update-user.dto.js';
-import UpdateTrainerDto from '../../../dto/update-trainer.dto.js';
+import UpdateUserDto from '../../../dto/update-user.dto';
+import UpdateTrainerDto from '../../../dto/update-trainer.dto';
+import { redirectToRoute } from '../../main-process/main-process.slice';
 
 class UserDto {
   public email!: string;
@@ -29,6 +30,12 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
     } catch(error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
+
+      const refToken = document.cookie.replace(/(?:(?:^|.*;\s*)refreshToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+
+      if(refToken){
+        dispatch(updateRefreshToken({refreshToken: refToken, accessToken: ''}));
+      }
       errorHandle(error as CustomError);
     }
   }
@@ -42,7 +49,7 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
   'user/login',
   async ({ email, password }, { dispatch, extra: api }) => {
     try {
-      const response: AxiosResponse<UserData> = await api.post(APIRoute.Login, { email, password });
+      const response = await api.post<UserData>(APIRoute.Login, { email, password });
 
       if (response.data.accessToken && response.data.refreshToken) {
         saveTokens(response.data.accessToken, response.data.refreshToken);
@@ -59,7 +66,7 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
   },
 );
 
-export const registerAction = createAsyncThunk<CreateUserDto | undefined, RegisterUserTransferData,
+export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
 {
   dispatch: AppDispatch;
   state: State;
@@ -72,12 +79,17 @@ export const registerAction = createAsyncThunk<CreateUserDto | undefined, Regist
         ? await api.post(APIRoute.RegisterTrainer, registerData)
         : await api.post(APIRoute.RegisterUser, registerData);
 
+      dispatch(setRegisterStatus(RegisterStatus.InProgress));
       dispatch(loginAction({ email: response.data.email, password: registerData.password }));
-      return response.data;
+
+      const targetRoute = roleRegisterRoutes[response.data.role];
+
+      if (targetRoute) {
+        dispatch(redirectToRoute(targetRoute));
+      }
     } catch (error) {
-      dispatch(setIsError(true));
+      dispatch(setRegisterStatus(RegisterStatus.Unknown));
       errorHandle(error as CustomError);
-      return undefined;
     }
   },
 );
@@ -91,20 +103,15 @@ export const editUserAction = createAsyncThunk<
     extra: AxiosInstance;
   }
 >(
-  'data/editProduct',
+  'user/editUser',
   async (userData, {dispatch, extra: api}) => {
     try {
       await api.put<UpdateUserDto>(APIRoute.UpdateUser, userData);
 
-      // if (postData.status === HTTP_CODE.OK && productData.image) {
-      //   const postImageApiRoute = `${APIRoute.Products}/${productData.id}/image`;
-      //   await api.post(postImageApiRoute, adaptImageToServer(productData.image), {
-      //     headers: {'Content-Type': 'multipart/form-data'},
-      //   });
-      // }
-
-      //dispatch(redirectToRoute(`${AppRoute.EditProduct}/${productData.id}`));
+      dispatch(setRegisterStatus(RegisterStatus.Done));
+      dispatch(redirectToRoute(AppRoute.Main));
     } catch (error) {
+      dispatch(setRegisterStatus(RegisterStatus.InProgress));
       errorHandle(error as CustomError);
     }
   },
@@ -119,19 +126,36 @@ export const editTrainerAction = createAsyncThunk<
     extra: AxiosInstance;
   }
 >(
-  'data/editProduct',
+  'user/editTrainer',
   async (trainerData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateUserDto>(APIRoute.UpdateTrainer, trainerData);
+      await api.put<UpdateTrainerDto>(APIRoute.UpdateTrainer, trainerData);
 
-      // if (postData.status === HTTP_CODE.OK && productData.image) {
-      //   const postImageApiRoute = `${APIRoute.Products}/${productData.id}/image`;
-      //   await api.post(postImageApiRoute, adaptImageToServer(productData.image), {
-      //     headers: {'Content-Type': 'multipart/form-data'},
-      //   });
-      // }
+      dispatch(setRegisterStatus(RegisterStatus.Done));
+      dispatch(redirectToRoute(AppRoute.Main));
+    } catch (error) {
+      dispatch(setRegisterStatus(RegisterStatus.InProgress));
+      errorHandle(error as CustomError);
+    }
+  },
+);
 
-      //dispatch(redirectToRoute(`${AppRoute.EditProduct}/${productData.id}`));
+const BACKEND_URL = 'http://localhost:4000';
+
+export const updateRefreshToken = createAsyncThunk<void, RefreshData, { dispatch: AppDispatch; state: State; extra: AxiosInstance }>(
+  'user/refreshToken',
+  async (tokenData, { dispatch, extra: api }) => {
+    try {
+      const { accessToken, refreshToken} = await axios.post<APIRoute.RefreshToken, RefreshData>(
+        `${BACKEND_URL}${APIRoute.RefreshToken}`,
+        { refreshToken: (tokenData as { refreshToken: string }).refreshToken }
+      );
+
+      if (accessToken && refreshToken) {
+        dropToken();
+        saveTokens(accessToken, refreshToken);
+        dispatch(checkAuthAction());
+      }
     } catch (error) {
       errorHandle(error as CustomError);
     }

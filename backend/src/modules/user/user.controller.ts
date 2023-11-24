@@ -17,7 +17,7 @@ import { RestSchema } from '../../core/config/rest.schema.js';
 import HttpError from '../../core/errors/http-error.js';
 import { clearCookie, fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
-import LoginUserDto from './dto/login-user.dto.js';
+import LoginUserDto from './dto/refresh-token.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import LoggedUserRdo from './rdo/logged-user.rdo.js';
 import UserRdo from './rdo/user.rdo.js';
@@ -77,7 +77,7 @@ export default class UserController extends Controller {
       ]
     });
     this.addRoute({ path: '/refresh',
-      method: HttpMethod.Get,
+      method: HttpMethod.Post,
       handler: this.refreshToken,
       middlewares: [
         new ValidateDtoMiddleware(LoginUserDto)
@@ -130,9 +130,15 @@ export default class UserController extends Controller {
     req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
   ){
-    const { refreshToken } = req.cookies;
-    const { body } = req;
-    const userData = await this.userService.refresh(refreshToken, body);
+    if (!req.body.refreshToken || typeof req.body.refreshToken !== 'string') {
+      throw new HttpError(
+        StatusCodes.BAD_REQUEST,
+        'Invalid Refresh Token Format',
+        'UserController'
+      );
+    }
+
+    const userData = await this.userService.refresh(req.body.refreshToken);
 
     if (!userData) {
       throw new HttpError(
@@ -144,7 +150,7 @@ export default class UserController extends Controller {
 
     setRefreshTokenCookie(res, userData.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
-    this.ok(res, { message: 'Token updated' });
+    this.ok(res, userData);
   }
 
   public async checkAuthenticate(req: Request, res: Response) {

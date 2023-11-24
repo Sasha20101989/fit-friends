@@ -1,3 +1,5 @@
+import { Role } from './types/role.enum';
+
 export enum NameSpace {
   Data = 'data',
   Main = 'main',
@@ -13,6 +15,7 @@ export enum HTTP_CODE {
   CONFLICT = 409,
 }
 
+
 export enum APIRoute {
   Trainings = '/trainings',
   Login = '/users/login',
@@ -20,12 +23,20 @@ export enum APIRoute {
   RegisterTrainer = '/trainers/register',
   Logout = '/users/logout',
   UpdateUser = '/users',
-  UpdateTrainer = '/trainers'
+  UpdateTrainer = '/trainers',
+  RefreshToken = '/users/refresh'
 }
 
 export enum AuthorizationStatus {
   Auth = 'AUTH',
   NoAuth = 'NO_AUTH',
+  Unknown = 'UNKNOWN'
+}
+
+
+export enum RegisterStatus {
+  InProgress = 'IN_PROGRESS',
+  Done = 'DONE',
   Unknown = 'UNKNOWN'
 }
 
@@ -54,3 +65,14 @@ export const isAuthorizationUnknown = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Unknown;
 
 export const RING_LOADER_COLOR = '#123abc';
+
+export const roleRegisterRoutes: Record<Role, AppRoute> = {
+  [Role.User]: AppRoute.RegisterUser,
+  [Role.Trainer]: AppRoute.RegisterTrainer
+};
+
+export const isRegister = (status: RegisterStatus) =>
+  status === RegisterStatus.InProgress;
+
+export const isRegisterUnknown = (status: RegisterStatus) =>
+  status === RegisterStatus.Unknown;

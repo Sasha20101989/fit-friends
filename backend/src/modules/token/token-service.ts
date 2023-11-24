@@ -1,6 +1,6 @@
 import { types } from '@typegoose/typegoose';
 import { inject, injectable } from 'inversify';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 import type { LoggerInterface } from '../../core/logger/logger.interface.js';
 import type { TokenServiceInterface } from './token-service.interface.js';
@@ -8,10 +8,8 @@ import type { ConfigInterface } from '../../core/config/config.interface.js';
 import type { Auth } from './types/auth.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
 import { TokenEntity } from './token.entity.js';
-import { UserEntity } from '../user/user.entity.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
-import LoginUserDto from '../user/dto/login-user.dto.js';
-
+import RefreshTokenDto from '../user/dto/refresh-token.dto.js';
 
 @injectable()
 export default class TokenService implements TokenServiceInterface {
@@ -21,10 +19,11 @@ export default class TokenService implements TokenServiceInterface {
     @inject(AppComponent.TokenModel) private readonly tokenModel: types.ModelType<TokenEntity>
   ) {}
 
-  public generateTokens(dto: LoginUserDto): Auth{
+  public generateTokens(dto: RefreshTokenDto): Auth{
     this.logger.info('Create access token...');
+    const { exp, iat, ...dtoWithoutExp } = dto;
     const accessToken = jwt.sign(
-      dto,
+      dtoWithoutExp,
       this.configService.get('JWT_ACCESS_SECRET'),
       {
         expiresIn: this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME')
@@ -32,7 +31,7 @@ export default class TokenService implements TokenServiceInterface {
 
     this.logger.info('Create refresh token...');
     const refreshToken = jwt.sign(
-      dto,
+      dtoWithoutExp,
       this.configService.get('JWT_REFRESH_SECRET'),
       {
         expiresIn: this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME')
@@ -68,21 +67,12 @@ export default class TokenService implements TokenServiceInterface {
     return token;
   }
 
-  public async validateAccessToken(token: string): Promise<UserEntity | null>{
-    try{
-      const userData = jwt.verify(token, this.configService.get('JWT_ACCESS_SECRET')) as UserEntity;
-      return userData;
-    }catch(error){
-      return null;
-    }
-  }
-
-  public async validateRefreshToken(token: string): Promise<UserEntity | null>{
-    try{
-      const userData = jwt.verify(token, this.configService.get('JWT_REFRESH_SECRET')) as UserEntity;
-      return userData;
-    }catch(error){
-      return null;
+  public async validateRefreshToken(token: string): Promise<JwtPayload>{
+    try {
+      const decodedToken = jwt.verify(token, this.configService.get('JWT_REFRESH_SECRET')) as JwtPayload;
+      return decodedToken;
+    } catch (error) {
+      throw new Error('Invalid refresh token');
     }
   }
 }

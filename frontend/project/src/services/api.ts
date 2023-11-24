@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import {getToken} from './token';
 
 const BACKEND_URL = 'http://localhost:4000';
@@ -11,19 +11,18 @@ export const createApi = (): AxiosInstance => {
   });
 
   api.interceptors.request.use(
-    (config: AxiosRequestConfig) => {
+    (config) => {
       const token = getToken();
 
-      if (!config.headers){
-        config.headers = {};
-      }
-
-      if (token) {
-        config.headers['Authorization'] = `Bearer: ${token}`;
+      if (config.headers) {
+        if (token) {
+          config.headers['Authorization'] = `Bearer ${token}`;
+        }
       }
 
       return config;
     },
+    (error) => Promise.reject(error)
   );
 
   return api;

@@ -8,7 +8,7 @@ import type { UserQueryParams } from './types/user-query-params.js';
 import { AppComponent } from '../../types/common/app-component.enum.js';
 import { UserEntity } from './user.entity.js';
 import { DEFAULT_USER_COUNT, PASSWORD_CONSTRAINTS } from './user.const.js';
-import LoginUserDto from './dto/login-user.dto.js';
+import LoginUserDto from './dto/refresh-token.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import { VerifyUserResponse } from './response/verify-user.response.js';
@@ -53,27 +53,21 @@ export default class UserService implements UserServiceInterface {
       .exec();
   }
 
-  public async refresh(refreshToken: string, dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null>{
+  public async refresh(refreshToken: string): Promise<VerifyUserResponse<UserEntity> | null>{
     if(!refreshToken){
       return null;
     }
-    const userData = await this.tokenService.validateRefreshToken(refreshToken);
+    const tokenData = await this.tokenService.validateRefreshToken(refreshToken);
     const tokenFromDb = await this.tokenService.findToken(refreshToken);
 
-    if(!userData || !tokenFromDb){
+    if(!tokenData || !tokenFromDb){
       return null;
     }
 
-    const user = await this.findByEmail(userData.email);
+    const tokens = this.tokenService.generateTokens(tokenData);
+    await this.tokenService.saveToken(tokenData.id, tokens.refreshToken);
 
-    if(!user){
-      return null;
-    }
-
-    const tokens = this.tokenService.generateTokens({...dto, id: user.id, role: user.role});
-    await this.tokenService.saveToken(user.id, tokens.refreshToken);
-
-    return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+    return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
 
   public async create(dto: CreateUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity>> {
@@ -101,6 +95,10 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async verifyUser(dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null> {
+    if(!dto.email || !dto.password){
+      return null;
+    }
+
     const user = await this.findByEmail(dto.email);
 
     if (! user) {
