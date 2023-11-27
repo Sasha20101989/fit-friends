@@ -6,19 +6,24 @@ import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import browserHistory from '../../browser-history';
 import { AppRoute } from '../../const';
+import { Role } from '../../types/role.enum';
 
 const initialState: MainState = {
   sortingOrderMethod: Sorting.Ascending,
   specializations: [],
   level: TrainingLevel.Beginner,
   duration: WorkoutDuration.Short,
-  file: ''
+  file: '',
+  role: Role.Undefined
 };
 
 export const mainProcess = createSlice({
   name: 'main',
   initialState: initialState,
   reducers: {
+    setRole: (state, action: PayloadAction<Role>) => {
+      state.role = action.payload;
+    },
     changeSortingOrder: (state, action: PayloadAction<string>) => {
       state.sortingOrderMethod = action.payload;
     },
@@ -45,4 +50,4 @@ export const mainProcess = createSlice({
     },
   },
 });
-export const { redirectToRoute, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { setRole, redirectToRoute, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, changeLevel, changeDuration } = mainProcess.actions;

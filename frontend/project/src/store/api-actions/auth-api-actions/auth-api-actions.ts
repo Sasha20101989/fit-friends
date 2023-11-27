@@ -12,11 +12,7 @@ import { RegisterUserTransferData } from '../../../types/register-transfer-data'
 import { Role } from '../../../types/role.enum';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { redirectToRoute } from '../../main-process/main-process.slice';
-
-class UserDto {
-  public email!: string;
-}
+import { redirectToRoute, setRole } from '../../main-process/main-process.slice';
 
 export const checkAuthAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -26,7 +22,8 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
   'user/checkAuth',
   async (_arg, {dispatch, extra: api}) => {
     try{
-      await api.get<UserDto>(APIRoute.Login);
+      const response = await api.get<UserData>(APIRoute.Login);
+      dispatch(setRole(response.data.role));
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
     } catch(error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
@@ -35,8 +32,9 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
 
       if(refToken){
         dispatch(updateRefreshToken({refreshToken: refToken, accessToken: ''}));
+      }else{
+        errorHandle(error as CustomError);
       }
-      errorHandle(error as CustomError);
     }
   }
 );
@@ -56,12 +54,20 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
       }
 
       dispatch(checkAuthAction());
+      dispatch(setRole(response.data.role));
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       return response.data;
     } catch (error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
-      errorHandle(error as CustomError);
-      return undefined;
+      dispatch(setRole(Role.Undefined));
+      const refToken = document.cookie.replace(/(?:(?:^|.*;\s*)refreshToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
+
+      if(refToken){
+        dispatch(updateRefreshToken({refreshToken: refToken, accessToken: ''}));
+      }else{
+        errorHandle(error as CustomError);
+        return undefined;
+      }
     }
   },
 );

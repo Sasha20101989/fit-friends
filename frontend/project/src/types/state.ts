@@ -1,4 +1,5 @@
 import {store} from '../store/index.js';
+import { Role } from './role.enum.js';
 import { TrainingLevel } from './training-level.enum.js';
 import { Training } from './training.type.js';
 import { WorkoutDuration } from './workout-duration.enum.js';
@@ -16,6 +17,7 @@ export type MainState = {
   level: TrainingLevel;
   duration: WorkoutDuration;
   file: string;
+  role: Role;
 }
 
 export type DataState = {

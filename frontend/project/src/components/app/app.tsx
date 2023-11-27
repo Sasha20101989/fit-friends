@@ -10,20 +10,31 @@ import QuestionnaireTrainerScreen from '../../pages/questionnaire-trainer-screen
 import { useAppSelector } from '../../hooks/index';
 import { getAuthorizationStatus, getRegisterStatus } from '../../store/user-process/user-process.selectors';
 import PrivateRoute from '../private-route/private-route';
+import MainScreen from '../../pages/main-screen/main-screen';
+import { getRole } from '../../store/main-process/main-process.selectors';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus) as AuthorizationStatus;
   const registerStatus = useAppSelector(getRegisterStatus) as RegisterStatus;
+  const role = useAppSelector(getRole);
 
   return (
     <Routes>
-      <Route path={AppRoute.Parent} element={<ParentScreen/>}/>
-      <Route path={AppRoute.Login} element={<LoginScreen/>}/>
+      <Route
+        path={AppRoute.Main}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <MainScreen/>
+          // </PrivateRoute>
+        }
+      />
+      <Route path={AppRoute.MainRegister} element={<ParentScreen/>}/>
       <Route path={AppRoute.ParentRegister} element={<RegisterScreen/>}/>
+      <Route path={AppRoute.Login} element={<LoginScreen/>}/>
       <Route
         path={AppRoute.RegisterUser}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
+          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
             <QuestionnaireUserScreen/>
           </PrivateRoute>
         }
@@ -31,7 +42,7 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.RegisterTrainer}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
+          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
             <QuestionnaireTrainerScreen/>
           </PrivateRoute>
         }

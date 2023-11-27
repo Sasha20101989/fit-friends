@@ -41,12 +41,12 @@ export enum RegisterStatus {
 }
 
 export enum AppRoute {
-  Main = '/main',
+  Main = '/',
   Login = '/login',
   ParentRegister = '/register',
   Logout = '/logout',
   NotFound = '*',
-  Parent = '/',
+  MainRegister = '/main/register',
   RegisterTrainer = '/register/questionnaire/trainer',
   RegisterUser = '/register/questionnaire/user'
 }
@@ -68,7 +68,8 @@ export const RING_LOADER_COLOR = '#123abc';
 
 export const roleRegisterRoutes: Record<Role, AppRoute> = {
   [Role.User]: AppRoute.RegisterUser,
-  [Role.Trainer]: AppRoute.RegisterTrainer
+  [Role.Trainer]: AppRoute.RegisterTrainer,
+  [Role.Undefined]: AppRoute.Login,
 };
 
 export const isRegister = (status: RegisterStatus) =>
@@ -76,3 +77,9 @@ export const isRegister = (status: RegisterStatus) =>
 
 export const isRegisterUnknown = (status: RegisterStatus) =>
   status === RegisterStatus.Unknown;
+
+export const isUser = (role: Role) =>
+  role === Role.User;
+
+export const isTrainer = (role: Role) =>
+  role === Role.Trainer;
