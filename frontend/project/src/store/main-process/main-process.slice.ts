@@ -14,7 +14,7 @@ const initialState: MainState = {
   level: TrainingLevel.Beginner,
   duration: WorkoutDuration.Short,
   file: '',
-  role: Role.Undefined
+  role: Role.Unknown
 };
 
 export const mainProcess = createSlice({

@@ -1,7 +1,7 @@
 import GenderItem from '../../components/gender-item/gender-item';
-import { useAppSelector } from '../../hooks/index.js';
+import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { getSubmittingStatus } from '../../store/user-process/user-process.selectors.js';
+import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Gender } from '../../types/gender.enum';
 
 function CreateTrainingScreen(): JSX.Element {

@@ -59,7 +59,7 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
       return response.data;
     } catch (error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
-      dispatch(setRole(Role.Undefined));
+      dispatch(setRole(Role.Unknown));
       const refToken = document.cookie.replace(/(?:(?:^|.*;\s*)refreshToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
 
       if(refToken){

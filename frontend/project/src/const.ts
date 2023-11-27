@@ -49,7 +49,7 @@ export enum AppRoute {
   MainRegister = '/main/register',
   RegisterTrainer = '/register/questionnaire/trainer',
   RegisterUser = '/register/questionnaire/user',
-  TrainerRoom = '/trainer/room',
+  TrainerRoom = '/room/trainer',
   CreateTraining = '/training/add'
 }
 
@@ -71,7 +71,7 @@ export const RING_LOADER_COLOR = '#123abc';
 export const roleRegisterRoutes: Record<Role, AppRoute> = {
   [Role.User]: AppRoute.RegisterUser,
   [Role.Trainer]: AppRoute.RegisterTrainer,
-  [Role.Undefined]: AppRoute.Login,
+  [Role.Unknown]: AppRoute.Login,
 };
 
 export const isRegister = (status: RegisterStatus) =>

@@ -1,3 +1,4 @@
+import { AuthorizationStatus, RegisterStatus } from '../const.js';
 import {store} from '../store/index.js';
 import { Role } from './role.enum.js';
 import { TrainingLevel } from './training-level.enum.js';
@@ -6,8 +7,8 @@ import { WorkoutDuration } from './workout-duration.enum.js';
 import { WorkoutType } from './workout-type.enum.js';
 
 export type UserState = {
-  authorizationStatus: string;
-  registerStatus: string;
+  authorizationStatus: AuthorizationStatus;
+  registerStatus: RegisterStatus;
   isSubmitting: boolean;
 }
 
