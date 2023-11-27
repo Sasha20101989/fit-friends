@@ -3,7 +3,7 @@ import Header from '../../components/header/header';
 import SpecialForYou from '../../components/special-for-you/special-for-you';
 import SpecialOffers from '../../components/special-offers/special-offers';
 import PopularTrainings from '../../components/popular-trainings/popular-trainings';
-import LookForCompany from '../../components/look-gor-company/look-gor-company.js';
+import LookForCompany from '../../components/look-for-company/look-for-company';
 
 function MainScreen(): JSX.Element {
   return(

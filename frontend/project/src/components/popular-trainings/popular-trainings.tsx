@@ -39,14 +39,14 @@ function PopularTrainings():JSX.Element {
             </div>
           </div>
           <ul className="popular-trainings__list">
-            {trainingsData.map((training, index) => (
-              <ThumbnailTraining key={index} {...training} />
+            {trainingsData.map((training) => (
+              <ThumbnailTraining key={training.title} {...training} />
             ))}
           </ul>
         </div>
       </div>
     </section>
   );
-};
+}
 
 export default PopularTrainings;

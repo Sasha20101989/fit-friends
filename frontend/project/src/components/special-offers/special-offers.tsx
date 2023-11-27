@@ -38,6 +38,6 @@ function SpecialOffers():JSX.Element {
       </div>
     </section>
   );
-};
+}
 
 export default SpecialOffers;

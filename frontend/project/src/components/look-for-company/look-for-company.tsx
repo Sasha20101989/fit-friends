@@ -36,8 +36,8 @@ const LookForCompany = () => {
             </div>
           </div>
           <ul className="look-for-company__list">
-            {usersData.map((user, index) => (
-              <ThumbnailUser key={index} {...user} />
+            {usersData.map((user) => (
+              <ThumbnailUser key={user.name} {...user} />
             ))}
           </ul>
         </div>

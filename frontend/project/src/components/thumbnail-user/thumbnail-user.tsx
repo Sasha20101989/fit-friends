@@ -30,8 +30,8 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
           </div>
         </div>
         <ul className="thumbnail-user__hashtags-list">
-          {hashtags.map((hashtag, index) => (
-            <li key={index} className="thumbnail-user__hashtags-item">
+          {hashtags.map((hashtag) => (
+            <li key={hashtag} className="thumbnail-user__hashtags-item">
               <div className="hashtag thumbnail-user__hashtag"><span>{hashtag}</span></div>
             </li>
           ))}
@@ -40,6 +40,6 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
       </div>
     </li>
   );
-};
+}
 
 export default ThumbnailUser;

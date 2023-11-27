@@ -24,7 +24,7 @@ function App(): JSX.Element {
         path={AppRoute.Main}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <MainScreen/>
+          <MainScreen/>
           // </PrivateRoute>
         }
       />

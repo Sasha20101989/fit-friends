@@ -38,6 +38,6 @@ function SpecialForYou(): JSX.Element {
       </div>
     </section>
   );
-};
+}
 
 export default SpecialForYou;

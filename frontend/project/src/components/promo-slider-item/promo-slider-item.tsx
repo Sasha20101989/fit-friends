@@ -41,6 +41,6 @@ function PromoSliderItem({ title, imageSrc, text, price, sup, oldPrice }: PromoS
       </aside>
     </li>
   );
-};
+}
 
 export default PromoSliderItem;

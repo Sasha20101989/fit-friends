@@ -13,6 +13,6 @@ function ThumbnailSpecGym():JSX.Element {
       </div>
     </div>
   );
-};
+}
 
 export default ThumbnailSpecGym;

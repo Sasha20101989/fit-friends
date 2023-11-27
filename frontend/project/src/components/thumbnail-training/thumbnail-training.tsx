@@ -21,8 +21,8 @@ function ThumbnailTraining({ title, imageSrc, price, hashtags, rate, text }: Thu
           <h3 className="thumbnail-training__title">{title}</h3>
           <div className="thumbnail-training__info">
             <ul className="thumbnail-training__hashtags-list">
-              {hashtags.map((hashtag, index) => (
-                <li key={index} className="thumbnail-training__hashtags-item">
+              {hashtags.map((hashtag) => (
+                <li key={hashtag} className="thumbnail-training__hashtags-item">
                   <div className="hashtag thumbnail-training__hashtag"><span>{hashtag}</span></div>
                 </li>
               ))}
@@ -44,6 +44,6 @@ function ThumbnailTraining({ title, imageSrc, price, hashtags, rate, text }: Thu
       </div>
     </li>
   );
-};
+}
 
 export default ThumbnailTraining;

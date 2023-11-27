@@ -22,6 +22,6 @@ function SpecialForYouItem({ title, imageSrc }: SpecialForYouItemProps):JSX.Elem
       </div>
     </li>
   );
-};
+}
 
 export default SpecialForYouItem;
