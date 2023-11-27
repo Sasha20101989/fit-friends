@@ -15,7 +15,7 @@ function PromoSliderItem({ title, imageSrc, text, price, sup, oldPrice }: PromoS
       <aside className="promo-slider">
         <div className="promo-slider__overlay"></div>
         <div className="promo-slider__image">
-          <img src={imageSrc} srcSet={`${imageSrc}@2x.png 2x`} width="1040" height="469" alt="promo-photo" />
+          <img src={imageSrc} srcSet={`${imageSrc}@2x.png 2x`} width="1040" height="469" alt={title} />
         </div>
         <div className="promo-slider__header">
           <h3 className="promo-slider__title">{title}</h3>

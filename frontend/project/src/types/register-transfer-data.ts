@@ -11,5 +11,5 @@ export type RegisterUserTransferData = {
   gender: Gender;
   role: Role;
   birthDate?: string;
-  location: Location
+  location: Location;
 };

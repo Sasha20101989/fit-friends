@@ -12,6 +12,8 @@ import { getAuthorizationStatus, getRegisterStatus } from '../../store/user-proc
 import PrivateRoute from '../private-route/private-route';
 import MainScreen from '../../pages/main-screen/main-screen';
 import { getRole } from '../../store/main-process/main-process.selectors';
+import TrainerRoomScreen from '../../pages/trainer-room-screen/trainer-room-screen';
+import CreateTrainingScreen from '../../pages/create-training-screen/create-training-screen';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus) as AuthorizationStatus;
@@ -25,6 +27,22 @@ function App(): JSX.Element {
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <MainScreen/>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.TrainerRoom}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <TrainerRoomScreen/>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.CreateTraining}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <CreateTrainingScreen/>
           // </PrivateRoute>
         }
       />

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 type ThumbnailUserProps = {
   name: string;
   imageSrc: string;
@@ -36,7 +38,7 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
             </li>
           ))}
         </ul>
-        <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
+        <Link className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" to="">Подробнее</Link>
       </div>
     </li>
   );

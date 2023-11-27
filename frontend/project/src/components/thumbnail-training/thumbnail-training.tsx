@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 type ThumbnailTrainingProps = {
   title: string;
   imageSrc: string;
@@ -37,8 +39,8 @@ function ThumbnailTraining({ title, imageSrc, price, hashtags, rate, text }: Thu
             <p className="thumbnail-training__text" dangerouslySetInnerHTML={{ __html: text }}></p>
           </div>
           <div className="thumbnail-training__button-wrapper">
-            <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-            <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
+            <Link className="btn btn--small thumbnail-training__button-catalog" to="">Подробнее</Link>
+            <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to="">Отзывы</Link>
           </div>
         </div>
       </div>

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 type SpecialForYouItemProps = {
   title: string;
   imageSrc: string;
@@ -16,7 +18,7 @@ function SpecialForYouItem({ title, imageSrc }: SpecialForYouItemProps):JSX.Elem
         <div className="thumbnail-preview__inner">
           <h3 className="thumbnail-preview__title">{title}</h3>
           <div className="thumbnail-preview__button-wrapper">
-            <a className="btn btn--small thumbnail-preview__button" href="#">Подробнее</a>
+            <Link className="btn btn--small thumbnail-preview__button" to="">Подробнее</Link>
           </div>
         </div>
       </div>

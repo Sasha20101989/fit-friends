@@ -6,6 +6,7 @@ import { Gender } from '../../types/gender.enum';
 import { Role } from '../../types/role.enum';
 import { useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import GenderItem from '../../components/gender-item/gender-item';
 
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
@@ -15,13 +16,11 @@ function RegisterScreen() : JSX.Element {
     emailRef,
     passwordRef,
     birthdayRef,
-    selectedSex,
     selectedLocation,
     selectedRole,
     isAgreementChecked,
     isDropdownOpen,
     handleRegister,
-    handleSexChange,
     handleRoleChange,
     handleAgreementChange,
     handleLocationChange,
@@ -114,20 +113,8 @@ function RegisterScreen() : JSX.Element {
                     <div className="sign-up__radio">
                       <span className="sign-up__label">Пол</span>
                       <div className="custom-toggle-radio custom-toggle-radio--big">
-                        {Object.values(Gender).map((sex) => (
-                          <div key={sex} className="custom-toggle-radio__block">
-                            <label>
-                              <input
-                                type="radio"
-                                name="sex"
-                                value={sex}
-                                checked={selectedSex === sex}
-                                onChange={handleSexChange}
-                              />
-                              <span className="custom-toggle-radio__icon"></span>
-                              <span className="custom-toggle-radio__label">{sex}</span>
-                            </label>
-                          </div>
+                        {Object.values(Gender).map((gender) => (
+                          <GenderItem key={gender} gender={gender}/>
                         ))}
                       </div>
                     </div>
