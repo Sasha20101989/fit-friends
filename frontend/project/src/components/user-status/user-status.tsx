@@ -1,8 +1,9 @@
 function UserStatus():JSX.Element {
+  const isEdit = false;
   return (
-    <div className="user-info-edit__section user-info-edit__section--status">
-      <h2 className="user-info-edit__title user-info-edit__title--status">Статус</h2>
-      <div className="custom-toggle custom-toggle--switch user-info-edit__toggle">
+    <div className={`user-info${isEdit && '-edit'}__section user-info${isEdit && '-edit'}__section--status`}>
+      <h2 className={`user-info${isEdit && '-edit'}__title user-info${isEdit && '-edit'}__title--status`}>Статус</h2>
+      <div className={`custom-toggle custom-toggle--switch user-info${isEdit && '-edit'}__toggle`}>
         <label>
           <input type="checkbox" name="ready-for-training"/>
           <span className="custom-toggle__icon">

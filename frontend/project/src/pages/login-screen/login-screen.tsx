@@ -1,5 +1,5 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import Layout from '../../components/layout/layout';
+import { Fragment } from 'react';
 import { useAppSelector } from '../../hooks/index';
 import useLoginForm from '../../hooks/use-login-form/use-login-form';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
@@ -9,7 +9,7 @@ function LoginScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   return(
-    <Layout>
+    <Fragment>
       <BackgroundLogo/>
       <div className="popup-form popup-form--sign-in">
         <div className="popup-form__wrapper">
@@ -43,7 +43,7 @@ function LoginScreen() : JSX.Element {
           </div>
         </div>
       </div>
-    </Layout>
+    </Fragment>
   );
 }
 export default LoginScreen;

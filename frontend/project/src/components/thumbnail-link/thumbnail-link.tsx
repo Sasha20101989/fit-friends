@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 
-
 type ThumbnailLinkProps = {
   to: string;
   icon: string;

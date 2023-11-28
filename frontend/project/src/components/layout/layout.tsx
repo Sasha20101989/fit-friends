@@ -1,17 +1,20 @@
+import Header from '../header/header';
+
 type LayoutProps = {
   children: React.ReactNode;
+  includeHeader?: boolean;
 }
 
-function Layout({ children }: LayoutProps): JSX.Element {
+function Layout({ children, includeHeader = true }: LayoutProps): JSX.Element {
   return (
     <div className="wrapper">
-      {/* <Header/> */}
+      {includeHeader && <Header />}
       <main>
         {children}
       </main>
-      {/* <Footer/> */}
     </div>
   );
 }
 
 export default Layout;
+

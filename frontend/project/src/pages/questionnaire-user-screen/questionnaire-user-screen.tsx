@@ -1,5 +1,5 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import Layout from '../../components/layout/layout';
+import { Fragment } from 'react';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import LevelRadio from '../../components/level-radio/level-radio';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
@@ -17,7 +17,7 @@ function QuestionnaireUserScreen(): JSX.Element {
     handleUserQuestion} = useRegisterForm();
 
   return(
-    <Layout>
+    <Fragment>
       <BackgroundLogo/>
       <div className="popup-form popup-form--questionnaire-user">
         <div className="popup-form__wrapper">
@@ -60,7 +60,7 @@ function QuestionnaireUserScreen(): JSX.Element {
           </div>
         </div>
       </div>
-    </Layout>
+    </Fragment>
   );
 }
 

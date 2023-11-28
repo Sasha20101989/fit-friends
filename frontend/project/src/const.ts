@@ -46,11 +46,17 @@ export enum AppRoute {
   ParentRegister = '/register',
   Logout = '/logout',
   NotFound = '*',
-  MainRegister = '/main/register',
+  MainRegister = '/home/register',
   RegisterTrainer = '/register/questionnaire/trainer',
   RegisterUser = '/register/questionnaire/user',
-  TrainerRoom = '/room/trainer',
-  CreateTraining = '/training/add'
+  TrainerRoom = '/trainer/home',
+  CreateTraining = '/training-create',
+  TrainerTrainings = '/my-trainings',
+  TrainerOrders = '/my-orders',
+  TrainerFriends = '/trainer/my-friends',
+  UserFriends = '/user/my-friends',
+  UserPurchases = '/my-purchases',
+  UserRoom = '/user/home'
 }
 
 export const isValidPassword = (password: string): boolean => {

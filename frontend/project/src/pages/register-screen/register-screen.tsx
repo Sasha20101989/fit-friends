@@ -1,5 +1,5 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import Layout from '../../components/layout/layout';
+import { Fragment } from 'react';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
@@ -27,10 +27,10 @@ function RegisterScreen() : JSX.Element {
     handleToggleDropdown } = useRegisterForm();
 
   return(
-    <Layout>
+    <Fragment>
       <BackgroundLogo/>
-      <div className="popup-form__wrapper">
-        <div className="popup-form popup-form--sign-up">
+      <div className="popup-form popup-form--sign-up">
+        <div className="popup-form__wrapper">
           <div className="popup-form__content">
             <div className="popup-form__title-wrapper">
               <h1 className="popup-form__title">Регистрация</h1>
@@ -170,7 +170,7 @@ function RegisterScreen() : JSX.Element {
           </div>
         </div>
       </div>
-    </Layout>
+    </Fragment>
   );
 }
 export default RegisterScreen;

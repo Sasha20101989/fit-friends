@@ -170,9 +170,8 @@ function useRegisterForm(){
     dispatch(changeLevel(newLevel));
   };
 
-  const handleDurationChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newDuration = event.target.value as WorkoutDuration;
-    dispatch(changeDuration(newDuration));
+  const handleDurationChange = (duration: WorkoutDuration) => {
+    dispatch(changeDuration(duration));
   };
 
   const handleSpecializationChange = (event: ChangeEvent<HTMLInputElement>) => {
