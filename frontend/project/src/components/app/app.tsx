@@ -18,6 +18,7 @@ import OrderScreen from '../../pages/order-screen/order-screen';
 import TrainerFriendsScreen from '../../pages/trainer-friends-screen/trainer-friends-screen';
 import Layout from '../layout/layout';
 import UserRoomScreen from '../../pages/user-room-screen/user-room-screen';
+import UserFriendsScreen from '../../pages/user-friends-screen/user-friends-screen';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -92,6 +93,16 @@ function App(): JSX.Element {
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <Layout>
             <TrainerFriendsScreen/>
+          </Layout>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.UserFriends}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <Layout>
+            <UserFriendsScreen/>
           </Layout>
           // </PrivateRoute>
         }

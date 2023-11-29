@@ -19,7 +19,7 @@ function ThumbnailTrainingOrder({ title, imageSrc, price, hashtags, rate, text }
     <li className="my-orders__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <ThumbnailTrainingPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'}/>
+          <ThumbnailTrainingPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'} width={330} height={190}/>
           <p className="thumbnail-training__price">
             <span className="thumbnail-training__price-value">{price}</span>
             <span>₽</span>

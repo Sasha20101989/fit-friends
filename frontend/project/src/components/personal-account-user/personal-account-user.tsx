@@ -35,7 +35,7 @@ function PersonalAccountUser():JSX.Element {
           <ThumbnailLink key={link.text} to={link.to} icon={link.icon} text={link.text} theme={theme}/>
         ))}
         <div className="thumbnail-spec-gym">
-          <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'}/>
+          <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'} width={330} height={190}/>
           <p className="thumbnail-spec-gym__type">Ближайший зал</p>
           <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
             <h3 className="thumbnail-spec-gym__title">Скоро тут появится что-то полезное</h3>

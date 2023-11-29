@@ -1,6 +1,7 @@
 import { AppRoute } from '../../const';
 import CoachAdditionalInfo from '../coach-additional-info/coach-additional-info';
 import ThumbnailLink from '../thumbnail-link/thumbnail-link';
+import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
 function PersonalAccountCoach():JSX.Element {
   const thumbnailLinks = [
@@ -20,12 +21,7 @@ function PersonalAccountCoach():JSX.Element {
         ))}
         <div className="personal-account-coach__calendar">
           <div className="thumbnail-spec-gym">
-            <div className="thumbnail-spec-gym__image">
-              <picture>
-                <source type="image/webp" srcSet="img/content/thumbnails/nearest-gym-01.webp, img/content/thumbnails/nearest-gym-01@2x.webp 2x"/>
-                <img src="img/content/thumbnails/nearest-gym-01.jpg" srcSet="img/content/thumbnails/nearest-gym-01@2x.jpg 2x" width="330" height="190" alt=""/>
-              </picture>
-            </div>
+            <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'} width={330} height={190}/>
             <p className="thumbnail-spec-gym__type">Ближайший зал</p>
             <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
               <h3 className="thumbnail-spec-gym__title">Скоро тут будет интересно</h3>

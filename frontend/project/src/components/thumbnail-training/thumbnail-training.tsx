@@ -19,7 +19,7 @@ function ThumbnailTraining({ title, imageSrc, price, hashtags, rate, text }: Thu
     <li className="popular-trainings__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <ThumbnailPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'}/>
+          <ThumbnailPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'} width={330} height={190}/>
           <p className="thumbnail-training__price">
             <span className="thumbnail-training__price-value">{price}</span>
             <span>₽</span>

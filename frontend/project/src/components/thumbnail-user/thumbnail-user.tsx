@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
 type ThumbnailUserProps = {
   name: string;
@@ -8,15 +9,11 @@ type ThumbnailUserProps = {
 }
 
 function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProps): JSX.Element {
+  const theme = 'light';
   return (
     <li className="look-for-company__item">
-      <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
-        <div className="thumbnail-user__image">
-          <picture>
-            <source type="image/webp" srcSet={`${imageSrc}.webp, ${imageSrc}@2x.webp 2x`} />
-            <img src={`${imageSrc}.jpg`} srcSet={`${imageSrc}@2x.jpg 2x`} width="82" height="82" alt="" />
-          </picture>
-        </div>
+      <div className={`thumbnail-user thumbnail-user--role-user thumbnail-user--${theme}`}>
+        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={imageSrc} width={82} height={82}/>
         {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
                       <svg width="12" height="12" aria-hidden="true">
                         <use xlinkHref="#icon-crown"></use>
@@ -38,7 +35,7 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
             </li>
           ))}
         </ul>
-        <Link className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" to="">Подробнее</Link>
+        <Link className={`btn btn--outlined btn--${theme}-bg btn--medium thumbnail-user__button`} to="">Подробнее</Link>
       </div>
     </li>
   );

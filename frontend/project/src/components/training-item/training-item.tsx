@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
 type TrainingItemProps = {
   training: Training;
@@ -6,7 +7,6 @@ type TrainingItemProps = {
 
 type Training = {
   imageSrc: string;
-  imageSrcSet: string;
   price: string | number;
   title: string;
   hashtags: string[];
@@ -15,17 +15,12 @@ type Training = {
 };
 
 function TrainingItem({ training }: TrainingItemProps):JSX.Element {
-  const { imageSrc, imageSrcSet, price, title, hashtags, rate, text } = training;
+  const { imageSrc, price, title, hashtags, rate, text } = training;
   return (
     <li className="my-trainings__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <div className="thumbnail-training__image">
-            <picture>
-              <source type="image/webp" srcSet={imageSrcSet} />
-              <img src={imageSrc} srcSet={`${imageSrcSet} 2x`} width="330" height="190" alt="" />
-            </picture>
-          </div>
+          <ThumbnailPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'} width={330} height={190}/>
           <p className="thumbnail-training__price">{price}</p>
           <h3 className="thumbnail-training__title">{title}</h3>
           <div className="thumbnail-training__info">
