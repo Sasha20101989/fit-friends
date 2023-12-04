@@ -66,12 +66,12 @@ export const createApi = (): AxiosInstance => {
 
         if (refreshToken) {
           try {
-            const response = await axios.post<RefreshData>(
+            const response = await axios.post<Token.Access>(
               `${BACKEND_URL}${APIRoute.RefreshToken}`,
               { refreshToken }
             );
 
-            updateAccessToken(response.data.accessToken as Token.Access);
+            updateAccessToken(response.data);
 
             const accessToken = getAccessToken();
 
@@ -83,6 +83,8 @@ export const createApi = (): AxiosInstance => {
             handleRefreshError(refreshError as AxiosError<{error: string}>);
           }
         }
+      }else if(parsedResponse.status === StatusCodes.NOT_FOUND){
+        toast.warn(parsedResponse.errorMessage);
       }
     }
   }

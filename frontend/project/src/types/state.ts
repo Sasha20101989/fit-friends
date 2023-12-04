@@ -1,8 +1,12 @@
 import { AuthorizationStatus, RegisterStatus } from '../const.js';
 import {store} from '../store/index.js';
+import { Gender } from './gender.enum.js';
+import { Location } from './location.enum.js';
 import { Role } from './role.enum.js';
+import { Trainer } from './trainer.interface.js';
 import { TrainingLevel } from './training-level.enum.js';
 import { Training } from './training.type.js';
+import { User } from './user.interface.js';
 import { WorkoutDuration } from './workout-duration.enum.js';
 import { WorkoutType } from './workout-type.enum.js';
 
@@ -10,6 +14,7 @@ export type UserState = {
   authorizationStatus: AuthorizationStatus;
   registerStatus: RegisterStatus;
   isSubmitting: boolean;
+  user: User | Trainer | null;
 }
 
 export type MainState = {
@@ -18,7 +23,10 @@ export type MainState = {
   level: TrainingLevel;
   duration: WorkoutDuration;
   file: string;
-  role: Role;
+  userRole: Role;
+  userId: string;
+  location: Location | null;
+  gender: Gender | null;
 }
 
 export type DataState = {

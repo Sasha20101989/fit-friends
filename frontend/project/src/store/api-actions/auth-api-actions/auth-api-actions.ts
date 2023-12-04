@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, AppRoute, AuthorizationStatus, RegisterStatus, roleRegisterRoutes } from '../../../const';
+import { APIRoute, AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isTrainer, roleRegisterRoutes } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
 import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
 import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/user-process.slice';
@@ -11,7 +11,9 @@ import { RegisterUserTransferData } from '../../../types/register-transfer-data'
 import { Role } from '../../../types/role.enum';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { redirectToRoute, setRole } from '../../main-process/main-process.slice';
+import { redirectToRoute, setRole, setUserId } from '../../main-process/main-process.slice';
+import { User } from '../../../types/user.interface';
+import { Trainer } from '../../../types/trainer.interface';
 
 export const checkAuthAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -23,7 +25,12 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
     try{
       const response = await api.get<UserData>(APIRoute.Login);
       dispatch(setRole(response.data.role));
+      dispatch(setUserId(response.data.id));
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
+
+      if(isTrainer(response.data.role) && isAuthorization(AuthorizationStatus.Auth)){
+        dispatch(redirectToRoute(`${AppRoute.Trainers}/${response.data.id}`));
+      }
     } catch(error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
     }
@@ -47,6 +54,7 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
 
       dispatch(checkAuthAction());
       dispatch(setRole(response.data.role));
+      dispatch(setUserId(response.data.id));
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       return response.data;
     } catch (error) {
@@ -95,7 +103,7 @@ export const editUserAction = createAsyncThunk<
   'user/editUser',
   async (userData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateUserDto>(APIRoute.UpdateUser, userData);
+      await api.put<UpdateUserDto>(APIRoute.Users, userData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
       dispatch(redirectToRoute(AppRoute.Main));
@@ -124,5 +132,17 @@ export const editTrainerAction = createAsyncThunk<
     } catch (error) {
       dispatch(setRegisterStatus(RegisterStatus.InProgress));
     }
+  },
+);
+
+export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchOffer',
+  async (userId: string, {dispatch, extra: api}) => {
+    const { data } = await api.get<User | Trainer>(`${APIRoute.Users}/${userId}`);
+    return data;
   },
 );

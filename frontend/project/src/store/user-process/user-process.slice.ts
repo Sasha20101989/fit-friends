@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthorizationStatus, RegisterStatus } from '../../const';
 import { UserState } from '../../types/state';
-import { loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
+import { fetchUserAction, loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
 
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
   registerStatus: RegisterStatus.Unknown,
   isSubmitting: false,
+  user: null
 };
 
 export const userProcess = createSlice({
@@ -41,6 +42,16 @@ export const userProcess = createSlice({
         state.isSubmitting = false;
       })
       .addCase(registerAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchUserAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchUserAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUserAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       });
   },

@@ -1,5 +1,5 @@
 import {Navigate} from 'react-router-dom';
-import {AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isAuthorizationUnknown, isRegister, isTrainer, isUser} from '../../const';
+import {AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isAuthorizationUnknown, isRegister, isTrainer} from '../../const';
 import { Role } from '../../types/role.enum';
 import Loading from '../loading/loading';
 
@@ -17,12 +17,12 @@ function PrivateRoute(props: PrivateRouteProps): JSX.Element {
     return children;
   }
 
-  if(isUser(role) && isAuthorization(authorizationStatus)){
-    return children;
-  }
+  // if(isUser(role) && isAuthorization(authorizationStatus)){
+  //   return children;
+  // }
 
   if(isTrainer(role) && isAuthorization(authorizationStatus)){
-    return <Navigate to={AppRoute.TrainerRoom} />;
+    return children;
   }
 
   if (isAuthorizationUnknown(authorizationStatus)) {

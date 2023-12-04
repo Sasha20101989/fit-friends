@@ -11,8 +11,8 @@ import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDuration, getFile, getLevel, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { addSpecialization, changeDuration, changeFile, changeLevel, removeSpecialization } from '../../store/main-process/main-process.slice';
+import { getDuration, getFile, getGender, getLevel, getLocation, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { addSpecialization, changeDuration, changeFile, changeLevel, removeSpecialization, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 
@@ -25,6 +25,8 @@ function useRegisterForm(){
   const selectedLevel = useAppSelector(getLevel);
   const selectedDuration = useAppSelector(getDuration);
   const selectedFile = useAppSelector(getFile);
+  const selectedLocation = useAppSelector(getLocation);
+  const selectedGender = useAppSelector(getGender);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -35,8 +37,6 @@ function useRegisterForm(){
 
   const descriptionCoachRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [selectedLocation, setLocation] = useState<Location | null>(null);
-  const [selectedSex, setGenderType] = useState<Gender | null>(Gender.Other);
   const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -81,7 +81,7 @@ function useRegisterForm(){
         emailRef.current !== null &&
         birthdayRef.current !== null &&
         selectedLocation !== null &&
-        selectedSex !== null &&
+        selectedGender !== null &&
         selectedRole !== null) {
 
       const formData: RegisterUserTransferData = {
@@ -89,7 +89,7 @@ function useRegisterForm(){
         email: emailRef.current.value,
         password: passwordRef.current.value,
         location: selectedLocation,
-        gender: selectedSex,
+        gender: selectedGender,
         role: selectedRole,
       };
 
@@ -144,7 +144,7 @@ function useRegisterForm(){
 
   const handleLocationChange = (event: MouseEvent<HTMLLIElement>) => {
     const location: Location = event.currentTarget.textContent as Location;
-    setLocation(location);
+    dispatch(setLocation(location));
     setIsDropdownOpen(false);
   };
 
@@ -154,9 +154,8 @@ function useRegisterForm(){
   };
 
   const handleSexChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedGender: Gender = event.target.value as Gender;
-
-    setGenderType(selectedGender);
+    const gender: Gender = event.target.value as Gender;
+    dispatch(setGender(gender));
   };
 
   const handleAgreementChange = () => {
@@ -220,7 +219,6 @@ function useRegisterForm(){
     caloriesWaste,
     descriptionCoachRef,
     selectedLocation,
-    selectedSex,
     selectedRole,
     isAgreementChecked,
     isDropdownOpen,

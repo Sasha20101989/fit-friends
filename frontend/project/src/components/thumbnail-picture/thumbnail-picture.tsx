@@ -17,4 +17,5 @@ function ThumbnailPicture({ imageSrc, sourceName, width, height }: ThumbnailPict
   );
 }
 
+
 export default ThumbnailPicture;

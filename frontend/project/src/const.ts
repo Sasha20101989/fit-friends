@@ -22,9 +22,9 @@ export enum APIRoute {
   RegisterUser = '/users/register',
   RegisterTrainer = '/trainers/register',
   Logout = '/users/logout',
-  UpdateUser = '/users',
   UpdateTrainer = '/trainers',
-  RefreshToken = '/users/refresh'
+  RefreshToken = '/users/refresh',
+  Users = '/users'
 }
 
 export enum AuthorizationStatus {
@@ -49,7 +49,8 @@ export enum AppRoute {
   MainRegister = '/home/register',
   RegisterTrainer = '/register/questionnaire/trainer',
   RegisterUser = '/register/questionnaire/user',
-  TrainerRoom = '/trainer/home',
+  TrainerRoom = '/trainers/:id',
+  Trainers = '/trainers',
   CreateTraining = '/training-create',
   TrainerTrainings = '/my-trainings',
   TrainerOrders = '/my-orders',
@@ -94,3 +95,11 @@ export const isUser = (role: Role) =>
 
 export const isTrainer = (role: Role) =>
   role === Role.Trainer;
+
+export function capitalizeFirstLetter(str: string): string {
+  if (str.length === 0) {
+    return str;
+  }
+
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

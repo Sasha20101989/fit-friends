@@ -5,8 +5,9 @@ import { WorkoutType } from '../../types/workout-type.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import browserHistory from '../../browser-history';
-import { AppRoute } from '../../const';
 import { Role } from '../../types/role.enum';
+import { Location } from '../../types/location.enum';
+import { Gender } from '../../types/gender.enum';
 
 const initialState: MainState = {
   sortingOrderMethod: Sorting.Ascending,
@@ -14,7 +15,10 @@ const initialState: MainState = {
   level: TrainingLevel.Beginner,
   duration: WorkoutDuration.Short,
   file: '',
-  role: Role.Unknown
+  userRole: Role.Unknown,
+  userId: '',
+  location: null,
+  gender: null
 };
 
 export const mainProcess = createSlice({
@@ -22,7 +26,16 @@ export const mainProcess = createSlice({
   initialState: initialState,
   reducers: {
     setRole: (state, action: PayloadAction<Role>) => {
-      state.role = action.payload;
+      state.userRole = action.payload;
+    },
+    setGender: (state, action: PayloadAction<Gender>) => {
+      state.gender = action.payload;
+    },
+    setLocation: (state, action: PayloadAction<Location>) => {
+      state.location = action.payload;
+    },
+    setUserId: (state, action: PayloadAction<string>) => {
+      state.userId = action.payload;
     },
     changeSortingOrder: (state, action: PayloadAction<string>) => {
       state.sortingOrderMethod = action.payload;
@@ -36,6 +49,9 @@ export const mainProcess = createSlice({
     changeDuration: (state, action: PayloadAction<WorkoutDuration>) => {
       state.duration = action.payload;
     },
+    setSpecializations: (state, action: PayloadAction<WorkoutType[]>) => {
+      state.specializations = action.payload;
+    },
     addSpecialization: (state, action: PayloadAction<WorkoutType>) => {
       state.specializations.push(action.payload);
     },
@@ -45,9 +61,9 @@ export const mainProcess = createSlice({
     clearSpecializations: (state) => {
       state.specializations = [];
     },
-    redirectToRoute: (state, action: PayloadAction<AppRoute>) => {
+    redirectToRoute: (_state, action: PayloadAction<string>) => {
       browserHistory.push(action.payload);
     },
   },
 });
-export const { setRole, redirectToRoute, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;

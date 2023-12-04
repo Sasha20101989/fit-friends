@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength, MinLength, IsEnum, IsOptional } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, IsEnum } from 'class-validator';
 
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
@@ -21,7 +21,7 @@ export default class UpdateTrainerDto {
   @IsThreeWorkoutTypes({ message: 'Workout types array must not have more than 3 elements' })
   public workoutTypes!: WorkoutType[];
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'Personal Training is required' })
   public personalTraining!: boolean;
 
   @IsNotEmpty({ message: 'Certificate is required' })
