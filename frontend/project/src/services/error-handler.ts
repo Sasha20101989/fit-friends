@@ -11,7 +11,7 @@ export interface CustomError {
   message?: string;
 }
 
-export const errorHandle = (error: CustomError): void => {
+export const errorHandle1 = (error: CustomError): void => {
   if (error.response) {
     const { status, data } = error.response;
     if (status === 400) {

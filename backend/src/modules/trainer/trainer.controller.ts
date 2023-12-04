@@ -13,7 +13,7 @@ import { RestSchema } from '../../core/config/rest.schema.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import HttpError from '../../core/errors/http-error.js';
-import { fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
+import { fillDTO } from '../../core/helpers/index.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
 import TrainerRdo from './rdo/trainer.rdo.js';
 import { Role } from '../../types/role.enum.js';
@@ -64,7 +64,7 @@ export default class TrainerController extends Controller {
 
     const result = await this.trainerService.create({...body, role: Role.Trainer}, this.configService.get('SALT_ROUNDS'));
 
-    setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
+    //setAccessTokenCookie(res, result.accessToken, this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'));
 
     this.created(res, fillDTO(TrainerRdo, result.user));
   }

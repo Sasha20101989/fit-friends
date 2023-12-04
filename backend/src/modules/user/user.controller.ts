@@ -15,7 +15,7 @@ import { Token } from '../token/types/token.enum.js';
 import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import HttpError from '../../core/errors/http-error.js';
-import { clearCookie, fillDTO, setRefreshTokenCookie } from '../../core/helpers/index.js';
+import { clearCookie, fillDTO } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/refresh-token.dto.js';
 import UpdateUserDto from './dto/update-user.dto.js';
@@ -29,6 +29,8 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
+import { TokenServiceInterface } from '../token/token-service.interface.js';
+import AccessTokenRdo from '../token/rdo/access-token.rdo.js';
 
 
 @injectable()
@@ -36,6 +38,7 @@ export default class UserController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
+    @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
@@ -78,7 +81,7 @@ export default class UserController extends Controller {
     });
     this.addRoute({ path: '/refresh',
       method: HttpMethod.Post,
-      handler: this.refreshToken,
+      handler: this.refreshAccessToken,
       middlewares: [
         new ValidateDtoMiddleware(LoginUserDto)
       ]
@@ -126,7 +129,7 @@ export default class UserController extends Controller {
     this.ok(res, fillDTO(UserRdo, users || []));
   }
 
-  public async refreshToken(
+  public async refreshAccessToken(
     req: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
   ){
@@ -138,19 +141,25 @@ export default class UserController extends Controller {
       );
     }
 
-    const userData = await this.userService.refresh(req.body.refreshToken);
-
-    if (!userData) {
+    if(!this.tokenService.exists(req.body.refreshToken)){
       throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Unauthorized',
+        StatusCodes.NOT_FOUND,
+        `Refresh token with not found.`,
         'UserController'
       );
     }
 
-    setRefreshTokenCookie(res, userData.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
+    const accessToken = await this.userService.refreshAccessToken(req.body.refreshToken);
 
-    this.ok(res, userData);
+    if (!accessToken) {
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'Invalid Refresh Token',
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(AccessTokenRdo, accessToken));
   }
 
   public async checkAuthenticate(req: Request, res: Response) {
@@ -186,8 +195,6 @@ export default class UserController extends Controller {
         'UserController'
       );
     }
-
-    setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.ok(res, {
       ...fillDTO(LoggedUserRdo, result.user),
@@ -245,8 +252,6 @@ export default class UserController extends Controller {
     }
 
     const result = await this.userService.create({...body, role: Role.User}, this.configService.get('SALT_ROUNDS'));
-
-    setRefreshTokenCookie(res, result.refreshToken, this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'));
 
     this.created(
       res,

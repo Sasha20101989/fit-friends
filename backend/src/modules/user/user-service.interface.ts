@@ -17,7 +17,7 @@ export interface UserServiceInterface {
   exists(documentId: string): Promise<boolean>;
   verifyUser(dto: LoginUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity> | null>;
   updateById(userId: MongoId, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null>;
-  refresh(refreshToken: string): Promise<VerifyUserResponse<UserEntity> | null>;
+  refreshAccessToken(refreshToken: string): Promise<string | null>;
   GetAllUsers(query: UserQueryParams): Promise<DocumentType<UserEntity>[]>;
   findById(userId: MongoId): Promise<DocumentType<UserEntity> | null>;
   findUserOrTrainerById(userId: string): Promise<DocumentType<UserEntity> | DocumentType<TrainerEntity> | null>;

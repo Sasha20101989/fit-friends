@@ -19,6 +19,10 @@ import TrainerFriendsScreen from '../../pages/trainer-friends-screen/trainer-fri
 import Layout from '../layout/layout';
 import UserRoomScreen from '../../pages/user-room-screen/user-room-screen';
 import UserFriendsScreen from '../../pages/user-friends-screen/user-friends-screen';
+import PurchasesScreen from '../../pages/purchases-screen/purchases-screen';
+import UsersCatalogScreen from '../../pages/users-catalog-screen/users-catalog-screen';
+import UserCardScreen from '../../pages/user-card-screen/user-card-screen';
+import TrainingsCatalogScreen from '../../pages/trainings-catalog-screen/trainings-catalog-screen';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -103,6 +107,46 @@ function App(): JSX.Element {
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <Layout>
             <UserFriendsScreen/>
+          </Layout>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.UserPurchases}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <Layout>
+            <PurchasesScreen/>
+          </Layout>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.UsersCatalog}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <Layout>
+            <UsersCatalogScreen/>
+          </Layout>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.TrainingsCatalog}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <Layout>
+            <TrainingsCatalogScreen/>
+          </Layout>
+          // </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.UserCard}
+        element={
+          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+          <Layout>
+            <UserCardScreen/>
           </Layout>
           // </PrivateRoute>
         }

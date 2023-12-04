@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthorizationStatus, RegisterStatus } from '../../const';
 import { UserState } from '../../types/state';
-import { loginAction, registerAction, updateRefreshToken } from '../api-actions/auth-api-actions/auth-api-actions';
+import { loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
 
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -41,15 +41,6 @@ export const userProcess = createSlice({
         state.isSubmitting = false;
       })
       .addCase(registerAction.rejected, (state, _action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(updateRefreshToken.pending, (state, _action) => {
-        state.isSubmitting = true;
-      })
-      .addCase(updateRefreshToken.fulfilled, (state, action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(updateRefreshToken.rejected, (state, _action) => {
         state.isSubmitting = false;
       });
   },

@@ -53,21 +53,17 @@ export default class UserService implements UserServiceInterface {
       .exec();
   }
 
-  public async refresh(refreshToken: string): Promise<VerifyUserResponse<UserEntity> | null>{
+  public async refreshAccessToken(refreshToken: string): Promise<string | null>{
     if(!refreshToken){
       return null;
     }
-    const tokenData = await this.tokenService.validateRefreshToken(refreshToken);
-    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+    const decodedRefreshToken = await this.tokenService.decodeRefreshToken(refreshToken);
 
-    if(!tokenData || !tokenFromDb){
+    if(!decodedRefreshToken){
       return null;
     }
 
-    const tokens = this.tokenService.generateTokens(tokenData);
-    await this.tokenService.saveToken(tokenData.id, tokens.refreshToken);
-
-    return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
+    return this.tokenService.updateAccessToken(decodedRefreshToken);
   }
 
   public async create(dto: CreateUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity>> {
@@ -81,7 +77,7 @@ export default class UserService implements UserServiceInterface {
     const userResult = await this.userModel.create(user);
 
     const tokens = this.tokenService.generateTokens({...dto, id: userResult.id, role: userResult.role});
-    await this.tokenService.saveToken(userResult.id, tokens.refreshToken);
+    await this.tokenService.saveRefreshToken(userResult.id, tokens.refreshToken);
 
     return {user: userResult, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
@@ -110,7 +106,7 @@ export default class UserService implements UserServiceInterface {
     if (ifPasswordVerified) {
 
       const tokens = this.tokenService.generateTokens({...dto, id: user.id, role: user.role});
-      await this.tokenService.saveToken(user.id, tokens.refreshToken);
+      await this.tokenService.saveRefreshToken(user.id, tokens.refreshToken);
 
       return {user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
     }

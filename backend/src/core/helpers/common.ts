@@ -4,7 +4,6 @@ import { plainToInstance, ClassConstructor } from 'class-transformer';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 import { Response } from 'express';
-import { DEFAULT_MAX_AGE_TOKEN } from '../../modules/user/user.const.js';
 import { Token } from '../../modules/token/types/token.enum.js';
 import { Sorting } from '../../types/sorting.enum.js';
 import { QueryTypes } from '../../types/query-types.interface.js';
@@ -68,18 +67,18 @@ export function calculateSum<T>(array: T[], getValue: (item: T) => number): numb
   return array.reduce((total, item) => total + getValue(item), 0);
 }
 
-export function setRefreshTokenCookie(res: Response, refreshToken: string, expirationTime: string) {
-  const numericValue = parseInt(expirationTime, 10);
-  let maxAge;
+// export function setAccessTokenCookie(res: Response, accessToken: string, expirationTime: string) {
+//   const numericValue = parseInt(expirationTime, 10);
+//   let maxAge;
 
-  if (expirationTime.endsWith('d')) {
-    maxAge = numericValue * 24 * 60 * 60 * 1000;
-  } else {
-    maxAge = DEFAULT_MAX_AGE_TOKEN * 24 * 60 * 60 * 1000;
-  }
+//   if (expirationTime.endsWith('m')) {
+//     maxAge = numericValue * 60 * 1000;
+//   } else {
+//     maxAge = DEFAULT_MAX_AGE_TOKEN * 60 * 1000;
+//   }
 
-  res.cookie(Token.Refresh, refreshToken, { maxAge, httpOnly: true });
-}
+//   res.cookie(Token.Access, accessToken, { maxAge, httpOnly: true });
+// }
 
 export function clearCookie(res: Response, token: Token) {
   res.clearCookie(token);

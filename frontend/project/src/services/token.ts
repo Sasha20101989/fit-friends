@@ -1,17 +1,31 @@
-export const AUTH_TOKEN_KEY_NAME = 'fit-friends-token';
+export enum Token {
+  Access = 'accessToken',
+  Refresh = 'refreshToken'
+}
 
-export type Token = string;
-
-export const getToken = (): Token => {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY_NAME);
+export const getRefreshToken = (): string => {
+  const token = localStorage.getItem(Token.Refresh);
   return token ?? '';
 };
 
-export const saveTokens = (accessToken: Token, refreshToken: Token): void => {
-  localStorage.setItem(AUTH_TOKEN_KEY_NAME, accessToken);
-  document.cookie = `refreshToken=${refreshToken}; path=/;`;
+export const getAccessToken = (): string => {
+  const cookies = document.cookie.split('; ');
+  const accessTokenCookie = cookies.find((cookie) => cookie.startsWith(`${Token.Access}=`));
+
+  if (accessTokenCookie) {
+    const [, accessToken] = accessTokenCookie.split('=');
+    return accessToken;
+  }
+
+  return '';
 };
 
-export const dropToken = (): void => {
-  localStorage.removeItem(AUTH_TOKEN_KEY_NAME);
+export const updateAccessToken = (accessToken: Token.Access) => {
+  document.cookie = `${Token.Access}=; path=/;`;
+  document.cookie = `${Token.Access}=${accessToken}; path=/;`;
+};
+
+export const updateRefreshToken = (refreshToken: Token.Refresh): void => {
+  localStorage.removeItem(Token.Refresh);
+  localStorage.setItem(Token.Refresh, refreshToken);
 };

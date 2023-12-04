@@ -21,7 +21,7 @@ export default class TokenService implements TokenServiceInterface {
 
   public generateTokens(dto: RefreshTokenDto): Auth{
     this.logger.info('Create access token...');
-    const { exp, iat, ...dtoWithoutExp } = dto;
+    const { exp, iat, refreshToken, password, ...dtoWithoutExp } = dto;
     const accessToken = jwt.sign(
       dtoWithoutExp,
       this.configService.get('JWT_ACCESS_SECRET'),
@@ -30,7 +30,7 @@ export default class TokenService implements TokenServiceInterface {
       });
 
     this.logger.info('Create refresh token...');
-    const refreshToken = jwt.sign(
+    const refToken = jwt.sign(
       dtoWithoutExp,
       this.configService.get('JWT_REFRESH_SECRET'),
       {
@@ -39,11 +39,11 @@ export default class TokenService implements TokenServiceInterface {
 
     return {
       accessToken,
-      refreshToken
+      refreshToken: refToken
     };
   }
 
-  public async saveToken(userId: string, refreshToken: string): Promise<TokenEntity>{
+  public async saveRefreshToken(userId: string, refreshToken: string): Promise<TokenEntity>{
     const tokenDta = await this.tokenModel.findOne({user: userId});
 
     if(tokenDta){
@@ -63,16 +63,37 @@ export default class TokenService implements TokenServiceInterface {
   }
 
   public async findToken(refreshToken: string): Promise<TokenEntity | null>{
-    const token = await this.tokenModel.findOne({ refreshToken }).exec();
+    const token = await this.tokenModel.findOne({ refreshToken: refreshToken }).exec();
     return token;
   }
 
-  public async validateRefreshToken(token: string): Promise<JwtPayload>{
-    try {
-      const decodedToken = jwt.verify(token, this.configService.get('JWT_REFRESH_SECRET')) as JwtPayload;
+  public async exists(refreshToken: string): Promise<boolean> {
+    return this.tokenModel.exists({ refreshToken: refreshToken }).then((v) => v !== null);
+  }
+
+  public async updateRefreshToken(refreshToken: string): Promise<Auth | null> {
+    const tokenData = await this.findToken(refreshToken);
+
+    if (tokenData) {
+      const tokens = this.generateTokens(tokenData);
+      await this.saveRefreshToken(tokenData.user, tokens.refreshToken);
+      return tokens;
+    }
+
+    return null;
+  }
+
+  public async updateAccessToken(decodedRefreshToken: RefreshTokenDto): Promise<string> {
+      const tokens = this.generateTokens(decodedRefreshToken);
+      return tokens.accessToken;
+  }
+
+  public async decodeRefreshToken(refreshToken: string): Promise<JwtPayload | null> {
+    try{
+      const decodedToken: JwtPayload = jwt.verify(refreshToken, this.configService.get('JWT_REFRESH_SECRET')) as JwtPayload;
       return decodedToken;
-    } catch (error) {
-      throw new Error('Invalid refresh token');
+    }catch(error){
+      return null;
     }
   }
 }

@@ -25,9 +25,17 @@ export class AuthenticateMiddleware implements MiddlewareInterface {
       req.user = { email: payload.email as string, id: payload.id as string, role: payload.role as string };
       return next();
     } catch (error) {
+      if(error instanceof Error){
+        return next(new HttpError(
+          StatusCodes.UNAUTHORIZED,
+          error.name,
+          'AuthenticateMiddleware')
+        );
+      }
+
       return next(new HttpError(
         StatusCodes.UNAUTHORIZED,
-        'Invalid token',
+        'Invalid Token',
         'AuthenticateMiddleware')
       );
     }

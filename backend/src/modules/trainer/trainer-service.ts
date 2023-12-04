@@ -30,7 +30,7 @@ export default class TrainerService implements TrainerServiceInterface {
     const trainerResult = await this.trainerModel.create(trainer);
 
     const tokens = this.tokenService.generateTokens({...dto, id: trainerResult.id, role: trainerResult.role});
-    await this.tokenService.saveToken(trainerResult.id, tokens.refreshToken);
+    await this.tokenService.saveRefreshToken(trainerResult.id, tokens.refreshToken);
 
     return {user: trainerResult, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken};
   }
