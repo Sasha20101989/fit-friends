@@ -1,5 +1,7 @@
+import { WorkoutType } from '../../types/workout-type.enum';
+
 type ThumbnailTrainingHashtagsProps = {
-  hashtags: string[];
+  hashtags: WorkoutType[];
 }
 
 function ThumbnailTrainingHashtags({ hashtags }: ThumbnailTrainingHashtagsProps): JSX.Element {
@@ -8,7 +10,7 @@ function ThumbnailTrainingHashtags({ hashtags }: ThumbnailTrainingHashtagsProps)
       {hashtags.map((hashtag) => (
         <li key={hashtag} className="thumbnail-training__hashtags-item">
           <div className="hashtag thumbnail-training__hashtag">
-            <span>{hashtag}</span>
+            <span>{`#${hashtag}`}</span>
           </div>
         </li>
       ))}

@@ -1,17 +1,19 @@
+import { useParams } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
+import { Training } from '../../types/training.type';
+import { getTrainings } from '../../store/main-data/main-data.selectors';
+import { useEffect } from 'react';
+import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 
 
 function PopularTrainings():JSX.Element {
-  const trainingsData = [
-    {
-      title: 'run, forrest, run',
-      imageSrc: 'img/content/thumbnails/training-06',
-      price: 1600,
-      hashtags: ['#бег', '#500ккал'],
-      rate: 5,
-      text: 'Узнайте правильную технику бега, развивайте выносливость и&nbsp;откройте для себя все секреты длительных пробежек.'
-    }
-  ];
+  const dispatch = useAppDispatch();
+  const trainings: Training[] = useAppSelector(getTrainings);
+
+  useEffect(() => {
+      dispatch(fetchTrainingsAction({}));
+  }, [dispatch, trainings]);
 
   return (
     <section className="popular-trainings">
@@ -39,8 +41,8 @@ function PopularTrainings():JSX.Element {
             </div>
           </div>
           <ul className="popular-trainings__list">
-            {trainingsData.map((training) => (
-              <ThumbnailTraining key={training.title} {...training} />
+            {trainings.map((training) => (
+              <ThumbnailTraining key={training.name} training={training} />
             ))}
           </ul>
         </div>

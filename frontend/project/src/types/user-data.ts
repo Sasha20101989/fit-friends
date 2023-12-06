@@ -1,4 +1,4 @@
-import { Role } from '../../../../backend/src/types/role.enum.js';
+import { Role } from './role.enum';
 
 export type UserData = {
   id: string;

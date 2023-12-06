@@ -86,13 +86,13 @@ function App(): JSX.Element {
         }
       />
       <Route
-        path={AppRoute.Orders}
+        path={`${AppRoute.Orders}/:id`}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <OrderScreen/>
-          </Layout>
-          // </PrivateRoute>
+          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <Layout>
+              <OrderScreen/>
+            </Layout>
+          </PrivateRoute>
         }
       />
       <Route

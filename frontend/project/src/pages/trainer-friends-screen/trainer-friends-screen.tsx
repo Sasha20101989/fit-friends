@@ -10,8 +10,8 @@ function TrainerFriendsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-      dispatch(fetchFriendsAction({}));
-  }, [dispatch]);
+    dispatch(fetchFriendsAction({}));
+  }, [dispatch, friends]);
 
   return(
     <section className="friends-list">

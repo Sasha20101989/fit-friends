@@ -5,6 +5,7 @@ import { Location } from './location.enum.js';
 import { Role } from './role.enum.js';
 import { Trainer } from './trainer.interface.js';
 import { TrainingLevel } from './training-level.enum.js';
+import { TrainingOrder } from './training-order.type.js';
 import { Training } from './training.type.js';
 import { User } from './user.interface.js';
 import { WorkoutDuration } from './workout-duration.enum.js';
@@ -33,6 +34,7 @@ export type MainState = {
 
 export type DataState = {
   trainings: Training[];
+  orders: TrainingOrder[],
   selectedTraining: Training | null;
   isDataLoading: boolean;
   isSubmitting: boolean;

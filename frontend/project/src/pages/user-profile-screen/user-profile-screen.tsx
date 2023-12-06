@@ -24,11 +24,12 @@ function UserProfileScreen(): JSX.Element {
   const user = useAppSelector(getUser);
   const { isFormEditable, handleToggleFormEditable } = useUserRoom();
 
+
   useEffect(() => {
     if (id) {
       dispatch(fetchUserAction(id));
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, user]);
 
   if (!user || !id) {
     return <NotFoundScreen />;

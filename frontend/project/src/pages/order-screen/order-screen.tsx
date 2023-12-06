@@ -1,16 +1,22 @@
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { TrainingOrder } from '../../types/training-order.type';
+import { useParams } from 'react-router-dom';
+import { fetchOrdersAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { getOrders } from '../../store/main-data/main-data.selectors';
 import ThumbnailTrainingOrder from '../../components/thumbnail-training-order/thumbnail-training-order';
 
 function OrderScreen() : JSX.Element {
-  const ordersData = [
-    {
-      title: 'run, forrest, run',
-      imageSrc: 'img/content/thumbnails/training-06',
-      price: 1600,
-      hashtags: ['#бег', '#500ккал'],
-      rate: 5,
-      text: 'Узнайте правильную технику бега, развивайте выносливость и&nbsp;откройте для себя все секреты длительных пробежек.'
+  const dispatch = useAppDispatch();
+  const { id } = useParams<{ id: string }>();
+  const orders: TrainingOrder[] | null = useAppSelector(getOrders);
+
+  useEffect(() => {
+    if(id){
+      dispatch(fetchOrdersAction(id));
     }
-  ];
+  }, [dispatch, id, orders]);
+
   return(
     <section className="my-orders">
       <div className="container">
@@ -39,8 +45,8 @@ function OrderScreen() : JSX.Element {
             </div>
           </div>
           <ul className="my-orders__list">
-            {ordersData.map((order) => (
-              <ThumbnailTrainingOrder key={order.title} {...order} />
+            {orders.map((order) => (
+              <ThumbnailTrainingOrder key={order.name} order={order} />
             ))}
           </ul>
           <div className="show-more my-orders__show-more">

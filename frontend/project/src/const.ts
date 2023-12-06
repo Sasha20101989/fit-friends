@@ -24,7 +24,8 @@ export enum APIRoute {
   UpdateTrainer = '/trainers',
   RefreshToken = '/users/refresh',
   Users = '/users',
-  Friends = '/friends'
+  Friends = '/friends',
+  Orders = '/orders'
 }
 
 export enum AuthorizationStatus {
@@ -32,7 +33,6 @@ export enum AuthorizationStatus {
   NoAuth = 'NO_AUTH',
   Unknown = 'UNKNOWN'
 }
-
 
 export enum RegisterStatus {
   InProgress = 'IN_PROGRESS',

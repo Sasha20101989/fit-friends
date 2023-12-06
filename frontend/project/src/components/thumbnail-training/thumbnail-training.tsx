@@ -1,3 +1,4 @@
+import { Training } from '../../types/training.type';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 import ThumbnailTrainingHashtags from '../thumbnail-training-hashtags/thumbnail-training-hashtags';
 import ThumbnailTrainingRate from '../thumbnail-training-rate/thumbnail-training-rate';
@@ -6,30 +7,27 @@ import ThumbnailTrainingWrapper from '../thumbnail-training-wrapper/thumbnail-tr
 
 
 type ThumbnailTrainingProps = {
-  title: string;
-  imageSrc: string;
-  price: number;
-  hashtags: string[];
-  rate: number;
-  text: string;
+  training: Training;
 }
 
-function ThumbnailTraining({ title, imageSrc, price, hashtags, rate, text }: ThumbnailTrainingProps): JSX.Element {
+function ThumbnailTraining({ training }: ThumbnailTrainingProps): JSX.Element {
+  const { name, backgroundImage, price, workoutType, rating, description } = training;
+  const hashtags = [workoutType];
   return (
     <li className="popular-trainings__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <ThumbnailPicture imageSrc={imageSrc} sourceName={'thumbnail-training__image'} width={330} height={190}/>
+          <ThumbnailPicture imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190}/>
           <p className="thumbnail-training__price">
             <span className="thumbnail-training__price-value">{price}</span>
             <span>₽</span>
           </p>
-          <h3 className="thumbnail-training__title">{title}</h3>
+          <h3 className="thumbnail-training__title">{name}</h3>
           <div className="thumbnail-training__info">
             <ThumbnailTrainingHashtags hashtags={hashtags}/>
-            <ThumbnailTrainingRate rate={rate}/>
+            <ThumbnailTrainingRate rate={rating}/>
           </div>
-          <ThumbnailTrainingText text={text}/>
+          <ThumbnailTrainingText text={description}/>
           <ThumbnailTrainingWrapper/>
         </div>
       </div>
