@@ -1,4 +1,6 @@
+import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { getGender } from '../../store/main-process/main-process.selectors';
 import { Gender } from '../../types/gender.enum';
 
 type GenderItemProps = {
@@ -6,7 +8,8 @@ type GenderItemProps = {
 }
 
 function GenderItem({ gender }: GenderItemProps): JSX.Element {
-  const { selectedSex, handleSexChange } = useRegisterForm();
+  const selectedGender = useAppSelector(getGender);
+  const { handleSexChange } = useRegisterForm();
 
   return (
     <div className="custom-toggle-radio__block">
@@ -15,7 +18,7 @@ function GenderItem({ gender }: GenderItemProps): JSX.Element {
           type="radio"
           name="gender"
           value={gender}
-          checked={selectedSex === gender}
+          checked={selectedGender === gender}
           onChange={handleSexChange}
         />
         <span className="custom-toggle-radio__icon"></span>

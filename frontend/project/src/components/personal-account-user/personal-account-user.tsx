@@ -18,13 +18,13 @@ function PersonalAccountUser():JSX.Element {
             <div className="personal-account-user__input">
               <label>
                 <span className="personal-account-user__label">План на день, ккал</span>
-                <input type="text" name="schedule-for-the-day" value="3 300"/>
+                <input type="text" name="schedule-for-the-day" value="3300"/>
               </label>
             </div>
             <div className="personal-account-user__input">
               <label>
                 <span className="personal-account-user__label">План на неделю, ккал</span>
-                <input type="text" name="schedule-for-the-week" value="23 100"/>
+                <input type="text" name="schedule-for-the-week" value="23100"/>
               </label>
             </div>
           </div>

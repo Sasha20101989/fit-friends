@@ -15,6 +15,7 @@ export type UserState = {
   registerStatus: RegisterStatus;
   isSubmitting: boolean;
   user: User | Trainer | null;
+  friends: User[];
 }
 
 export type MainState = {
@@ -27,6 +28,7 @@ export type MainState = {
   userId: string;
   location: Location | null;
   gender: Gender | null;
+  readiessToWorkout: boolean;
 }
 
 export type DataState = {

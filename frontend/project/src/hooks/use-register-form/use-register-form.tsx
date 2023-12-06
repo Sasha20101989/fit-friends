@@ -3,7 +3,7 @@ import { RegisterUserTransferData } from '../../types/register-transfer-data';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 import { useAppDispatch, useAppSelector } from '..';
-import { editTrainerAction, editUserAction, registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
+import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 import { toast } from 'react-toastify';
 import { Role } from '../../types/role.enum';
 import { Gender } from '../../types/gender.enum';
@@ -11,10 +11,11 @@ import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDuration, getFile, getGender, getLevel, getLocation, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { addSpecialization, changeDuration, changeFile, changeLevel, removeSpecialization, setGender, setLocation } from '../../store/main-process/main-process.slice';
+import { getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { addSpecialization, changeDuration, changeFile, changeLevel, changeReadiessToWorkout, removeSpecialization, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
+import { editTrainerAction, editUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 
 function useRegisterForm(){
   const dispatch = useAppDispatch();
@@ -27,6 +28,7 @@ function useRegisterForm(){
   const selectedFile = useAppSelector(getFile);
   const selectedLocation = useAppSelector(getLocation);
   const selectedGender = useAppSelector(getGender);
+  const readinessToWorkout = useAppSelector(getReadiessToWorkout);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -35,13 +37,12 @@ function useRegisterForm(){
   const caloriesWaste = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
 
-  const descriptionCoachRef = useRef<HTMLTextAreaElement | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCoachDescription, setSelectedCoachDescription] = useState<string | null>(null);
-  const [isPersonalTrainingSelected, setIsPersonalTrainingSelected] = useState(false);
+  const [selectedDescription, setSelectedCoachDescription] = useState<string | null>(null);
 
   // const handleRole = (roleData: Role) => {
   //   const handlers: Record<Role, () => void> = {
@@ -125,16 +126,16 @@ function useRegisterForm(){
   const handleTrainerQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (descriptionCoachRef.current !== null &&
+    if (descriptionRef.current !== null &&
         specializations.length > 0 &&
         selectedLevel !== null &&
         selectedFile !== '') {
 
       const userData: UpdateTrainerDto = {
-        description: descriptionCoachRef.current.value,
+        description: descriptionRef.current.value,
         workoutTypes: specializations,
         trainingLevel: selectedLevel,
-        readinessForWorkout: isPersonalTrainingSelected,
+        readinessForWorkout: readinessToWorkout,
         certificate: selectedFile
       };
 
@@ -142,14 +143,14 @@ function useRegisterForm(){
     }
   };
 
-  const handleLocationChange = (event: MouseEvent<HTMLLIElement>) => {
-    const location: Location = event.currentTarget.textContent as Location;
+  const handleLocationChange = (evt: MouseEvent<HTMLLIElement>) => {
+    const location: Location = evt.currentTarget.textContent as Location;
     dispatch(setLocation(location));
     setIsDropdownOpen(false);
   };
 
-  const handleRoleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const role: Role = event.target.value as Role;
+  const handleRoleChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const role: Role = evt.target.value as Role;
     setRole(role);
   };
 
@@ -164,8 +165,8 @@ function useRegisterForm(){
 
   const handleToggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const handleLevelChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newLevel = event.target.value as TrainingLevel;
+  const handleLevelChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const newLevel = evt.target.value as TrainingLevel;
     dispatch(changeLevel(newLevel));
   };
 
@@ -173,10 +174,10 @@ function useRegisterForm(){
     dispatch(changeDuration(duration));
   };
 
-  const handleSpecializationChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedType = event.target.value as WorkoutType;
+  const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = evt.target.value as WorkoutType;
 
-    if (event.target.checked) {
+    if (evt.target.checked) {
       dispatch(addSpecialization(selectedType));
     } else {
       dispatch(removeSpecialization(selectedType));
@@ -185,16 +186,16 @@ function useRegisterForm(){
 
   const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
 
-  const handleDescriptionCoachChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSelectedCoachDescription(event.target.value);
+  const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSelectedCoachDescription(evt.target.value);
   };
 
-  const handleIsPersonalTrainingChange = () => {
-    setIsPersonalTrainingSelected(!isPersonalTrainingSelected);
+  const handleReadinessForWorkoutChange = () => {
+    dispatch(changeReadiessToWorkout(!readinessToWorkout));
   };
 
-  const handleCertificateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleCertificateChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const file = evt.target.files?.[0];
 
     const isJpegOrPngOrPdf = file?.type === 'image/jpeg' || file?.type === 'image/png' || file?.type === 'application/pdf';
 
@@ -217,17 +218,18 @@ function useRegisterForm(){
     birthdayRef,
     caloriesLoseRef,
     caloriesWaste,
-    descriptionCoachRef,
+    descriptionRef,
     selectedLocation,
     selectedRole,
     isAgreementChecked,
     isDropdownOpen,
     selectedLevel,
     specializations,
-    selectedCoachDescription,
-    isPersonalTrainingSelected,
+    selectedDescription,
+    readinessToWorkout,
     selectedDuration,
     selectedFile,
+    selectedGender,
     isDisabled,
     handleRegister,
     handleLocationChange,
@@ -237,8 +239,8 @@ function useRegisterForm(){
     handleToggleDropdown,
     handleLevelChange,
     handleSpecializationChange,
-    handleDescriptionCoachChange,
-    handleIsPersonalTrainingChange,
+    handleDescriptionChange,
+    handleReadinessForWorkoutChange,
     handleCertificateChange,
     handleUserQuestion,
     handleTrainerQuestion,

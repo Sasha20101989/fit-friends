@@ -17,8 +17,9 @@ export default class FriendService implements FriendServiceInterface {
 
   public async delete(userId: MongoId, friendId: MongoId): Promise<void> {
     const user = await this.findById(userId);
+
     if (user) {
-      const friendIndex = user.friends.indexOf(friendId);
+      const friendIndex = user.friends.findIndex((friend) => friend._id.equals(friendId));
 
       if (friendIndex !== -1) {
         user.friends.splice(friendIndex, 1);
@@ -28,7 +29,7 @@ export default class FriendService implements FriendServiceInterface {
   }
 
   public async findById(userId: MongoId): Promise<DocumentType<UserEntity> | null> {
-    return await this.userModel.findById(userId).exec();
+    return await this.userModel.findById(userId).populate('friends').exec();
   }
 
   public async find(userId: MongoId, query: FriendQueryParams): Promise<DocumentType<UserEntity>[]> {
@@ -43,7 +44,7 @@ export default class FriendService implements FriendServiceInterface {
 
     const sort = getSortOptionsForCreatedAt(query.createdAtDirection);
 
-    const friendIds = user.friends;
+    const friendIds = Object.values(user.friends);
     const friends = await this.userModel
       .find({ _id: { $in: friendIds } })
       .sort(sort)
@@ -56,7 +57,13 @@ export default class FriendService implements FriendServiceInterface {
 
   public async exists(userId: MongoId, friendId: MongoId): Promise<boolean> {
     const user = await this.findById(userId);
-    return user !== null && user.friends.includes(friendId);
+    const friend = await this.findById(friendId);
+
+    if (user && friend) {
+      return user.friends.some((userFriend) => userFriend._id.equals(friend._id));
+    }
+
+    return false;
   }
 
   public async create(userId: MongoId, friendId: MongoId): Promise<DocumentType<UserEntity> | null>{
@@ -64,10 +71,10 @@ export default class FriendService implements FriendServiceInterface {
     const friend = await this.findById(friendId);
 
     if (user && friend) {
-      user.AddFriend(friendId);
+      user.AddFriend(friend);
       await user.save();
 
-      friend.AddFriend(userId);
+      friend.AddFriend(friend);
       await friend.save();
     }
 

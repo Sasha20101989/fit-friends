@@ -15,3 +15,4 @@ export const getRole = (state: State): Role => state[NameSpace.Main].userRole;
 export const getUserId = (state: State): string => state[NameSpace.Main].userId;
 export const getLocation = (state: State): Location | null => state[NameSpace.Main].location;
 export const getGender = (state: State): Gender | null => state[NameSpace.Main].gender;
+export const getReadiessToWorkout = (state: State): boolean => state[NameSpace.Main].readiessToWorkout;

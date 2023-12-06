@@ -9,11 +9,7 @@ import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/us
 import CreateUserDto from '../../../dto/create-user.dto';
 import { RegisterUserTransferData } from '../../../types/register-transfer-data';
 import { Role } from '../../../types/role.enum';
-import UpdateUserDto from '../../../dto/update-user.dto';
-import UpdateTrainerDto from '../../../dto/update-trainer.dto';
 import { redirectToRoute, setRole, setUserId } from '../../main-process/main-process.slice';
-import { User } from '../../../types/user.interface';
-import { Trainer } from '../../../types/trainer.interface';
 
 export const checkAuthAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
@@ -88,61 +84,5 @@ export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
     } catch (error) {
       dispatch(setRegisterStatus(RegisterStatus.Unknown));
     }
-  },
-);
-
-export const editUserAction = createAsyncThunk<
-  void,
-  UpdateUserDto,
-  {
-    dispatch: AppDispatch;
-    state: State;
-    extra: AxiosInstance;
-  }
->(
-  'user/editUser',
-  async (userData, {dispatch, extra: api}) => {
-    try {
-      await api.put<UpdateUserDto>(APIRoute.Users, userData);
-
-      dispatch(setRegisterStatus(RegisterStatus.Done));
-      dispatch(redirectToRoute(AppRoute.Main));
-    } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
-    }
-  },
-);
-
-export const editTrainerAction = createAsyncThunk<
-  void,
-  UpdateTrainerDto,
-  {
-    dispatch: AppDispatch;
-    state: State;
-    extra: AxiosInstance;
-  }
->(
-  'user/editTrainer',
-  async (trainerData, {dispatch, extra: api}) => {
-    try {
-      await api.put<UpdateTrainerDto>(APIRoute.UpdateTrainer, trainerData);
-
-      dispatch(setRegisterStatus(RegisterStatus.Done));
-      dispatch(redirectToRoute(AppRoute.Main));
-    } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
-    }
-  },
-);
-
-export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
-  dispatch: AppDispatch;
-  state: State;
-  extra: AxiosInstance;
-}>(
-  'data/fetchOffer',
-  async (userId: string, {dispatch, extra: api}) => {
-    const { data } = await api.get<User | Trainer>(`${APIRoute.Users}/${userId}`);
-    return data;
   },
 );

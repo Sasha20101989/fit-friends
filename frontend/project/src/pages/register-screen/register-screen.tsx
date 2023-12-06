@@ -7,6 +7,7 @@ import { Role } from '../../types/role.enum';
 import { useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import GenderItem from '../../components/gender-item/gender-item';
+import { capitalizeFirstLetter } from '../../const';
 
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
@@ -81,8 +82,9 @@ function RegisterScreen() : JSX.Element {
                     </div>
                     <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
                       <span className="custom-select__label">Ваша локация</span>
+                      <div className="custom-select__placeholder">{selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}</div>
                       <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
-                        <span className="custom-select__text">{selectedLocation}</span>
+                        <span className="custom-select__text"></span>
                         <span className="custom-select__icon">
                           <svg width="15" height="6" aria-hidden="true">
                             <use xlinkHref="#arrow-down"></use>
@@ -93,9 +95,9 @@ function RegisterScreen() : JSX.Element {
                         {Object.values(Location).map((loc) => (
                           <li
                             key={loc}
-                            value={selectedLocation ?? ''}
-                            className={loc === selectedLocation ? 'selected' : ''}
+                            value={loc}
                             onClick={handleLocationChange}
+                            style={{cursor: 'pointer'}}
                           >
                             {loc}
                           </li>

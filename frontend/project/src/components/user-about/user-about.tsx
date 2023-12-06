@@ -1,25 +1,39 @@
+import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+
 type UserAboutProps = {
   name: string;
   description: string;
+  isFormEditable: boolean;
 }
 
-function UserAbout({name, description}: UserAboutProps):JSX.Element {
-  const isEdit: boolean = false;
+function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Element {
+  const {
+    descriptionRef,
+    handleDescriptionChange} = useRegisterForm();
   return (
-    <div className={`user-info${isEdit && '-edit'}__section`}>
-      <h2 className={`user-info${isEdit && '-edit'}__title`}>Обо мне</h2>
-      <div className={`custom-input ${!isEdit && 'custom-input--readonly'} user-info${isEdit && '-edit'}__input`}>
+    <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
+      <h2 className={`user-info${isFormEditable ? '-edit' : ''}__title`}>Обо мне</h2>
+      <div className={`custom-input ${!isFormEditable ? 'custom-input--readonly' : ''} user-info${isFormEditable ? '-edit' : ''}__input`}>
         <label>
           <span className="custom-input__label">Имя</span>
           <span className="custom-input__wrapper">
-            <input type="text" name="name" value={name} disabled={!isEdit}/>
+            <input type="text" name="name" value={name} disabled={!isFormEditable}/>
           </span>
         </label>
       </div>
-      <div className={`custom-textarea ${!isEdit && 'custom-textarea--readonly'} user-info${isEdit && '-edit'}__textarea`}>
+      <div className={`custom-textarea ${!isFormEditable ? 'custom-textarea--readonly' : ''} user-info${isFormEditable ? '-edit' : ''}__textarea`}>
         <label>
           <span className="custom-textarea__label">Описание</span>
-          <textarea name="description" value={description} placeholder=" " disabled={!isEdit}></textarea>
+          <textarea
+            name="description"
+            placeholder=" "
+            ref={descriptionRef}
+            value={description ?? ''}
+            onChange={handleDescriptionChange}
+            disabled={!isFormEditable}
+            required
+          >
+          </textarea>
         </label>
       </div>
     </div>

@@ -25,7 +25,7 @@ function PromoSliderItem({ title, imageSrc, text, price, sup, oldPrice }: PromoS
             </svg>
           </div>
         </div>
-        <span className="promo-slider__text" dangerouslySetInnerHTML={{ __html: text }}></span>
+        <span className="promo-slider__text"></span>
         <div className="promo-slider__bottom-container">
           <div className="promo-slider__slider-dots">
             <button className="promo-slider__slider-dot" aria-label="первый слайд"></button>

@@ -1,4 +1,4 @@
-import typegoose, { Ref, defaultClasses } from '@typegoose/typegoose';
+import typegoose, { DocumentType, Ref, defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
 import { Role } from '../../types/role.enum.js';
@@ -73,10 +73,10 @@ export class UserEntity extends defaultClasses.TimeStamps {
   public readinessForWorkout: boolean;
 
   @prop({ required: false, ref: BalanceEntity })
-  public balance?: Ref<BalanceEntity[]>;
+  public balance?: Ref<BalanceEntity>[];
 
-  @prop({ required: true })
-  public friends!: string[];
+  @prop({ required: true, ref: UserEntity })
+  public friends!: Ref<UserEntity>[];
 
   constructor(userData: CreateUserDto) {
     super();
@@ -114,9 +114,11 @@ export class UserEntity extends defaultClasses.TimeStamps {
     return false;
   }
 
-  public AddFriend(friendId: string) {
-    if (!this.friends.includes(friendId)) {
-      this.friends.push(friendId);
+  public AddFriend(newFriend: DocumentType<UserEntity>) {
+    const isNewFriendInList = this.friends.some((friend) => friend._id.equals(newFriend._id));
+
+    if (!isNewFriendInList) {
+      this.friends.push(newFriend);
     }
   }
 }

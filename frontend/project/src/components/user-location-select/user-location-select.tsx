@@ -1,15 +1,23 @@
 import { capitalizeFirstLetter } from '../../const';
-import { useAppSelector } from '../../hooks/index';
-import { getLocation } from '../../store/main-process/main-process.selectors';
+import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { Location } from '../../types/location.enum';
 
-function UserLocationSelect():JSX.Element {
-  const location = useAppSelector(getLocation);
-  const isEdit = false;
+type UserLocationSelectProps = {
+  isFormEditable: boolean;
+}
+
+function UserLocationSelect({isFormEditable}: UserLocationSelectProps):JSX.Element {
+  const {
+    selectedLocation,
+    isDropdownOpen,
+    handleToggleDropdown,
+    handleLocationChange } = useRegisterForm();
+
   return (
-    <div className={`${!isEdit && '-custom-select--readonly'} custom-select user-info${!isEdit && '-edit'}__select`}>
+    <div className={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${!isFormEditable ? '-edit' : ''}__select ${isDropdownOpen ? 'is-open' : ''}`}>
       <span className="custom-select__label">Локация</span>
-      <div className="custom-select__placeholder">{`ст. м. ${location ? capitalizeFirstLetter(location) : ''}`}</div>
-      <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled={!isEdit}>
+      <div className="custom-select__placeholder">{`ст. м. ${selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}`}</div>
+      <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled={!isFormEditable} onClick={handleToggleDropdown}>
         <span className="custom-select__text"></span>
         <span className="custom-select__icon">
           <svg width="15" height="6" aria-hidden="true">
@@ -18,6 +26,16 @@ function UserLocationSelect():JSX.Element {
         </span>
       </button>
       <ul className="custom-select__list" role="listbox">
+        {Object.values(Location).map((loc) => (
+          <li
+            key={loc}
+            value={loc}
+            onClick={handleLocationChange}
+            style={{cursor: 'pointer'}}
+          >
+            {loc}
+          </li>
+        ))}
       </ul>
     </div>
   );

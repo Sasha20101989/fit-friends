@@ -10,12 +10,12 @@ import { Role } from '../../types/role.enum';
 function QuestionnaireTrainerScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
   const {
-    descriptionCoachRef,
-    selectedCoachDescription,
-    isPersonalTrainingSelected,
+    descriptionRef,
+    selectedDescription,
+    readinessToWorkout,
     selectedFile,
-    handleDescriptionCoachChange,
-    handleIsPersonalTrainingChange,
+    handleDescriptionChange,
+    handleReadinessForWorkoutChange,
     handleCertificateChange,
     handleTrainerQuestion } = useRegisterForm();
 
@@ -51,9 +51,9 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                           <textarea
                             name="description"
                             placeholder=" "
-                            ref={descriptionCoachRef}
-                            defaultValue={selectedCoachDescription ?? ''}
-                            onChange={handleDescriptionCoachChange}
+                            ref={descriptionRef}
+                            defaultValue={selectedDescription ?? ''}
+                            onChange={handleDescriptionChange}
                             required
                           >
                           </textarea>
@@ -65,8 +65,8 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             type="checkbox"
                             value="individual-training"
                             name="individual-training"
-                            checked={isPersonalTrainingSelected}
-                            onChange={handleIsPersonalTrainingChange}
+                            checked={readinessToWorkout}
+                            onChange={handleReadinessForWorkoutChange}
                           />
                           <span className="questionnaire-coach__checkbox-icon">
                             <svg width="9" height="6" aria-hidden="true">

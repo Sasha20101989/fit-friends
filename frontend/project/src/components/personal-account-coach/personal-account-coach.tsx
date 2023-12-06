@@ -3,12 +3,16 @@ import CoachAdditionalInfo from '../coach-additional-info/coach-additional-info'
 import ThumbnailLink from '../thumbnail-link/thumbnail-link';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
-function PersonalAccountCoach():JSX.Element {
+type PersonalAccountCoachProps = {
+  userId: string;
+}
+
+function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
   const thumbnailLinks = [
-    { to: AppRoute.TrainerTrainings, icon: '#icon-flash', text: 'Мои тренировки' },
+    { to: AppRoute.Trainings, icon: '#icon-flash', text: 'Мои тренировки' },
     { to: AppRoute.CreateTraining, icon: '#icon-add', text: 'Создать тренировку' },
-    { to: AppRoute.TrainerFriends, icon: '#icon-friends', text: 'Мои друзья' },
-    { to: AppRoute.TrainerOrders, icon: '#icon-bag', text: 'Мои заказы' },
+    { to: `${AppRoute.Trainer}/${userId}${AppRoute.Friends}`, icon: '#icon-friends', text: 'Мои друзья' },
+    { to: AppRoute.Orders, icon: '#icon-bag', text: 'Мои заказы' },
   ];
 
   const theme = 'light';
@@ -21,7 +25,7 @@ function PersonalAccountCoach():JSX.Element {
         ))}
         <div className="personal-account-coach__calendar">
           <div className="thumbnail-spec-gym">
-            <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'} width={330} height={190}/>
+            <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01.jpg'} width={330} height={190}/>
             <p className="thumbnail-spec-gym__type">Ближайший зал</p>
             <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
               <h3 className="thumbnail-spec-gym__title">Скоро тут будет интересно</h3>

@@ -15,7 +15,6 @@ export enum HTTP_CODE {
   CONFLICT = 409,
 }
 
-
 export enum APIRoute {
   Trainings = '/trainings',
   Login = '/users/login',
@@ -24,7 +23,8 @@ export enum APIRoute {
   Logout = '/users/logout',
   UpdateTrainer = '/trainers',
   RefreshToken = '/users/refresh',
-  Users = '/users'
+  Users = '/users',
+  Friends = '/friends'
 }
 
 export enum AuthorizationStatus {
@@ -52,15 +52,16 @@ export enum AppRoute {
   TrainerRoom = '/trainers/:id',
   Trainers = '/trainers',
   CreateTraining = '/training-create',
-  TrainerTrainings = '/my-trainings',
-  TrainerOrders = '/my-orders',
-  TrainerFriends = '/trainer/my-friends',
+  Trainings = '/trainings',
+  Orders = '/orders',
+  Trainer = '/trainer',
   UserFriends = '/user/my-friends',
   UserPurchases = '/my-purchases',
   UserRoom = '/user/home',
   UsersCatalog = 'users/catalog',
   UserCard = '/users/user-card',
   TrainingsCatalog = 'trainings/catalog',
+  Friends = '/friends'
 }
 
 export const isValidPassword = (password: string): boolean => {

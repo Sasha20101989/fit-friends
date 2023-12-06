@@ -5,7 +5,7 @@ type ThumbnailTrainingTextProps = {
 function ThumbnailTrainingText({ text }: ThumbnailTrainingTextProps): JSX.Element {
   return (
     <div className="thumbnail-training__text-wrapper">
-      <p className="thumbnail-training__text" dangerouslySetInnerHTML={{ __html: text }}></p>
+      <p className="thumbnail-training__text"></p>
     </div>
   );
 }

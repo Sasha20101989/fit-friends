@@ -18,13 +18,17 @@ const initialState: MainState = {
   userRole: Role.Unknown,
   userId: '',
   location: null,
-  gender: null
+  gender: null,
+  readiessToWorkout: false
 };
 
 export const mainProcess = createSlice({
   name: 'main',
   initialState: initialState,
   reducers: {
+    changeReadiessToWorkout: (state, action: PayloadAction<boolean>) => {
+      state.readiessToWorkout = action.payload;
+    },
     setRole: (state, action: PayloadAction<Role>) => {
       state.userRole = action.payload;
     },
@@ -66,4 +70,4 @@ export const mainProcess = createSlice({
     },
   },
 });
-export const { setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;
