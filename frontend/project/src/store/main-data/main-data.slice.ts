@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
-import { fetchOrdersAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
+import { fetchOrdersAction, fetchPopularTrainingsAction, fetchTrainerTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 
 export const initialState: DataState = {
-  trainings: [],
+  popularTrainings: [],
+  trainerTrainings: [],
   orders: [],
   isDataLoading: false,
   selectedTraining: null,
@@ -17,14 +18,24 @@ export const mainData = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchTrainingsAction.pending, (state, _action) => {
+      .addCase(fetchPopularTrainingsAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
-      .addCase(fetchTrainingsAction.fulfilled, (state, action) => {
+      .addCase(fetchPopularTrainingsAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.trainings = action.payload;
+        state.popularTrainings = action.payload;
       })
-      .addCase(fetchTrainingsAction.rejected, (state, _action) => {
+      .addCase(fetchPopularTrainingsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchTrainerTrainingsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchTrainerTrainingsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.trainerTrainings = action.payload;
+      })
+      .addCase(fetchTrainerTrainingsAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       })
       .addCase(fetchOrdersAction.pending, (state, _action) => {

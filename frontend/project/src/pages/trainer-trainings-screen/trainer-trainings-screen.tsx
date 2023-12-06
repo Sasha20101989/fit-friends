@@ -1,8 +1,24 @@
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { Training } from '../../types/training.type';
+import { useEffect } from 'react';
+import { getTrainerTrainings } from '../../store/main-data/main-data.selectors';
+import { fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { useParams } from 'react-router-dom';
 
 function TrainerTrainingsScreen(): JSX.Element {
+  const dispatch = useAppDispatch();
+  const { id } = useParams<{ id: string }>();
+  const trainings: Training[] = useAppSelector(getTrainerTrainings);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchTrainerTrainingsAction({userId: id}));
+    }
+  }, [dispatch, trainings]);
+
   const { selectedDuration, handleDurationChange } = useRegisterForm();
   return(
     <section className="inner-page">
@@ -126,7 +142,7 @@ function TrainerTrainingsScreen(): JSX.Element {
           </div>
           <div className="inner-page__content">
             <div className="my-trainings">
-              <TrainingList/>
+              <TrainingList trainings={trainings}/>
               <div className="show-more my-trainings__show-more">
                 <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
                 <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>

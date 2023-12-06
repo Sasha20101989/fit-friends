@@ -9,7 +9,7 @@ type PersonalAccountCoachProps = {
 
 function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
   const thumbnailLinks = [
-    { to: AppRoute.Trainings, icon: '#icon-flash', text: 'Мои тренировки' },
+    { to: `${AppRoute.Trainings}/${userId}`, icon: '#icon-flash', text: 'Мои тренировки' },
     { to: AppRoute.CreateTraining, icon: '#icon-add', text: 'Создать тренировку' },
     { to: `${AppRoute.Trainer}/${userId}${AppRoute.Friends}`, icon: '#icon-friends', text: 'Мои друзья' },
     { to: `${AppRoute.Orders}/${userId}`, icon: '#icon-bag', text: 'Мои заказы' },

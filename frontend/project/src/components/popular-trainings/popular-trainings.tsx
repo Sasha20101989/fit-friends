@@ -2,18 +2,18 @@ import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
 import { Training } from '../../types/training.type';
-import { getTrainings } from '../../store/main-data/main-data.selectors';
 import { useEffect } from 'react';
-import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { fetchPopularTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { getPopularTrainings } from '../../store/main-data/main-data.selectors';
 
 
 function PopularTrainings():JSX.Element {
   const dispatch = useAppDispatch();
-  const trainings: Training[] = useAppSelector(getTrainings);
+  const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
 
   useEffect(() => {
-      dispatch(fetchTrainingsAction({}));
-  }, [dispatch, trainings]);
+      dispatch(fetchPopularTrainingsAction({}));
+  }, [dispatch, popularTrainings]);
 
   return (
     <section className="popular-trainings">
@@ -41,7 +41,7 @@ function PopularTrainings():JSX.Element {
             </div>
           </div>
           <ul className="popular-trainings__list">
-            {trainings.map((training) => (
+            {popularTrainings.map((training) => (
               <ThumbnailTraining key={training.name} training={training} />
             ))}
           </ul>

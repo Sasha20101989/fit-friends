@@ -10,7 +10,29 @@ export interface FetchTrainingsParams {
   types?: string[];
 }
 
-export const fetchTrainingsAction = createAsyncThunk<Training[], FetchTrainingsParams, {
+export interface FetchTrainerTrainingsParams {
+  userId: string;
+  limit?: number;
+  types?: string[];
+}
+
+export const fetchPopularTrainingsAction = createAsyncThunk<Training[], FetchTrainingsParams, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchPopularTrainings',
+  async (params, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<Training[]>(APIRoute.Trainings, { params });
+      return data;
+    } catch (error) {
+      return [];
+    }
+  },
+);
+
+export const fetchTrainerTrainingsAction = createAsyncThunk<Training[], FetchTrainerTrainingsParams, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -18,7 +40,7 @@ export const fetchTrainingsAction = createAsyncThunk<Training[], FetchTrainingsP
   'data/fetchTrainings',
   async (params, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.get<Training[]>(APIRoute.Trainings, { params });
+      const { data } = await api.get<Training[]>(`${APIRoute.Trainings}/trainer-room/${params.userId}`, { params });
       return data;
     } catch (error) {
       return [];

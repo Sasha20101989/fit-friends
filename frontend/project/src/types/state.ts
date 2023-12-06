@@ -33,7 +33,8 @@ export type MainState = {
 }
 
 export type DataState = {
-  trainings: Training[];
+  popularTrainings: Training[];
+  trainerTrainings: Training[];
   orders: TrainingOrder[],
   selectedTraining: Training | null;
   isDataLoading: boolean;
