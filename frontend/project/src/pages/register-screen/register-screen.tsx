@@ -6,8 +6,9 @@ import { Gender } from '../../types/gender.enum';
 import { Role } from '../../types/role.enum';
 import { useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
-import GenderItem from '../../components/gender-item/gender-item';
-import { capitalizeFirstLetter } from '../../const';
+import DropdownSelect from '../../components/dropdown-select/dropdown-select';
+import LabeledInput from '../../components/labeled-input/labeled-input';
+import RadioSelect from '../../components/radio-select/radio-select';
 
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
@@ -20,12 +21,12 @@ function RegisterScreen() : JSX.Element {
     selectedLocation,
     selectedRole,
     isAgreementChecked,
-    isDropdownOpen,
+    selectedGender,
     handleRegister,
     handleRoleChange,
     handleAgreementChange,
     handleLocationChange,
-    handleToggleDropdown } = useRegisterForm();
+    handleSexChange } = useRegisterForm();
 
   return(
     <Fragment>
@@ -56,95 +57,48 @@ function RegisterScreen() : JSX.Element {
                     </div>
                   </div>
                   <div className="sign-up__data">
-                    <div className="custom-input">
-                      <label>
-                        <span className="custom-input__label">Имя</span>
-                        <span className="custom-input__wrapper">
-                          <input type="text" name="name" ref={nameRef} id="name" required/>
-                        </span>
-                      </label>
-                    </div>
-                    <div className="custom-input">
-                      <label>
-                        <span className="custom-input__label">E-mail</span>
-                        <span className="custom-input__wrapper">
-                          <input type="email" name="email" ref={emailRef} id="email" required/>
-                        </span>
-                      </label>
-                    </div>
-                    <div className="custom-input">
-                      <label>
-                        <span className="custom-input__label">Дата рождения</span>
-                        <span className="custom-input__wrapper">
-                          <input type="date" name="birthday" ref={birthdayRef} id="birthday" max="2099-12-31"/>
-                        </span>
-                      </label>
-                    </div>
-                    <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
-                      <span className="custom-select__label">Ваша локация</span>
-                      <div className="custom-select__placeholder">{selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}</div>
-                      <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
-                        <span className="custom-select__text"></span>
-                        <span className="custom-select__icon">
-                          <svg width="15" height="6" aria-hidden="true">
-                            <use xlinkHref="#arrow-down"></use>
-                          </svg>
-                        </span>
-                      </button>
-                      <ul className="custom-select__list" role="listbox">
-                        {Object.values(Location).map((loc) => (
-                          <li
-                            key={loc}
-                            value={loc}
-                            onClick={handleLocationChange}
-                            style={{cursor: 'pointer'}}
-                          >
-                            {loc}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="custom-input">
-                      <label>
-                        <span className="custom-input__label">Пароль</span>
-                        <span className="custom-input__wrapper">
-                          <input type="password" name="password" ref={passwordRef} id="password" autoComplete="off" required/>
-                        </span>
-                      </label>
-                    </div>
-                    <div className="sign-up__radio">
-                      <span className="sign-up__label">Пол</span>
-                      <div className="custom-toggle-radio custom-toggle-radio--big">
-                        {Object.values(Gender).map((gender) => (
-                          <GenderItem key={gender} gender={gender}/>
-                        ))}
-                      </div>
-                    </div>
+                    <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef}/>
+                    <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" reference={emailRef}/>
+                    <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" reference={birthdayRef}/>
+                    <DropdownSelect label={'Ваша локация'} onValueChange={handleLocationChange} selectedValue={selectedLocation} object={Object.values(Location)}/>
+                    <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" reference={passwordRef}/>
+                    <RadioSelect
+                      name={'gender'}
+                      classType={'sign-up__radio'}
+                      classChildType={'custom-toggle-radio custom-toggle-radio--big'}
+                      classLabelType={'sign-up__label'}
+                      label={'Пол'}
+                      selectedValue={selectedGender}
+                      onValueChange={handleSexChange}
+                      object={Object.values(Gender)}
+                    />
                   </div>
                   <div className="sign-up__role">
                     <h2 className="sign-up__legend">Выберите роль</h2>
                     <div className="role-selector sign-up__role-selector">
-                      {Object.values(Role).map((role) => (
-                        <div key={role} className="role-btn">
-                          <label>
-                            <input
-                              className="visually-hidden"
-                              type="radio"
-                              name="role"
-                              value={role}
-                              checked={selectedRole === role}
-                              onChange={handleRoleChange}
-                            />
-                            <span className="role-btn__icon">
-                              <svg width="12" height="13" aria-hidden="true">
-                                <use xlinkHref="#icon-cup"></use>
-                              </svg>
-                            </span>
-                            <span className="role-btn__btn">
-                              {role === Role.Trainer ? 'Я хочу тренировать' : 'Я хочу тренироваться'}
-                            </span>
-                          </label>
-                        </div>
+                      {Object.values(Role)
+                        .filter((role) => role !== Role.Unknown)
+                        .map((role) => (
+                          <div key={role} className="role-btn">
+                            <label>
+                              <input
+                                className="visually-hidden"
+                                type="radio"
+                                name="role"
+                                value={role}
+                                checked={selectedRole === role}
+                                onChange={handleRoleChange}
+                              />
+                              <span className="role-btn__icon">
+                                <svg width="12" height="13" aria-hidden="true">
+                                  <use xlinkHref="#icon-cup"></use>
+                                </svg>
+                              </span>
+                              <span className="role-btn__btn">
+                                {role === Role.Trainer ? 'Я хочу тренировать' : 'Я хочу тренироваться'}
+                              </span>
+                            </label>
+                          </div>
                       ))}
                     </div>
                   </div>

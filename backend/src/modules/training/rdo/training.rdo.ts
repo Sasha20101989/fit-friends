@@ -48,4 +48,7 @@ export default class TrainingRdo {
   @Expose({ name: 'trainer'})
   @Type(() => TrainerRdo)
   public trainer!: TrainerRdo;
+
+  @Expose()
+  public createdAt!: boolean;
 }

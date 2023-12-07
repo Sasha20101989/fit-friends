@@ -22,7 +22,7 @@ export class TrainingEntity extends defaultClasses.TimeStamps {
   public name!: string;
 
   @prop()
-  public backgroundImage!: string;
+  public backgroundImage?: string;
 
   @prop()
   public trainingLevel!: TrainingLevel;

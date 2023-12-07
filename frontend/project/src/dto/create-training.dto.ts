@@ -13,5 +13,4 @@ export default class CreateTrainingDto {
   public description!: string;
   public genderPreference!: GenderPreference;
   public video!: string;
-  public trainer!: string;
 }

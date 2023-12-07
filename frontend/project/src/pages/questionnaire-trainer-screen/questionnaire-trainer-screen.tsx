@@ -1,23 +1,27 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
 import { Fragment } from 'react';
-import LevelRadio from '../../components/level-radio/level-radio';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
 import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Role } from '../../types/role.enum';
+import RadioSelect from '../../components/radio-select/radio-select';
+import { TrainingLevel } from '../../types/training-level.enum';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
+
   const {
     descriptionRef,
     selectedDescription,
     readinessToWorkout,
     selectedFile,
+    selectedLevel,
     handleDescriptionChange,
     handleReadinessForWorkoutChange,
     handleCertificateChange,
-    handleTrainerQuestion } = useRegisterForm();
+    handleTrainerQuestion,
+    handleLevelChange } = useRegisterForm();
 
   return(
     <Fragment>
@@ -31,7 +35,16 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-coach__wrapper">
                     <SpecializationGroup role={Role.Trainer}/>
-                    <LevelRadio role={Role.Trainer}/>
+                    <RadioSelect
+                      name={'level'}
+                      classType={'questionnaire-coach__block'}
+                      classLabelType={'questionnaire-coach__legend'}
+                      label={'Ваш уровень'}
+                      classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-coach__radio'}
+                      selectedValue={selectedLevel}
+                      onValueChange={handleLevelChange}
+                      object={Object.values(TrainingLevel)}
+                    />
                     <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>

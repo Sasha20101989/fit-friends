@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { GenderPreference } from '../../../types/gender-preference.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
@@ -11,9 +11,9 @@ export default class CreateTrainingDto{
   @MaxLength(TRAINING_NAME_CONSTRAINTS.MAX_LENGTH, { message: `Maximum name length must be ${TRAINING_NAME_CONSTRAINTS.MAX_LENGTH}` })
   public name!: string;
 
-  @IsNotEmpty({ message: 'Background Image is required' })
+  @IsOptional()
   @Matches(/\.(jpg|png)$/, { message: 'Background Image must be in JPG or PNG format' })
-  public backgroundImage!: string;
+  public backgroundImage?: string;
 
   @IsNotEmpty({ message: 'Training level is required' })
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
@@ -52,10 +52,6 @@ export default class CreateTrainingDto{
   @IsNotEmpty({ message: 'Video is required' })
   @Matches(/\.(mov|avi|mp4)$/, { message: 'Video must be in MOV or AVI or MP4 format' })
   public video!: string;
-
-  @IsNotEmpty({ message: 'SpecialOffer is required' })
-  @IsBoolean({ message: 'SpecialOffer must be a boolean (true or false)' })
-  public specialOffer!: boolean;
 
   public trainer!: string;
 }

@@ -1,24 +1,32 @@
 import { FormEvent, useRef, useState } from 'react';
-import GenderItem from '../../components/gender-item/gender-item';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { getSubmittingStatus, getUser } from '../../store/user-process/user-process.selectors';
+import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Gender } from '../../types/gender.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { GenderPreference } from '../../types/gender-preference.enum';
-import { Trainer } from '../../types/trainer.interface';
 import { createTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import CreateTrainingDto from '../../dto/create-training.dto.js';
+import CreateTrainingDto from '../../dto/create-training.dto';
+import DropdownSelect from '../../components/dropdown-select/dropdown-select';
+import LabeledInput from '../../components/labeled-input/labeled-input';
+import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import RadioSelect from '../../components/radio-select/radio-select';
 
 function CreateTrainingScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const isSubmitting = useAppSelector(getSubmittingStatus);
+
+  const { selectedGender, handleSexChange } = useRegisterForm();
+
   const nameRef = useRef<HTMLInputElement | null>(null);
-  const user = useAppSelector(getUser) as Trainer;
+  const caloriesRef = useRef<HTMLInputElement | null>(null);
+  const priceRef = useRef<HTMLInputElement | null>(null);
 
   const [description, setDescription] = useState<string | null>(null);
+  const [selectedType, setType] = useState<WorkoutType | null>(null);
+  const [selectedDuration, setDuration] = useState<WorkoutDuration | null>(null);
+  const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(evt.target.value);
@@ -27,18 +35,24 @@ function CreateTrainingScreen(): JSX.Element {
   const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (nameRef.current !== null && description !== null && user.id) {
+    if (nameRef.current !== null &&
+        priceRef.current !== null &&
+        caloriesRef.current !== null &&
+        description !== null &&
+        selectedLevel !== null &&
+        selectedType !== null &&
+        selectedDuration !== null
+    ){
       const trainingData: CreateTrainingDto = {
         name: nameRef.current.value,
-        trainingLevel: TrainingLevel.Amateur,
-        workoutType: WorkoutType.Aerobics,
-        workoutDuration: WorkoutDuration.ExtraLong,
-        price: 0,
-        calories: 0,
+        trainingLevel: selectedLevel,
+        workoutType: selectedType,
+        workoutDuration: selectedDuration,
+        price: parseInt(priceRef.current.value, 10),
+        calories: parseInt(caloriesRef.current.value, 10),
         description,
         genderPreference: GenderPreference.All,
-        video: 'video.mov',
-        trainer: user.id
+        video: 'video.mov'
       };
 
       onCreate(trainingData);
@@ -49,9 +63,20 @@ function CreateTrainingScreen(): JSX.Element {
     dispatch(createTrainingAction(trainingData));
   };
 
-  const {
-    isDropdownOpen,
-    handleToggleDropdown } = useRegisterForm();
+  const handleSpecializationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
+    const newType = evt.currentTarget.textContent as WorkoutType;
+    setType(newType);
+  };
+
+  const handleDurationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
+    const newDuration = evt.currentTarget.textContent as WorkoutDuration;
+    setDuration(newDuration);
+  };
+
+  const handleLevelChange = (evt: React.MouseEvent<HTMLLIElement>) => {
+    const newLevel = evt.currentTarget.textContent as TrainingLevel;
+    setLevel(newLevel);
+  };
 
   return(
     <div className="popup-form popup-form--create-training">
@@ -69,7 +94,7 @@ function CreateTrainingScreen(): JSX.Element {
                     <div className="custom-input create-training__input">
                       <label>
                         <span className="custom-input__wrapper">
-                          <input type="text" name="training-name" id="training-name" ref={nameRef}/>
+                          <input type="text" name="training-name" id="training-name" ref={nameRef} required/>
                         </span>
                       </label>
                     </div>
@@ -77,72 +102,22 @@ function CreateTrainingScreen(): JSX.Element {
                   <div className="create-training__block">
                     <h2 className="create-training__legend">Характеристики тренировки</h2>
                     <div className="create-training__info">
-                      <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
-                        <span className="custom-select__label">Выберите тип тренировки</span>
-                        <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
-                          <span className="custom-select__text"></span>
-                          <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-down"></use>
-                            </svg>
-                          </span>
-                        </button>
-                        <ul className="custom-select__list" role="listbox">
-                        </ul>
-                      </div>
-                      <div className="custom-input custom-input--with-text-right">
-                        <label>
-                          <span className="custom-input__label">Сколько калорий потратим</span>
-                          <span className="custom-input__wrapper">
-                            <input type="number" name="calories"/>
-                            <span className="custom-input__text">ккал</span>
-                          </span>
-                        </label>
-                      </div>
-                      <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
-                        <span className="custom-select__label">Сколько времени потратим</span>
-                        <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
-                          <span className="custom-select__text"></span>
-                          <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-down"></use>
-                            </svg>
-                          </span>
-                        </button>
-                        <ul className="custom-select__list" role="listbox">
-                        </ul>
-                      </div>
-                      <div className="custom-input custom-input--with-text-right">
-                        <label>
-                          <span className="custom-input__label">Стоимость тренировки</span>
-                          <span className="custom-input__wrapper">
-                            <input type="number" name="price"/>
-                            <span className="custom-input__text">₽</span>
-                          </span>
-                        </label>
-                      </div>
-                      <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
-                        <span className="custom-select__label">Выберите уровень тренировки</span>
-                        <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
-                          <span className="custom-select__text"></span>
-                          <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-down"></use>
-                            </svg>
-                          </span>
-                        </button>
-                        <ul className="custom-select__list" role="listbox">
-                        </ul>
-                      </div>
-                      <div className="create-training__radio-wrapper">
-                        <span className="create-training__label">Кому подойдет тренировка</span>
-                        <br/>
-                        <div className="custom-toggle-radio create-training__radio">
-                          {Object.values(Gender).map((gender) => (
-                            <GenderItem key={gender} gender={gender}/>
-                          ))}
-                        </div>
-                      </div>
+                      <DropdownSelect label={'Выберите тип тренировки'} onValueChange={handleSpecializationChange} selectedValue={selectedType} object={Object.values(WorkoutType)}/>
+                      <LabeledInput classType={'custom-input custom-input--with-text-right'} type={'number'} label="Сколько калорий потратим" inputName="calories" text="ккал" reference={caloriesRef}/>
+                      <DropdownSelect label={'Сколько времени потратим'} onValueChange={handleDurationChange} selectedValue={selectedDuration} object={Object.values(WorkoutDuration)}/>
+                      <LabeledInput classType={'custom-input custom-input--with-text-right'} type={'number'} label="Стоимость тренировки" inputName="price" text="₽" reference={priceRef}/>
+                      <DropdownSelect label={'Выберите уровень тренировки'} onValueChange={handleLevelChange} selectedValue={selectedLevel} object={Object.values(TrainingLevel)}/>
+                      <RadioSelect
+                        name={'gender'}
+                        classType={'create-training__radio-wrapper'}
+                        classLabelType={'create-training__label'}
+                        toNextLine
+                        label={'Кому подойдет тренировка'}
+                        classChildType={'custom-toggle-radio create-training__radio'}
+                        selectedValue={selectedGender}
+                        onValueChange={handleSexChange}
+                        object={Object.values(Gender)}
+                      />
                     </div>
                   </div>
                   <div className="create-training__block">

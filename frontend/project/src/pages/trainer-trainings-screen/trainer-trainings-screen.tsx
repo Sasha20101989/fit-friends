@@ -39,11 +39,11 @@ function TrainerTrainingsScreen(): JSX.Element {
                   <h4 className="my-training-form__block-title">Цена, ₽</h4>
                   <div className="filter-price">
                     <div className="filter-price__input-text filter-price__input-text--min">
-                      <input type="number" id="text-min" name="text-min" value="0"/>
+                      <input type="number" id="text-min" name="text-min"/>
                       <label htmlFor="text-min">от</label>
                     </div>
                     <div className="filter-price__input-text filter-price__input-text--max">
-                      <input type="number" id="text-max" name="text-max" value="3200"/>
+                      <input type="number" id="text-max" name="text-max"/>
                       <label htmlFor="text-max">до</label>
                     </div>
                   </div>
