@@ -1,9 +1,8 @@
 import { useGoToLogin } from '../../hooks/use-go-to-login/use-go-to-login';
 import { useGoToRegister } from '../../hooks/use-go-to-register/use-go-to-register';
-import IntroBackground from '../../components/intro/intro-background';
 import IntroIcon from '../../components/intro/intro-icon';
-import IntroTitleLogo from '../../components/intro/intro-title-logo';
 import IntroButtons from '../../components/intro/intro-buttons';
+import Image from '../../components/image/image';
 
 function ParentScreen(): JSX.Element {
   const handleGoToRegisterClick = useGoToRegister();
@@ -11,10 +10,10 @@ function ParentScreen(): JSX.Element {
 
   return(
     <div className="intro">
-      <IntroBackground/>
+      <Image sourceName={'intro__background'} imageSrc={'img/content/sitemap//background.jpg'} width={1440} height={1024} alt={'Фон с бегущей девушкой'}/>
       <div className="intro__wrapper">
         <IntroIcon/>
-        <IntroTitleLogo/>
+        <Image sourceName={'intro__title-logo'} imageSrc={'img/content/sitemap//title-logo.png'} width={934} height={455} alt={'Логотип Fit Friends'}/>
         <IntroButtons handleGoToRegisterClick={handleGoToRegisterClick} handleGoToLoginClick={handleGoToLoginClick} />
       </div>
     </div>

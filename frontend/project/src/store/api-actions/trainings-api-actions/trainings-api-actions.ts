@@ -3,7 +3,8 @@ import { AxiosInstance } from 'axios';
 import { AppDispatch, State } from '../../../types/state';
 import { APIRoute } from '../../../const';
 import { Training } from '../../../types/training.type';
-import { TrainingOrder } from '../../../types/training-order.type.js';
+import { TrainingOrder } from '../../../types/training-order.type';
+import CreateTrainingDto from '../../../dto/create-training.dto';
 
 export interface FetchTrainingsParams {
   limit?: number;
@@ -60,6 +61,22 @@ export const fetchOrdersAction = createAsyncThunk<TrainingOrder[], string, {
       return data;
     } catch (error) {
       return [];
+    }
+  },
+);
+
+export const createTrainingAction = createAsyncThunk<Training | null, CreateTrainingDto, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/createTraining',
+  async (trainingData: CreateTrainingDto, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.post<Training>(`${APIRoute.Trainings}/trainer-room`, trainingData);
+      return data;
+    } catch (error) {
+      return null;
     }
   },
 );

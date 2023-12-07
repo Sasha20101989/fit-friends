@@ -1,11 +1,54 @@
+import { FormEvent, useRef, useState } from 'react';
 import GenderItem from '../../components/gender-item/gender-item';
-import { useAppSelector } from '../../hooks/index';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import { getSubmittingStatus, getUser } from '../../store/user-process/user-process.selectors';
 import { Gender } from '../../types/gender.enum';
+import { WorkoutType } from '../../types/workout-type.enum';
+import { TrainingLevel } from '../../types/training-level.enum';
+import { WorkoutDuration } from '../../types/workout-duration.enum';
+import { GenderPreference } from '../../types/gender-preference.enum';
+import { Trainer } from '../../types/trainer.interface';
+import { createTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import CreateTrainingDto from '../../dto/create-training.dto.js';
 
 function CreateTrainingScreen(): JSX.Element {
+  const dispatch = useAppDispatch();
   const isSubmitting = useAppSelector(getSubmittingStatus);
+  const nameRef = useRef<HTMLInputElement | null>(null);
+  const user = useAppSelector(getUser) as Trainer;
+
+  const [description, setDescription] = useState<string | null>(null);
+
+  const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(evt.target.value);
+  };
+
+  const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    if (nameRef.current !== null && description !== null && user.id) {
+      const trainingData: CreateTrainingDto = {
+        name: nameRef.current.value,
+        trainingLevel: TrainingLevel.Amateur,
+        workoutType: WorkoutType.Aerobics,
+        workoutDuration: WorkoutDuration.ExtraLong,
+        price: 0,
+        calories: 0,
+        description,
+        genderPreference: GenderPreference.All,
+        video: 'video.mov',
+        trainer: user.id
+      };
+
+      onCreate(trainingData);
+    }
+  };
+
+  const onCreate = (trainingData: CreateTrainingDto) => {
+    dispatch(createTrainingAction(trainingData));
+  };
+
   const {
     isDropdownOpen,
     handleToggleDropdown } = useRegisterForm();
@@ -18,7 +61,7 @@ function CreateTrainingScreen(): JSX.Element {
             <h1 className="popup-form__title">Создание тренировки</h1>
           </div>
           <div className="popup-form__form">
-            <form method="get">
+            <form method="get" onSubmit={handleCreate}>
               <div className="create-training">
                 <div className="create-training__wrapper">
                   <div className="create-training__block">
@@ -26,7 +69,7 @@ function CreateTrainingScreen(): JSX.Element {
                     <div className="custom-input create-training__input">
                       <label>
                         <span className="custom-input__wrapper">
-                          <input type="text" name="training-name"/>
+                          <input type="text" name="training-name" id="training-name" ref={nameRef}/>
                         </span>
                       </label>
                     </div>
@@ -106,7 +149,14 @@ function CreateTrainingScreen(): JSX.Element {
                     <h2 className="create-training__legend">Описание тренировки</h2>
                     <div className="custom-textarea create-training__textarea">
                       <label>
-                        <textarea name="description" placeholder=" "></textarea>
+                        <textarea
+                          name="description"
+                          placeholder=" "
+                          value={description ?? ''}
+                          onChange={handleDescriptionChange}
+                          required
+                        >
+                        </textarea>
                       </label>
                     </div>
                   </div>

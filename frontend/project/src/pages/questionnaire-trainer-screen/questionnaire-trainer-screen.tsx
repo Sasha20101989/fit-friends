@@ -52,7 +52,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             name="description"
                             placeholder=" "
                             ref={descriptionRef}
-                            defaultValue={selectedDescription ?? ''}
+                            value={selectedDescription ?? ''}
                             onChange={handleDescriptionChange}
                             required
                           >

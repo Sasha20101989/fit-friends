@@ -34,6 +34,7 @@ function App(): JSX.Element {
   const UserFriendsScreenMemoized = React.memo(UserFriendsScreen);
   const OrderScreenMemoized = React.memo(OrderScreen);
   const TrainerTrainingsScreenMemoized = React.memo(TrainerTrainingsScreen);
+  const CreateTrainingScreenMemoized = React.memo(CreateTrainingScreen);
 
   return (
     <Routes>
@@ -70,11 +71,11 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.CreateTraining}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <CreateTrainingScreen/>
-          </Layout>
-          // </PrivateRoute>
+          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <Layout>
+              <CreateTrainingScreenMemoized/>
+            </Layout>
+          </PrivateRoute>
         }
       />
       <Route

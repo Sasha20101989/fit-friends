@@ -40,7 +40,7 @@ export const userProcess = createSlice({
       .addCase(registerAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
-      .addCase(registerAction.fulfilled, (state, action) => {
+      .addCase(registerAction.fulfilled, (state, _action) => {
         state.isSubmitting = false;
       })
       .addCase(registerAction.rejected, (state, _action) => {

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
-import { fetchOrdersAction, fetchPopularTrainingsAction, fetchTrainerTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
+import { createTrainingAction, fetchOrdersAction, fetchPopularTrainingsAction, fetchTrainerTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 
 export const initialState: DataState = {
   popularTrainings: [],
@@ -18,6 +18,16 @@ export const mainData = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(createTrainingAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(createTrainingAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.selectedTraining = action.payload;
+      })
+      .addCase(createTrainingAction.rejected, (state, _action) => {
+        state.isSubmitting = true;
+      })
       .addCase(fetchPopularTrainingsAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
