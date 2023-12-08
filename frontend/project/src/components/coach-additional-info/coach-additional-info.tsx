@@ -1,41 +1,16 @@
+import { useAppSelector } from '../../hooks/index';
+import { getUser } from '../../store/user-process/user-process.selectors';
+import { Trainer } from '../../types/trainer.interface';
 import CertificateList from '../certificate-list/certificate-list';
 
-type Certificate = {
-  webp: string;
-  image: {
-    src: string;
-    highResolution: string;
-  };
-  alt: string;
-}
+function CoachAdditionalInfo(): JSX.Element | null {
+  const user = useAppSelector(getUser) as Trainer;
 
-function CoachAdditionalInfo(): JSX.Element {
-  const certificates: Certificate[] = [
-    {
-      webp: 'img/content/certificates-and-diplomas/certificate-3.webp, img/content/certificates-and-diplomas/certificate-3@2x.webp 2x',
-      image: {
-        src: 'img/content/certificates-and-diplomas/certificate-3.jpg',
-        highResolution: 'img/content/certificates-and-diplomas/certificate-3@2x.jpg 2x',
-      },
-      alt: 'Certificate 1',
-    },
-    {
-      webp: 'img/content/certificates-and-diplomas/certificate-2.webp, img/content/certificates-and-diplomas/certificate-2@2x.webp 2x',
-      image: {
-        src: 'img/content/certificates-and-diplomas/certificate-2.jpg',
-        highResolution: 'img/content/certificates-and-diplomas/certificate-2@2x.jpg 2x',
-      },
-      alt: 'Certificate 2',
-    },
-    {
-      webp: 'img/content/certificates-and-diplomas/certificate-1.webp, img/content/certificates-and-diplomas/certificate-1@2x.webp 2x',
-      image: {
-        src: 'img/content/certificates-and-diplomas/certificate-1.jpg',
-        highResolution: 'img/content/certificates-and-diplomas/certificate-1@2x.jpg 2x',
-      },
-      alt: 'Certificate 3',
-    }
-  ];
+  if(!user){
+    return null;
+  }
+
+  const certificates: string[] = [user.certificate];
 
   return(
     <div className="personal-account-coach__additional-info">
@@ -59,7 +34,7 @@ function CoachAdditionalInfo(): JSX.Element {
           </button>
         </div>
       </div>
-      <CertificateList certificates={certificates}/>
+      {user.certificate && <CertificateList certificates={certificates}/>}
     </div>
   );
 }

@@ -1,31 +1,29 @@
-import { useState } from 'react';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
-import { capitalizeFirstLetter } from '../../const';
 import { Location } from '../../types/location.enum';
+import { Gender } from '../../types/gender.enum';
 
 type DropdownSelectProps = {
+  classType: string;
   label: string;
-  selectedValue: WorkoutDuration | WorkoutType | TrainingLevel | Location | null;
-  object: WorkoutDuration[] | WorkoutType[] | TrainingLevel[] | Location[];
+  selectedValue: string | null;
+  object: WorkoutDuration[] | WorkoutType[] | TrainingLevel[] | Location[] | Gender[];
   onValueChange: (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
+  onToggleDropdown: () => void;
 }
 
-function DropdownSelect({label, selectedValue, onValueChange, object}: DropdownSelectProps): JSX.Element {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const handleToggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-
+function DropdownSelect({classType, label, selectedValue, onValueChange, object, onToggleDropdown}: DropdownSelectProps): JSX.Element {
   const handleValueChange = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     onValueChange(evt);
-    handleToggleDropdown();
+    onToggleDropdown();
   };
 
   return(
-    <div className={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}>
+    <div className={classType}>
       <span className="custom-select__label">{label}</span>
-      <div className="custom-select__placeholder">{selectedValue ? capitalizeFirstLetter(selectedValue) : ''}</div>
-      <button className="custom-select__button" type="button" onClick={handleToggleDropdown} aria-label="Выберите одну из опций">
+      <div className="custom-select__placeholder">{selectedValue}</div>
+      <button className="custom-select__button" type="button" onClick={onToggleDropdown} aria-label="Выберите одну из опций">
         <span className="custom-select__text"></span>
         <span className="custom-select__icon">
           <svg width="15" height="6" aria-hidden="true">

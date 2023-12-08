@@ -1,11 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance } from 'axios';
-import { APIRoute, AppRoute, RegisterStatus } from '../../../const';
+import { APIRoute, RegisterStatus } from '../../../const';
 import { setRegisterStatus } from '../../user-process/user-process.slice';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { changeLevel, changeReadiessToWorkout, redirectToRoute, setGender, setLocation, setSpecializations } from '../../main-process/main-process.slice';
+import { changeLevel, changeReadiessToWorkout, setGender, setLocation, setSpecializations } from '../../main-process/main-process.slice';
 import { User } from '../../../types/user.interface';
 import { Trainer } from '../../../types/trainer.interface';
 import { Role } from '../../../types/role.enum';
@@ -25,9 +25,8 @@ export const editUserAction = createAsyncThunk<
       await api.put<UpdateUserDto>(APIRoute.Users, userData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
-      dispatch(redirectToRoute(AppRoute.Main));
     } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
+      dispatch(setRegisterStatus(RegisterStatus.Unknown));
     }
   },
 );
@@ -47,9 +46,8 @@ export const editTrainerAction = createAsyncThunk<
       await api.put<UpdateTrainerDto>(APIRoute.UpdateTrainer, trainerData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
-      dispatch(redirectToRoute(AppRoute.Main));
     } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
+      dispatch(setRegisterStatus(RegisterStatus.Unknown));
     }
   },
 );

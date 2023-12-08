@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isTrainer, roleRegisterRoutes } from '../../../const';
+import { APIRoute, AuthorizationStatus, RegisterStatus, roleRegisterRoutes } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
 import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
 import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/user-process.slice';
@@ -23,10 +23,6 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
       dispatch(setRole(response.data.role));
       dispatch(setUserId(response.data.id));
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
-
-      if(isTrainer(response.data.role) && isAuthorization(AuthorizationStatus.Auth)){
-        dispatch(redirectToRoute(`${AppRoute.Trainers}/${response.data.id}`));
-      }
     } catch(error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
     }

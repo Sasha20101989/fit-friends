@@ -1,6 +1,6 @@
-import { useAppSelector } from '../../hooks/index';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { getRole } from '../../store/main-process/main-process.selectors';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getReadiessToWorkout, getRole } from '../../store/main-process/main-process.selectors';
+import { changeReadiessToWorkout } from '../../store/main-process/main-process.slice';
 import { Role } from '../../types/role.enum';
 
 type UserStatusProps = {
@@ -8,8 +8,15 @@ type UserStatusProps = {
 }
 
 function UserStatus({isFormEditable}: UserStatusProps):JSX.Element {
+  const dispatch = useAppDispatch();
+
   const role = useAppSelector(getRole);
-  const { readinessToWorkout, handleReadinessForWorkoutChange } = useRegisterForm();
+  const readinessToWorkout = useAppSelector(getReadiessToWorkout);
+
+  const handleReadinessForWorkoutChange = () => {
+    dispatch(changeReadiessToWorkout(!readinessToWorkout));
+  };
+
   return (
     <div className={`user-info${isFormEditable ? '-edit' : ''}__section user-info${isFormEditable ? '-edit' : ''}__section--status`}>
       <h2 className={`user-info${isFormEditable ? '-edit' : ''}__title user-info${isFormEditable ? '-edit' : ''}__title--status`}>Статус</h2>

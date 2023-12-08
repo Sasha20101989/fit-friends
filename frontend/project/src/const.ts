@@ -1,3 +1,5 @@
+import { GenderPreference } from './types/gender-preference.enum';
+import { Gender } from './types/gender.enum';
 import { Role } from './types/role.enum';
 
 export enum NameSpace {
@@ -74,8 +76,8 @@ export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const isAuthorization = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Auth;
 
-export const isAuthorizationUnknown = (status: AuthorizationStatus) =>
-  status === AuthorizationStatus.Unknown;
+export const isAuthorizationUnknown = (status: AuthorizationStatus, role: Role) =>
+  status === AuthorizationStatus.Unknown && role === Role.Unknown;
 
 export const RING_LOADER_COLOR = '#123abc';
 
@@ -103,4 +105,26 @@ export function capitalizeFirstLetter(str: string): string {
   }
 
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function genderToPreference(gender: Gender): GenderPreference {
+  switch (gender) {
+    case Gender.Female:
+      return GenderPreference.Women;
+    case Gender.Male:
+      return GenderPreference.Men;
+    default:
+      return GenderPreference.All;
+  }
+}
+
+export function preferenceToGender(preference: GenderPreference): Gender {
+  switch (preference) {
+    case GenderPreference.Women:
+      return Gender.Female;
+    case GenderPreference.Men:
+      return Gender.Male;
+    default:
+      return Gender.Other;
+  }
 }

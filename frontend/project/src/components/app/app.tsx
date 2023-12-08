@@ -8,26 +8,29 @@ import QuestionnaireUserScreen from '../../pages/questionnaire-user-screen/quest
 import QuestionnaireTrainerScreen from '../../pages/questionnaire-trainer-screen/questionnaire-trainer-screen';
 import { useAppSelector } from '../../hooks/index';
 import { getAuthorizationStatus, getRegisterStatus } from '../../store/user-process/user-process.selectors';
-import PrivateRoute from '../private-route/private-route';
 import MainScreen from '../../pages/main-screen/main-screen';
-import { getRole } from '../../store/main-process/main-process.selectors';
+import { getRole, getUserId } from '../../store/main-process/main-process.selectors';
 import UserProfileScreen from '../../pages/user-profile-screen/user-profile-screen';
 import CreateTrainingScreen from '../../pages/create-training-screen/create-training-screen';
 import TrainerTrainingsScreen from '../../pages/trainer-trainings-screen/trainer-trainings-screen';
 import OrderScreen from '../../pages/order-screen/order-screen';
 import TrainerFriendsScreen from '../../pages/trainer-friends-screen/trainer-friends-screen';
-import Layout from '../layout/layout';
 import UserFriendsScreen from '../../pages/user-friends-screen/user-friends-screen';
 import PurchasesScreen from '../../pages/purchases-screen/purchases-screen';
 import UsersCatalogScreen from '../../pages/users-catalog-screen/users-catalog-screen';
 import UserCardScreen from '../../pages/user-card-screen/user-card-screen';
 import TrainingsCatalogScreen from '../../pages/trainings-catalog-screen/trainings-catalog-screen';
 import React from 'react';
+import PrivateRegisterRoute from '../private-register-route/private-register-route';
+import PrivateTrainerRegisterRoute from '../private-register-route/private-register-route';
+import PrivateTrainerRoute from '../private-trainer-route/private-trainer-route';
+import PrivateUserRoute from '../private-user-route/private-user-route';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const registerStatus = useAppSelector(getRegisterStatus);
   const role = useAppSelector(getRole);
+  const userId = useAppSelector(getUserId);
 
   const UserProfileScreenMemoized = React.memo(UserProfileScreen);
   const TrainerFriendsScreenMemoized = React.memo(TrainerFriendsScreen);
@@ -39,82 +42,72 @@ function App(): JSX.Element {
   return (
     <Routes>
       <Route
-        path={AppRoute.Main}
+        path={AppRoute.Login}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <MainScreen/>
-            </Layout>
-          </PrivateRoute>
+          <LoginScreen/>
         }
       />
       <Route
-        path={AppRoute.TrainerRoom}
+        path={AppRoute.Main}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <UserProfileScreenMemoized/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role} userId={userId}>
+            <MainScreen/>
+          </PrivateUserRoute>
+        }
+      />
+      <Route
+        path={`${AppRoute.Trainers}/:id`}
+        element={
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <UserProfileScreenMemoized/>
+          </PrivateTrainerRoute>
         }
       />
       <Route
         path={AppRoute.UserRoom}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <UserProfileScreenMemoized/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role} userId={userId}>
+            <UserProfileScreenMemoized/>
+          </PrivateUserRoute>
         }
       />
       <Route
         path={AppRoute.CreateTraining}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <CreateTrainingScreenMemoized/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <CreateTrainingScreenMemoized/>
+          </PrivateTrainerRoute>
         }
       />
       <Route
         path={`${AppRoute.Trainings}/:id`}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
             <TrainerTrainingsScreenMemoized/>
-          </Layout>
-          // </PrivateRoute>
+          </PrivateTrainerRoute>
         }
       />
       <Route
         path={`${AppRoute.Orders}/:id`}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <OrderScreenMemoized/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <OrderScreenMemoized/>
+          </PrivateTrainerRoute>
         }
       />
       <Route
         path={`${AppRoute.Trainer}/:id${AppRoute.Friends}`}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout>
-              <TrainerFriendsScreenMemoized/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <TrainerFriendsScreenMemoized/>
+          </PrivateTrainerRoute>
         }
       />
       <Route
         path={AppRoute.UserFriends}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <UserFriendsScreenMemoized/>
-          </Layout>
+          <UserFriendsScreenMemoized/>
           // </PrivateRoute>
         }
       />
@@ -122,9 +115,7 @@ function App(): JSX.Element {
         path={AppRoute.UserPurchases}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <PurchasesScreen/>
-          </Layout>
+          <PurchasesScreen/>
           // </PrivateRoute>
         }
       />
@@ -132,9 +123,7 @@ function App(): JSX.Element {
         path={AppRoute.UsersCatalog}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <UsersCatalogScreen/>
-          </Layout>
+          <UsersCatalogScreen/>
           // </PrivateRoute>
         }
       />
@@ -142,9 +131,7 @@ function App(): JSX.Element {
         path={AppRoute.TrainingsCatalog}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <TrainingsCatalogScreen/>
-          </Layout>
+          <TrainingsCatalogScreen/>
           // </PrivateRoute>
         }
       />
@@ -152,63 +139,37 @@ function App(): JSX.Element {
         path={AppRoute.UserCard}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <Layout>
-            <UserCardScreen/>
-          </Layout>
+          <UserCardScreen/>
           // </PrivateRoute>
         }
       />
       <Route
         path={AppRoute.MainRegister}
-        element={
-          <Layout includeHeader={false}>
-            <ParentScreen/>
-          </Layout>
-        }
+        element={<ParentScreen/>}
       />
       <Route
         path={AppRoute.ParentRegister}
-        element={
-          <Layout includeHeader={false}>
-            <RegisterScreen/>
-          </Layout>
-        }
-      />
-      <Route
-        path={AppRoute.Login}
-        element={
-          <Layout includeHeader={false}>
-            <LoginScreen/>
-          </Layout>
-        }
+        element={<RegisterScreen/>}
       />
       <Route
         path={AppRoute.RegisterUser}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout includeHeader={false}>
-              <QuestionnaireUserScreen/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <QuestionnaireUserScreen/>
+          </PrivateRegisterRoute>
         }
       />
       <Route
         path={AppRoute.RegisterTrainer}
         element={
-          <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <Layout includeHeader={false}>
-              <QuestionnaireTrainerScreen/>
-            </Layout>
-          </PrivateRoute>
+          <PrivateTrainerRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <QuestionnaireTrainerScreen/>
+          </PrivateTrainerRegisterRoute>
         }
       />
       <Route
         path={'*'}
-        element={
-          <Layout includeHeader={false}>
-            <NotFoundScreen/>
-          </Layout>
-        }
+        element={<NotFoundScreen/>}
       />
     </Routes>
   );

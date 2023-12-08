@@ -1,13 +1,30 @@
 import { WorkoutType } from '../../types/workout-type.enum';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { addSpecialization, removeSpecialization } from '../../store/main-process/main-process.slice';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getSpecializations } from '../../store/main-process/main-process.selectors';
+import { ChangeEvent } from 'react';
+import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 type UserSpecializationGroupProps = {
   isFormEditable: boolean;
 }
 
-
 function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps):JSX.Element {
-  const { specializations, isDisabled, handleSpecializationChange } = useRegisterForm();
+  const dispatch = useAppDispatch();
+
+  const specializations = useAppSelector(getSpecializations);
+
+  const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = evt.target.value as WorkoutType;
+
+    if (evt.target.checked) {
+      dispatch(addSpecialization(selectedType));
+    } else {
+      dispatch(removeSpecialization(selectedType));
+    }
+  };
+
+  const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
 
   return (
     <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>

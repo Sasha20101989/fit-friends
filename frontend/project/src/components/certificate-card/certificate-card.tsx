@@ -1,27 +1,14 @@
-type Certificate = {
-  webp: string;
-  image: {
-    src: string;
-    highResolution: string;
-  };
-  alt: string;
-}
+import Image from '../image/image';
 
 type CertificateCardProps = {
-  certificate: Certificate;
-  description: string;
+  certificate: string;
 }
 
-function CertificateCard({ certificate, description }: CertificateCardProps): JSX.Element {
+function CertificateCard({ certificate }: CertificateCardProps): JSX.Element {
   return (
     <li className="personal-account-coach__item">
       <div className="certificate-card certificate-card--edit">
-        <div className="certificate-card__image">
-          <picture>
-            <source type="image/webp" srcSet={certificate.webp} />
-            <img src={certificate.image.src} srcSet={certificate.image.highResolution} width="294" height="360" alt={description} />
-          </picture>
-        </div>
+        <Image imageSrc={certificate} sourceName={'certificate-card__image'} width={294} height={360} alt={'сертификат'}/>
         <div className="certificate-card__buttons">
           <button className="btn-flat btn-flat--underlined certificate-card__button certificate-card__button--edit" type="button">
             <svg width="12" height="12" aria-hidden="true">

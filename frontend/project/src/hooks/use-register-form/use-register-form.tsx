@@ -135,7 +135,7 @@ function useRegisterForm(){
         description: descriptionRef.current.value,
         workoutTypes: specializations,
         trainingLevel: selectedLevel,
-        readinessForWorkout: readinessToWorkout,
+        personalTraining: readinessToWorkout,
         certificate: selectedFile
       };
 

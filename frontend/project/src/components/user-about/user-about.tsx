@@ -1,4 +1,4 @@
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { useState } from 'react';
 
 type UserAboutProps = {
   name: string;
@@ -7,9 +7,17 @@ type UserAboutProps = {
 }
 
 function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Element {
-  const {
-    descriptionRef,
-    handleDescriptionChange} = useRegisterForm();
+  const [changedName, setName] = useState<string | null>(name);
+  const [changedDescription, setDescription] = useState<string | null>(description);
+
+  const handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setName(evt.target.value);
+  };
+
+  const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(evt.target.value);
+  };
+
   return (
     <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
       <h2 className={`user-info${isFormEditable ? '-edit' : ''}__title`}>Обо мне</h2>
@@ -17,7 +25,14 @@ function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Elem
         <label>
           <span className="custom-input__label">Имя</span>
           <span className="custom-input__wrapper">
-            <input type="text" name="name" value={name} disabled={!isFormEditable}/>
+            <input
+              type="text"
+              name="name"
+              value={changedName ?? ''}
+              onChange={handleNameChange}
+              disabled={!isFormEditable}
+              required
+            />
           </span>
         </label>
       </div>
@@ -27,8 +42,7 @@ function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Elem
           <textarea
             name="description"
             placeholder=" "
-            ref={descriptionRef}
-            value={description ?? ''}
+            value={changedDescription ?? ''}
             onChange={handleDescriptionChange}
             disabled={!isFormEditable}
             required

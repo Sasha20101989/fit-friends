@@ -1,5 +1,4 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import { Fragment } from 'react';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
@@ -9,6 +8,8 @@ import { getSubmittingStatus } from '../../store/user-process/user-process.selec
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
+import Layout from '../../components/layout/layout';
+import { capitalizeFirstLetter } from '../../const';
 
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
@@ -22,14 +23,16 @@ function RegisterScreen() : JSX.Element {
     selectedRole,
     isAgreementChecked,
     selectedGender,
+    isDropdownOpen,
     handleRegister,
     handleRoleChange,
     handleAgreementChange,
     handleLocationChange,
-    handleSexChange } = useRegisterForm();
+    handleSexChange,
+    handleToggleDropdown } = useRegisterForm();
 
   return(
-    <Fragment>
+    <Layout includeHeader={false}>
       <BackgroundLogo/>
       <div className="popup-form popup-form--sign-up">
         <div className="popup-form__wrapper">
@@ -60,7 +63,14 @@ function RegisterScreen() : JSX.Element {
                     <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef}/>
                     <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" reference={emailRef}/>
                     <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" reference={birthdayRef}/>
-                    <DropdownSelect label={'Ваша локация'} onValueChange={handleLocationChange} selectedValue={selectedLocation} object={Object.values(Location)}/>
+                    <DropdownSelect
+                      classType={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}
+                      label={'Ваша локация'}
+                      onValueChange={handleLocationChange}
+                      selectedValue={selectedLocation && capitalizeFirstLetter(selectedLocation)}
+                      object={Object.values(Location)}
+                      onToggleDropdown={handleToggleDropdown}
+                    />
                     <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" reference={passwordRef}/>
                     <RadioSelect
                       name={'gender'}
@@ -99,7 +109,7 @@ function RegisterScreen() : JSX.Element {
                               </span>
                             </label>
                           </div>
-                      ))}
+                        ))}
                     </div>
                   </div>
                   <div className="sign-up__checkbox">
@@ -126,7 +136,7 @@ function RegisterScreen() : JSX.Element {
           </div>
         </div>
       </div>
-    </Fragment>
+    </Layout>
   );
 }
 export default RegisterScreen;

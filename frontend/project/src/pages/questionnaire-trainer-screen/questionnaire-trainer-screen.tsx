@@ -1,5 +1,4 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import { Fragment } from 'react';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
 import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
@@ -7,6 +6,7 @@ import { getSubmittingStatus } from '../../store/user-process/user-process.selec
 import { Role } from '../../types/role.enum';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
+import Layout from '../../components/layout/layout';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
@@ -24,7 +24,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     handleLevelChange } = useRegisterForm();
 
   return(
-    <Fragment>
+    <Layout includeHeader={false}>
       <BackgroundLogo/>
       <div className="popup-form popup-form--questionnaire-coach">
         <div className="popup-form__wrapper">
@@ -98,7 +98,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
           </div>
         </div>
       </div>
-    </Fragment>
+    </Layout>
   );
 }
 

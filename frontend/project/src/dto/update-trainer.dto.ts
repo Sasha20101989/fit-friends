@@ -5,6 +5,6 @@ export default class UpdateTrainerDto {
   public description!: string;
   public trainingLevel!: TrainingLevel;
   public workoutTypes!: WorkoutType[];
-  public readinessForWorkout?: boolean;
+  public personalTraining?: boolean;
   public certificate!: string;
 }
