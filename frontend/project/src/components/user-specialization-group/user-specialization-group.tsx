@@ -15,12 +15,14 @@ function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps)
   const specializations = useAppSelector(getSpecializations);
 
   const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    const selectedType = evt.target.value as WorkoutType;
+    if(isFormEditable){
+      const selectedType = evt.target.value as WorkoutType;
 
-    if (evt.target.checked) {
-      dispatch(addSpecialization(selectedType));
-    } else {
-      dispatch(removeSpecialization(selectedType));
+      if (evt.target.checked) {
+        dispatch(addSpecialization(selectedType));
+      } else {
+        dispatch(removeSpecialization(selectedType));
+      }
     }
   };
 

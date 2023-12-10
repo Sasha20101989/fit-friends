@@ -23,4 +23,5 @@ export type TrainingOrder = {
   purchasedQuantity: number;
   totalSalesAmount: number;
   createdAt: Date;
+  training: string;
 }

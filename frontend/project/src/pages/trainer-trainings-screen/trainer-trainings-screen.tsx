@@ -1,26 +1,81 @@
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { Training } from '../../types/training.type';
-import { useEffect } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { getTrainerTrainings } from '../../store/main-data/main-data.selectors';
-import { fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { FetchTrainerTrainingsParams, fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
+import { debounce } from 'lodash';
 
 function TrainerTrainingsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
   const trainings: Training[] = useAppSelector(getTrainerTrainings);
 
+  const [minPrice, setMinPrice] = useState<number | ''>('');
+  const [maxPrice, setMaxPrice] = useState<number | ''>('');
+  const [minCalories, setMinCalories] = useState<number | ''>('');
+  const [maxCalories, setMaxCalories] = useState<number | ''>('');
+  const [selectedDuration, setDuration] = useState<WorkoutDuration | ''>('');
+
+  const [queryParams, setQueryParams] = useState<FetchTrainerTrainingsParams>({
+    userId: id || '',
+  });
+
+  const debouncedFetchTrainerTrainings = debounce(
+    (params: FetchTrainerTrainingsParams) => {
+      dispatch(fetchTrainerTrainingsAction(params));
+    },
+    400
+  );
+
+  const handleInputChange = (
+    evt: ChangeEvent<HTMLInputElement>,
+    setValue: React.Dispatch<React.SetStateAction<number | ''>>,
+    paramName: string
+  ) => {
+    evt.preventDefault();
+    const inputValue = evt.currentTarget.value.trim();
+    const newValue: number | '' = inputValue === '' ? '' : parseInt(inputValue, 10);
+
+    if (typeof newValue === 'number' && !isNaN(newValue)) {
+      setValue(newValue);
+      setQueryParams((prevParams) => ({ ...prevParams, [paramName]: newValue }));
+    } else {
+      setValue('');
+      setQueryParams((prevParams) => ({ ...prevParams, [paramName]: undefined }));
+    }
+  };
+
+  const handleDurationChange = (
+    evt: ChangeEvent<HTMLInputElement>,
+    setValue: React.Dispatch<React.SetStateAction<WorkoutDuration | ''>>,
+    paramName: string
+  ) => {
+    const newValue = evt.target.value as WorkoutDuration;
+    const isChecked = evt.target.checked;
+
+    setValue(() => {
+      const updatedValue = isChecked ? newValue : '';
+
+      setQueryParams((prevParams) => ({ ...prevParams, [paramName]: updatedValue === '' ? undefined : updatedValue }));
+      return updatedValue;
+    });
+  };
+
   useEffect(() => {
     if (id) {
-      dispatch(fetchTrainerTrainingsAction({userId: id}));
+      setQueryParams((prevParams) => ({ ...prevParams, userId: id }));
     }
-  }, [dispatch, id]);
+  }, [id]);
 
-  const { selectedDuration, handleDurationChange } = useRegisterForm();
+  useEffect(() => {
+    if (id) {
+      debouncedFetchTrainerTrainings(queryParams);
+    }
+  }, [id, queryParams]);
 
   return(
     <Layout>
@@ -42,11 +97,11 @@ function TrainerTrainingsScreen(): JSX.Element {
                     <h4 className="my-training-form__block-title">Цена, ₽</h4>
                     <div className="filter-price">
                       <div className="filter-price__input-text filter-price__input-text--min">
-                        <input type="number" id="text-min" name="text-min"/>
+                        <input type="number" id="text-min" name="text-min" value={minPrice} onChange={(evt) => handleInputChange(evt, setMinPrice, 'minPrice')}/>
                         <label htmlFor="text-min">от</label>
                       </div>
                       <div className="filter-price__input-text filter-price__input-text--max">
-                        <input type="number" id="text-max" name="text-max"/>
+                        <input type="number" id="text-max" name="text-max" value={maxPrice} onChange={(evt) => handleInputChange(evt, setMaxPrice, 'maxPrice')}/>
                         <label htmlFor="text-max">до</label>
                       </div>
                     </div>
@@ -70,11 +125,11 @@ function TrainerTrainingsScreen(): JSX.Element {
                     <h4 className="my-training-form__block-title">Калории</h4>
                     <div className="filter-calories">
                       <div className="filter-calories__input-text filter-calories__input-text--min">
-                        <input type="number" id="text-min-cal" name="text-min-cal"/>
+                        <input type="number" id="text-min-cal" name="text-min-cal" value={minCalories} onChange={(evt) => handleInputChange(evt, setMinCalories, 'minCalories')}/>
                         <label htmlFor="text-min-cal">от</label>
                       </div>
                       <div className="filter-calories__input-text filter-calories__input-text--max">
-                        <input type="number" id="text-max-cal" name="text-max-cal"/>
+                        <input type="number" id="text-max-cal" name="text-max-cal" value={maxCalories} onChange={(evt) => handleInputChange(evt, setMaxCalories, 'maxCalories')}/>
                         <label htmlFor="text-max-cal">до</label>
                       </div>
                     </div>
@@ -126,7 +181,7 @@ function TrainerTrainingsScreen(): JSX.Element {
                                 name="duration"
                                 value={duration}
                                 checked={selectedDuration === duration}
-                                onChange={handleDurationChange}
+                                onChange={(evt) => handleDurationChange(evt, setDuration, 'workoutDuration')}
                               />
                               <span className="custom-toggle__icon">
                                 <svg width="9" height="6" aria-hidden="true">

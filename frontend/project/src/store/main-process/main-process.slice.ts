@@ -19,13 +19,25 @@ const initialState: MainState = {
   userId: '',
   location: null,
   gender: null,
-  readiessToWorkout: false
+  readiessToWorkout: false,
+  description: '',
+  name: '',
+  avatar: ''
 };
 
 export const mainProcess = createSlice({
   name: 'main',
   initialState: initialState,
   reducers: {
+    setAvatar: (state, action: PayloadAction<string | undefined>) => {
+      state.avatar = action.payload;
+    },
+    setName: (state, action: PayloadAction<string>) => {
+      state.name = action.payload;
+    },
+    setDescription: (state, action: PayloadAction<string | undefined>) => {
+      state.description = action.payload;
+    },
     changeReadiessToWorkout: (state, action: PayloadAction<boolean>) => {
       state.readiessToWorkout = action.payload;
     },
@@ -70,4 +82,4 @@ export const mainProcess = createSlice({
     },
   },
 });
-export const { changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { setAvatar, setName, setDescription, changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;

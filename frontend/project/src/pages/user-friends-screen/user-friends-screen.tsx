@@ -29,7 +29,7 @@ function UserFriendsScreen(): JSX.Element {
                 <div className="thumbnail-friend">
                   <div className="thumbnail-friend__info thumbnail-friend__info--theme-light">
                     <div className="thumbnail-friend__image-status">
-                      <ThumbnailPicture sourceName={'thumbnail-friend__image-status'} imageSrc={'img/content/thumbnails/friend-13'} width={78} height={78}/>
+                      <ThumbnailPicture sourceName={'thumbnail-friend__image-status'} imageSrc={'img/content/thumbnails/friend-13'} width={78} height={78} alt={'аватар пользователя'}/>
                     </div>
                     <div className="thumbnail-friend__header">
                       <h2 className="thumbnail-friend__name">Елизавета</h2>

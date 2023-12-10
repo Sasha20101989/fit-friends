@@ -3,9 +3,10 @@ type ThumbnailPictureProps = {
   imageSrc: string;
   width: number;
   height: number;
+  alt: string;
 }
 
-function ThumbnailPicture({ imageSrc, sourceName, width, height }: ThumbnailPictureProps): JSX.Element {
+function ThumbnailPicture({ imageSrc, sourceName, width, height, alt }: ThumbnailPictureProps): JSX.Element {
   const fileExtension = imageSrc.split('.').pop();
   const imageNameWithoutExtension = imageSrc.replace(/\.[^/.]+$/, '');
   const hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
@@ -19,7 +20,7 @@ function ThumbnailPicture({ imageSrc, sourceName, width, height }: ThumbnailPict
           srcSet={`${hostedImage}@2x.${fileExtension ? fileExtension : ''} 2x`}
           width={width}
           height={height}
-          alt=""
+          alt={alt}
         />
       </picture>
       {/* <div className="thumbnail-friend__online-status thumbnail-friend__online-status--is-online"></div> */}

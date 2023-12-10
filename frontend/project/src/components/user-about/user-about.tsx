@@ -1,21 +1,22 @@
-import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getDescription, getName } from '../../store/main-process/main-process.selectors';
+import { setDescription, setName } from '../../store/main-process/main-process.slice';
 
 type UserAboutProps = {
-  name: string;
-  description: string;
   isFormEditable: boolean;
 }
 
-function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Element {
-  const [changedName, setName] = useState<string | null>(name);
-  const [changedDescription, setDescription] = useState<string | null>(description);
+function UserAbout({isFormEditable}: UserAboutProps):JSX.Element {
+  const dispatch = useAppDispatch();
+  const name = useAppSelector(getName);
+  const description = useAppSelector(getDescription);
 
   const handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setName(evt.target.value);
+    dispatch(setName(evt.target.value));
   };
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(evt.target.value);
+    dispatch(setDescription(evt.target.value));
   };
 
   return (
@@ -28,7 +29,7 @@ function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Elem
             <input
               type="text"
               name="name"
-              value={changedName ?? ''}
+              value={name}
               onChange={handleNameChange}
               disabled={!isFormEditable}
               required
@@ -42,7 +43,7 @@ function UserAbout({name, description, isFormEditable}: UserAboutProps):JSX.Elem
           <textarea
             name="description"
             placeholder=" "
-            value={changedDescription ?? ''}
+            value={description ?? ''}
             onChange={handleDescriptionChange}
             disabled={!isFormEditable}
             required

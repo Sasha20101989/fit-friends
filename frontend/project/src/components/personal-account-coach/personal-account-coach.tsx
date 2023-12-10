@@ -9,7 +9,7 @@ type PersonalAccountCoachProps = {
 
 function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
   const thumbnailLinks = [
-    { to: `${AppRoute.Trainings}/${userId}`, icon: '#icon-flash', text: 'Мои тренировки' },
+    { to: `${AppRoute.Trainers}/${userId}${AppRoute.Trainings}`, icon: '#icon-flash', text: 'Мои тренировки' },
     { to: AppRoute.CreateTraining, icon: '#icon-add', text: 'Создать тренировку' },
     { to: `${AppRoute.Trainer}/${userId}${AppRoute.Friends}`, icon: '#icon-friends', text: 'Мои друзья' },
     { to: `${AppRoute.Orders}/${userId}`, icon: '#icon-bag', text: 'Мои заказы' },
@@ -25,7 +25,7 @@ function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
         ))}
         <div className="personal-account-coach__calendar">
           <div className="thumbnail-spec-gym">
-            <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01.jpg'} width={330} height={190}/>
+            <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01.jpg'} width={330} height={190} alt={'аватар пользователя'}/>
             <p className="thumbnail-spec-gym__type">Ближайший зал</p>
             <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
               <h3 className="thumbnail-spec-gym__title">Скоро тут будет интересно</h3>

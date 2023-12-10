@@ -1,11 +1,16 @@
-type UserAvatarProps = {
-  avatar: string;
-}
+import { useAppSelector } from '../../hooks/index';
+import { getAvatar } from '../../store/main-process/main-process.selectors';
 
-function UserAvatar({ avatar }: UserAvatarProps): JSX.Element {
-  const fileExtension = avatar.split('.').pop();
-  const imageNameWithoutExtension = avatar.replace(/\.[^/.]+$/, '');
-  const hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
+function UserAvatar(): JSX.Element {
+  const avatar = useAppSelector(getAvatar);
+  let hostedImage = '';
+  let fileExtension = '';
+
+  if (avatar) {
+    fileExtension = avatar.split('.').pop() || '';
+    const imageNameWithoutExtension = avatar.replace(/\.[^/.]+$/, '');
+    hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
+  }
 
   return (
     <div className="input-load-avatar">

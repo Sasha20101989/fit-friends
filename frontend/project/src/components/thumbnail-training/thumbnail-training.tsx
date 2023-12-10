@@ -11,13 +11,13 @@ type ThumbnailTrainingProps = {
 }
 
 function ThumbnailTraining({ training }: ThumbnailTrainingProps): JSX.Element {
-  const { name, backgroundImage, price, workoutType, rating, description } = training;
-  const hashtags = [workoutType];
+  const { name, backgroundImage, price, workoutType, rating, description, calories } = training;
+  const hashtags = [workoutType, `${calories}ккал`];
   return (
     <li className="popular-trainings__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <ThumbnailPicture imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190}/>
+          <ThumbnailPicture imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
           <p className="thumbnail-training__price">
             <span className="thumbnail-training__price-value">{price}</span>
             <span>₽</span>

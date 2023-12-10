@@ -1,10 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
-import { createTrainingAction, fetchOrdersAction, fetchPopularTrainingsAction, fetchTrainerTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
+import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchPopularTrainingsAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
+import { Training } from '../../types/training.type';
 
 export const initialState: DataState = {
   popularTrainings: [],
   trainerTrainings: [],
+  reviews: [],
   orders: [],
   isDataLoading: false,
   selectedTraining: null,
@@ -15,9 +17,41 @@ export const initialState: DataState = {
 export const mainData = createSlice({
   name: 'data',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    setTraining: (state, action: PayloadAction<Training>) => {
+      state.selectedTraining = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(editTrainingAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(editTrainingAction.fulfilled, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(editTrainingAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchReviewsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchReviewsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.reviews = action.payload;
+      })
+      .addCase(fetchReviewsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchTrainingAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchTrainingAction.fulfilled, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchTrainingAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(createTrainingAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
@@ -26,7 +60,7 @@ export const mainData = createSlice({
         state.selectedTraining = action.payload;
       })
       .addCase(createTrainingAction.rejected, (state, _action) => {
-        state.isSubmitting = true;
+        state.isSubmitting = false;
       })
       .addCase(fetchPopularTrainingsAction.pending, (state, _action) => {
         state.isSubmitting = true;
@@ -62,4 +96,5 @@ export const mainData = createSlice({
 });
 
 export const {
+  setTraining
 } = mainData.actions;

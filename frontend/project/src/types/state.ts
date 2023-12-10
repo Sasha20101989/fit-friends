@@ -1,15 +1,16 @@
-import { AuthorizationStatus, RegisterStatus } from '../const.js';
-import {store} from '../store/index.js';
-import { Gender } from './gender.enum.js';
-import { Location } from './location.enum.js';
-import { Role } from './role.enum.js';
-import { Trainer } from './trainer.interface.js';
-import { TrainingLevel } from './training-level.enum.js';
-import { TrainingOrder } from './training-order.type.js';
-import { Training } from './training.type.js';
-import { User } from './user.interface.js';
-import { WorkoutDuration } from './workout-duration.enum.js';
-import { WorkoutType } from './workout-type.enum.js';
+import { AuthorizationStatus, RegisterStatus } from '../const';
+import {store} from '../store/index';
+import { Gender } from './gender.enum';
+import { Location } from './location.enum';
+import { Review } from './review.type';
+import { Role } from './role.enum';
+import { Trainer } from './trainer.interface';
+import { TrainingLevel } from './training-level.enum';
+import { TrainingOrder } from './training-order.type';
+import { Training } from './training.type';
+import { User } from './user.interface';
+import { WorkoutDuration } from './workout-duration.enum';
+import { WorkoutType } from './workout-type.enum';
 
 export type UserState = {
   authorizationStatus: AuthorizationStatus;
@@ -30,11 +31,15 @@ export type MainState = {
   location: Location | null;
   gender: Gender | null;
   readiessToWorkout: boolean;
+  description: string | undefined;
+  name: string;
+  avatar: string | undefined;
 }
 
 export type DataState = {
   popularTrainings: Training[];
   trainerTrainings: Training[];
+  reviews: Review[],
   orders: TrainingOrder[],
   selectedTraining: Training | null;
   isDataLoading: boolean;

@@ -5,7 +5,7 @@ import { APIRoute, RegisterStatus } from '../../../const';
 import { setRegisterStatus } from '../../user-process/user-process.slice';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { changeLevel, changeReadiessToWorkout, setGender, setLocation, setSpecializations } from '../../main-process/main-process.slice';
+import { changeLevel, changeReadiessToWorkout, setAvatar, setDescription, setGender, setLocation, setName, setSpecializations } from '../../main-process/main-process.slice';
 import { User } from '../../../types/user.interface';
 import { Trainer } from '../../../types/trainer.interface';
 import { Role } from '../../../types/role.enum';
@@ -64,6 +64,9 @@ export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
     dispatch(setLocation(data.location));
     dispatch(setGender(data.gender));
     dispatch(changeLevel(data.trainingLevel));
+    dispatch(setDescription(data.description));
+    dispatch(setName(data.name));
+    dispatch(setAvatar(data.avatar));
 
     if(data.role === Role.Trainer){
       const trainer = data as Trainer;

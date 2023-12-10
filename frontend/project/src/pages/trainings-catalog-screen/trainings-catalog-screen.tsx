@@ -209,7 +209,7 @@ function TrainingsCatalogScreen() : JSX.Element {
                 <li className="training-catalog__item">
                   <div className="thumbnail-training">
                     <div className="thumbnail-training__inner">
-                      <ThumbnailPicture imageSrc={'img/content/thumbnails/training-02'} sourceName={'thumbnail-training__image'} width={330} height={190}/>
+                      <ThumbnailPicture imageSrc={'img/content/thumbnails/training-02'} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
                       <p className="thumbnail-training__price">Бесплатно
                       </p>
                       <h3 className="thumbnail-training__title">crossfit</h3>

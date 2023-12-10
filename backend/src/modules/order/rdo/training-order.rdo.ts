@@ -57,4 +57,7 @@ export default class TrainingOrderRdo {
 
   @Expose()
   public createdAt!: Date;
+
+  @Expose()
+  public training!: Date;
 }

@@ -25,6 +25,7 @@ import PrivateRegisterRoute from '../private-register-route/private-register-rou
 import PrivateTrainerRegisterRoute from '../private-register-route/private-register-route';
 import PrivateTrainerRoute from '../private-trainer-route/private-trainer-route';
 import PrivateUserRoute from '../private-user-route/private-user-route';
+import TrainingCardScreen from '../../pages/training-card-screen/training-card-screen';
 
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -38,6 +39,7 @@ function App(): JSX.Element {
   const OrderScreenMemoized = React.memo(OrderScreen);
   const TrainerTrainingsScreenMemoized = React.memo(TrainerTrainingsScreen);
   const CreateTrainingScreenMemoized = React.memo(CreateTrainingScreen);
+  const TrainingCardScreenMemoized = React.memo(TrainingCardScreen);
 
   return (
     <Routes>
@@ -80,10 +82,18 @@ function App(): JSX.Element {
         }
       />
       <Route
-        path={`${AppRoute.Trainings}/:id`}
+        path={`${AppRoute.Trainers}/:id${AppRoute.Trainings}`}
         element={
           <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
             <TrainerTrainingsScreenMemoized/>
+          </PrivateTrainerRoute>
+        }
+      />
+      <Route
+        path={`${AppRoute.Trainers}/:trainerId${AppRoute.Trainings}/:trainingId`}
+        element={
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
+            <TrainingCardScreenMemoized/>
           </PrivateTrainerRoute>
         }
       />

@@ -92,7 +92,7 @@ function UserCardScreen() : JSX.Element {
                     <li className="user-card-coach__training-item">
                       <div className="thumbnail-training">
                         <div className="thumbnail-training__inner">
-                          <ThumbnailPicture imageSrc={'img/content/user-card-coach/training-2'} sourceName={'thumbnail-training__image'} width={330} height={190}/>
+                          <ThumbnailPicture imageSrc={'img/content/user-card-coach/training-2'} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
                           <p className="thumbnail-training__price"><span className="thumbnail-training__price-value">2200</span><span>₽</span>
                           </p>
                           <h3 className="thumbnail-training__title">Devils Cindy</h3>

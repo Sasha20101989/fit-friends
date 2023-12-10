@@ -33,7 +33,7 @@ function PurchasesScreen() : JSX.Element {
               <li className="my-purchases__item">
                 <div className="thumbnail-training">
                   <div className="thumbnail-training__inner">
-                    <ThumbnailPicture imageSrc={'img/content/thumbnails/training-01'} sourceName={'thumbnail-training__image'} width={330} height={190}/>
+                    <ThumbnailPicture imageSrc={'img/content/thumbnails/training-01'} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
                     <p className="thumbnail-training__price"><span className="thumbnail-training__price-value">800</span><span>₽</span>
                     </p>
                     <h2 className="thumbnail-training__title">energy</h2>

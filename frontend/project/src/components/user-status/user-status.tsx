@@ -14,7 +14,9 @@ function UserStatus({isFormEditable}: UserStatusProps):JSX.Element {
   const readinessToWorkout = useAppSelector(getReadiessToWorkout);
 
   const handleReadinessForWorkoutChange = () => {
-    dispatch(changeReadiessToWorkout(!readinessToWorkout));
+    if(isFormEditable){
+      dispatch(changeReadiessToWorkout(!readinessToWorkout));
+    }
   };
 
   return (

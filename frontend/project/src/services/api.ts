@@ -1,39 +1,13 @@
 
-import axios, {AxiosInstance, AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosInstance} from 'axios';
 import {Token, getAccessToken, getRefreshToken, updateAccessToken} from './token';
 import { APIRoute } from '../const';
-import { RefreshData } from '../types/auth-data.js';
 import {StatusCodes} from 'http-status-codes';
 import { toast } from 'react-toastify';
+import { ApiErrorType, CustomError, ParsedResponse, parseResponse, shouldDisplayError } from './error-handler';
 
 const BACKEND_URL = 'http://localhost:4000';
 const REQUEST_TIMEOUT = 5000;
-
-const StatusCodeMapping: Record<number, boolean> = {
-  [StatusCodes.BAD_REQUEST]: true,
-  [StatusCodes.UNAUTHORIZED]: true,
-  [StatusCodes.NOT_FOUND]: true,
-  [StatusCodes.FORBIDDEN]: true
-};
-
-const shouldDisplayError = (response: AxiosResponse) => !!StatusCodeMapping[response.status];
-
-type ParsedResponse = {
-  errorMessage: string;
-  status: number;
-  statusText: string;
-}
-
-function parseResponse(response: AxiosResponse): ParsedResponse {
-  const errorMatch: RegExpMatchArray | null = response.data.match(/Error: (.+)<br>/);
-  const errorMessage = errorMatch ? errorMatch[1].split('<br>')[0] : 'Unknown Error';
-
-  return {
-    errorMessage,
-    status: response.status,
-    statusText: response.statusText,
-  };
-}
 
 export const createApi = (): AxiosInstance => {
   const api = axios.create({
@@ -56,10 +30,10 @@ export const createApi = (): AxiosInstance => {
     (error) => Promise.reject(error)
   );
 
-  async function handleExpiredTokenError(error: AxiosError<{error: string}>) {
+  async function handleExpiredTokenError(error: CustomError) {
     if (error.response && shouldDisplayError(error.response)) {
-      const parsedResponse: ParsedResponse = parseResponse(error.response);
-      if (parsedResponse.errorMessage === 'JWTExpired') {
+      const parsedResponse: ParsedResponse | undefined = parseResponse(error.response);
+      if (parsedResponse?.errorMessage === ApiErrorType.JWTExpired) {
         toast.warn(parsedResponse.errorMessage);
 
         const refreshToken = getRefreshToken();
@@ -80,20 +54,17 @@ export const createApi = (): AxiosInstance => {
               return api(error.config);
             }
           } catch (refreshError) {
-            handleRefreshError(refreshError as AxiosError<{error: string}>);
+            handleRefreshError(refreshError as CustomError);
           }
         }
-      }else if(parsedResponse.status === StatusCodes.NOT_FOUND){
-        toast.warn(parsedResponse.errorMessage);
       }
     }
   }
 
-  function handleRefreshError(refreshError: AxiosError<{error: string}>) {
-    const responseError = refreshError as AxiosError<{error: string}>;
-    if (responseError.response && shouldDisplayError(responseError.response)) {
-      const parsedResponse: ParsedResponse = parseResponse(responseError.response);
-      if (parsedResponse.errorMessage === 'Invalid Refresh Token') {
+  function handleRefreshError(refreshError: CustomError) {
+    if (refreshError.response && shouldDisplayError(refreshError.response)) {
+      const parsedResponse: ParsedResponse | undefined = parseResponse(refreshError.response);
+      if (parsedResponse?.errorMessage === ApiErrorType.InvalidRefreshToken) {
         toast.warn(parsedResponse.errorMessage);
         document.cookie = `${Token.Access}=; path=/;`;
         localStorage.removeItem(Token.Refresh);
@@ -103,8 +74,18 @@ export const createApi = (): AxiosInstance => {
 
   api.interceptors.response.use(
     (response) => response,
-    async (error: AxiosError<{error: string}>) => {
-      await handleExpiredTokenError(error);
+    async (error: CustomError) => {
+      if(error.response){
+        if (error.response.status !== StatusCodes.UNAUTHORIZED && error.response.data) {
+          const matchesValues = error.response.data.map((item) => item.constraints.matches);
+
+          matchesValues.forEach((matchesValue) => {
+            toast.warn(matchesValue);
+          });
+        } else {
+          await handleExpiredTokenError(error);
+        }
+      }
     }
   );
 

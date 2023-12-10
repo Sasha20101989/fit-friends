@@ -27,7 +27,8 @@ export enum APIRoute {
   RefreshToken = '/users/refresh',
   Users = '/users',
   Friends = '/friends',
-  Orders = '/orders'
+  Orders = '/orders',
+  Reviews = '/reviews/training'
 }
 
 export enum AuthorizationStatus {

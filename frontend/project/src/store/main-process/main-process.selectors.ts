@@ -16,3 +16,6 @@ export const getUserId = (state: State): string => state[NameSpace.Main].userId;
 export const getLocation = (state: State): Location | null => state[NameSpace.Main].location;
 export const getGender = (state: State): Gender | null => state[NameSpace.Main].gender;
 export const getReadiessToWorkout = (state: State): boolean => state[NameSpace.Main].readiessToWorkout;
+export const getDescription = (state: State): string | undefined => state[NameSpace.Main].description;
+export const getName = (state: State): string => state[NameSpace.Main].name;
+export const getAvatar = (state: State): string | undefined => state[NameSpace.Main].avatar;

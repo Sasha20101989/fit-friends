@@ -64,7 +64,7 @@ export default class OrderService implements OrderServiceInterface {
       const trainingOrders = await this.findByTrainingId(training.id);
       const purchasedQuantity = calculateSum(trainingOrders, (order) => order.quantity);
       const totalSalesAmount = calculateSum(trainingOrders, (order) => order.totalAmount);
-      const trainingInfo: TrainingOrderRdo = { ...training.toObject(), purchasedQuantity, totalSalesAmount };
+      const trainingInfo: TrainingOrderRdo = { ...training.toObject(), purchasedQuantity, totalSalesAmount, training: training.id};
       trainingInfoList.push(trainingInfo);
     }
 

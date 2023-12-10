@@ -5,6 +5,7 @@ import { WorkoutDuration } from './workout-duration.enum.js';
 import { WorkoutType } from './workout-type.enum.js';
 
 export type Training = {
+  id?: string;
   name: string;
   backgroundImage: string;
   trainingLevel: TrainingLevel;

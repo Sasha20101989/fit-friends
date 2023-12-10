@@ -168,7 +168,7 @@ function UsersCatalogScreen() : JSX.Element {
                 <ul className="users-catalog__list">
                   <li className="users-catalog__item">
                     <div className="thumbnail-user thumbnail-user--role-user">
-                      <ThumbnailPicture imageSrc={'img/content/thumbnails/user-01'} sourceName={'thumbnail-user__image'} width={82} height={82}/>
+                      <ThumbnailPicture imageSrc={'img/content/thumbnails/user-01'} sourceName={'thumbnail-user__image'} width={82} height={82} alt={'аватар пользователя'}/>
                       <div className="thumbnail-user__header">
                         <h3 className="thumbnail-user__name">Елизавета</h3>
                         <div className="thumbnail-user__location">

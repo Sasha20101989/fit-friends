@@ -13,7 +13,7 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
   return (
     <li className="look-for-company__item">
       <div className={`thumbnail-user thumbnail-user--role-user thumbnail-user--${theme}`}>
-        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={imageSrc} width={82} height={82}/>
+        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={imageSrc} width={82} height={82} alt={'аватар пользователя'}/>
         {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
                       <svg width="12" height="12" aria-hidden="true">
                         <use xlinkHref="#icon-crown"></use>

@@ -14,7 +14,7 @@ function Friend({friend}: FriendProps): JSX.Element{
       <div className="thumbnail-friend">
         <div className={`thumbnail-friend__info thumbnail-friend__info--theme-${theme}`}>
           <div className="thumbnail-friend__image-status">
-            <ThumbnailPicture sourceName={'thumbnail-friend__image'} imageSrc={'img/content/thumbnails/friend-14'} width={78} height={78}/>
+            <ThumbnailPicture sourceName={'thumbnail-friend__image'} imageSrc={'img/content/thumbnails/friend-14'} width={78} height={78} alt={'аватар пользователя'}/>
           </div>
           <div className="thumbnail-friend__header">
             <h2 className="thumbnail-friend__name">{name}</h2>

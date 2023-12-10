@@ -1,7 +1,5 @@
-import { WorkoutType } from '../../types/workout-type.enum';
-
 type ThumbnailTrainingHashtagsProps = {
-  hashtags: WorkoutType[];
+  hashtags: string[];
 }
 
 function ThumbnailTrainingHashtags({ hashtags }: ThumbnailTrainingHashtagsProps): JSX.Element {

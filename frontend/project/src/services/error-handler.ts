@@ -1,39 +1,58 @@
-import { toast } from 'react-toastify';
+import { InternalAxiosRequestConfig } from 'axios';
+import {StatusCodes} from 'http-status-codes';
 
 export interface CustomError {
-  response?: {
-    status: number;
-    data?: {
-      details?: { messages: string[] }[];
-      message?: string;
-    };
-  };
+  response?: CustomResponse;
   message?: string;
+  config: InternalAxiosRequestConfig;
 }
 
-export const errorHandle1 = (error: CustomError): void => {
-  if (error.response) {
-    const { status, data } = error.response;
-    if (status === 400) {
-      if (data && data.details && data.details.length > 0) {
-        data.details.forEach((detail) => {
-          detail.messages.forEach((message) => {
-            toast.error(message);
-          });
-        });
-      } else {
-        toast.error(data?.message || 'Bad Request');
-      }
-    } else if (status === 401) {
-      toast.error('Unauthorized');
-    } else if (status === 404) {
-      toast.error('Not Found');
-    } else if (status === 409) {
-      toast.error('Conflict');
-    } else if (status === 500) {
-      toast.error('Server Error');
-    }
-  } else {
-    toast.error('An error occurred');
+export interface CustomResponse {
+  status: number;
+  data?: CustomResponseData[];
+}
+
+export interface CustomResponseData {
+  target: {
+    description: string;
+    trainingLevel: string;
+    gender: string;
+    workoutTypes: string[];
+    personalTraining: boolean;
+    name: string;
+  };
+  value: string;
+  property: string;
+  children: never[];
+  constraints: {
+    matches: string;
+  };
+}
+
+export function parseResponse(response: CustomResponse): ParsedResponse | undefined {
+  if (typeof response.data === 'string') {
+    const parsedData = response.data as string;
+    const errorMatch: RegExpMatchArray | null = parsedData.match(/Error: (.+)<br>/);
+    const errorMessage = errorMatch ? errorMatch[1].split('<br>')[0] : 'Unknown Error';
+
+    return { errorMessage };
   }
+}
+
+export enum ApiErrorType {
+  JWTExpired = 'JWTExpired',
+  InvalidRefreshToken = 'Invalid Refresh Token',
+}
+
+const StatusCodeMapping: Record<number, boolean> = {
+  [StatusCodes.BAD_REQUEST]: true,
+  [StatusCodes.UNAUTHORIZED]: true,
+  [StatusCodes.NOT_FOUND]: true,
+  [StatusCodes.FORBIDDEN]: true
 };
+
+export const shouldDisplayError = (response: CustomResponse) => !!StatusCodeMapping[response.status];
+
+export interface ParsedResponse {
+  errorMessage: string;
+}
