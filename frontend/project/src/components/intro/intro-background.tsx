@@ -27,6 +27,3 @@ function IntroBackground({imageSrc, sourceName, width, height}: IntroBackgroundP
 }
 
 export default IntroBackground;
-
-
-

@@ -1,17 +1,14 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
-import { useAppSelector } from '../../hooks/index';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Role } from '../../types/role.enum';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
-  const isSubmitting = useAppSelector(getSubmittingStatus);
-
   const {
+    isSubmitting,
     descriptionRef,
     selectedDescription,
     readinessToWorkout,

@@ -5,19 +5,15 @@ import { APIRoute } from '../../../const';
 import { Training } from '../../../types/training.type';
 import { TrainingOrder } from '../../../types/training-order.type';
 import CreateTrainingDto from '../../../dto/create-training.dto';
-import { setTraining } from '../../main-data/main-data.slice';
+import { setPopularTrainings, setSpecialForUserTrainings, setSpecialTrainings, setTraining } from '../../main-data/main-data.slice';
 import { Review } from '../../../types/review.type';
 import UpdateTrainingDto from '../../../dto/update-training.dto';
 import { WorkoutDuration } from '../../../types/workout-duration.enum';
 import { WorkoutType } from '../../../types/workout-type.enum';
 import { Sorting } from '../../../types/sorting.enum';
+import { TrainingCategory } from '../../../types/training-category';
 
 export interface FetchTrainingsParams {
-  limit?: number;
-  types?: string[];
-}
-
-export interface FetchTrainerTrainingsParams {
   userId: string;
   minPrice?: number;
   maxPrice?: number;
@@ -30,6 +26,8 @@ export interface FetchTrainerTrainingsParams {
   limit?: number;
   page?: number;
   createdAtDirection?: Sorting;
+  category?: TrainingCategory;
+  isSpecial?: boolean;
 }
 
 export interface FetchTrainingParams {
@@ -40,15 +38,25 @@ export interface FetchReviewsParams {
   trainingId: string;
 }
 
-export const fetchPopularTrainingsAction = createAsyncThunk<Training[], FetchTrainingsParams, {
+export const fetchTrainingsAction = createAsyncThunk<Training[], FetchTrainingsParams, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
-  'data/fetchPopularTrainings',
+  'data/fetchTrainings',
   async (params, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.get<Training[]>(APIRoute.Trainings, { params });
+      const { category, ...restParams } = params;
+      const { data } = await api.get<Training[]>(APIRoute.Trainings, { params: restParams });
+
+      if (category === TrainingCategory.FOR_USER) {
+        dispatch(setSpecialForUserTrainings(data));
+      } else if (category === TrainingCategory.SPECIAL) {
+        dispatch(setSpecialTrainings(data));
+      } else if (category === TrainingCategory.POPULAR) {
+        dispatch(setPopularTrainings(data));
+      }
+
       return data;
     } catch (error) {
       return [];
@@ -56,12 +64,12 @@ export const fetchPopularTrainingsAction = createAsyncThunk<Training[], FetchTra
   },
 );
 
-export const fetchTrainerTrainingsAction = createAsyncThunk<Training[], FetchTrainerTrainingsParams, {
+export const fetchTrainerTrainingsAction = createAsyncThunk<Training[], FetchTrainingsParams, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
-  'data/fetchTrainings',
+  'data/fetchTrainerTrainings',
   async (params, { dispatch, extra: api }) => {
     try {
       const { data } = await api.get<Training[]>(`${APIRoute.Trainings}/trainer-room/${params.userId}`, { params });
@@ -149,6 +157,10 @@ export const editTrainingAction = createAsyncThunk<
   'user/editTraining',
   async (trainingData, {dispatch, extra: api}) => {
     try {
+      if(!trainingData.id){
+        return null;
+      }
+
       const { data } = await api.put<Training>(`${APIRoute.Trainings}/trainer-room/${trainingData.id}`, trainingData);
 
       dispatch(setTraining(data));

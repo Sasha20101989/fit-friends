@@ -4,7 +4,7 @@ import {Token, getAccessToken, getRefreshToken, updateAccessToken} from './token
 import { APIRoute } from '../const';
 import {StatusCodes} from 'http-status-codes';
 import { toast } from 'react-toastify';
-import { ApiErrorType, CustomError, ParsedResponse, parseResponse, shouldDisplayError } from './error-handler';
+import { ApiErrorType, CustomError, ParsedResponse, parseResponse, shouldDisplayError, showToast } from './error-handler';
 
 const BACKEND_URL = 'http://localhost:4000';
 const REQUEST_TIMEOUT = 5000;
@@ -33,29 +33,33 @@ export const createApi = (): AxiosInstance => {
   async function handleExpiredTokenError(error: CustomError) {
     if (error.response && shouldDisplayError(error.response)) {
       const parsedResponse: ParsedResponse | undefined = parseResponse(error.response);
-      if (parsedResponse?.errorMessage === ApiErrorType.JWTExpired) {
-        toast.warn(parsedResponse.errorMessage);
+      if(parsedResponse){
+        if (parsedResponse.errorMessage === ApiErrorType.JWTExpired) {
+          toast.warn(parsedResponse.errorMessage);
 
-        const refreshToken = getRefreshToken();
+          const refreshToken = getRefreshToken();
 
-        if (refreshToken) {
-          try {
-            const response = await axios.post<Token.Access>(
-              `${BACKEND_URL}${APIRoute.RefreshToken}`,
-              { refreshToken }
-            );
+          if (refreshToken) {
+            try {
+              const response = await axios.post<Token.Access>(
+                `${BACKEND_URL}${APIRoute.RefreshToken}`,
+                { refreshToken }
+              );
 
-            updateAccessToken(response.data);
+              updateAccessToken(response.data);
 
-            const accessToken = getAccessToken();
+              const accessToken = getAccessToken();
 
-            if (error.config && accessToken) {
-              error.config.headers['Authorization'] = `Bearer ${accessToken}`;
-              return api(error.config);
+              if (error.config && accessToken) {
+                error.config.headers['Authorization'] = `Bearer ${accessToken}`;
+                return api(error.config);
+              }
+            } catch (refreshError) {
+              handleRefreshError(refreshError as CustomError);
             }
-          } catch (refreshError) {
-            handleRefreshError(refreshError as CustomError);
           }
+        }else{
+          toast.warn(parsedResponse.errorMessage);
         }
       }
     }
@@ -76,11 +80,14 @@ export const createApi = (): AxiosInstance => {
     (response) => response,
     async (error: CustomError) => {
       if(error.response){
-        if (error.response.status !== StatusCodes.UNAUTHORIZED && error.response.data) {
-          const matchesValues = error.response.data.map((item) => item.constraints.matches);
+        if (error.response.status !== StatusCodes.UNAUTHORIZED &&
+          error.response.status !== StatusCodes.CONFLICT &&
+          error.response.data
+        ) {
+          const matchesValues = error.response.data.map((item) => item.constraints);
 
           matchesValues.forEach((matchesValue) => {
-            toast.warn(matchesValue);
+            showToast(matchesValue);
           });
         } else {
           await handleExpiredTokenError(error);

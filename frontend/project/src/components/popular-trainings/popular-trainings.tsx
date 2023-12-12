@@ -1,19 +1,21 @@
-import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
 import { Training } from '../../types/training.type';
 import { useEffect } from 'react';
-import { fetchPopularTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { getPopularTrainings } from '../../store/main-data/main-data.selectors';
+import { TrainingCategory } from '../../types/training-category';
+import { getUserId } from '../../store/main-process/main-process.selectors';
 
 
 function PopularTrainings():JSX.Element {
   const dispatch = useAppDispatch();
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
+  const userId = useAppSelector(getUserId);
 
   useEffect(() => {
-      dispatch(fetchPopularTrainingsAction({}));
-  }, [dispatch, popularTrainings]);
+    dispatch(fetchTrainingsAction({category: TrainingCategory.POPULAR, userId: userId}));
+  }, [dispatch, userId]);
 
   return (
     <section className="popular-trainings">
@@ -42,7 +44,7 @@ function PopularTrainings():JSX.Element {
           </div>
           <ul className="popular-trainings__list">
             {popularTrainings.map((training) => (
-              <ThumbnailTraining key={training.name} training={training} />
+              <ThumbnailTraining key={`${training.name}-${training.calories}-${training.price}`} training={training} />
             ))}
           </ul>
         </div>

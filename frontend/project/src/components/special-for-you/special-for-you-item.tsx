@@ -1,24 +1,31 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Image from '../image/image';
+import { AppRoute } from '../../const';
 
 type SpecialForYouItemProps = {
   title: string;
   imageSrc: string;
+  trainingId: string | undefined;
 }
 
-function SpecialForYouItem({ title, imageSrc }: SpecialForYouItemProps):JSX.Element {
+function SpecialForYouItem({ title, imageSrc, trainingId }: SpecialForYouItemProps):JSX.Element {
+  const navigate = useNavigate();
+
+  const handleTrainingClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
+    evt.preventDefault();
+    if (trainingId) {
+      navigate(`${AppRoute.Trainings}/${trainingId}`);
+    }
+  };
+
   return (
     <li className="special-for-you__item">
       <div className="thumbnail-preview">
-        <div className="thumbnail-preview__image">
-          <picture>
-            <source type="image/webp" srcSet={`${imageSrc}.webp, ${imageSrc}@2x.webp 2x`} />
-            <img src={`${imageSrc}.jpg`} srcSet={`${imageSrc}@2x.jpg 2x`} width="452" height="191" alt="" />
-          </picture>
-        </div>
+        <Image imageSrc={imageSrc} sourceName={'thumbnail-preview__image'} width={452} height={191} alt={'special card'}/>
         <div className="thumbnail-preview__inner">
           <h3 className="thumbnail-preview__title">{title}</h3>
           <div className="thumbnail-preview__button-wrapper">
-            <Link className="btn btn--small thumbnail-preview__button" to="">Подробнее</Link>
+            <Link className="btn btn--small thumbnail-preview__button" to="" onClick={handleTrainingClick}>Подробнее</Link>
           </div>
         </div>
       </div>

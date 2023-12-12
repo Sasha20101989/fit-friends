@@ -1,17 +1,17 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
-import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchPopularTrainingsAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
+import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
 
 export const initialState: DataState = {
   popularTrainings: [],
+  specialTrainings: [],
+  specialForUserTrainings: [],
   trainerTrainings: [],
   reviews: [],
   orders: [],
-  isDataLoading: false,
   selectedTraining: null,
   isSubmitting: false,
-  isSubmittingSuccess: false,
 };
 
 export const mainData = createSlice({
@@ -20,6 +20,15 @@ export const mainData = createSlice({
   reducers: {
     setTraining: (state, action: PayloadAction<Training>) => {
       state.selectedTraining = action.payload;
+    },
+    setPopularTrainings: (state, action: PayloadAction<Training[]>) => {
+      state.popularTrainings = action.payload;
+    },
+    setSpecialTrainings: (state, action: PayloadAction<Training[]>) => {
+      state.specialTrainings = action.payload;
+    },
+    setSpecialForUserTrainings: (state, action: PayloadAction<Training[]>) => {
+      state.specialForUserTrainings = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -62,14 +71,13 @@ export const mainData = createSlice({
       .addCase(createTrainingAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       })
-      .addCase(fetchPopularTrainingsAction.pending, (state, _action) => {
+      .addCase(fetchTrainingsAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
-      .addCase(fetchPopularTrainingsAction.fulfilled, (state, action) => {
+      .addCase(fetchTrainingsAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.popularTrainings = action.payload;
       })
-      .addCase(fetchPopularTrainingsAction.rejected, (state, _action) => {
+      .addCase(fetchTrainingsAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       })
       .addCase(fetchTrainerTrainingsAction.pending, (state, _action) => {
@@ -96,5 +104,8 @@ export const mainData = createSlice({
 });
 
 export const {
+  setSpecialForUserTrainings,
+  setPopularTrainings,
+  setSpecialTrainings,
   setTraining
 } = mainData.actions;

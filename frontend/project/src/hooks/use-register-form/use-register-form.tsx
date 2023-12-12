@@ -11,11 +11,12 @@ import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { addSpecialization, changeDuration, changeFile, changeLevel, changeReadiessToWorkout, removeSpecialization, setGender, setLocation } from '../../store/main-process/main-process.slice';
+import { getDescription, getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getRole, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { addSpecialization, changeDuration, changeFile, changeLevel, changeReadiessToWorkout, removeSpecialization, setDescription, setGender, setLocation, setRole } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { editTrainerAction, editUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 
 function useRegisterForm(){
   const dispatch = useAppDispatch();
@@ -29,6 +30,9 @@ function useRegisterForm(){
   const selectedLocation = useAppSelector(getLocation);
   const selectedGender = useAppSelector(getGender);
   const readinessToWorkout = useAppSelector(getReadiessToWorkout);
+  const selectedRole = useAppSelector(getRole);
+  const selectedDescription = useAppSelector(getDescription);
+  const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
@@ -39,23 +43,8 @@ function useRegisterForm(){
 
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const [selectedRole, setRole] = useState<Role | null>(Role.Trainer);
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedDescription, setSelectedCoachDescription] = useState<string | null>(null);
-
-  // const handleRole = (roleData: Role) => {
-  //   const handlers: Record<Role, () => void> = {
-  //     [Role.Trainer]: () => navigate(AppRoute.RegisterTrainer),
-  //     [Role.User]: () => navigate(AppRoute.RegisterUser),
-  //   };
-
-  //   const errorHandler = () => {
-  //     toast.error('Некорректная роль пользователя');
-  //   };
-
-  //   (handlers[roleData] || errorHandler)();
-  // };
 
   const onSubmit = (registerData: RegisterUserTransferData) => {
     dispatch(registerAction(registerData));
@@ -151,7 +140,7 @@ function useRegisterForm(){
 
   const handleRoleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const role: Role = evt.target.value as Role;
-    setRole(role);
+    dispatch(setRole(role));
   };
 
   const handleSexChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -188,7 +177,7 @@ function useRegisterForm(){
   const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSelectedCoachDescription(evt.target.value);
+    dispatch(setDescription(evt.target.value));
   };
 
   const handleReadinessForWorkoutChange = () => {
@@ -231,6 +220,7 @@ function useRegisterForm(){
     selectedDuration,
     selectedFile,
     selectedGender,
+    isSubmitting,
     isDisabled,
     handleRegister,
     handleLocationChange,

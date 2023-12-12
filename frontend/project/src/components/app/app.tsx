@@ -90,11 +90,9 @@ function App(): JSX.Element {
         }
       />
       <Route
-        path={`${AppRoute.Trainers}/:trainerId${AppRoute.Trainings}/:trainingId`}
+        path={`${AppRoute.Trainings}/:trainingId`}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-            <TrainingCardScreenMemoized/>
-          </PrivateTrainerRoute>
+          <TrainingCardScreenMemoized/>
         }
       />
       <Route

@@ -38,13 +38,13 @@ export type MainState = {
 
 export type DataState = {
   popularTrainings: Training[];
+  specialTrainings: Training[];
+  specialForUserTrainings: Training[];
   trainerTrainings: Training[];
-  reviews: Review[],
-  orders: TrainingOrder[],
+  reviews: Review[];
+  orders: TrainingOrder[];
   selectedTraining: Training | null;
-  isDataLoading: boolean;
   isSubmitting: boolean;
-  isSubmittingSuccess: boolean;
 }
 
 export type AppState = {

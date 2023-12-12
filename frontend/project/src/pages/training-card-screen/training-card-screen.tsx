@@ -3,7 +3,7 @@ import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-pictu
 import { editTrainingAction, fetchReviewsAction, fetchTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getReviews, getTraining } from '../../store/main-data/main-data.selectors';
+import { getLoadingStatus, getReviews, getTraining } from '../../store/main-data/main-data.selectors';
 import { Training } from '../../types/training.type';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import HashtagList from '../../components/hashtag-list/hashtag-list';
@@ -13,12 +13,17 @@ import { Review } from '../../types/review.type';
 import ReviewItem from '../../components/review-item/review-item';
 import TrainingEditButton from '../../components/training-edit-button/training-edit-button';
 import UpdateTrainingDto from '../../dto/update-training.dto';
+import VideoSection from '../../components/video-section/video-section';
+import TrainingCardButton from '../../components/training-card-button/training-card-button';
+import Loading from '../../components/loading/loading';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
   const role = useAppSelector(getRole);
   const training: Training | null = useAppSelector(getTraining);
   const reviews: Review[] = useAppSelector(getReviews);
+
+  const isLoading = useAppSelector(getLoadingStatus);
 
   const { trainingId } = useParams<{ trainingId: string }>();
 
@@ -32,11 +37,16 @@ function TrainingCardScreen() : JSX.Element {
       dispatch(fetchTrainingAction({trainingId}));
       dispatch(fetchReviewsAction({trainingId}));
     }
-  }, [dispatch]);
+  }, [dispatch, trainingId]);
 
-  if (!training || !trainingId) {
+  if (isLoading) {
+    return <Loading/>;
+  }
+
+  if (!training) {
     return <NotFoundScreen/>;
   }
+
 
   const handleTrainingNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
     evt.preventDefault();
@@ -85,8 +95,6 @@ function TrainingCardScreen() : JSX.Element {
         trainingData.id = training.id;
         dispatch(editTrainingAction(trainingData));
       }
-    } else if (role === Role.User) {
-
     }
   };
 
@@ -122,7 +130,7 @@ function TrainingCardScreen() : JSX.Element {
                     <span className="training-info__name">{training.trainer.name}</span>
                   </div>
                 </div>
-                <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>
+                {role === Role.Trainer ?? <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>}
               </div>
               <div className="training-info__main-content">
                 <form action="#" method="get">
@@ -180,74 +188,13 @@ function TrainingCardScreen() : JSX.Element {
                         </label>
                         {error && <div className="training-info__error">{error}</div>}
                       </div>
-                      {role === Role.User ? (
-                        <button className="btn training-info__buy" type="button">Купить</button>
-                      ) : role === Role.Trainer ? (
-                        <button className="btn-flat btn-flat--light btn-flat--underlined" type="button">
-                          <svg width="14" height="14" aria-hidden="true">
-                            <use xlinkHref="#icon-discount"></use>
-                          </svg>
-                          <span>Сделать скидку 10%</span>
-                        </button>
-                      ) : null}
+                      <TrainingCardButton/>
                     </div>
                   </div>
                 </form>
               </div>
             </div>
-
-            {role === Role.User ? (
-              <div className="training-video">
-                <h2 className="training-video__title">Видео</h2>
-                <div className="training-video__video">
-                  <ThumbnailPicture imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'}/>
-                  <button className="training-video__play-button btn-reset">
-                    <svg width="18" height="30" aria-hidden="true">
-                      <use xlinkHref="#icon-arrow"></use>
-                    </svg>
-                  </button>
-                </div>
-                <div className="training-video__buttons-wrapper">
-                  <button className="btn training-video__button training-video__button--start" type="button" disabled>Приступить</button>
-                  <button className="btn training-video__button training-video__button--stop" type="button">Закончить</button>
-                </div>
-              </div>
-            ) : role === Role.Trainer ? (
-              <div className="training-video">
-                <h2 className="training-video__title">Видео</h2>
-                <div className="training-video__video">
-                  <ThumbnailPicture imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'}/>
-                  <button className="training-video__play-button btn-reset">
-                    <svg width="18" height="30" aria-hidden="true">
-                      <use xlinkHref="#icon-arrow"></use>
-                    </svg>
-                  </button>
-                </div>
-                <div className="training-video__drop-files">
-                  <form action="#" method="post">
-                    <div className="training-video__form-wrapper">
-                      <div className="drag-and-drop">
-                        <label>
-                          <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата MOV, AVI или MP4
-                            <svg width="20" height="20" aria-hidden="true">
-                              <use xlinkHref="#icon-import-video"></use>
-                            </svg>
-                          </span>
-                          <input type="file" name="import" tabIndex={-1} accept=".mov, .avi, .mp4"/>
-                        </label>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div className="training-video__buttons-wrapper">
-                  <button className="btn training-video__button training-video__button--start" type="button" disabled>Приступить</button>
-                  <div className="training-video__edit-buttons">
-                    <button className="btn" type="button">Сохранить</button>
-                    <button className="btn btn--outlined" type="button">Удалить</button>
-                  </div>
-                </div>
-              </div>
-            ) : null}
+            <VideoSection/>
           </div>
         </div>
       </div>

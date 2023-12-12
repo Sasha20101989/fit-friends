@@ -1,6 +1,56 @@
+import { useEffect, useState } from 'react';
 import SpecialForYouItem from './special-for-you-item';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { Training } from '../../types/training.type';
+import { getSpecialForUserTrainings } from '../../store/main-data/main-data.selectors';
+import { getUserId } from '../../store/main-process/main-process.selectors';
+import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { getUser } from '../../store/user-process/user-process.selectors';
+import Loading from '../loading/loading';
+import IconButton from '../icon-button/icon-button';
+import { MAX_SPECIAL_TRAININGS_COUNT } from '../../const';
+import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { TrainingCategory } from '../../types/training-category';
 
 function SpecialForYou(): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const userId: string = useAppSelector(getUserId);
+  const user = useAppSelector(getUser);
+  const trainings: Training[] = useAppSelector(getSpecialForUserTrainings);
+
+  const [selectedSpecialPage, setSpecialPage] = useState<number>(1);
+
+  const handlePreviousClick = () => {
+    setSpecialPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextClick = () => {
+    setSpecialPage((prevPage) => prevPage + 1);
+  };
+
+  useEffect(() => {
+    if(userId){
+      dispatch(fetchUserAction(userId));
+    }
+  }, [dispatch , userId]);
+
+  useEffect(() => {
+    if(user && user.workoutTypes.length > 0){
+      dispatch(fetchTrainingsAction({
+        userId: userId,
+        category: TrainingCategory.FOR_USER,
+        page: selectedSpecialPage,
+        limit: MAX_SPECIAL_TRAININGS_COUNT,
+        workoutTypes: user.workoutTypes
+      }));
+    }
+  }, [dispatch , user, selectedSpecialPage, userId]);
+
+  if(!user){
+    return (<Loading/>);
+  }
+
   return (
     <section className="special-for-you">
       <div className="container">
@@ -8,31 +58,19 @@ function SpecialForYou(): JSX.Element {
           <div className="special-for-you__title-wrapper">
             <h2 className="special-for-you__title">Специально подобрано для вас</h2>
             <div className="special-for-you__controls">
-              <button className="btn-icon special-for-you__control" type="button" aria-label="previous">
-                <svg width="16" height="14" aria-hidden="true">
-                  <use xlinkHref="#arrow-left"></use>
-                </svg>
-              </button>
-              <button className="btn-icon special-for-you__control" type="button" aria-label="next">
-                <svg width="16" height="14" aria-hidden="true">
-                  <use xlinkHref="#arrow-right"></use>
-                </svg>
-              </button>
+              <IconButton direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
+              <IconButton direction="right" onClick={handleNextClick} ariaLabel="next" />
             </div>
           </div>
           <ul className="special-for-you__list">
-            <SpecialForYouItem
-              title="crossfit"
-              imageSrc="img/content/thumbnails/preview-03"
-            />
-            <SpecialForYouItem
-              title="power"
-              imageSrc="img/content/thumbnails/preview-02"
-            />
-            <SpecialForYouItem
-              title="boxing"
-              imageSrc="img/content/thumbnails/preview-01"
-            />
+            {trainings.map((training, index) => (
+              <SpecialForYouItem
+                key={`${training.name}-${training.calories}-${training.price}`}
+                trainingId={training.id}
+                title={training.workoutType}
+                imageSrc={`img/content/thumbnails/preview-0${index + 1}`}
+              />
+            ))}
           </ul>
         </div>
       </div>

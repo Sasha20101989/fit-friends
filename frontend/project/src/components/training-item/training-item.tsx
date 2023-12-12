@@ -1,28 +1,15 @@
-import { Link, useNavigate } from 'react-router-dom';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 import { Training } from '../../types/training.type';
-import { useAppSelector } from '../../hooks/index';
-import { getUser } from '../../store/user-process/user-process.selectors';
-import { AppRoute } from '../../const';
 import HashtagList from '../hashtag-list/hashtag-list';
+import ThumbnailTrainingWrapper from '../thumbnail-training-wrapper/thumbnail-training-wrapper';
 
 type TrainingItemProps = {
   training: Training;
 }
 
 function TrainingItem({ training }: TrainingItemProps):JSX.Element {
-  const navigate = useNavigate();
   const { id, backgroundImage, price, name, workoutType, rating, description } = training;
-  const user = useAppSelector(getUser);
   const hashtags = [workoutType];
-
-  const handleTrainingClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
-    evt.preventDefault();
-    const trainerId = user?.id;
-    if (trainerId && id) {
-      navigate(`${AppRoute.Trainers}/${trainerId}${AppRoute.Trainings}/${id}`);
-    }
-  };
 
   return (
     <li className="my-trainings__item">
@@ -48,14 +35,7 @@ function TrainingItem({ training }: TrainingItemProps):JSX.Element {
           <div className="thumbnail-training__text-wrapper">
             <p className="thumbnail-training__text">{description}</p>
           </div>
-          <div className="thumbnail-training__button-wrapper">
-            <Link className="btn btn--small thumbnail-training__button-catalog" to="" onClick={handleTrainingClick}>
-              Подробнее
-            </Link>
-            <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to="">
-              Отзывы
-            </Link>
-          </div>
+          {id && <ThumbnailTrainingWrapper trainingId={id}/>}
         </div>
       </div>
     </li>

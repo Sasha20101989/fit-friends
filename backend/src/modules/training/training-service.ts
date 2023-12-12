@@ -15,9 +15,8 @@ import { RabbitRouting } from '../../types/rabbit-routing.enum.js';
 import { RabbitClientInterface } from '../../core/rabbit-client/rabit-client.interface.js';
 import { User } from '../user/types/user.interface.js';
 import { Sorting } from '../../types/sorting.enum.js';
-import { WorkoutDuration } from '../../types/workout-duration.enum.js';
 import { DEFAULT_TRAINING_COUNT } from './training.const.js';
-import { applyWorkoutTypesFilter, durationFilters, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
+import { applyWorkoutDurationFilter, applyWorkoutTypeFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
 import { TrainingFilter } from './types/training-filter.type.js';
 
 @injectable()
@@ -63,8 +62,8 @@ export default class TrainingService implements TrainingServiceInterface {
     }
 
     this.applyFilters(query, filter);
-    this.applyWorkoutDurationFilter(query, filter);
-    applyWorkoutTypesFilter<TrainingQueryParams, TrainingFilter>(query, filter);
+    applyWorkoutDurationFilter(query, filter);
+    applyWorkoutTypeFilter(query, filter);
 
     let queryResult = this.trainingModel
       .find(filter)
@@ -114,6 +113,10 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.price = { $gte: query.minPrice };
     }
 
+    if (query.isSpecial !== undefined) {
+      filter.specialOffer = query.isSpecial;
+    }
+
     if (query.maxPrice !== undefined) {
       if (!filter.price) {
         filter.price = {};
@@ -137,16 +140,6 @@ export default class TrainingService implements TrainingServiceInterface {
       if (Number.isInteger(rating) && rating >= 0 && rating <= 5) {
         filter.rating = rating;
       }
-    }
-  }
-
-  private applyWorkoutDurationFilter(query: TrainingQueryParams, filter: TrainingFilter): void {
-    if (query.workoutDuration) {
-      const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
-      const filterValues = workoutDurationsArray
-        .filter((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration])
-        .map((selectedDuration) => durationFilters[selectedDuration as WorkoutDuration]);
-      filter.workoutDuration = { $in: filterValues };
     }
   }
 }

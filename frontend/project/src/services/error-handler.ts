@@ -1,5 +1,6 @@
 import { InternalAxiosRequestConfig } from 'axios';
 import {StatusCodes} from 'http-status-codes';
+import { toast } from 'react-toastify';
 
 export interface CustomError {
   response?: CustomResponse;
@@ -24,9 +25,26 @@ export interface CustomResponseData {
   value: string;
   property: string;
   children: never[];
-  constraints: {
-    matches: string;
-  };
+  constraints: AnyObject;
+}
+
+interface AnyObject {
+  [key: string]: string;
+}
+
+export function showToast<T extends AnyObject>(obj: T): void {
+  let message = '';
+
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      const value = obj[key];
+      message += `${key}: ${value} `;
+    }
+  }
+
+  if (message.trim() !== '') {
+    toast.warn<string>(message.trim());
+  }
 }
 
 export function parseResponse(response: CustomResponse): ParsedResponse | undefined {
@@ -48,7 +66,8 @@ const StatusCodeMapping: Record<number, boolean> = {
   [StatusCodes.BAD_REQUEST]: true,
   [StatusCodes.UNAUTHORIZED]: true,
   [StatusCodes.NOT_FOUND]: true,
-  [StatusCodes.FORBIDDEN]: true
+  [StatusCodes.FORBIDDEN]: true,
+  [StatusCodes.CONFLICT]: true,
 };
 
 export const shouldDisplayError = (response: CustomResponse) => !!StatusCodeMapping[response.status];

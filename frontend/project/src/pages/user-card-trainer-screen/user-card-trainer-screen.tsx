@@ -1,7 +1,9 @@
 import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import { Link } from 'react-router-dom';
+import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
 
 function UserCardScreen() : JSX.Element {
+  const id = null;
   return(
     <div className="inner-page inner-page--no-sidebar">
       <div className="container">
@@ -114,10 +116,7 @@ function UserCardScreen() : JSX.Element {
                           <div className="thumbnail-training__text-wrapper">
                             <p className="thumbnail-training__text">Знаменитый кроссфит комплекс. Синди – универсальная тренировка для развития функциональной силы.</p>
                           </div>
-                          <div className="thumbnail-training__button-wrapper">
-                            <Link className="btn btn--small thumbnail-training__button-catalog" to="">Подробнее</Link>
-                            <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to="">Отзывы</Link>
-                          </div>
+                          {id && <ThumbnailTrainingWrapper trainingId={id}/>}
                         </div>
                       </div>
                     </li>

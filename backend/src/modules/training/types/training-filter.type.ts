@@ -1,5 +1,4 @@
 import { Sorting } from '../../../types/sorting.enum.js';
-import { WorkoutType } from '../../../types/workout-type.enum.js';
 
 export type TrainingFilter = {
   trainer?: string;
@@ -11,6 +10,7 @@ export type TrainingFilter = {
   workoutDuration?: { $in: string[] };
   price?: { $gte?: number; $lte?: number };
   calories?: { $gte?: number; $lte?: number };
-  workoutTypes?: { $in: WorkoutType[] };
+  workoutType?: { $in: string[] };
   sortByPrice?: Sorting;
+  specialOffer?: boolean;
 }

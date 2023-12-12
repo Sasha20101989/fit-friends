@@ -22,6 +22,8 @@ import { capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
+import { getLoadingStatus } from '../../store/main-data/main-data.selectors';
+import Loading from '../../components/loading/loading';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -36,6 +38,7 @@ function UserProfileScreen(): JSX.Element {
   const selectedAvatar = useAppSelector(getAvatar);
   const readinessToWorkout = useAppSelector(getReadiessToWorkout);
   const specializations = useAppSelector(getSpecializations);
+  const isLoading = useAppSelector(getLoadingStatus);
 
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
   const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
@@ -54,6 +57,10 @@ function UserProfileScreen(): JSX.Element {
 
   if (!user || !id) {
     return <NotFoundScreen/>;
+  }
+
+  if (isLoading) {
+    return <Loading/>;
   }
 
   const contentComponent = role === Role.Trainer ? (
@@ -115,8 +122,6 @@ function UserProfileScreen(): JSX.Element {
 
         dispatch(editTrainerAction(trainerData));
       }
-    }else if(role === Role.User){
-
     }
   };
 

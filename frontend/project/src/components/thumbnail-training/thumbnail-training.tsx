@@ -5,7 +5,6 @@ import ThumbnailTrainingRate from '../thumbnail-training-rate/thumbnail-training
 import ThumbnailTrainingText from '../thumbnail-training-text/thumbnail-training-text';
 import ThumbnailTrainingWrapper from '../thumbnail-training-wrapper/thumbnail-training-wrapper';
 
-
 type ThumbnailTrainingProps = {
   training: Training;
 }
@@ -28,7 +27,7 @@ function ThumbnailTraining({ training }: ThumbnailTrainingProps): JSX.Element {
             <ThumbnailTrainingRate rate={rating}/>
           </div>
           <ThumbnailTrainingText text={description}/>
-          <ThumbnailTrainingWrapper/>
+          {training.id && <ThumbnailTrainingWrapper trainingId={training.id}/>}
         </div>
       </div>
     </li>

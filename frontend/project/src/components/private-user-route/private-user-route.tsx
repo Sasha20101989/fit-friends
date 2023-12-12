@@ -11,15 +11,10 @@ type PrivateUserRouteProps = {
   userId: string;
 }
 
-function PrivateUserRoute(props: PrivateUserRouteProps): JSX.Element {
-  const {userId, authorizationStatus, role, registerStatus, children} = props;
+function PrivateUserRoute({authorizationStatus, role, registerStatus, children, userId}: PrivateUserRouteProps): JSX.Element {
 
   if(isUser(role) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
     return children;
-  }
-
-  if(isTrainer(role) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
-    return <Navigate to={`${AppRoute.Trainers}/${userId}`}/>;
   }
 
   if(isAuthorizationUnknown(authorizationStatus, role)) {
@@ -28,6 +23,10 @@ function PrivateUserRoute(props: PrivateUserRouteProps): JSX.Element {
 
   if(isUser(role) && registerStatus === RegisterStatus.InProgress){
     return <Navigate to={AppRoute.RegisterUser}/>;
+  }
+
+  if(isTrainer(role) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
+    return <Navigate to={`${AppRoute.Trainers}/${userId}`}/>;
   }
 
   return <Navigate to={AppRoute.MainRegister}/>;

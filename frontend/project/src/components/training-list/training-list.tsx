@@ -9,7 +9,7 @@ function TrainingList({trainings}: TrainingListProps): JSX.Element {
   return (
     <ul className="my-trainings__list">
       {trainings.map((training) => (
-        <TrainingItem key={`${training.name}-${training.createdAt}`} training={training} />
+        <TrainingItem key={`${training.name}-${training.trainer.email}`} training={training} />
       ))}
     </ul>
   );

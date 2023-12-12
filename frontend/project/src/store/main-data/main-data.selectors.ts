@@ -5,7 +5,10 @@ import { TrainingOrder } from '../../types/training-order.type';
 import { Review } from '../../types/review.type';
 
 export const getPopularTrainings = (state: State): Training[] => state[NameSpace.Data].popularTrainings;
+export const getSpecialForUserTrainings = (state: State): Training[] => state[NameSpace.Data].specialForUserTrainings;
+export const getSpecialTrainings = (state: State): Training[] => state[NameSpace.Data].specialTrainings;
 export const getTrainerTrainings = (state: State): Training[] => state[NameSpace.Data].trainerTrainings;
 export const getOrders = (state: State): TrainingOrder[] => state[NameSpace.Data].orders;
 export const getTraining = (state: State): Training | null => state[NameSpace.Data].selectedTraining;
 export const getReviews = (state: State): Review[] => state[NameSpace.Data].reviews;
+export const getLoadingStatus = (state: State): boolean => state[NameSpace.Data].isSubmitting;

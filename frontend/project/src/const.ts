@@ -2,6 +2,7 @@ import { GenderPreference } from './types/gender-preference.enum';
 import { Gender } from './types/gender.enum';
 import { Role } from './types/role.enum';
 
+
 export enum NameSpace {
   Data = 'data',
   Main = 'main',
@@ -73,6 +74,8 @@ export const isValidPassword = (password: string): boolean => {
 };
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
+export const MAX_SPECIAL_TRAININGS_COUNT = 3;
+export const DISCOUNT_PERCENTAGE = 0.9;
 
 export const isAuthorization = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Auth;

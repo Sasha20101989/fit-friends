@@ -4,10 +4,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { Training } from '../../types/training.type';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { getTrainerTrainings } from '../../store/main-data/main-data.selectors';
-import { FetchTrainerTrainingsParams, fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { FetchTrainingsParams, fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { debounce } from 'lodash';
+import { TrainingCategory } from '../../types/training-category';
 
 function TrainerTrainingsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -20,12 +21,13 @@ function TrainerTrainingsScreen(): JSX.Element {
   const [maxCalories, setMaxCalories] = useState<number | ''>('');
   const [selectedDuration, setDuration] = useState<WorkoutDuration | ''>('');
 
-  const [queryParams, setQueryParams] = useState<FetchTrainerTrainingsParams>({
+  const [queryParams, setQueryParams] = useState<FetchTrainingsParams>({
+    category: TrainingCategory.FOR_TRAINER,
     userId: id || '',
   });
 
   const debouncedFetchTrainerTrainings = debounce(
-    (params: FetchTrainerTrainingsParams) => {
+    (params: FetchTrainingsParams) => {
       dispatch(fetchTrainerTrainingsAction(params));
     },
     400

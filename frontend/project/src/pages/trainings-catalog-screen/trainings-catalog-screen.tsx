@@ -1,8 +1,9 @@
-import { Link } from 'react-router-dom';
 import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import Layout from '../../components/layout/layout';
+import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
 
 function TrainingsCatalogScreen() : JSX.Element {
+  const id = null;
   return(
     <Layout>
       <section className="inner-page">
@@ -231,10 +232,7 @@ function TrainingsCatalogScreen() : JSX.Element {
                       <div className="thumbnail-training__text-wrapper">
                         <p className="thumbnail-training__text">Сложный комплекс упражнений для профессиональных атлетов на&nbsp;отработку показателей в&nbsp;классическом стиле.</p>
                       </div>
-                      <div className="thumbnail-training__button-wrapper">
-                        <Link className="btn btn--small thumbnail-training__button-catalog" to="">Подробнее</Link>
-                        <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to="">Отзывы</Link>
-                      </div>
+                      {id && <ThumbnailTrainingWrapper trainingId={id}/>}
                     </div>
                   </div>
                 </li>
