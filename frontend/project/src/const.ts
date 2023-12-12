@@ -75,6 +75,7 @@ export const isValidPassword = (password: string): boolean => {
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
+export const MAX_POPULAR_TRAININGS_COUNT = 4;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
 export const isAuthorization = (status: AuthorizationStatus) =>

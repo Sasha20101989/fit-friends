@@ -58,8 +58,8 @@ function SpecialForYou(): JSX.Element {
           <div className="special-for-you__title-wrapper">
             <h2 className="special-for-you__title">Специально подобрано для вас</h2>
             <div className="special-for-you__controls">
-              <IconButton direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
-              <IconButton direction="right" onClick={handleNextClick} ariaLabel="next" />
+              <IconButton sourceName={'btn-icon special-for-you__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
+              <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" />
             </div>
           </div>
           <ul className="special-for-you__list">

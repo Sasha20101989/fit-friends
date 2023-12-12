@@ -1,21 +1,37 @@
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
 import { Training } from '../../types/training.type';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { getPopularTrainings } from '../../store/main-data/main-data.selectors';
 import { TrainingCategory } from '../../types/training-category';
 import { getUserId } from '../../store/main-process/main-process.selectors';
-
+import IconButton from '../icon-button/icon-button';
+import { MAX_POPULAR_TRAININGS_COUNT } from '../../const';
 
 function PopularTrainings():JSX.Element {
   const dispatch = useAppDispatch();
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
   const userId = useAppSelector(getUserId);
 
+  const [selectedSpecialPage, setSpecialPage] = useState<number>(1);
+
+  const handlePreviousClick = () => {
+    setSpecialPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextClick = () => {
+    setSpecialPage((prevPage) => prevPage + 1);
+  };
+
   useEffect(() => {
-    dispatch(fetchTrainingsAction({category: TrainingCategory.POPULAR, userId: userId}));
-  }, [dispatch, userId]);
+    dispatch(fetchTrainingsAction({
+      category: TrainingCategory.POPULAR,
+      userId: userId,
+      page: selectedSpecialPage,
+      limit: MAX_POPULAR_TRAININGS_COUNT,
+    }));
+  }, [dispatch, userId, selectedSpecialPage]);
 
   return (
     <section className="popular-trainings">
@@ -30,16 +46,8 @@ function PopularTrainings():JSX.Element {
               </svg>
             </button>
             <div className="popular-trainings__controls">
-              <button className="btn-icon popular-trainings__control" type="button" aria-label="previous">
-                <svg width="16" height="14" aria-hidden="true">
-                  <use xlinkHref="#arrow-left"></use>
-                </svg>
-              </button>
-              <button className="btn-icon popular-trainings__control" type="button" aria-label="next">
-                <svg width="16" height="14" aria-hidden="true">
-                  <use xlinkHref="#arrow-right"></use>
-                </svg>
-              </button>
+              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
+              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="right" onClick={handleNextClick} ariaLabel="next" />
             </div>
           </div>
           <ul className="popular-trainings__list">
