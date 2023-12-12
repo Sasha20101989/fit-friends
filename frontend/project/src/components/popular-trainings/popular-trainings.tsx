@@ -7,10 +7,12 @@ import { getPopularTrainings } from '../../store/main-data/main-data.selectors';
 import { TrainingCategory } from '../../types/training-category';
 import { getUserId } from '../../store/main-process/main-process.selectors';
 import IconButton from '../icon-button/icon-button';
-import { MAX_POPULAR_TRAININGS_COUNT } from '../../const';
+import { AppRoute, MAX_POPULAR_TRAININGS_COUNT } from '../../const';
+import { useNavigate } from 'react-router-dom';
 
 function PopularTrainings():JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
   const userId = useAppSelector(getUserId);
 
@@ -22,6 +24,11 @@ function PopularTrainings():JSX.Element {
 
   const handleNextClick = () => {
     setSpecialPage((prevPage) => prevPage + 1);
+  };
+
+  const handleShowAllClick = (evt: React.MouseEvent<HTMLButtonElement>): void => {
+    evt.preventDefault();
+      navigate(AppRoute.TrainingsCatalog);
   };
 
   useEffect(() => {
@@ -39,7 +46,7 @@ function PopularTrainings():JSX.Element {
         <div className="popular-trainings__wrapper">
           <div className="popular-trainings__title-wrapper">
             <h2 className="popular-trainings__title">Популярные тренировки</h2>
-            <button className="btn-flat popular-trainings__button" type="button">
+            <button className="btn-flat popular-trainings__button" type="button" onClick={handleShowAllClick}>
               <span>Смотреть все</span>
               <svg width="14" height="10" aria-hidden="true">
                 <use xlinkHref="#arrow-right"></use>

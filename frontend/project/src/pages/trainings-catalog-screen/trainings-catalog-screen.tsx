@@ -1,9 +1,15 @@
 import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import Layout from '../../components/layout/layout';
 import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
+import { Training } from '../../types/training.type';
+import { useAppSelector } from '../../hooks/index';
+import { getTrainings } from '../../store/main-data/main-data.selectors';
 
 function TrainingsCatalogScreen() : JSX.Element {
   const id = null;
+
+  const trainings: Training[] = useAppSelector(getTrainings);
+
   return(
     <Layout>
       <section className="inner-page">

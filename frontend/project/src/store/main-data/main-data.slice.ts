@@ -8,6 +8,7 @@ export const initialState: DataState = {
   specialTrainings: [],
   specialForUserTrainings: [],
   trainerTrainings: [],
+  trainings: [],
   reviews: [],
   orders: [],
   selectedTraining: null,
@@ -23,6 +24,9 @@ export const mainData = createSlice({
     },
     setPopularTrainings: (state, action: PayloadAction<Training[]>) => {
       state.popularTrainings = action.payload;
+    },
+    setTrainings: (state, action: PayloadAction<Training[]>) => {
+      state.trainings = action.payload;
     },
     setSpecialTrainings: (state, action: PayloadAction<Training[]>) => {
       state.specialTrainings = action.payload;
@@ -104,6 +108,7 @@ export const mainData = createSlice({
 });
 
 export const {
+  setTrainings,
   setSpecialForUserTrainings,
   setPopularTrainings,
   setSpecialTrainings,

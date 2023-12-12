@@ -5,7 +5,7 @@ import { APIRoute } from '../../../const';
 import { Training } from '../../../types/training.type';
 import { TrainingOrder } from '../../../types/training-order.type';
 import CreateTrainingDto from '../../../dto/create-training.dto';
-import { setPopularTrainings, setSpecialForUserTrainings, setSpecialTrainings, setTraining } from '../../main-data/main-data.slice';
+import { setPopularTrainings, setSpecialForUserTrainings, setSpecialTrainings, setTraining, setTrainings } from '../../main-data/main-data.slice';
 import { Review } from '../../../types/review.type';
 import UpdateTrainingDto from '../../../dto/update-training.dto';
 import { WorkoutDuration } from '../../../types/workout-duration.enum';
@@ -55,6 +55,8 @@ export const fetchTrainingsAction = createAsyncThunk<Training[], FetchTrainingsP
         dispatch(setSpecialTrainings(data));
       } else if (category === TrainingCategory.POPULAR) {
         dispatch(setPopularTrainings(data));
+      } else if (category === TrainingCategory.BASE) {
+        dispatch(setTrainings(data));
       }
 
       return data;

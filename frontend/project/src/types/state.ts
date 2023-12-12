@@ -38,6 +38,7 @@ export type MainState = {
 
 export type DataState = {
   popularTrainings: Training[];
+  trainings: Training[];
   specialTrainings: Training[];
   specialForUserTrainings: Training[];
   trainerTrainings: Training[];

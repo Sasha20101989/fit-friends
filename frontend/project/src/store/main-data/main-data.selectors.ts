@@ -5,6 +5,7 @@ import { TrainingOrder } from '../../types/training-order.type';
 import { Review } from '../../types/review.type';
 
 export const getPopularTrainings = (state: State): Training[] => state[NameSpace.Data].popularTrainings;
+export const getTrainings = (state: State): Training[] => state[NameSpace.Data].trainings;
 export const getSpecialForUserTrainings = (state: State): Training[] => state[NameSpace.Data].specialForUserTrainings;
 export const getSpecialTrainings = (state: State): Training[] => state[NameSpace.Data].specialTrainings;
 export const getTrainerTrainings = (state: State): Training[] => state[NameSpace.Data].trainerTrainings;
