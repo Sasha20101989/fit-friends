@@ -12,4 +12,5 @@ export type UserQueryParams = {
   limit?: number;
   page?: number;
   createdAtDirection?: Sorting;
+  readinessForWorkout?: boolean;
 }

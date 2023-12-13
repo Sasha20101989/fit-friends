@@ -37,6 +37,8 @@ export type MainState = {
 }
 
 export type DataState = {
+  selectedUser: User | Trainer | null;
+  users: User[];
   popularTrainings: Training[];
   trainings: Training[];
   specialTrainings: Training[];

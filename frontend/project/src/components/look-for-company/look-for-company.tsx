@@ -1,14 +1,17 @@
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import ThumbnailUser from '../thumbnail-user/thumbnail-user';
+import { fetchUsersAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { getUsers } from '../../store/main-data/main-data.selectors';
 
 const LookForCompany = () => {
-  const usersData = [
-    {
-      name: 'Диана',
-      imageSrc: 'img/content/thumbnails/user-04',
-      location: 'Невский проспект',
-      hashtags: ['#пилатес']
-    }
-  ];
+  const dispatch = useAppDispatch();
+
+  const users = useAppSelector(getUsers);
+
+  useEffect(() => {
+    dispatch(fetchUsersAction({readinessForWorkout: true}));
+  }, [dispatch]);
 
   return (
     <section className="look-for-company">
@@ -36,8 +39,8 @@ const LookForCompany = () => {
             </div>
           </div>
           <ul className="look-for-company__list">
-            {usersData.map((user) => (
-              <ThumbnailUser key={user.name} {...user} />
+            {users.map((user) => (
+              <ThumbnailUser key={user.email} user={user} />
             ))}
           </ul>
         </div>

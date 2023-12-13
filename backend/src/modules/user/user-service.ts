@@ -119,6 +119,7 @@ export default class UserService implements UserServiceInterface {
     const page = query.page || 1;
     const skip = (page - 1) * userLimit;
 
+    this.applyReadinessFilter(query, filter);
     applyLocationFilter(query, filter);
     applyWorkoutTypeFilter(query, filter);
     applyTrainingLevelFilter(query, filter);
@@ -139,5 +140,11 @@ export default class UserService implements UserServiceInterface {
 
   public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({ _id: userId});
+  }
+
+  private applyReadinessFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.readinessForWorkout !== undefined) {
+      filter.readinessForWorkout = query.readinessForWorkout;
+    }
   }
 }

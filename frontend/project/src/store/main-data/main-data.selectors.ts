@@ -3,7 +3,11 @@ import { State } from '../../types/state';
 import { Training } from '../../types/training.type';
 import { TrainingOrder } from '../../types/training-order.type';
 import { Review } from '../../types/review.type';
+import { User } from '../../types/user.interface';
+import { Trainer } from '../../types/trainer.interface';
 
+export const getUsers = (state: State): User[] => state[NameSpace.Data].users;
+export const getSelectedUser = (state: State): User | Trainer | null => state[NameSpace.Data].selectedUser;
 export const getPopularTrainings = (state: State): Training[] => state[NameSpace.Data].popularTrainings;
 export const getTrainings = (state: State): Training[] => state[NameSpace.Data].trainings;
 export const getSpecialForUserTrainings = (state: State): Training[] => state[NameSpace.Data].specialForUserTrainings;

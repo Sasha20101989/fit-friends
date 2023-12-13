@@ -1,19 +1,31 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
+import { User } from '../../types/user.interface';
+import { AppRoute } from '../../const';
 
 type ThumbnailUserProps = {
-  name: string;
-  imageSrc: string;
-  location: string;
-  hashtags: string[];
+  user: User;
 }
 
-function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProps): JSX.Element {
+function ThumbnailUser({ user }: ThumbnailUserProps): JSX.Element {
+  const navigate = useNavigate();
+
+  const { avatar, name, location, workoutTypes } = user;
   const theme = 'light';
+  const hashtags = workoutTypes;
+
+  const handleUserClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
+    evt.preventDefault();
+    const userId = user?.id;
+    if (userId && user) {
+      navigate(`${AppRoute.Users}/${userId}`);
+    }
+  };
+
   return (
     <li className="look-for-company__item">
       <div className={`thumbnail-user thumbnail-user--role-user thumbnail-user--${theme}`}>
-        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={imageSrc} width={82} height={82} alt={'аватар пользователя'}/>
+        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={avatar ? avatar : ''} width={82} height={82} alt={'аватар пользователя'}/>
         {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
                       <svg width="12" height="12" aria-hidden="true">
                         <use xlinkHref="#icon-crown"></use>
@@ -31,11 +43,13 @@ function ThumbnailUser({ name, imageSrc, location, hashtags }: ThumbnailUserProp
         <ul className="thumbnail-user__hashtags-list">
           {hashtags.map((hashtag) => (
             <li key={hashtag} className="thumbnail-user__hashtags-item">
-              <div className="hashtag thumbnail-user__hashtag"><span>{hashtag}</span></div>
+              <div className="hashtag thumbnail-user__hashtag">
+                <span>{`#${hashtag}`}</span>
+              </div>
             </li>
           ))}
         </ul>
-        <Link className={`btn btn--outlined btn--${theme}-bg btn--medium thumbnail-user__button`} to="">Подробнее</Link>
+        {user.id && <Link className={`btn btn--outlined btn--${theme}-bg btn--medium thumbnail-user__button`} to="" onClick={handleUserClick}>Подробнее</Link>}
       </div>
     </li>
   );

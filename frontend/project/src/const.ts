@@ -63,9 +63,9 @@ export enum AppRoute {
   UserPurchases = '/my-purchases',
   UserRoom = '/user/home',
   UsersCatalog = 'users/catalog',
-  UserCard = '/users/user-card',
   TrainingsCatalog = 'trainings/catalog',
-  Friends = '/friends'
+  Friends = '/friends',
+  Users = '/users'
 }
 
 export const isValidPassword = (password: string): boolean => {

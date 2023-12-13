@@ -2,8 +2,11 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
+import { fetchSelectedUserAction, fetchUsersAction } from '../api-actions/user-api-actions/user-api-actions';
 
 export const initialState: DataState = {
+  users: [],
+  selectedUser: null,
   popularTrainings: [],
   specialTrainings: [],
   specialForUserTrainings: [],
@@ -37,6 +40,26 @@ export const mainData = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchSelectedUserAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchSelectedUserAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.selectedUser = action.payload;
+      })
+      .addCase(fetchSelectedUserAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchUsersAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchUsersAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsersAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(editTrainingAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })

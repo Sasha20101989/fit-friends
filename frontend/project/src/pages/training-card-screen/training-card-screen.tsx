@@ -47,7 +47,6 @@ function TrainingCardScreen() : JSX.Element {
     return <NotFoundScreen/>;
   }
 
-
   const handleTrainingNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
     evt.preventDefault();
 

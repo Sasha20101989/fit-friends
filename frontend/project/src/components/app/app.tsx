@@ -144,7 +144,7 @@ function App(): JSX.Element {
         }
       />
       <Route
-        path={AppRoute.UserCard}
+        path={`${AppRoute.Users}/:id`}
         element={
           // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <UserCardScreen/>

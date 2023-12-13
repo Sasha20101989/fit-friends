@@ -9,6 +9,20 @@ import { changeLevel, changeReadiessToWorkout, setAvatar, setDescription, setGen
 import { User } from '../../../types/user.interface';
 import { Trainer } from '../../../types/trainer.interface';
 import { Role } from '../../../types/role.enum';
+import { Sorting } from '../../../types/sorting.enum';
+import { TrainingLevel } from '../../../types/training-level.enum';
+import { WorkoutType } from '../../../types/workout-type.enum';
+
+export type UserQueryParams = {
+  location?: Location;
+  workoutTypes?: WorkoutType[];
+  trainingLevel?: TrainingLevel;
+  sortBy?: Role;
+  limit?: number;
+  page?: number;
+  createdAtDirection?: Sorting;
+  readinessForWorkout?: boolean;
+}
 
 export const editUserAction = createAsyncThunk<
   void,
@@ -92,6 +106,38 @@ export const fetchFriendsAction = createAsyncThunk<User[], object, {
       return data;
     } catch (error) {
       return [];
+    }
+  },
+);
+
+export const fetchUsersAction = createAsyncThunk<User[], UserQueryParams, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchUsers',
+  async (params, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<User[]>(APIRoute.Users, { params });
+      return data;
+    } catch (error) {
+      return [];
+    }
+  },
+);
+
+export const fetchSelectedUserAction = createAsyncThunk<User | Trainer | null, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'data/fetchSelectedUser',
+  async (userId, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<User | Trainer | null>(`${APIRoute.Users}/${userId}`);
+      return data;
+    } catch (error) {
+      return null;
     }
   },
 );

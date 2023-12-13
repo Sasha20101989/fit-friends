@@ -4,4 +4,5 @@ export type UserFilter = {
   location?: string;
   workoutType?: { $in: WorkoutType[] };
   trainingLevel?: string;
+  readinessForWorkout?: boolean;
 }
