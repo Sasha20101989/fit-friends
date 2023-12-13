@@ -4,6 +4,7 @@ import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrappe
 import { Training } from '../../types/training.type';
 import { useAppSelector } from '../../hooks/index';
 import { getTrainings } from '../../store/main-data/main-data.selectors';
+import { WorkoutType } from '../../types/workout-type.enum.js';
 
 function TrainingsCatalogScreen() : JSX.Element {
   const id = null;
@@ -85,110 +86,25 @@ function TrainingsCatalogScreen() : JSX.Element {
                   <div className="gym-catalog-form__block gym-catalog-form__block--type">
                     <h4 className="gym-catalog-form__block-title">Тип</h4>
                     <ul className="gym-catalog-form__check-list">
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">йога</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">силовые</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">кроссфит</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">бокс</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">бег</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">аэробика</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">пилатес</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="gym-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="type-1" name="type"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">стрейчинг</span>
-                          </label>
-                        </div>
-                      </li>
+                      {Object.values(WorkoutType).map((type) => (
+                        <li key={type} className="gym-catalog-form__check-list-item">
+                          <div className="custom-toggle custom-toggle--checkbox">
+                            <label>
+                              <input
+                                type="checkbox"
+                                name="type"
+                                value={type}
+                              />
+                              <span className="custom-toggle__icon">
+                                <svg width="9" height="6" aria-hidden="true">
+                                  <use xlinkHref="#arrow-check"></use>
+                                </svg>
+                              </span>
+                              <span className="custom-toggle__label">{type}</span>
+                            </label>
+                          </div>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className="gym-catalog-form__block gym-catalog-form__block--sort">
