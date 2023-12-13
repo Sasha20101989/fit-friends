@@ -114,6 +114,7 @@ export const workoutTypeFilters: { [key in WorkoutType]: string } = {
   [WorkoutType.Running]: WorkoutType.Running,
   [WorkoutType.Stretching]: WorkoutType.Stretching,
   [WorkoutType.Yoga]: WorkoutType.Yoga,
+  [WorkoutType.Power]: WorkoutType.Power,
 };
 
 export function applyWorkoutDurationFilter(query: TrainingQueryParams, filter: TrainingFilter): void {
