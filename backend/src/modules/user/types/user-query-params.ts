@@ -5,7 +5,7 @@ import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 
 export type UserQueryParams = {
-  location?: Location;
+  location?: Location[];
   workoutTypes?: WorkoutType[];
   trainingLevel?: TrainingLevel;
   sortBy?: Role;

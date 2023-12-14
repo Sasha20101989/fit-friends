@@ -48,6 +48,7 @@ export type DataState = {
   orders: TrainingOrder[];
   selectedTraining: Training | null;
   isSubmitting: boolean;
+  pagination: {page?: number | undefined, limit?: number | undefined};
 }
 
 export type AppState = {

@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
@@ -9,9 +9,11 @@ import { fetchSelectedUserAction } from '../../store/api-actions/user-api-action
 import { Role } from '../../types/role.enum';
 import { User } from '../../types/user.interface';
 import { Trainer } from '../../types/trainer.interface';
+import { AppRoute } from '../../const';
 
 function UserCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
@@ -23,16 +25,16 @@ function UserCardScreen() : JSX.Element {
 
   const user = useAppSelector(getSelectedUser);
 
+  const handleGoCatalog = (): void => {
+    navigate(AppRoute.UsersCatalog);
+  };
+
   if(!user){
     return <NotFoundScreen/>;
   }
 
-  if (!user) {
-    return <NotFoundScreen/>;
-  }
-
   let name, location, description, workoutTypes, role;
-  let readinessForWorkout, personalTraining;
+  let readinessForWorkout;
 
   if (user.role === Role.User) {
     const currentUser = user as User;
@@ -49,7 +51,7 @@ function UserCardScreen() : JSX.Element {
     description = currentTrainer.description;
     workoutTypes = currentTrainer.workoutTypes;
     role = currentTrainer.role;
-    personalTraining = currentTrainer.personalTraining;
+    //personalTraining = currentTrainer.personalTraining;
   }
 
   const hashtags = workoutTypes;
@@ -59,10 +61,11 @@ function UserCardScreen() : JSX.Element {
       <div className="inner-page inner-page--no-sidebar">
         <div className="container">
           <div className="inner-page__wrapper">
-            <button className="btn-flat inner-page__back" type="button">
+            <button className="btn-flat inner-page__back" type="button" onClick={handleGoCatalog}>
               <svg width="14" height="10" aria-hidden="true">
                 <use xlinkHref="#arrow-left"></use>
-              </svg><span>Назад</span>
+              </svg>
+              <span>Назад</span>
             </button>
             <div className="inner-page__content">
               <section className="user-card">

@@ -12,9 +12,12 @@ import { Role } from '../../../types/role.enum';
 import { Sorting } from '../../../types/sorting.enum';
 import { TrainingLevel } from '../../../types/training-level.enum';
 import { WorkoutType } from '../../../types/workout-type.enum';
+import { Location } from '../../../types/location.enum';
+import { getUsers } from '../../main-data/main-data.selectors';
+import { setPaginationParams } from '../../main-data/main-data.slice';
 
 export type UserQueryParams = {
-  location?: Location;
+  location?: Location[];
   workoutTypes?: WorkoutType[];
   trainingLevel?: TrainingLevel;
   sortBy?: Role;
@@ -120,6 +123,25 @@ export const fetchUsersAction = createAsyncThunk<User[], UserQueryParams, {
     try {
       const { data } = await api.get<User[]>(APIRoute.Users, { params });
       return data;
+    } catch (error) {
+      return [];
+    }
+  },
+);
+
+export const fetchUsersWithPaginationAction = createAsyncThunk<User[], UserQueryParams, { dispatch: AppDispatch; state: State; extra: AxiosInstance }>(
+  'user/fetchUsersWithPagination',
+  async (params, { getState, dispatch, extra: api }) => {
+    try {
+      const state = getState();
+      const currentUsers = getUsers(state);
+      const { data } = await api.get<User[]>(APIRoute.Users, { params });
+
+      if(params.page && params.limit){
+        dispatch(setPaginationParams({ page: params.page, limit: params.limit }));
+      }
+
+      return [...currentUsers, ...data];
     } catch (error) {
       return [];
     }

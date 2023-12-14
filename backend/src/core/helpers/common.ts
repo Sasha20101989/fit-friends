@@ -117,6 +117,20 @@ export const workoutTypeFilters: { [key in WorkoutType]: string } = {
   [WorkoutType.Power]: WorkoutType.Power,
 };
 
+export const locationsFilters: { [key in Location]: string } = {
+  [Location.Petrograd]: Location.Petrograd,
+  [Location.Pioneer]: Location.Pioneer,
+  [Location.Sportivnaya]: Location.Sportivnaya,
+  [Location.Udelnaya]: Location.Udelnaya,
+  [Location.Zvezdnaya]: Location.Zvezdnaya,
+};
+
+export const levelsFilters: { [key in TrainingLevel]: string } = {
+  [TrainingLevel.Amateur]: TrainingLevel.Amateur,
+  [TrainingLevel.Beginner]: TrainingLevel.Beginner,
+  [TrainingLevel.Professional]: TrainingLevel.Professional,
+};
+
 export function applyWorkoutDurationFilter(query: TrainingQueryParams, filter: TrainingFilter): void {
   if (query.workoutDuration) {
     const workoutDurationsArray = query.workoutDuration.toString().toLowerCase().split(',').map((duration) => duration.trim());
@@ -137,9 +151,13 @@ export function applyWorkoutTypeFilter(query: TrainingQueryParams, filter: Train
   }
 }
 
-export function applyLocationFilter(query: UserQueryParams, filter: UserFilter): void {
-  if (query.location && Object.values(Location).includes(query.location)) {
-    filter.location = query.location.toLowerCase();
+export function applyLocationsFilter(query: UserQueryParams, filter: UserFilter): void {
+  if (query.location) {
+    const locationsArray = query.location.toString().toLowerCase().split(',').map((item) => item.trim());
+    const filterValues = locationsArray
+      .filter((selectedLocation) => locationsFilters[selectedLocation as Location])
+      .map((selectedLocation) => locationsFilters[selectedLocation as Location]);
+    filter.location = { $in: filterValues };
   }
 }
 

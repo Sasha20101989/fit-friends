@@ -2,7 +2,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
-import { fetchSelectedUserAction, fetchUsersAction } from '../api-actions/user-api-actions/user-api-actions';
+import { fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction } from '../api-actions/user-api-actions/user-api-actions';
+import { User } from '../../types/user.interface';
 
 export const initialState: DataState = {
   users: [],
@@ -16,12 +17,22 @@ export const initialState: DataState = {
   orders: [],
   selectedTraining: null,
   isSubmitting: false,
+  pagination: {
+    page: undefined,
+    limit: undefined
+  }
 };
 
 export const mainData = createSlice({
   name: 'data',
   initialState: initialState,
   reducers: {
+    setUsers: (state, action: PayloadAction<User[]>) => {
+      state.users = action.payload;
+    },
+    setPaginationParams: (state, action: PayloadAction<{page: number; limit: number}>) => {
+      state.pagination = action.payload;
+    },
     setTraining: (state, action: PayloadAction<Training>) => {
       state.selectedTraining = action.payload;
     },
@@ -40,6 +51,17 @@ export const mainData = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchUsersWithPaginationAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchUsersWithPaginationAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.pagination = action.meta.arg;
+        state.users = action.payload;
+      })
+      .addCase(fetchUsersWithPaginationAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(fetchSelectedUserAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
@@ -131,6 +153,8 @@ export const mainData = createSlice({
 });
 
 export const {
+  setUsers,
+  setPaginationParams,
   setTrainings,
   setSpecialForUserTrainings,
   setPopularTrainings,

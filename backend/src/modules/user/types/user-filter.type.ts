@@ -1,8 +1,6 @@
-import { WorkoutType } from '../../../types/workout-type.enum.js';
-
 export type UserFilter = {
-  location?: string;
-  workoutType?: { $in: WorkoutType[] };
+  location?: { $in: string[] };
+  workoutTypes?: { $in: string[] };
   trainingLevel?: string;
   readinessForWorkout?: boolean;
 }

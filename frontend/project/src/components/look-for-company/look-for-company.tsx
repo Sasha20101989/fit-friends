@@ -6,6 +6,7 @@ import { getUsers } from '../../store/main-data/main-data.selectors';
 import IconButton from '../icon-button/icon-button';
 import { AppRoute, MAX_LOOK_FOR_COMPANY_COUNT } from '../../const';
 import { useNavigate } from 'react-router-dom';
+import { setUsers } from '../../store/main-data/main-data.slice';
 
 const LookForCompany = () => {
   const dispatch = useAppDispatch();
@@ -23,7 +24,8 @@ const LookForCompany = () => {
 
   const handleShowAllClick = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
-      navigate(AppRoute.UsersCatalog);
+    dispatch(setUsers([]));
+    navigate(AppRoute.UsersCatalog);
   };
 
   useEffect(() => {
@@ -53,7 +55,13 @@ const LookForCompany = () => {
           </div>
           <ul className="look-for-company__list">
             {users.map((user) => (
-              <ThumbnailUser key={user.email} user={user} />
+              <ThumbnailUser
+                sourceName={'look-for-company__item'}
+                childSourceName={'thumbnail-user thumbnail-user--role-user thumbnail-user--dark'}
+                buttonSourceName={'btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button'}
+                key={user.email}
+                user={user}
+              />
             ))}
           </ul>
         </div>

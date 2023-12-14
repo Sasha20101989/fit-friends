@@ -4,14 +4,16 @@ import { User } from '../../types/user.interface';
 import { AppRoute } from '../../const';
 
 type ThumbnailUserProps = {
+  sourceName: string;
+  childSourceName: string;
+  buttonSourceName: string;
   user: User;
 }
 
-function ThumbnailUser({ user }: ThumbnailUserProps): JSX.Element {
+function ThumbnailUser({ sourceName, childSourceName, buttonSourceName, user }: ThumbnailUserProps): JSX.Element {
   const navigate = useNavigate();
 
   const { avatar, name, location, workoutTypes } = user;
-  const theme = 'light';
   const hashtags = workoutTypes;
 
   const handleUserClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
@@ -23,8 +25,8 @@ function ThumbnailUser({ user }: ThumbnailUserProps): JSX.Element {
   };
 
   return (
-    <li className="look-for-company__item">
-      <div className={`thumbnail-user thumbnail-user--role-user thumbnail-user--${theme}`}>
+    <li className={sourceName}>
+      <div className={childSourceName}>
         <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={avatar ? avatar : ''} width={82} height={82} alt={'аватар пользователя'}/>
         {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
                       <svg width="12" height="12" aria-hidden="true">
@@ -49,7 +51,7 @@ function ThumbnailUser({ user }: ThumbnailUserProps): JSX.Element {
             </li>
           ))}
         </ul>
-        {user.id && <Link className={`btn btn--outlined btn--${theme}-bg btn--medium thumbnail-user__button`} to="" onClick={handleUserClick}>Подробнее</Link>}
+        {user.id && <Link className={buttonSourceName} to="" onClick={handleUserClick}>Подробнее</Link>}
       </div>
     </li>
   );

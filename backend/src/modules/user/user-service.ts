@@ -17,7 +17,10 @@ import { Role } from '../../types/role.enum.js';
 import { UserFilter } from './types/user-filter.type.js';
 import { TrainerEntity } from '../trainer/trainer.entity.js';
 import { ModelType } from '@typegoose/typegoose/lib/types.js';
-import { applyLocationFilter, applyTrainingLevelFilter, applyWorkoutTypeFilter, getSortOptionsForCreatedAt } from '../../core/helpers/index.js';
+import { getSortOptionsForCreatedAt, locationsFilters, workoutTypeFilters } from '../../core/helpers/index.js';
+import { Location } from '../../types/location.enum.js';
+import { WorkoutType } from '../../types/workout-type.enum.js';
+import { TrainingLevel } from '../../types/training-level.enum.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
@@ -120,9 +123,9 @@ export default class UserService implements UserServiceInterface {
     const skip = (page - 1) * userLimit;
 
     this.applyReadinessFilter(query, filter);
-    applyLocationFilter(query, filter);
-    applyWorkoutTypeFilter(query, filter);
-    applyTrainingLevelFilter(query, filter);
+    this.applyLocationsFilter(query, filter);
+    this.applyWorkoutTypesFilter(query, filter);
+    this.applyTrainingLevelFilter(query, filter);
 
     if (query.sortBy && Object.values(Role).includes(query.sortBy)) {
       sort['role'] = (query.sortBy === Role.User) ? Sorting.Ascending : Sorting.Descending;
@@ -145,6 +148,32 @@ export default class UserService implements UserServiceInterface {
   private applyReadinessFilter(query: UserQueryParams, filter: UserFilter): void {
     if (query.readinessForWorkout !== undefined) {
       filter.readinessForWorkout = query.readinessForWorkout;
+    }
+  }
+
+  private applyWorkoutTypesFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.workoutTypes) {
+      const workoutTypesArray = query.workoutTypes.toString().toLowerCase().split(',').map((workoutType) => workoutType.trim());
+      const filterValues = workoutTypesArray
+        .filter((selectedWorkoutType) => workoutTypeFilters[selectedWorkoutType as WorkoutType])
+        .map((selectedWorkoutType) => workoutTypeFilters[selectedWorkoutType as WorkoutType]);
+      filter.workoutTypes = { $in: filterValues };
+    }
+  }
+
+  private applyLocationsFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.location) {
+      const locationsArray = query.location.toString().toLowerCase().split(',').map((item) => item.trim());
+      const filterValues = locationsArray
+        .filter((selectedLocation) => locationsFilters[selectedLocation as Location])
+        .map((selectedLocation) => locationsFilters[selectedLocation as Location]);
+      filter.location = { $in: filterValues };
+    }
+  }
+
+  private applyTrainingLevelFilter(query: UserQueryParams, filter: UserFilter): void {
+    if (query.trainingLevel && Object.values(TrainingLevel).includes(query.trainingLevel.toLowerCase() as TrainingLevel)) {
+      filter.trainingLevel = query.trainingLevel.toLowerCase();
     }
   }
 }

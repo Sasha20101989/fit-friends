@@ -7,7 +7,7 @@ type RadioItemProps = {
   name: string;
   value: Gender | TrainingLevel | WorkoutDuration;
   selectedValue: Gender | TrainingLevel | WorkoutDuration | null;
-  onValueChange: (evt: React.ChangeEvent<HTMLInputElement>) => void;
+  onValueChange: (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => void;
 }
 
 function RadioItem({ classType, name, value, selectedValue, onValueChange }: RadioItemProps): JSX.Element {

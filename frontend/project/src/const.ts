@@ -62,7 +62,7 @@ export enum AppRoute {
   UserFriends = '/user/my-friends',
   UserPurchases = '/my-purchases',
   UserRoom = '/user/home',
-  UsersCatalog = 'users/catalog',
+  UsersCatalog = '/users/catalog',
   TrainingsCatalog = 'trainings/catalog',
   Friends = '/friends',
   Users = '/users'
@@ -77,6 +77,7 @@ export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
 export const MAX_POPULAR_TRAININGS_COUNT = 4;
 export const MAX_LOOK_FOR_COMPANY_COUNT = 8;
+export const MAX_USERS_COUNT = 6;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
 export const isAuthorization = (status: AuthorizationStatus) =>

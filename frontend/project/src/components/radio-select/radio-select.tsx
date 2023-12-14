@@ -13,7 +13,7 @@ type RadioSelectProps = {
   selectedValue: Gender| WorkoutDuration | TrainingLevel | null;
   object: Gender[] | WorkoutDuration[] | TrainingLevel[];
   toNextLine?: boolean;
-  onValueChange: (evt: ChangeEvent<HTMLInputElement>) => void;
+  onValueChange: (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => void;
 }
 
 function RadioSelect({name, classType, classChildType, classLabelType, label, selectedValue, onValueChange, object, toNextLine}: RadioSelectProps): JSX.Element {

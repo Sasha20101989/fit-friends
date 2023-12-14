@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Gender } from '../../types/gender.enum';
@@ -41,8 +41,11 @@ function CreateTrainingScreen(): JSX.Element {
     setDescription(evt.target.value);
   };
 
-  const handleSexChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const gender: Gender = event.target.value as Gender;
+  const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const gender = 'value' in evt.target ?
+      (evt.target as HTMLInputElement).value as Gender :
+        (evt.target as HTMLLIElement).dataset.value as Gender;
+
     dispatch(setGender(gender));
   };
 

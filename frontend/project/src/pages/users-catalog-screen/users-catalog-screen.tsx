@@ -1,9 +1,74 @@
 import Layout from '../../components/layout/layout';
-import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { UserQueryParams, fetchUsersAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getUsers } from '../../store/main-data/main-data.selectors';
+import ThumbnailUser from '../../components/thumbnail-user/thumbnail-user';
+import { WorkoutType } from '../../types/workout-type.enum';
+import Filter from '../../components/filter/filter';
 import { Location } from '../../types/location.enum';
+import { Sorting } from '../../types/sorting.enum';
+import RadioItem from '../../components/radio-item/radio-item';
+import { AppRoute, MAX_USERS_COUNT, capitalizeFirstLetter } from '../../const';
+import { TrainingLevel } from '../../types/training-level.enum';
+import { Role } from '../../types/role.enum';
+import { useNavigate } from 'react-router-dom';
 
 function UsersCatalogScreen() : JSX.Element {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const users = useAppSelector(getUsers);
+
+  const initialQueryParams: UserQueryParams = {
+    createdAtDirection: Sorting.Descending,
+    limit: MAX_USERS_COUNT,
+  };
+
+  const [queryParams, setQueryParams] = useState<UserQueryParams>(initialQueryParams);
+  const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
+  const [sortingOption, setSortingOption] = useState<Role | null>(null);
+
+  const handleShowMoreClick = () => {
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      limit: (prevParams.limit || 0) + MAX_USERS_COUNT,
+    }));
+  };
+
+  const handleFilterChange = (filterName: string, values: (Location | WorkoutType)[]) => {
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      location: filterName === 'location' ? values as Location[] : prevParams.location,
+      workoutTypes: filterName === 'spezialization' ? values as WorkoutType[] : prevParams.workoutTypes,
+    }));
+  };
+
+  const handleLevelChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newLevel = evt.currentTarget.value as TrainingLevel;
+    setLevel(newLevel);
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      trainingLevel: newLevel,
+    }));
+  };
+
+  const handleSortingChange = (option: Role) => {
+    setSortingOption(option);
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      sortBy: option,
+      createdAtDirection: undefined
+    }));
+  };
+
+  useEffect(() => {
+    dispatch(fetchUsersAction(queryParams));
+  }, [dispatch, queryParams]);
+
+  const handleGoMain = (): void => {
+    navigate(AppRoute.Main);
+  };
+
   return(
     <Layout>
       <section className="inner-page">
@@ -13,149 +78,50 @@ function UsersCatalogScreen() : JSX.Element {
             <div className="user-catalog-form">
               <h2 className="visually-hidden">Каталог пользователя</h2>
               <div className="user-catalog-form__wrapper">
-                <button className="btn-flat btn-flat--underlined user-catalog-form__btnback" type="button">
+                <button className="btn-flat btn-flat--underlined user-catalog-form__btnback" type="button" onClick={handleGoMain}>
                   <svg width="14" height="10" aria-hidden="true">
                     <use xlinkHref="#arrow-left"></use>
-                  </svg><span>Назад</span>
+                  </svg>
+                  <span>Назад</span>
                 </button>
                 <h3 className="user-catalog-form__title">Фильтры</h3>
                 <form className="user-catalog-form__form">
-                  <div className="user-catalog-form__block user-catalog-form__block--location">
-                    <h4 className="user-catalog-form__block-title">Локация, станция метро</h4>
-                    <ul className="user-catalog-form__check-list">
-                      {Object.values(Location).map((loc) => (
-                        <li key={loc} className="user-catalog-form__check-list-item">
-                          <div className="custom-toggle custom-toggle--checkbox">
-                            <label>
-                              <input type="checkbox" value={loc} name="user-agreement"/>
-                              <span className="custom-toggle__icon">
-                                <svg width="9" height="6" aria-hidden="true">
-                                  <use xlinkHref="#arrow-check"></use>
-                                </svg>
-                              </span>
-                              <span className="custom-toggle__label">{loc}</span>
-                            </label>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                    <button className="btn-show-more user-catalog-form__btn-show" type="button"><span>Посмотреть все</span>
-                      <svg className="btn-show-more__icon" width="10" height="4" aria-hidden="true">
-                        <use xlinkHref="#arrow-down"></use>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="user-catalog-form__block user-catalog-form__block--spezialization">
-                    <h4 className="user-catalog-form__block-title">Специализация</h4>
-                    <ul className="user-catalog-form__check-list">
-                      <li className="user-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="spezialization-1" name="spezialization"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">Аэробика</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="user-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="spezialization-1" name="spezialization"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">Бег</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="user-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="spezialization-1" name="spezialization"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">Бокс</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="user-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="spezialization-1" name="spezialization"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">Йога</span>
-                          </label>
-                        </div>
-                      </li>
-                      <li className="user-catalog-form__check-list-item">
-                        <div className="custom-toggle custom-toggle--checkbox">
-                          <label>
-                            <input type="checkbox" value="spezialization-1" name="spezialization"/>
-                            <span className="custom-toggle__icon">
-                              <svg width="9" height="6" aria-hidden="true">
-                                <use xlinkHref="#arrow-check"></use>
-                              </svg>
-                            </span>
-                            <span className="custom-toggle__label">Кроссфит</span>
-                          </label>
-                        </div>
-                      </li>
-                    </ul>
-                    <button className="btn-show-more user-catalog-form__btn-show" type="button">
-                      <span>Посмотреть все</span>
-                      <svg className="btn-show-more__icon" width="10" height="4" aria-hidden="true">
-                        <use xlinkHref="#arrow-down"></use>
-                      </svg>
-                    </button>
-                  </div>
+                  <Filter title="Локация, станция метро" filterName="location" values={Object.values(Location)} onFilterChange={handleFilterChange}/>
+                  <Filter title="Специализация" filterName="spezialization" values={Object.values(WorkoutType)} onFilterChange={handleFilterChange}/>
                   <div className="user-catalog-form__block user-catalog-form__block--level">
                     <h4 className="user-catalog-form__block-title">Ваш уровень</h4>
                     <div className="custom-toggle-radio">
-                      <div className="custom-toggle-radio__block">
-                        <label>
-                          <input type="radio" name="user-agreement"/>
-                          <span className="custom-toggle-radio__icon"></span>
-                          <span className="custom-toggle-radio__label">Новичок</span>
-                        </label>
-                      </div>
-                      <div className="custom-toggle-radio__block">
-                        <label>
-                          <input type="radio" name="user-agreement"/>
-                          <span className="custom-toggle-radio__icon"></span>
-                          <span className="custom-toggle-radio__label">Любитель</span>
-                        </label>
-                      </div>
-                      <div className="custom-toggle-radio__block">
-                        <label>
-                          <input type="radio" name="user-agreement" value="user-agreement-1"/>
-                          <span className="custom-toggle-radio__icon"></span>
-                          <span className="custom-toggle-radio__label">Профессионал</span>
-                        </label>
-                      </div>
+                      {Object.values(TrainingLevel).map((level) => (
+                        <RadioItem
+                          key={level}
+                          classType={'custom-toggle-radio__block'}
+                          name={'user-agreement'}
+                          value={capitalizeFirstLetter(level) as TrainingLevel}
+                          selectedValue={selectedLevel}
+                          onValueChange={handleLevelChange}
+                        />
+                      ))}
                     </div>
                   </div>
                   <div className="user-catalog-form__block">
                     <h3 className="user-catalog-form__title user-catalog-form__title--sort">Сортировка</h3>
                     <div className="btn-radio-sort">
                       <label>
-                        <input type="radio" name="sort"/>
+                        <input
+                          type="radio"
+                          name="sort"
+                          onChange={() => handleSortingChange(Role.Trainer)}
+                          checked={sortingOption === Role.Trainer}
+                        />
                         <span className="btn-radio-sort__label">Тренеры</span>
                       </label>
                       <label>
-                        <input type="radio" name="sort"/>
+                        <input
+                          type="radio"
+                          name="sort"
+                          onChange={() => handleSortingChange(Role.User)}
+                          checked={sortingOption === Role.User}
+                        />
                         <span className="btn-radio-sort__label">Пользователи</span>
                       </label>
                     </div>
@@ -166,33 +132,25 @@ function UsersCatalogScreen() : JSX.Element {
             <div className="inner-page__content">
               <div className="users-catalog">
                 <ul className="users-catalog__list">
-                  <li className="users-catalog__item">
-                    <div className="thumbnail-user thumbnail-user--role-user">
-                      <ThumbnailPicture imageSrc={'img/content/thumbnails/user-01'} sourceName={'thumbnail-user__image'} width={82} height={82} alt={'аватар пользователя'}/>
-                      <div className="thumbnail-user__header">
-                        <h3 className="thumbnail-user__name">Елизавета</h3>
-                        <div className="thumbnail-user__location">
-                          <svg width="14" height="16" aria-hidden="true">
-                            <use xlinkHref="#icon-location"></use>
-                          </svg>
-                          <address className="thumbnail-user__location-address">Петроградская</address>
-                        </div>
-                      </div>
-                      <ul className="thumbnail-user__hashtags-list">
-                        <li className="thumbnail-user__hashtags-item">
-                          <div className="hashtag thumbnail-user__hashtag"><span>#стретчинг</span></div>
-                        </li>
-                        <li className="thumbnail-user__hashtags-item">
-                          <div className="hashtag thumbnail-user__hashtag"><span>#йога</span></div>
-                        </li>
-                      </ul>
-                      <Link className="btn btn--medium thumbnail-user__button" to="">Подробнее</Link>
-                    </div>
-                  </li>
+                  {users.map((user) => (
+                    <ThumbnailUser
+                      key={user.email}
+                      sourceName={'users-catalog__item'}
+                      childSourceName={'thumbnail-user thumbnail-user--role-user'}
+                      buttonSourceName={'btn btn--medium thumbnail-user__button'}
+                      user={user}
+                    />
+                  ))}
                 </ul>
                 <div className="show-more users-catalog__show-more">
-                  <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
-                  <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
+                  {users.length > 0 && queryParams.limit && users.length % queryParams.limit === 0 && (
+                    <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreClick}>
+                      Показать еще
+                    </button>
+                  )}
+                  <button className="btn show-more__button show-more__button--to-top" type="button">
+                    Вернуться в начало
+                  </button>
                 </div>
               </div>
             </div>

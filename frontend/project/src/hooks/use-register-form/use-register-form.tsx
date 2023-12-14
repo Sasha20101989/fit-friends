@@ -143,8 +143,11 @@ function useRegisterForm(){
     dispatch(setRole(role));
   };
 
-  const handleSexChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const gender: Gender = event.target.value as Gender;
+  const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const gender = 'value' in evt.target ?
+      (evt.target as HTMLInputElement).value as Gender :
+        (evt.target as HTMLLIElement).dataset.value as Gender;
+
     dispatch(setGender(gender));
   };
 
@@ -154,13 +157,19 @@ function useRegisterForm(){
 
   const handleToggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-  const handleLevelChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    const newLevel = evt.target.value as TrainingLevel;
+  const handleLevelChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newLevel = 'value' in evt.target ?
+      (evt.target as HTMLInputElement).value as TrainingLevel :
+        (evt.target as HTMLLIElement).dataset.value as TrainingLevel;
+
     dispatch(changeLevel(newLevel));
   };
 
-  const handleDurationChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    const newDuration = evt.target.value as WorkoutDuration;
+  const handleDurationChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newDuration = 'value' in evt.target ?
+    (evt.target as HTMLInputElement).value as WorkoutDuration :
+      (evt.target as HTMLLIElement).dataset.value as WorkoutDuration;
+
     dispatch(changeDuration(newDuration));
   };
 
