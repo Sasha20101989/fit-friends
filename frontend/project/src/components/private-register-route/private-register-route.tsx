@@ -7,21 +7,21 @@ type PrivateRegisterRouteProps = {
   authorizationStatus: AuthorizationStatus;
   children: JSX.Element;
   registerStatus?: RegisterStatus;
-  role: Role;
+  currentRole: Role;
 }
 
 function PrivateTrainerRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element {
-  const {authorizationStatus, role, registerStatus, children} = props;
+  const {authorizationStatus, currentRole, registerStatus, children} = props;
 
-  if((isTrainer(role) || isUser(role)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.InProgress){
+  if((isTrainer(currentRole) || isUser(currentRole)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.InProgress){
     return children;
   }
 
-  if(isAuthorizationUnknown(authorizationStatus, role)) {
+  if(isAuthorizationUnknown(authorizationStatus, currentRole)) {
     return <Loading />;
   }
 
-  if((isTrainer(role) || isUser(role)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
+  if((isTrainer(currentRole) || isUser(currentRole)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
     return <Navigate to={AppRoute.Main}/>;
   }
 

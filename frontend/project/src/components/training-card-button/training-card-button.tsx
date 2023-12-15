@@ -1,11 +1,11 @@
 import { useAppSelector } from '../../hooks/index';
-import { getRole } from '../../store/main-process/main-process.selectors';
+import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
 
 function TrainingCardButton(): JSX.Element {
-  const role = useAppSelector(getRole);
+  const currentRole = useAppSelector(getCurrentRole);
 
-  if (role === Role.User) {
+  if (currentRole === Role.User) {
     return (
       <button className="btn training-info__buy" type="button">
         Купить

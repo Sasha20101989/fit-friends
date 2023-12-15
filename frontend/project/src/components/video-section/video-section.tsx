@@ -1,11 +1,11 @@
 import { Fragment } from 'react';
 import { useAppSelector } from '../../hooks/index';
-import { getRole } from '../../store/main-process/main-process.selectors';
+import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
 function VideoSection():JSX.Element {
-  const role = useAppSelector(getRole);
+  const currentRole = useAppSelector(getCurrentRole);
 
   return (
     <div className="training-video">
@@ -18,7 +18,7 @@ function VideoSection():JSX.Element {
           </svg>
         </button>
       </div>
-      {role === Role.Trainer && (
+      {currentRole === Role.Trainer && (
         <Fragment>
           <div className="training-video__drop-files">
             <form action="#" method="post">

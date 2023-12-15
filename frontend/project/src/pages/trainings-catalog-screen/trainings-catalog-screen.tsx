@@ -7,7 +7,7 @@ import { getTrainings } from '../../store/main-data/main-data.selectors';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { ChangeEvent, Fragment, useEffect, useState } from 'react';
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { getUserId } from '../../store/main-process/main-process.selectors';
+import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { TrainingCategory } from '../../types/training-category';
 import { Sorting } from '../../types/sorting.enum';
 import { debounce } from 'lodash';
@@ -16,7 +16,7 @@ function TrainingsCatalogScreen() : JSX.Element {
   const dispatch = useAppDispatch();
 
   const trainings: Training[] = useAppSelector(getTrainings);
-  const userId = useAppSelector(getUserId);
+  const currentUserId = useAppSelector(getCurrentUserId);
 
   const [minPrice, setMinPrice] = useState<number | ''>('');
   const [maxPrice, setMaxPrice] = useState<number | ''>('');
@@ -41,10 +41,10 @@ function TrainingsCatalogScreen() : JSX.Element {
   );
 
   useEffect(() => {
-    if(userId){
+    if(currentUserId){
       let fetchParams: FetchTrainingsParams = {
         ...queryParams,
-        trainer: userId
+        trainer: currentUserId
       };
 
       if (sortingOption) {
@@ -69,7 +69,7 @@ function TrainingsCatalogScreen() : JSX.Element {
 
       debouncedFetchTrainerTrainings(fetchParams);
     }
-  }, [dispatch, userId, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
+  }, [dispatch, currentUserId, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
 
   const handleSortingChange = (option: Sorting | undefined) => {
     setShowFreeOnly(false);

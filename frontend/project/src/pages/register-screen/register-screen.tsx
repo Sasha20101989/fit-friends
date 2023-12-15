@@ -20,7 +20,7 @@ function RegisterScreen() : JSX.Element {
     passwordRef,
     birthdayRef,
     selectedLocation,
-    selectedRole,
+    currentRole,
     isAgreementChecked,
     selectedGender,
     isDropdownOpen,
@@ -96,7 +96,7 @@ function RegisterScreen() : JSX.Element {
                                 type="radio"
                                 name="role"
                                 value={role}
-                                checked={selectedRole === role}
+                                checked={currentRole === role}
                                 onChange={handleRoleChange}
                               />
                               <span className="role-btn__icon">

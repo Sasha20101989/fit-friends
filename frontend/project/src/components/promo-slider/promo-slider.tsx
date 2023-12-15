@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Training } from '../../types/training.type';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getUserId } from '../../store/main-process/main-process.selectors';
+import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { getUser } from '../../store/user-process/user-process.selectors';
 import { getSpecialTrainings } from '../../store/main-data/main-data.selectors';
 import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
@@ -15,17 +15,17 @@ function PromoSlider():JSX.Element {
 
   const dispatch = useAppDispatch();
 
-  const userId: string = useAppSelector(getUserId);
+  const currentUserId: string = useAppSelector(getCurrentUserId);
   const user = useAppSelector(getUser);
   const trainings: Training[] = useAppSelector(getSpecialTrainings);
 
   const [selectedSpecialPage] = useState<number>(1);
 
   useEffect(() => {
-    if(userId){
-      dispatch(fetchUserAction(userId));
+    if(currentUserId){
+      dispatch(fetchUserAction(currentUserId));
     }
-  }, [dispatch , userId]);
+  }, [dispatch , currentUserId]);
 
   useEffect(() => {
     if(user && user.workoutTypes.length > 0){
@@ -37,7 +37,7 @@ function PromoSlider():JSX.Element {
         isSpecial: true
       }));
     }
-  }, [dispatch , user, selectedSpecialPage, userId]);
+  }, [dispatch , user, selectedSpecialPage, currentUserId]);
 
   if(!user){
     return (<Loading/>);

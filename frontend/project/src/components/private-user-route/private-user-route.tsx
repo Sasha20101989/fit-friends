@@ -7,26 +7,26 @@ type PrivateUserRouteProps = {
   authorizationStatus: AuthorizationStatus;
   children: JSX.Element;
   registerStatus?: RegisterStatus;
-  role: Role;
+  currentRole: Role;
   userId: string;
 }
 
-function PrivateUserRoute({authorizationStatus, role, registerStatus, children, userId}: PrivateUserRouteProps): JSX.Element {
+function PrivateUserRoute({authorizationStatus, currentRole, registerStatus, children, userId}: PrivateUserRouteProps): JSX.Element {
 
-  if(isUser(role) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
+  if(isUser(currentRole) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
     return children;
   }
 
-  if(isAuthorizationUnknown(authorizationStatus, role)) {
+  if(isAuthorizationUnknown(authorizationStatus, currentRole)) {
     return <Loading />;
   }
 
-  if(isUser(role) && registerStatus === RegisterStatus.InProgress){
+  if(isUser(currentRole) && registerStatus === RegisterStatus.InProgress){
     return <Navigate to={AppRoute.RegisterUser}/>;
   }
 
-  if(isTrainer(role) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
-    return <Navigate to={`${AppRoute.Trainers}/${userId}`}/>;
+  if(isTrainer(currentRole) && isAuthorization(authorizationStatus) && registerStatus !== RegisterStatus.InProgress){
+    return <Navigate to={`${AppRoute.TrainerRoom}/${userId}`}/>;
   }
 
   return <Navigate to={AppRoute.MainRegister}/>;

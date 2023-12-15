@@ -2,6 +2,7 @@ import { AuthorizationStatus, RegisterStatus } from '../const';
 import {store} from '../store/index';
 import { Gender } from './gender.enum';
 import { Location } from './location.enum';
+import { Page } from './page.enum.js';
 import { Review } from './review.type';
 import { Role } from './role.enum';
 import { Trainer } from './trainer.interface';
@@ -26,14 +27,15 @@ export type MainState = {
   level: TrainingLevel;
   duration: WorkoutDuration;
   file: string;
-  userRole: Role;
-  userId: string;
+  currentRole: Role;
+  currentUserId: string;
   location: Location | null;
   gender: Gender | null;
   readiessToWorkout: boolean;
   description: string | undefined;
   name: string;
   avatar: string | undefined;
+  selectedPage: Page | undefined;
 }
 
 export type DataState = {

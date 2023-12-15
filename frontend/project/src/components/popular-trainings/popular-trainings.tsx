@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { getPopularTrainings } from '../../store/main-data/main-data.selectors';
 import { TrainingCategory } from '../../types/training-category';
-import { getUserId } from '../../store/main-process/main-process.selectors';
 import IconButton from '../icon-button/icon-button';
 import { AppRoute, MAX_POPULAR_TRAININGS_COUNT } from '../../const';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,6 @@ function PopularTrainings():JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
-  const userId = useAppSelector(getUserId);
 
   const [selectedPage, setSpecialPage] = useState<number>(1);
 
@@ -40,7 +38,7 @@ function PopularTrainings():JSX.Element {
       page: selectedPage,
       limit: MAX_POPULAR_TRAININGS_COUNT,
     }));
-  }, [dispatch, userId, selectedPage]);
+  }, [dispatch, selectedPage]);
 
   return (
     <section className="popular-trainings">

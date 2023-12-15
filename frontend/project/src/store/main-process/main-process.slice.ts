@@ -8,6 +8,7 @@ import browserHistory from '../../browser-history';
 import { Role } from '../../types/role.enum';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
+import { Page } from '../../types/page.enum';
 
 const initialState: MainState = {
   sortingOrderMethod: Sorting.Ascending,
@@ -15,20 +16,24 @@ const initialState: MainState = {
   level: TrainingLevel.Beginner,
   duration: WorkoutDuration.Short,
   file: '',
-  userRole: Role.Unknown,
-  userId: '',
+  currentRole: Role.Unknown,
+  currentUserId: '',
   location: null,
   gender: null,
   readiessToWorkout: false,
   description: '',
   name: '',
-  avatar: ''
+  avatar: '',
+  selectedPage: undefined
 };
 
 export const mainProcess = createSlice({
   name: 'main',
   initialState: initialState,
   reducers: {
+    setSelectedPage: (state, action: PayloadAction<Page | undefined>) => {
+      state.selectedPage = action.payload;
+    },
     setAvatar: (state, action: PayloadAction<string | undefined>) => {
       state.avatar = action.payload;
     },
@@ -42,7 +47,7 @@ export const mainProcess = createSlice({
       state.readiessToWorkout = action.payload;
     },
     setRole: (state, action: PayloadAction<Role>) => {
-      state.userRole = action.payload;
+      state.currentRole = action.payload;
     },
     setGender: (state, action: PayloadAction<Gender>) => {
       state.gender = action.payload;
@@ -51,7 +56,7 @@ export const mainProcess = createSlice({
       state.location = action.payload;
     },
     setUserId: (state, action: PayloadAction<string>) => {
-      state.userId = action.payload;
+      state.currentUserId = action.payload;
     },
     changeSortingOrder: (state, action: PayloadAction<string>) => {
       state.sortingOrderMethod = action.payload;
@@ -82,4 +87,4 @@ export const mainProcess = createSlice({
     },
   },
 });
-export const { setAvatar, setName, setDescription, changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { setSelectedPage, setAvatar, setName, setDescription, changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;

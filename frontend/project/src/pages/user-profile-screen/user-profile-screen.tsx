@@ -16,7 +16,7 @@ import Layout from '../../components/layout/layout';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
-import { getAvatar, getDescription, getGender, getLevel, getLocation, getName, getReadiessToWorkout, getRole, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { getAvatar, getDescription, getGender, getLevel, getLocation, getName, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
 import { changeLevel, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import { capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
@@ -29,7 +29,7 @@ function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
   const user = useAppSelector(getUser);
-  const role = useAppSelector(getRole);
+  const currentRole = useAppSelector(getCurrentRole);
   const selectedGender = useAppSelector(getGender);
   const selectedLocation = useAppSelector(getLocation);
   const selectedLevel = useAppSelector(getLevel);
@@ -63,7 +63,7 @@ function UserProfileScreen(): JSX.Element {
     return <Loading/>;
   }
 
-  const contentComponent = role === Role.Trainer ? (
+  const contentComponent = currentRole === Role.Trainer ? (
     <PersonalAccountCoach userId={id} />
   ) : (
     <PersonalAccountUser />
@@ -106,7 +106,7 @@ function UserProfileScreen(): JSX.Element {
   };
 
   const handleSave = () => {
-    if(role === Role.Trainer){
+    if(currentRole === Role.Trainer){
       if(selectedName !== undefined && selectedName.trim() !== '' &&
         selectedGender !== null &&
         specializations.length >= 1){
@@ -134,7 +134,7 @@ function UserProfileScreen(): JSX.Element {
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
                 <UserAvatar/>
-                {role === Role.Trainer && isFormEditable && <UserControls />}
+                {currentRole === Role.Trainer && isFormEditable && <UserControls />}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>

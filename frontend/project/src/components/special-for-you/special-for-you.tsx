@@ -3,7 +3,7 @@ import SpecialForYouItem from './special-for-you-item';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { Training } from '../../types/training.type';
 import { getSpecialForUserTrainings } from '../../store/main-data/main-data.selectors';
-import { getUserId } from '../../store/main-process/main-process.selectors';
+import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { getUser } from '../../store/user-process/user-process.selectors';
 import Loading from '../loading/loading';
@@ -15,7 +15,7 @@ import { TrainingCategory } from '../../types/training-category';
 function SpecialForYou(): JSX.Element {
   const dispatch = useAppDispatch();
 
-  const userId: string = useAppSelector(getUserId);
+  const currentUserId: string = useAppSelector(getCurrentUserId);
   const user = useAppSelector(getUser);
   const trainings: Training[] = useAppSelector(getSpecialForUserTrainings);
 
@@ -33,10 +33,10 @@ function SpecialForYou(): JSX.Element {
   };
 
   useEffect(() => {
-    if(userId){
-      dispatch(fetchUserAction(userId));
+    if(currentUserId){
+      dispatch(fetchUserAction(currentUserId));
     }
-  }, [dispatch , userId]);
+  }, [dispatch , currentUserId]);
 
   useEffect(() => {
     if(user && user.workoutTypes.length > 0){
@@ -47,7 +47,7 @@ function SpecialForYou(): JSX.Element {
         workoutTypes: user.workoutTypes
       }));
     }
-  }, [dispatch , user, selectedPage, userId]);
+  }, [dispatch , user, selectedPage, currentUserId]);
 
   if(!user){
     return (<Loading/>);

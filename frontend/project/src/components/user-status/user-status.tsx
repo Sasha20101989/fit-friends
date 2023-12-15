@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getReadiessToWorkout, getRole } from '../../store/main-process/main-process.selectors';
+import { getReadiessToWorkout, getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { changeReadiessToWorkout } from '../../store/main-process/main-process.slice';
 import { Role } from '../../types/role.enum';
 
@@ -10,7 +10,7 @@ type UserStatusProps = {
 function UserStatus({isFormEditable}: UserStatusProps):JSX.Element {
   const dispatch = useAppDispatch();
 
-  const role = useAppSelector(getRole);
+  const currentRole = useAppSelector(getCurrentRole);
   const readinessToWorkout = useAppSelector(getReadiessToWorkout);
 
   const handleReadinessForWorkoutChange = () => {
@@ -30,7 +30,7 @@ function UserStatus({isFormEditable}: UserStatusProps):JSX.Element {
               <use xlinkHref="#arrow-check"></use>
             </svg>
           </span>
-          <span className="custom-toggle__label">{ role === Role.Trainer ? 'Готов тренировать' : 'Готов к тренировке'}</span>
+          <span className="custom-toggle__label">{ currentRole === Role.Trainer ? 'Готов тренировать' : 'Готов к тренировке'}</span>
         </label>
       </div>
     </div>

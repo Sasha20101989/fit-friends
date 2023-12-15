@@ -11,7 +11,7 @@ import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDescription, getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getRole, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { getDescription, getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
 import { addSpecialization, changeDuration, changeFile, changeLevel, changeReadiessToWorkout, removeSpecialization, setDescription, setGender, setLocation, setRole } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
@@ -30,7 +30,7 @@ function useRegisterForm(){
   const selectedLocation = useAppSelector(getLocation);
   const selectedGender = useAppSelector(getGender);
   const readinessToWorkout = useAppSelector(getReadiessToWorkout);
-  const selectedRole = useAppSelector(getRole);
+  const currentRole = useAppSelector(getCurrentRole);
   const selectedDescription = useAppSelector(getDescription);
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
@@ -72,7 +72,7 @@ function useRegisterForm(){
         birthdayRef.current !== null &&
         selectedLocation !== null &&
         selectedGender !== null &&
-        selectedRole !== null) {
+        currentRole !== null) {
 
       const formData: RegisterUserTransferData = {
         name: nameRef.current.value,
@@ -80,7 +80,7 @@ function useRegisterForm(){
         password: passwordRef.current.value,
         location: selectedLocation,
         gender: selectedGender,
-        role: selectedRole,
+        role: currentRole,
       };
 
       if (birthdayRef.current !== null) {
@@ -219,7 +219,7 @@ function useRegisterForm(){
     caloriesWaste,
     descriptionRef,
     selectedLocation,
-    selectedRole,
+    currentRole,
     isAgreementChecked,
     isDropdownOpen,
     selectedLevel,

@@ -1,20 +1,43 @@
 import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getCurrentRole, getCurrentUserId, getSelectedPage } from '../../store/main-process/main-process.selectors';
+import { AppRoute } from '../../const';
+import { Role } from '../../types/role.enum';
+import { Page } from '../../types/page.enum';
+import { setSelectedPage } from '../../store/main-process/main-process.slice';
+import { useEffect } from 'react';
 
 type NavItem = {
   to: string;
-  label: string;
+  label: Page;
   icon: string;
   width: number;
   height: number;
 }
 
 function Header (): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const currentRole = useAppSelector(getCurrentRole);
+  const currentUserId = useAppSelector(getCurrentUserId);
+  const selectedPage = useAppSelector(getSelectedPage);
+
+  const handleNavItemClick = (page: Page) => {
+    dispatch(setSelectedPage(page));
+  };
+
   const navItems: NavItem[] = [
-    { to: '/', label: 'На главную', icon: '#icon-home', width: 18, height: 18 },
-    { to: '/profile', label: 'Личный кабинет', icon: '#icon-user', width: 16, height: 18 },
-    { to: '/friends', label: 'Друзья', icon: '#icon-friends', width: 22, height: 16 },
-    { to: '/notifications', label: 'Уведомления', icon: '#icon-notification', width: 14, height: 18, },
+    { to: `${currentRole === Role.Trainer ? `` : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
+    { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUserId}` : `${AppRoute.UserRoom}/${currentUserId}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
+    { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUserId}` : `${AppRoute.UserFriends}/${currentUserId}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
+    { to: '/notifications', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
   ];
+
+  useEffect(() => {
+    const currentItem = navItems.find((item) => item.to === location.pathname);
+
+    dispatch(setSelectedPage(currentItem === undefined ? undefined : currentItem?.label));
+  }, [location.pathname]);
 
   return(
     <header className="header">
@@ -28,7 +51,12 @@ function Header (): JSX.Element {
           <ul className="main-nav__list">
             {navItems.map((item, index) => (
               <li key={item.label} className={`main-nav__item ${index === navItems.length - 1 ? 'main-nav__item--notifications' : ''}`}>
-                <Link className={`main-nav__link ${index === 0 ? 'is-active' : ''}`} to={item.to} aria-label={item.label}>
+                <Link
+                  className={`main-nav__link ${item.label === selectedPage ? 'is-active' : ''}`}
+                  to={item.to}
+                  aria-label={item.label}
+                  onClick={() => handleNavItemClick(item.label)}
+                >
                   <svg width={item.width} height={item.height} aria-hidden="true">
                     <use xlinkHref={item.icon}></use>
                   </svg>
