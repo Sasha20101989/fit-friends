@@ -6,14 +6,15 @@ import ThumbnailTrainingText from '../thumbnail-training-text/thumbnail-training
 import ThumbnailTrainingWrapper from '../thumbnail-training-wrapper/thumbnail-training-wrapper';
 
 type ThumbnailTrainingProps = {
+  sourceName: string;
   training: Training;
 }
 
-function ThumbnailTraining({ training }: ThumbnailTrainingProps): JSX.Element {
+function ThumbnailTraining({sourceName, training }: ThumbnailTrainingProps): JSX.Element {
   const { name, backgroundImage, price, workoutType, rating, description, calories } = training;
   const hashtags = [workoutType, `${calories}ккал`];
   return (
-    <li className="popular-trainings__item">
+    <li className={sourceName}>
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
           <ThumbnailPicture imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>

@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthorizationStatus, RegisterStatus } from '../../const';
 import { UserState } from '../../types/state';
 import { loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
-import { fetchFriendsAction, fetchUserAction } from '../api-actions/user-api-actions/user-api-actions';
+import { fetchMyFriendsAction, fetchUserAction } from '../api-actions/user-api-actions/user-api-actions';
 
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
   registerStatus: RegisterStatus.Unknown,
   isSubmitting: false,
   user: null,
-  friends: []
+  myFriends: []
 };
 
 export const userProcess = createSlice({
@@ -56,14 +56,14 @@ export const userProcess = createSlice({
       .addCase(fetchUserAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       })
-      .addCase(fetchFriendsAction.pending, (state, _action) => {
+      .addCase(fetchMyFriendsAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
-      .addCase(fetchFriendsAction.fulfilled, (state, action) => {
+      .addCase(fetchMyFriendsAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.friends = action.payload;
+        state.myFriends = action.payload;
       })
-      .addCase(fetchFriendsAction.rejected, (state, _action) => {
+      .addCase(fetchMyFriendsAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       });
   },

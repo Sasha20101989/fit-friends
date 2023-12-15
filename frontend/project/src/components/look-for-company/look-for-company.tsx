@@ -12,7 +12,11 @@ const LookForCompany = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const users = useAppSelector(getUsers);
+
   const [selectedPage, setPage] = useState<number>(1);
+
+  const isPreviousButtonDisabled = selectedPage === 1;
+  const isNextButtonDisabled = MAX_LOOK_FOR_COMPANY_COUNT !== users.length;
 
   const handlePreviousClick = () => {
     setPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -49,8 +53,8 @@ const LookForCompany = () => {
               </svg>
             </button>
             <div className="look-for-company__controls">
-              <IconButton sourceName={'btn-icon btn-icon--outlined look-for-company__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
-              <IconButton sourceName={'btn-icon btn-icon--outlined look-for-company__control'} direction="right" onClick={handleNextClick} ariaLabel="next" />
+              <IconButton sourceName={'btn-icon btn-icon--outlined look-for-company__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" width={16} height={14} disabled={isPreviousButtonDisabled}/>
+              <IconButton sourceName={'btn-icon btn-icon--outlined look-for-company__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
           <ul className="look-for-company__list">

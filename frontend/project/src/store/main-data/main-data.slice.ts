@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
-import { fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction } from '../api-actions/user-api-actions/user-api-actions';
+import { addToFriendsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction } from '../api-actions/user-api-actions/user-api-actions';
 import { User } from '../../types/user.interface';
 
 export const initialState: DataState = {
@@ -51,6 +51,15 @@ export const mainData = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(addToFriendsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(addToFriendsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(addToFriendsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(fetchUsersWithPaginationAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })

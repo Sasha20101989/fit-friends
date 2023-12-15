@@ -17,7 +17,7 @@ export type UserState = {
   registerStatus: RegisterStatus;
   isSubmitting: boolean;
   user: User | Trainer | null;
-  friends: User[];
+  myFriends: User[];
 }
 
 export type MainState = {

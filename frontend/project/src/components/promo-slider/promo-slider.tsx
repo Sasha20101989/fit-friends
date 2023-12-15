@@ -30,7 +30,6 @@ function PromoSlider():JSX.Element {
   useEffect(() => {
     if(user && user.workoutTypes.length > 0){
       dispatch(fetchTrainingsAction({
-        userId: userId,
         category: TrainingCategory.SPECIAL,
         page: selectedSpecialPage,
         limit: MAX_SPECIAL_TRAININGS_COUNT,

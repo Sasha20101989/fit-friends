@@ -142,7 +142,7 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({ _id: userId});
+    return await this.userModel.findOne({ _id: userId});
   }
 
   private applyReadinessFilter(query: UserQueryParams, filter: UserFilter): void {

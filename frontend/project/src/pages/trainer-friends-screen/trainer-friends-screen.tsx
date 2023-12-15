@@ -1,17 +1,17 @@
 import Friend from '../../components/friend/friend';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { fetchFriendsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getFriends } from '../../store/user-process/user-process.selectors';
+import { fetchMyFriendsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { getMyFriends } from '../../store/user-process/user-process.selectors';
 import { User } from '../../types/user.interface';
 import { useEffect } from 'react';
 
 function TrainerFriendsScreen(): JSX.Element {
-  const friends: User[] | null = useAppSelector(getFriends);
+  const friends: User[] | null = useAppSelector(getMyFriends);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchFriendsAction({}));
+    dispatch(fetchMyFriendsAction({}));
   }, [dispatch]);
 
   return(

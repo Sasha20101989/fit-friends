@@ -23,7 +23,7 @@ function TrainerTrainingsScreen(): JSX.Element {
 
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>({
     category: TrainingCategory.FOR_TRAINER,
-    userId: id || '',
+    trainer: id || '',
   });
 
   const debouncedFetchTrainerTrainings = debounce(

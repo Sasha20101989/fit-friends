@@ -19,7 +19,10 @@ function SpecialForYou(): JSX.Element {
   const user = useAppSelector(getUser);
   const trainings: Training[] = useAppSelector(getSpecialForUserTrainings);
 
-  const [selectedSpecialPage, setSpecialPage] = useState<number>(1);
+  const [selectedPage, setSpecialPage] = useState<number>(1);
+
+  const isPreviousButtonDisabled = selectedPage === 1;
+  const isNextButtonDisabled = MAX_SPECIAL_TRAININGS_COUNT !== trainings.length;
 
   const handlePreviousClick = () => {
     setSpecialPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -38,14 +41,13 @@ function SpecialForYou(): JSX.Element {
   useEffect(() => {
     if(user && user.workoutTypes.length > 0){
       dispatch(fetchTrainingsAction({
-        userId: userId,
         category: TrainingCategory.FOR_USER,
-        page: selectedSpecialPage,
+        page: selectedPage,
         limit: MAX_SPECIAL_TRAININGS_COUNT,
         workoutTypes: user.workoutTypes
       }));
     }
-  }, [dispatch , user, selectedSpecialPage, userId]);
+  }, [dispatch , user, selectedPage, userId]);
 
   if(!user){
     return (<Loading/>);
@@ -58,8 +60,8 @@ function SpecialForYou(): JSX.Element {
           <div className="special-for-you__title-wrapper">
             <h2 className="special-for-you__title">Специально подобрано для вас</h2>
             <div className="special-for-you__controls">
-              <IconButton sourceName={'btn-icon special-for-you__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
-              <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" />
+              <IconButton sourceName={'btn-icon special-for-you__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" width={16} height={14} disabled={isPreviousButtonDisabled}/>
+              <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
           <ul className="special-for-you__list">

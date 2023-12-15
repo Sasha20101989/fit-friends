@@ -20,6 +20,7 @@ export const AppComponent = {
   OrderController: Symbol.for('OrderController'),
   FriendServiceInterface: Symbol.for('FriendServiceInterface'),
   FriendController: Symbol.for('FriendController'),
+  FriendModel: Symbol.for('FriendModel'),
   BalanceServiceInterface: Symbol.for('BalanceServiceInterface'),
   BalanceController: Symbol.for('BalanceController'),
   BalanceModel: Symbol.for('BalanceModel'),

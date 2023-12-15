@@ -24,13 +24,13 @@ async function bootstrap() {
     createRabbitServerContainer(),
     createRestApplicationContainer(),
     createTokenContainer(),
-    createTrainerContainer(),
     createUserContainer(),
-    createFriendContainer(),
     createTrainingContainer(),
+    createFriendContainer(),
     createOrderContainer(),
     createBalanceContainer(),
     createReviewContainer(),
+    createTrainerContainer(),
     createRequestContainer(),
     createSubscriberContainer(),
     createNotificationContainer(),
@@ -40,4 +40,4 @@ async function bootstrap() {
   await application.init();
 }
 
-bootstrap().catch(console.error);
+bootstrap();

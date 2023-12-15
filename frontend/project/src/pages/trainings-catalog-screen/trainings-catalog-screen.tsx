@@ -28,7 +28,6 @@ function TrainingsCatalogScreen() : JSX.Element {
 
   const initialQueryParams: FetchTrainingsParams = {
     category: TrainingCategory.BASE,
-    userId: userId,
     createdAtDirection: Sorting.Descending,
   };
 
@@ -45,7 +44,7 @@ function TrainingsCatalogScreen() : JSX.Element {
     if(userId){
       let fetchParams: FetchTrainingsParams = {
         ...queryParams,
-        userId
+        trainer: userId
       };
 
       if (sortingOption) {

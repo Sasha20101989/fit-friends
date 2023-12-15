@@ -16,7 +16,10 @@ function PopularTrainings():JSX.Element {
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
   const userId = useAppSelector(getUserId);
 
-  const [selectedSpecialPage, setSpecialPage] = useState<number>(1);
+  const [selectedPage, setSpecialPage] = useState<number>(1);
+
+  const isPreviousButtonDisabled = selectedPage === 1;
+  const isNextButtonDisabled = MAX_POPULAR_TRAININGS_COUNT !== popularTrainings.length;
 
   const handlePreviousClick = () => {
     setSpecialPage((prevPage) => Math.max(prevPage - 1, 1));
@@ -28,17 +31,16 @@ function PopularTrainings():JSX.Element {
 
   const handleShowAllClick = (evt: React.MouseEvent<HTMLButtonElement>): void => {
     evt.preventDefault();
-      navigate(AppRoute.TrainingsCatalog);
+    navigate(AppRoute.TrainingsCatalog);
   };
 
   useEffect(() => {
     dispatch(fetchTrainingsAction({
       category: TrainingCategory.POPULAR,
-      userId: userId,
-      page: selectedSpecialPage,
+      page: selectedPage,
       limit: MAX_POPULAR_TRAININGS_COUNT,
     }));
-  }, [dispatch, userId, selectedSpecialPage]);
+  }, [dispatch, userId, selectedPage]);
 
   return (
     <section className="popular-trainings">
@@ -53,13 +55,13 @@ function PopularTrainings():JSX.Element {
               </svg>
             </button>
             <div className="popular-trainings__controls">
-              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" />
-              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="right" onClick={handleNextClick} ariaLabel="next" />
+              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" width={16} height={14} disabled={isPreviousButtonDisabled}/>
+              <IconButton sourceName={'btn-icon popular-trainings__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
           <ul className="popular-trainings__list">
             {popularTrainings.map((training) => (
-              <ThumbnailTraining key={`${training.name}-${training.calories}-${training.price}`} training={training} />
+              <ThumbnailTraining sourceName={'popular-trainings__item'} key={`${training.name}-${training.calories}-${training.price}`} training={training} />
             ))}
           </ul>
         </div>

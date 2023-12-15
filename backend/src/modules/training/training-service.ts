@@ -141,5 +141,9 @@ export default class TrainingService implements TrainingServiceInterface {
         filter.rating = rating;
       }
     }
+
+    if (query.trainer !== undefined) {
+      filter.trainer = query.trainer;
+    }
   }
 }

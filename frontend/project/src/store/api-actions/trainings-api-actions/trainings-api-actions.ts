@@ -14,7 +14,7 @@ import { Sorting } from '../../../types/sorting.enum';
 import { TrainingCategory } from '../../../types/training-category';
 
 export interface FetchTrainingsParams {
-  userId: string;
+  trainer?: string;
   minPrice?: number;
   maxPrice?: number;
   minCalories?: number;
@@ -74,7 +74,11 @@ export const fetchTrainerTrainingsAction = createAsyncThunk<Training[], FetchTra
   'data/fetchTrainerTrainings',
   async (params, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.get<Training[]>(`${APIRoute.Trainings}/trainer-room/${params.userId}`, { params });
+      if(!params.trainer){
+        return [];
+      }
+
+      const { data } = await api.get<Training[]>(`${APIRoute.Trainings}/trainer-room/${params.trainer}`, { params });
       return data;
     } catch (error) {
       return [];

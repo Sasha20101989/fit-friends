@@ -1,6 +1,7 @@
 import { Gender } from './gender.enum.js';
 import { Location } from './location.enum.js';
 import { TrainingLevel } from './training-level.enum.js';
+import { User } from './user.interface.js';
 import { WorkoutType } from './workout-type.enum.js';
 
 export type BaseUser = {
@@ -15,4 +16,5 @@ export type BaseUser = {
   description?: string;
   trainingLevel: TrainingLevel;
   workoutTypes: WorkoutType[];
+  friends: User[];
 }

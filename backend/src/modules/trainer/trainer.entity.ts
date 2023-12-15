@@ -1,15 +1,12 @@
 import typegoose, { defaultClasses } from '@typegoose/typegoose';
 import bcrypt from 'bcrypt';
 
-import type { Trainer } from './types/trainer.interface.js';
-
 import { Role } from '../../types/role.enum.js';
 import { Gender } from '../../types/gender.enum.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { WorkoutType } from '../../types/workout-type.enum.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
-
 
 const { prop, modelOptions, getModelForClass } = typegoose;
 
@@ -24,7 +21,7 @@ export interface TrainerEntity extends defaultClasses.Base {}
   }
 })
 
-export class TrainerEntity extends defaultClasses.TimeStamps implements Trainer {
+export class TrainerEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public name: string;
 

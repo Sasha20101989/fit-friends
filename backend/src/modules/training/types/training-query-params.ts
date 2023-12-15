@@ -15,4 +15,5 @@ export type TrainingQueryParams = {
   page?: number;
   createdAtDirection?: Sorting;
   isSpecial?: boolean;
+  trainer?: string;
 }

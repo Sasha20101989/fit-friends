@@ -97,7 +97,7 @@ export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
   },
 );
 
-export const fetchFriendsAction = createAsyncThunk<User[], object, {
+export const fetchMyFriendsAction = createAsyncThunk<User[], object, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -110,6 +110,18 @@ export const fetchFriendsAction = createAsyncThunk<User[], object, {
     } catch (error) {
       return [];
     }
+  },
+);
+
+export const addToFriendsAction = createAsyncThunk<User, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchFriends',
+  async (userId, { dispatch, extra: api }) => {
+    const { data } = await api.get<User>(`${APIRoute.Friends}/${userId}`);
+    return data;
   },
 );
 

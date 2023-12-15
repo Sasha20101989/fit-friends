@@ -91,7 +91,7 @@ export default class FriendController extends Controller {
   ): Promise<void> {
     const { friendId } = params;
 
-    const existingUser = await this.friendService.findById(user.id);
+    const existingUser = await this.userService.findById(user.id);
 
     if(!existingUser){
       throw new HttpError(
