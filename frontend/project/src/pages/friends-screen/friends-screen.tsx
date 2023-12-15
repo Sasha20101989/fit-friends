@@ -1,19 +1,18 @@
-import Friend from '../../components/friend/friend';
+import { useEffect } from 'react';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { fetchMyFriendsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { getMyFriends } from '../../store/user-process/user-process.selectors';
-import { User } from '../../types/user.interface';
-import { useEffect } from 'react';
+import Friend from '../../components/friend/friend';
 
-function TrainerFriendsScreen(): JSX.Element {
-  const friends: User[] | null = useAppSelector(getMyFriends);
+function FriendsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchMyFriendsAction({}));
   }, [dispatch]);
 
+  const friends = useAppSelector(getMyFriends);
   return(
     <Layout>
       <section className="friends-list">
@@ -22,8 +21,7 @@ function TrainerFriendsScreen(): JSX.Element {
             <button className="btn-flat friends-list__back" type="button">
               <svg width="14" height="10" aria-hidden="true">
                 <use xlinkHref="#arrow-left"></use>
-              </svg>
-              <span>Назад</span>
+              </svg><span>Назад</span>
             </button>
             <div className="friends-list__title-wrapper">
               <h1 className="friends-list__title">Мои друзья</h1>
@@ -37,7 +35,7 @@ function TrainerFriendsScreen(): JSX.Element {
               </div> */}
             </div>
             <ul className="friends-list__list">
-              {friends && friends.map((friend) => (
+              {friends.map((friend) => (
                 <Friend key={friend.email} friend={friend}/>
               ))}
             </ul>
@@ -52,4 +50,4 @@ function TrainerFriendsScreen(): JSX.Element {
   );
 }
 
-export default TrainerFriendsScreen;
+export default FriendsScreen;

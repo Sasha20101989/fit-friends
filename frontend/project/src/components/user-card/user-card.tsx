@@ -6,10 +6,21 @@ import CardGalery from '../../components/card-galery/card-galery';
 
 type UserCardProps = {
   user: User;
-}
+  isFriend: boolean;
+  onAddFriend: () => void;
+  onRemoveFriend: () => void;
+};
 
-function UserCard({user}: UserCardProps) : JSX.Element {
-  const {name, location, description, workoutTypes, role, readinessForWorkout} = user;
+function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps) : JSX.Element {
+  const { name, location, description, workoutTypes, role, readinessForWorkout } = user;
+
+  const handleAddFriend = () => {
+    onAddFriend();
+  };
+
+  const handleRemoveFriend = () => {
+    onRemoveFriend();
+  };
 
   return(
     <section className="user-card">
@@ -40,7 +51,15 @@ function UserCard({user}: UserCardProps) : JSX.Element {
             hashtagItemClassType={'hashtag'}
             hashtags={workoutTypes}
           />
-          <button className="btn user-card__btn" type="button">Добавить в друзья</button>
+          {isFriend ? (
+            <button className="btn btn--outlined user-card__friend-btn" type="button" onClick={handleRemoveFriend}>
+              Убрать из друзей
+            </button>
+          ) : (
+            <button className="btn user-card__friend-btn" type="button" onClick={handleAddFriend}>
+              Добавить в друзья
+            </button>
+          )}
         </div>
         <CardGalery isCoach={role === Role.Trainer}/>
       </div>

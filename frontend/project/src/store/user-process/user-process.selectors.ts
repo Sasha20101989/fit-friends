@@ -7,4 +7,4 @@ export const getAuthorizationStatus = (state: State): AuthorizationStatus => sta
 export const getSubmittingStatus = (state: State): boolean => state[NameSpace.User].isSubmitting;
 export const getRegisterStatus = (state: State): RegisterStatus => state[NameSpace.User].registerStatus;
 export const getUser = (state: State): User | Trainer | null => state[NameSpace.User].user;
-export const getMyFriends = (state: State): User[] | null => state[NameSpace.User].myFriends;
+export const getMyFriends = (state: State): User[] | [] => state[NameSpace.User].myFriends;

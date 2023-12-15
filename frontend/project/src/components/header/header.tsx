@@ -27,7 +27,7 @@ function Header (): JSX.Element {
   };
 
   const navItems: NavItem[] = [
-    { to: `${currentRole === Role.Trainer ? `` : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
+    { to: `${currentRole === Role.Trainer ? '' : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUserId}` : `${AppRoute.UserRoom}/${currentUserId}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUserId}` : `${AppRoute.UserFriends}/${currentUserId}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
     { to: '/notifications', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },

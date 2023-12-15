@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import HashtagList from '../hashtag-list/hashtag-list';
 import { Role } from '../../types/role.enum';
 import CardGalery from '../card-galery/card-galery';
@@ -12,31 +12,27 @@ import { TrainingCategory } from '../../types/training-category';
 import { getTrainings } from '../../store/main-data/main-data.selectors';
 import IconButton from '../icon-button/icon-button';
 import { MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
-import { addToFriendsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 
 type TrainerCardProps = {
   trainer: Trainer;
-}
+  isFriend: boolean;
+  onAddFriend: () => void;
+  onRemoveFriend: () => void;
+};
 
-function TrainerCard({trainer}: TrainerCardProps) : JSX.Element {
-  const {id, name, location, description, workoutTypes, role, personalTraining} = trainer;
-
+function TrainerCard({ trainer, isFriend, onAddFriend, onRemoveFriend }: TrainerCardProps) : JSX.Element {
   const dispatch = useAppDispatch();
 
+  const { id } = useParams<{ id: string }>();
+
   const [selectedPage, setPage] = useState<number>(1);
+
+  const {name, location, description, workoutTypes, role, personalTraining} = trainer;
 
   const trainings: Training[] = useAppSelector(getTrainings);
 
   const isPreviousButtonDisabled = selectedPage === 1;
   const isNextButtonDisabled = MAX_TRAINER_CARD_TRAININGS_COUNT !== trainings.length;
-
-  const handlePreviousClick = () => {
-    setPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-
-  const handleNextClick = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
 
   useEffect(() => {
     if(id){
@@ -49,11 +45,21 @@ function TrainerCard({trainer}: TrainerCardProps) : JSX.Element {
     }
   }, [dispatch , id, selectedPage]);
 
-  const handleAddToFriend = (evt: React.MouseEvent<HTMLButtonElement>): void => {
-    evt.preventDefault();
-    if(id){
-      dispatch(addToFriendsAction(id));
-    }
+  const handlePreviousClick = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextClick = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+
+  const handleAddFriend = () => {
+    onAddFriend();
+  };
+
+  const handleRemoveFriend = () => {
+    onRemoveFriend();
   };
 
   return(
@@ -103,7 +109,15 @@ function TrainerCard({trainer}: TrainerCardProps) : JSX.Element {
               hashtagItemClassType={'hashtag'}
               hashtags={workoutTypes}
             />
-            <button className="btn user-card-coach__btn" type="button" onClick={handleAddToFriend}>Добавить в друзья</button>
+            {isFriend ? (
+              <button className="btn btn--outlined user-card__friend-btn" type="button" onClick={handleRemoveFriend}>
+                Убрать из друзей
+              </button>
+            ) : (
+              <button className="btn user-card__friend-btn" type="button" onClick={handleAddFriend}>
+                Добавить в друзья
+              </button>
+            )}
           </div>
           <CardGalery isCoach={role === Role.Trainer}/>
         </div>
