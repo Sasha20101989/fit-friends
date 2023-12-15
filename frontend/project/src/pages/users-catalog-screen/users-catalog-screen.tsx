@@ -136,8 +136,8 @@ function UsersCatalogScreen() : JSX.Element {
                     <ThumbnailUser
                       key={user.email}
                       sourceName={'users-catalog__item'}
-                      childSourceName={'thumbnail-user thumbnail-user--role-user'}
-                      buttonSourceName={'btn btn--medium thumbnail-user__button'}
+                      childSourceName={`thumbnail-user thumbnail-user--role-${user.role === Role.Trainer ? 'coach' : 'user'}`}
+                      buttonSourceName={`btn ${user.role === Role.Trainer ? 'btn--dark-bg' : ''} btn--medium thumbnail-user__button`}
                       user={user}
                     />
                   ))}
