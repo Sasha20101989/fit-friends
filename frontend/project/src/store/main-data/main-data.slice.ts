@@ -2,10 +2,11 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
-import { addToFriendsAction, deleteFromNotificationsAction, fetchNotificationsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
+import { addToFriendsAction, addToSubscribesAction, deleteFromNotificationsAction, deleteFromSubscribesAction, fetchMySubscribesAction, fetchNotificationsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
 import { User } from '../../types/user.interface';
 
 export const initialState: DataState = {
+  subscribes: [],
   users: [],
   selectedUser: null,
   popularTrainings: [],
@@ -55,10 +56,38 @@ export const mainData = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(deleteFromSubscribesAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(deleteFromSubscribesAction.fulfilled, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(deleteFromSubscribesAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(addToSubscribesAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(addToSubscribesAction.fulfilled, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(addToSubscribesAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchMySubscribesAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchMySubscribesAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.subscribes = action.payload;
+      })
+      .addCase(fetchMySubscribesAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(deleteFromNotificationsAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
-      .addCase(deleteFromNotificationsAction.fulfilled, (state, action) => {
+      .addCase(deleteFromNotificationsAction.fulfilled, (state, _action) => {
         state.isSubmitting = false;
       })
       .addCase(deleteFromNotificationsAction.rejected, (state, _action) => {
@@ -163,6 +192,7 @@ export const mainData = createSlice({
       })
       .addCase(fetchTrainingsAction.pending, (state, _action) => {
         state.isSubmitting = true;
+        state.trainings = [];
       })
       .addCase(fetchTrainingsAction.fulfilled, (state, action) => {
         state.isSubmitting = false;

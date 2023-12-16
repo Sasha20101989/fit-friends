@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 type IconButtonProps = {
   sourceName: string;
   direction: string;
@@ -26,4 +28,4 @@ function IconButton({ sourceName, direction, onClick, ariaLabel, width, height, 
   );
 }
 
-export default IconButton;
+export default memo(IconButton);

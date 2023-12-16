@@ -6,6 +6,7 @@ import { Notification } from './notification.type.js';
 import { Page } from './page.enum.js';
 import { Review } from './review.type';
 import { Role } from './role.enum';
+import { Subscribe } from './subscribe.type';
 import { Trainer } from './trainer.interface';
 import { TrainingLevel } from './training-level.enum';
 import { TrainingOrder } from './training-order.type';
@@ -40,6 +41,7 @@ export type MainState = {
 }
 
 export type DataState = {
+  subscribes: Subscribe[],
   selectedUser: User | Trainer | null;
   users: User[];
   popularTrainings: Training[];

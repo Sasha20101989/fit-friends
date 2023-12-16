@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type HashtagListProps = {
   classType: string;
   hashtagClassType: string;
@@ -19,4 +21,4 @@ function HashtagList({classType, hashtagClassType, hashtagItemClassType, hashtag
   );
 }
 
-export default HashtagList;
+export default memo(HashtagList);

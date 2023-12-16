@@ -1,3 +1,4 @@
+import { Subscribe } from './../../../types/subscribe.type';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance } from 'axios';
@@ -15,7 +16,7 @@ import { WorkoutType } from '../../../types/workout-type.enum';
 import { Location } from '../../../types/location.enum';
 import { getUsers } from '../../main-data/main-data.selectors';
 import { setPaginationParams } from '../../main-data/main-data.slice';
-import { Notification } from '../../../types/notification.type.js';
+import { Notification } from '../../../types/notification.type';
 
 export type UserQueryParams = {
   location?: Location[];
@@ -114,6 +115,22 @@ export const fetchMyFriendsAction = createAsyncThunk<User[], object, {
   },
 );
 
+export const fetchMySubscribesAction = createAsyncThunk<Subscribe[], object, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchSubscribes',
+  async (params, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<Subscribe[]>(APIRoute.Subscribes);
+      return data;
+    } catch (error) {
+      return [];
+    }
+  },
+);
+
 export const addToFriendsAction = createAsyncThunk<User, string, {
   dispatch: AppDispatch;
   state: State;
@@ -123,6 +140,29 @@ export const addToFriendsAction = createAsyncThunk<User, string, {
   async (userId, { dispatch, extra: api }) => {
     const { data } = await api.post<User>(`${APIRoute.Friends}/${userId}`);
     return data;
+  },
+);
+
+export const addToSubscribesAction = createAsyncThunk<Subscribe, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/addToSubscribes',
+  async (trainerId, { dispatch, extra: api }) => {
+    const { data } = await api.post<Subscribe>(`${APIRoute.Subscribes}/trainer/${trainerId}`);
+    return data;
+  },
+);
+
+export const deleteFromSubscribesAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/deleteFromSubscribes',
+  async (trainerId, { dispatch, extra: api }) => {
+    await api.delete(`${APIRoute.Subscribes}/trainer/${trainerId}`);
   },
 );
 

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Training } from '../../types/training.type';
 import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 import ThumbnailTrainingHashtags from '../thumbnail-training-hashtags/thumbnail-training-hashtags';
@@ -35,4 +36,4 @@ function ThumbnailTraining({sourceName, training }: ThumbnailTrainingProps): JSX
   );
 }
 
-export default ThumbnailTraining;
+export default memo(ThumbnailTraining);

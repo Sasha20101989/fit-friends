@@ -5,7 +5,7 @@ import { Training } from '../../types/training.type';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getTrainings } from '../../store/main-data/main-data.selectors';
 import { WorkoutType } from '../../types/workout-type.enum';
-import { ChangeEvent, Fragment, useEffect, useState } from 'react';
+import { ChangeEvent, Fragment, memo, useEffect, useState } from 'react';
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { TrainingCategory } from '../../types/training-category';
@@ -19,7 +19,6 @@ function TrainingsCatalogScreen() : JSX.Element {
   const dispatch = useAppDispatch();
 
   const trainings: Training[] = useAppSelector(getTrainings);
-  const currentUserId = useAppSelector(getCurrentUserId);
 
   const [minPrice, setMinPrice] = useState<number | ''>('');
   const [maxPrice, setMaxPrice] = useState<number | ''>('');
@@ -32,6 +31,7 @@ function TrainingsCatalogScreen() : JSX.Element {
   const initialQueryParams: FetchTrainingsParams = {
     category: TrainingCategory.BASE,
     createdAtDirection: Sorting.Descending,
+    limit: MAX_TRAININGS_COUNT
   };
 
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
@@ -44,35 +44,31 @@ function TrainingsCatalogScreen() : JSX.Element {
   );
 
   useEffect(() => {
-    if(currentUserId){
-      let fetchParams: FetchTrainingsParams = {
-        ...queryParams,
-        trainer: currentUserId
+    let fetchParams: FetchTrainingsParams = {
+      ...queryParams
+    };
+
+    if (sortingOption) {
+      fetchParams = {
+        ...fetchParams,
+        sortByPrice: sortingOption,
       };
 
-      if (sortingOption) {
-
-        fetchParams = {
-          ...fetchParams,
-          sortByPrice: sortingOption,
-        };
-
-        delete fetchParams.createdAtDirection;
-      }
-
-      if (showFreeOnly) {
-        fetchParams = {
-          ...fetchParams,
-          maxPrice: 0,
-        };
-
-        delete fetchParams.sortByPrice;
-        delete fetchParams.createdAtDirection;
-      }
-
-      debouncedFetchTrainerTrainings(fetchParams);
+      delete fetchParams.createdAtDirection;
     }
-  }, [dispatch, currentUserId, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
+
+    if (showFreeOnly) {
+      fetchParams = {
+        ...fetchParams,
+        maxPrice: 0,
+      };
+
+      delete fetchParams.sortByPrice;
+      delete fetchParams.createdAtDirection;
+    }
+
+    debouncedFetchTrainerTrainings(fetchParams);
+  }, [dispatch, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
 
   const handleSortingChange = (option: Sorting | undefined) => {
     setShowFreeOnly(false);
@@ -336,7 +332,9 @@ function TrainingsCatalogScreen() : JSX.Element {
                 ))}
               </ul>
               <div className="show-more training-catalog__show-more">
-                <ShowMore onShowMoreClick={handleShowMoreClick}/>
+                {trainings.length > 0 && queryParams.limit && trainings.length % queryParams.limit === 0 && (
+                  <ShowMore onShowMoreClick={handleShowMoreClick}/>
+                )}
                 <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
               </div>
             </div>
@@ -346,4 +344,4 @@ function TrainingsCatalogScreen() : JSX.Element {
     </Layout>
   );
 }
-export default TrainingsCatalogScreen;
+export default memo(TrainingsCatalogScreen);

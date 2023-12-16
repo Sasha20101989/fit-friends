@@ -48,6 +48,22 @@ export default class SubscriberController extends Controller {
         new DocumentExistsMiddleware(this.userService, 'Traininer', 'trainerId')
       ]
     });
+    this.addRoute({ path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ]
+    });
+  }
+
+  public async index(
+    { user }: Request,
+    res: Response
+  ) {
+    const subscribes = await this.subscriberService.findByUserId(user.id);
+
+    this.ok(res, fillDTO(SubscriberRdo, subscribes));
   }
 
   public async create(

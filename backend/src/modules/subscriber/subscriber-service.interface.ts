@@ -4,6 +4,7 @@ import { SubscriberEntity } from './subscriber.entity.js';
 import { DocumentType } from '@typegoose/typegoose';
 
 export interface SubscriberServiceInterface {
+  findByUserId(userId: MongoId): Promise<DocumentType<SubscriberEntity>[]>;
   create(userId: MongoId, trainerId: MongoId): Promise<DocumentType<SubscriberEntity>>;
   exists(userId: MongoId, trainerId: MongoId): Promise<boolean>;
   destroy(userId: MongoId, trainerId: MongoId): Promise<void>;

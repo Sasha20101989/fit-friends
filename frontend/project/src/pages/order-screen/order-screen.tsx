@@ -64,7 +64,9 @@ function OrderScreen() : JSX.Element {
               ))}
             </ul>
             <div className="show-more my-orders__show-more">
-              {/* <ShowMore onShowMoreClick={handleShowMoreClick}/> */}
+              {/* {trainings.length > 0 && queryParams.limit && trainings.length % queryParams.limit === 0 && (
+                  <ShowMore onShowMoreClick={handleShowMoreClick}/>
+                )} */}
               <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
             </div>
           </div>

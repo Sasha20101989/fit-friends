@@ -30,7 +30,8 @@ export enum APIRoute {
   Friends = '/friends',
   Orders = '/orders',
   Reviews = '/reviews/training',
-  Notifications = '/notifications'
+  Notifications = '/notifications',
+  Subscribes = '/subscribes'
 }
 
 export enum AuthorizationStatus {

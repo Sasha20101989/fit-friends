@@ -16,6 +16,12 @@ export default class SubscriberService implements SubscriberServiceInterface {
     @inject(AppComponent.SubscriberModel) private readonly subscriberModel: ModelType<SubscriberEntity>
   ){}
 
+  public async findByUserId(userId: MongoId): Promise<DocumentType<SubscriberEntity>[]> {
+    return await this.subscriberModel
+      .find({ user: userId })
+      .populate(['user', 'trainer']);
+  }
+
   public async create(userId: MongoId, trainerId: MongoId): Promise<DocumentType<SubscriberEntity>> {
     const newSubscriber = await this.subscriberModel.create({user: userId, trainer: trainerId});
     this.logger.info('Subscriber created.');

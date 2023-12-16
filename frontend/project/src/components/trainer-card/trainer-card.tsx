@@ -1,56 +1,40 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import HashtagList from '../hashtag-list/hashtag-list';
 import { Role } from '../../types/role.enum';
 import CardGalery from '../card-galery/card-galery';
 import { Trainer } from '../../types/trainer.interface';
 import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { Training } from '../../types/training.type';
-import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { TrainingCategory } from '../../types/training-category';
-import { getTrainings } from '../../store/main-data/main-data.selectors';
 import IconButton from '../icon-button/icon-button';
 import { MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
+import { memo } from 'react';
 
 type TrainerCardProps = {
   trainer: Trainer;
+  trainings: Training[];
   isFriend: boolean;
+  isInSubscribers: boolean;
+  selectedPage: number;
   onAddFriend: () => void;
   onRemoveFriend: () => void;
+  onAddSubscribe: () => void;
+  onRemoveSubscribe: () => void;
+  onPreviousTrainingsClick: () => void;
+  onNextTrainingsClick: () => void;
 };
 
-function TrainerCard({ trainer, isFriend, onAddFriend, onRemoveFriend }: TrainerCardProps) : JSX.Element {
-  const dispatch = useAppDispatch();
-
-  const { id } = useParams<{ id: string }>();
-
-  const [selectedPage, setPage] = useState<number>(1);
-
+function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPage, onAddFriend, onRemoveFriend, onAddSubscribe, onRemoveSubscribe, onPreviousTrainingsClick, onNextTrainingsClick }: TrainerCardProps) : JSX.Element {
   const {name, location, description, workoutTypes, role, personalTraining} = trainer;
-
-  const trainings: Training[] = useAppSelector(getTrainings);
 
   const isPreviousButtonDisabled = selectedPage === 1;
   const isNextButtonDisabled = MAX_TRAINER_CARD_TRAININGS_COUNT !== trainings.length;
 
-  useEffect(() => {
-    if(id){
-      dispatch(fetchTrainingsAction({
-        trainer: id,
-        category: TrainingCategory.BASE,
-        page: selectedPage,
-        limit: MAX_TRAINER_CARD_TRAININGS_COUNT,
-      }));
-    }
-  }, [dispatch , id, selectedPage]);
-
   const handlePreviousClick = () => {
-    setPage((prevPage) => Math.max(prevPage - 1, 1));
+    onPreviousTrainingsClick();
   };
 
   const handleNextClick = () => {
-    setPage((prevPage) => prevPage + 1);
+    onNextTrainingsClick();
   };
 
 
@@ -60,6 +44,18 @@ function TrainerCard({ trainer, isFriend, onAddFriend, onRemoveFriend }: Trainer
 
   const handleRemoveFriend = () => {
     onRemoveFriend();
+  };
+
+  const handleAddSubscribe = () => {
+    onAddSubscribe();
+  };
+
+  const handleRemoveSubscribe = () => {
+    onRemoveSubscribe();
+  };
+
+  const handleCheckboxChange = () => {
+    isInSubscribers ? handleRemoveSubscribe() : handleAddSubscribe();
   };
 
   return(
@@ -139,7 +135,13 @@ function TrainerCard({ trainer, isFriend, onAddFriend, onRemoveFriend }: Trainer
             <div className="user-card-coach__training-check">
               <div className="custom-toggle custom-toggle--checkbox">
                 <label>
-                  <input type="checkbox" value="user-agreement-1" name="user-agreement"/>
+                  <input
+                    type="checkbox"
+                    value="user-agreement-1"
+                    name="user-agreement"
+                    checked={isInSubscribers}
+                    onChange={handleCheckboxChange}
+                  />
                   <span className="custom-toggle__icon">
                     <svg width="9" height="6" aria-hidden="true">
                       <use xlinkHref="#arrow-check"></use>
@@ -155,4 +157,4 @@ function TrainerCard({ trainer, isFriend, onAddFriend, onRemoveFriend }: Trainer
     </section>
   );
 }
-export default TrainerCard;
+export default memo(TrainerCard);

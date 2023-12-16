@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type CardGaleryProps = {
   isCoach: boolean;
 }
@@ -29,4 +31,4 @@ function CardGalery({ isCoach }: CardGaleryProps): JSX.Element {
   );
 }
 
-export default CardGalery;
+export default memo(CardGalery);

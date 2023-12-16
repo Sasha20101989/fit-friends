@@ -5,10 +5,12 @@ import { TrainingOrder } from '../../types/training-order.type';
 import { Review } from '../../types/review.type';
 import { User } from '../../types/user.interface';
 import { Trainer } from '../../types/trainer.interface';
-import { Notification } from '../../types/notification.type.js';
+import { Notification } from '../../types/notification.type';
+import { Subscribe } from '../../types/subscribe.type';
 
 export const getUsers = (state: State): User[] => state[NameSpace.Data].users;
 export const getNotifications = (state: State): Notification[] => state[NameSpace.Data].notifications;
+export const getSubscribes = (state: State): Subscribe[] => state[NameSpace.Data].subscribes;
 export const getSelectedUser = (state: State): User | Trainer | null => state[NameSpace.Data].selectedUser;
 export const getPopularTrainings = (state: State): Training[] => state[NameSpace.Data].popularTrainings;
 export const getTrainings = (state: State): Training[] => state[NameSpace.Data].trainings;
