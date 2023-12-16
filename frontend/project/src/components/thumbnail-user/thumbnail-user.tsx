@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 import { User } from '../../types/user.interface';
 import { AppRoute } from '../../const';
+import Image from '../image/image';
 
 type ThumbnailUserProps = {
   sourceName: string;
@@ -27,7 +27,7 @@ function ThumbnailUser({ sourceName, childSourceName, buttonSourceName, user }: 
   return (
     <li className={sourceName}>
       <div className={childSourceName}>
-        <ThumbnailPicture sourceName={'thumbnail-user__image'} imageSrc={avatar ? avatar : ''} width={82} height={82} alt={'аватар пользователя'}/>
+        <Image sourceName={'thumbnail-user__image'} imageSrc={avatar ? avatar : ''} width={82} height={82} alt={'аватар пользователя'}/>
         {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
                       <svg width="12" height="12" aria-hidden="true">
                         <use xlinkHref="#icon-crown"></use>

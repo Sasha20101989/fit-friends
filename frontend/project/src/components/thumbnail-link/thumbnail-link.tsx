@@ -4,13 +4,12 @@ type ThumbnailLinkProps = {
   to: string;
   icon: string;
   text: string;
-  theme: string;
 }
 
-function ThumbnailLink({ to, icon, text, theme }: ThumbnailLinkProps): JSX.Element {
+function ThumbnailLink({ to, icon, text }: ThumbnailLinkProps): JSX.Element {
   return (
-    <Link className={`thumbnail-link thumbnail-link--${theme}`} to={to}>
-      <div className={`thumbnail-link__icon thumbnail-link__icon--theme-${theme}`}>
+    <Link className="thumbnail-link thumbnail-link--light" to={to}>
+      <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
         <svg width="30" height="26" aria-hidden="true">
           <use xlinkHref={icon}></use>
         </svg>

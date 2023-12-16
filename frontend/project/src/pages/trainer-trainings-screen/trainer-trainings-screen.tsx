@@ -208,13 +208,8 @@ function TrainerTrainingsScreen(): JSX.Element {
             </div>
             <div className="inner-page__content">
               <div className="my-trainings">
-                <TrainingList trainings={trainings}/>
-                <div className="show-more my-trainings__show-more">
-                  {trainings.length > 0 && queryParams.limit && trainings.length % queryParams.limit === 0 && (
-                    <ShowMore onShowMoreClick={handleShowMoreClick}/>
-                  )}
-                  <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
-                </div>
+                <TrainingList sourceName={'my-trainings__list'} itemSourceName={'my-trainings__item'} trainings={trainings}/>
+                <ShowMore sourceName={'show-more my-trainings__show-more'} length={trainings.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
               </div>
             </div>
           </div>

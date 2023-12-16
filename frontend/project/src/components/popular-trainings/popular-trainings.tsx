@@ -1,10 +1,11 @@
-import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
+
 import { Training } from '../../types/training.type';
 import IconButton from '../icon-button/icon-button';
 import { AppRoute } from '../../const';
 import { useNavigate } from 'react-router-dom';
 import ThumbnailSpecGym from '../thumbnail-spec-gym/thumbnail-spec-gym';
 import { memo } from 'react';
+import TrainingList from '../training-list/training-list';
 
 type PopularTrainingsProps = {
   popularTrainings: Training[];
@@ -48,11 +49,7 @@ function PopularTrainings({popularTrainings, isPreviousButtonDisabled, isNextBut
             </div>
           </div>
           {popularTrainings.length > 0 ?
-            <ul className="popular-trainings__list">
-              {popularTrainings.map((training) => (
-                <ThumbnailTraining sourceName={'popular-trainings__item'} key={`${training.name}-${training.calories}-${training.price}`} training={training} />
-              ))}
-            </ul> :
+            <TrainingList sourceName={'popular-trainings__list'} itemSourceName={'popular-trainings__item'} trainings={popularTrainings}/> :
             <ThumbnailSpecGym/>}
         </div>
       </div>

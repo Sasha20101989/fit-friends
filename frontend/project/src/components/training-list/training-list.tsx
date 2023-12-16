@@ -1,18 +1,21 @@
 import TrainingItem from '../training-item/training-item';
 import { Training } from '../../types/training.type';
+import { memo } from 'react';
 
 type TrainingListProps = {
+  sourceName: string;
+  itemSourceName: string;
   trainings: Training[];
 };
 
-function TrainingList({trainings}: TrainingListProps): JSX.Element {
+function TrainingList({sourceName, itemSourceName, trainings}: TrainingListProps): JSX.Element {
   return (
-    <ul className="my-trainings__list">
+    <ul className={sourceName}>
       {trainings.map((training) => (
-        <TrainingItem key={`${training.name}-${training.trainer.email}`} training={training} />
+        <TrainingItem key={`${training.name}-${training.trainer.email}`} sourceName={itemSourceName} training={training} />
       ))}
     </ul>
   );
 }
 
-export default TrainingList;
+export default memo(TrainingList);

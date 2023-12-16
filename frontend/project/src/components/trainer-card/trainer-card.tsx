@@ -3,11 +3,11 @@ import HashtagList from '../hashtag-list/hashtag-list';
 import { Role } from '../../types/role.enum';
 import CardGalery from '../card-galery/card-galery';
 import { Trainer } from '../../types/trainer.interface';
-import ThumbnailTraining from '../thumbnail-training/thumbnail-training';
 import { Training } from '../../types/training.type';
 import IconButton from '../icon-button/icon-button';
 import { MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
 import { memo } from 'react';
+import TrainingList from '../training-list/training-list';
 
 type TrainerCardProps = {
   trainer: Trainer;
@@ -125,11 +125,7 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
               <IconButton sourceName={'btn-icon user-card-coach__training-btn'} direction="right" onClick={handleNextClick} ariaLabel="next" width={14} height={10} disabled={isNextButtonDisabled}/>
             </div>
           </div>
-          <ul className="user-card-coach__training-list">
-            {trainings.map((training) => (
-              <ThumbnailTraining key={training.name} sourceName={'user-card-coach__training-item'} training={training}/>
-            ))}
-          </ul>
+          <TrainingList sourceName={'user-card-coach__training-list'} itemSourceName={'user-card-coach__training-item'} trainings={trainings}/>
           <form className="user-card-coach__training-form">
             <button className="btn user-card-coach__btn-training" type="button">Хочу персональную тренировку</button>
             <div className="user-card-coach__training-check">

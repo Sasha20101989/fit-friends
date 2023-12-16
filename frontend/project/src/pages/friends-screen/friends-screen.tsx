@@ -54,12 +54,7 @@ function FriendsScreen(): JSX.Element {
                 <Friend key={friend.email} friend={friend}/>
               ))}
             </ul>
-            <div className="show-more friends-list__show-more">
-              {friends.length > 0 && queryParams.limit && friends.length % queryParams.limit === 0 && (
-                <ShowMore onShowMoreClick={handleShowMoreClick}/>
-              )}
-              <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
-            </div>
+            <ShowMore sourceName={'show-more friends-list__show-more'} length={friends.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
           </div>
         </div>
       </section>

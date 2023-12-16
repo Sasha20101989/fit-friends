@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { useAppSelector } from '../../hooks/index';
 import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
-import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
+import Image from '../image/image';
 
 function VideoSection():JSX.Element {
   const currentRole = useAppSelector(getCurrentRole);
@@ -11,7 +11,7 @@ function VideoSection():JSX.Element {
     <div className="training-video">
       <h2 className="training-video__title">Видео</h2>
       <div className="training-video__video">
-        <ThumbnailPicture imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
+        <Image imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
         <button className="training-video__play-button btn-reset">
           <svg width="18" height="30" aria-hidden="true">
             <use xlinkHref="#icon-arrow"></use>

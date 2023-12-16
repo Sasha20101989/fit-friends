@@ -1,5 +1,5 @@
 import { User } from '../../types/user.interface';
-import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
+import Image from '../image/image';
 
 type FriendProps = {
   friend: User;
@@ -14,7 +14,7 @@ function Friend({friend}: FriendProps): JSX.Element{
       <div className="thumbnail-friend">
         <div className={`thumbnail-friend__info thumbnail-friend__info--theme-${theme}`}>
           <div className="thumbnail-friend__image-status">
-            <ThumbnailPicture sourceName={'thumbnail-friend__image'} imageSrc={'img/content/thumbnails/friend-14'} width={78} height={78} alt={'аватар пользователя'}/>
+            <Image sourceName={'thumbnail-friend__image'} imageSrc={friend.avatar ? friend.avatar : ''} width={78} height={78} alt={'аватар пользователя'}/>
           </div>
           <div className="thumbnail-friend__header">
             <h2 className="thumbnail-friend__name">{name}</h2>

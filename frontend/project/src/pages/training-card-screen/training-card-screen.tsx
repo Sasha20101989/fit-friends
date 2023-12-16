@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import { editTrainingAction, fetchReviewsAction, fetchTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
@@ -19,6 +18,7 @@ import Loading from '../../components/loading/loading';
 import Layout from '../../components/layout/layout';
 import { AppRoute } from '../../const';
 import GoBack from '../../components/go-back/go-back';
+import Image from '../../components/image/image';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -124,7 +124,7 @@ function TrainingCardScreen() : JSX.Element {
                 <h2 className="visually-hidden">Информация о тренировке</h2>
                 <div className="training-info__header">
                   <div className="training-info__coach">
-                    <ThumbnailPicture imageSrc={training.trainer.avatar ?? ''} sourceName={'training-info__coach'} width={64} height={64} alt={'аватар пользователя'}/>
+                    <Image imageSrc={training.trainer.avatar ?? ''} sourceName={'training-info__coach'} width={64} height={64} alt={'аватар пользователя'}/>
                     <div className="training-info__coach-info">
                       <span className="training-info__label">{training.trainer.role}</span>
                       <span className="training-info__name">{training.trainer.name}</span>

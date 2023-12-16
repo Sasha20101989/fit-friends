@@ -134,14 +134,7 @@ function UsersCatalogScreen() : JSX.Element {
                     />
                   ))}
                 </ul>
-                <div className="show-more users-catalog__show-more">
-                  {users.length > 0 && queryParams.limit && users.length % queryParams.limit === 0 && (
-                    <ShowMore onShowMoreClick={handleShowMoreClick}/>
-                  )}
-                  <button className="btn show-more__button show-more__button--to-top" type="button">
-                    Вернуться в начало
-                  </button>
-                </div>
+                <ShowMore sourceName={'show-more users-catalog__show-more'} length={users.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
               </div>
             </div>
           </div>

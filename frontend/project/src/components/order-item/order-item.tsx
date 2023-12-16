@@ -1,19 +1,20 @@
 import { Link, useNavigate } from 'react-router-dom';
-import ThumbnailTrainingPicture from '../thumbnail-picture/thumbnail-picture';
 import ThumbnailTrainingTotal from '../thumbnail-training-total/thumbnail-training-total';
-import ThumbnailTrainingHashtags from '../thumbnail-training-hashtags/thumbnail-training-hashtags';
-import ThumbnailTrainingRate from '../thumbnail-training-rate/thumbnail-training-rate';
+import ThumbnailTrainingRate from '../training-rate/training-rate';
 import ThumbnailTrainingText from '../thumbnail-training-text/thumbnail-training-text';
 import { TrainingOrder } from '../../types/training-order.type';
 import { useAppSelector } from '../../hooks/index';
 import { getUser } from '../../store/user-process/user-process.selectors';
 import { AppRoute } from '../../const';
+import HashtagList from '../hashtag-list/hashtag-list';
+import Image from '../image/image';
+import { memo } from 'react';
 
-type ThumbnailTrainingOrderProps = {
+type OrderItemProps = {
   order: TrainingOrder;
 }
 
-function ThumbnailTrainingOrder({ order }: ThumbnailTrainingOrderProps): JSX.Element {
+function OrderItem({ order }: OrderItemProps): JSX.Element {
   const navigate = useNavigate();
 
   const { training, backgroundImage, price, name, workoutType, rating, description, totalSalesAmount, purchasedQuantity, calories } = order;
@@ -32,14 +33,14 @@ function ThumbnailTrainingOrder({ order }: ThumbnailTrainingOrderProps): JSX.Ele
     <li className="my-orders__item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
-          <ThumbnailTrainingPicture imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
+          <Image imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
           <p className="thumbnail-training__price">
             <span className="thumbnail-training__price-value">{price === 0 ? 'Бесплатно' : `${price} ₽`}</span>
             <span>₽</span>
           </p>
           <h2 className="thumbnail-training__title">{name}</h2>
           <div className="thumbnail-training__info">
-            <ThumbnailTrainingHashtags hashtags={hashtags}/>
+            <HashtagList classType={'thumbnail-training__hashtags-list'} hashtagClassType={'thumbnail-training__hashtags-item'} hashtagItemClassType={'hashtag thumbnail-training__hashtag'} hashtags={hashtags}/>
             <ThumbnailTrainingRate rate={rating}/>
           </div>
           <ThumbnailTrainingText text={description}/>
@@ -56,4 +57,4 @@ function ThumbnailTrainingOrder({ order }: ThumbnailTrainingOrderProps): JSX.Ele
   );
 }
 
-export default ThumbnailTrainingOrder;
+export default memo(OrderItem);

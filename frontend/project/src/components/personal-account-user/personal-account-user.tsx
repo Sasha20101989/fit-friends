@@ -1,14 +1,12 @@
 import { AppRoute } from '../../const';
+import Image from '../image/image';
 import ThumbnailLink from '../thumbnail-link/thumbnail-link';
-import ThumbnailPicture from '../thumbnail-picture/thumbnail-picture';
 
 function PersonalAccountUser():JSX.Element {
   const thumbnailLinks = [
     { to: AppRoute.UserFriends, icon: '#icon-friends', text: 'Мои друзья' },
     { to: AppRoute.UserPurchases, icon: '#icon-shopping-cart', text: 'Мои покупки' },
   ];
-
-  const theme = 'light';
 
   return (
     <div className="personal-account-user">
@@ -32,10 +30,10 @@ function PersonalAccountUser():JSX.Element {
       </div>
       <div className="personal-account-user__additional-info">
         {thumbnailLinks.map((link) => (
-          <ThumbnailLink key={link.text} to={link.to} icon={link.icon} text={link.text} theme={theme}/>
+          <ThumbnailLink key={link.text} to={link.to} icon={link.icon} text={link.text}/>
         ))}
         <div className="thumbnail-spec-gym">
-          <ThumbnailPicture sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'} width={330} height={190} alt={'тренировка'}/>
+          <Image sourceName='thumbnail-spec-gym__image' imageSrc={'img/content/thumbnails/nearest-gym-01'} width={330} height={190} alt={'тренировка'}/>
           <p className="thumbnail-spec-gym__type">Ближайший зал</p>
           <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
             <h3 className="thumbnail-spec-gym__title">Скоро тут появится что-то полезное</h3>

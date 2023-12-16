@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 type ImageProps = {
   sourceName: string;
   imageSrc: string;
@@ -23,8 +25,10 @@ function Image({imageSrc, sourceName, width, height, alt}: ImageProps): JSX.Elem
           alt={alt}
         />
       </picture>
+      {/* <div className="thumbnail-friend__online-status thumbnail-friend__online-status--is-online"></div> */}
     </div>
   );
 }
 
-export default Image;
+export default memo(Image);
+

@@ -1,8 +1,10 @@
-type ThumbnailTrainingRateProps = {
+import { memo } from 'react';
+
+type TrainingRateProps = {
   rate: number;
 }
 
-function ThumbnailTrainingRate({ rate }: ThumbnailTrainingRateProps): JSX.Element {
+function TrainingRate({ rate }: TrainingRateProps): JSX.Element {
   return (
     <div className="thumbnail-training__rate">
       <svg width="16" height="16" aria-hidden="true">
@@ -13,4 +15,4 @@ function ThumbnailTrainingRate({ rate }: ThumbnailTrainingRateProps): JSX.Elemen
   );
 }
 
-export default ThumbnailTrainingRate;
+export default memo(TrainingRate);

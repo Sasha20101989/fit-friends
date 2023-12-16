@@ -101,23 +101,27 @@ function MainScreen(): JSX.Element {
         isPreviousButtonDisabled={isPreviousSpecialForUserButtonDisabled}
         isNextButtonDisabled={isNextSpecialForUserButtonDisabled}
         onPreviousClick={handleSpecialForUserPreviousClick}
-        onNextClick={handleSpecialForUserNextClick}/>
+        onNextClick={handleSpecialForUserNextClick}
+      />
       <SpecialOffers
         specialTrainings={specialTrainings}
         activeSlide={activeSpecialSlide}
-        onDotClick={handleSpecialDotClick}/>
+        onDotClick={handleSpecialDotClick}
+      />
       <PopularTrainings
         popularTrainings={popularTrainings}
         isPreviousButtonDisabled={isPreviousPopularButtonDisabled}
         isNextButtonDisabled={isNextPopularButtonDisabled}
         onPreviousClick={handlePopularPreviousClick}
-        onNextClick={handlePopularNextClick}/>
+        onNextClick={handlePopularNextClick}
+      />
       <LookForCompany
         lookForCompanyUsers={lookForCompanyUsers}
         isPreviousButtonDisabled={isPreviousLookForCompanyButtonDisabled}
         isNextButtonDisabled={isNextLookForCompanyButtonDisabled}
         onPreviousClick={handleLookForCompanyPreviousClick}
-        onNextClick={handleLookForCompanyNextClick}/>
+        onNextClick={handleLookForCompanyNextClick}
+      />
     </Layout>
   );
 }

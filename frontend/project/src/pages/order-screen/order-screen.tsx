@@ -4,10 +4,10 @@ import { TrainingOrder } from '../../types/training-order.type';
 import { useParams } from 'react-router-dom';
 import { fetchOrdersAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { getOrders } from '../../store/main-data/main-data.selectors';
-import ThumbnailTrainingOrder from '../../components/thumbnail-training-order/thumbnail-training-order';
 import Layout from '../../components/layout/layout';
-import { AppRoute } from '../../const';
+import { AppRoute} from '../../const';
 import GoBack from '../../components/go-back/go-back';
+import OrderList from '../../components/order-list/order-list';
 
 function OrderScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -19,14 +19,14 @@ function OrderScreen() : JSX.Element {
   //   createdAtDirection: Sorting.Descending,
   // };
 
-  // const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
+  //const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
 
-  // const handleShowMoreClick = () => {
-  //   setQueryParams((prevParams) => ({
-  //     ...prevParams,
-  //     limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
-  //   }));
-  // };
+  const handleShowMoreClick = () => {
+    //setQueryParams((prevParams) => ({
+    //  ...prevParams,
+    //  limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+    //}));
+  };
 
   useEffect(() => {
     if(id){
@@ -58,17 +58,8 @@ function OrderScreen() : JSX.Element {
                 </div>
               </div>
             </div>
-            <ul className="my-orders__list">
-              {orders.map((order) => (
-                <ThumbnailTrainingOrder key={order.name} order={order} />
-              ))}
-            </ul>
-            <div className="show-more my-orders__show-more">
-              {/* {trainings.length > 0 && queryParams.limit && trainings.length % queryParams.limit === 0 && (
-                  <ShowMore onShowMoreClick={handleShowMoreClick}/>
-                )} */}
-              <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
-            </div>
+            <OrderList orders={orders}/>
+            {/* <ShowMore sourceName={'show-more my-orders__show-more'} length={orders.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/> */}
           </div>
         </div>
       </section>

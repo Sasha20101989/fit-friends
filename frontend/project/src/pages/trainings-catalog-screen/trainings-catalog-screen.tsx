@@ -1,19 +1,17 @@
-import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import Layout from '../../components/layout/layout';
-import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
 import { Training } from '../../types/training.type';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getTrainings } from '../../store/main-data/main-data.selectors';
 import { WorkoutType } from '../../types/workout-type.enum';
-import { ChangeEvent, Fragment, memo, useEffect, useState } from 'react';
+import { ChangeEvent, memo, useEffect, useState } from 'react';
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { TrainingCategory } from '../../types/training-category';
 import { Sorting } from '../../types/sorting.enum';
 import { debounce } from 'lodash';
 import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import ShowMore from '../../components/show-more/show-more';
+import TrainingList from '../../components/training-list/training-list';
 
 function TrainingsCatalogScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -292,51 +290,8 @@ function TrainingsCatalogScreen() : JSX.Element {
               </div>
             </div>
             <div className="training-catalog">
-              <ul className="training-catalog__list">
-                {trainings.map((training) => (
-                  <li key={training.description} className="training-catalog__item">
-                    <div className="thumbnail-training">
-                      <div className="thumbnail-training__inner">
-                        <ThumbnailPicture imageSrc={training.backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
-                        <p className="thumbnail-training__price">
-                          {training.price === 0 ?
-                            'Бесплатно' :
-                            <Fragment>
-                              <span className="thumbnail-training__price-value">{training.price}</span>
-                              <span>₽</span>
-                            </Fragment>}
-                        </p>
-                        <h3 className="thumbnail-training__title">crossfit</h3>
-                        <div className="thumbnail-training__info">
-                          <ul className="thumbnail-training__hashtags-list">
-                            <li className="thumbnail-training__hashtags-item">
-                              <div className="hashtag thumbnail-training__hashtag"><span>#кроссфит</span></div>
-                            </li>
-                            <li className="thumbnail-training__hashtags-item">
-                              <div className="hashtag thumbnail-training__hashtag"><span>#1200ккал</span></div>
-                            </li>
-                          </ul>
-                          <div className="thumbnail-training__rate">
-                            <svg width="16" height="16" aria-hidden="true">
-                              <use xlinkHref="#icon-star"></use>
-                            </svg><span className="thumbnail-training__rate-value">5</span>
-                          </div>
-                        </div>
-                        <div className="thumbnail-training__text-wrapper">
-                          <p className="thumbnail-training__text">Сложный комплекс упражнений для профессиональных атлетов на&nbsp;отработку показателей в&nbsp;классическом стиле.</p>
-                        </div>
-                        {training.id && <ThumbnailTrainingWrapper trainingId={training.id}/>}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <div className="show-more training-catalog__show-more">
-                {trainings.length > 0 && queryParams.limit && trainings.length % queryParams.limit === 0 && (
-                  <ShowMore onShowMoreClick={handleShowMoreClick}/>
-                )}
-                <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
-              </div>
+              <TrainingList sourceName={'training-catalog__list'} itemSourceName={'training-catalog__item'} trainings={trainings}/>
+              <ShowMore sourceName={'show-more training-catalog__show-more'} length={trainings.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
             </div>
           </div>
         </div>
