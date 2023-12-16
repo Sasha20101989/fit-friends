@@ -1,57 +1,25 @@
-import { useEffect, useState } from 'react';
 import SpecialForYouItem from './special-for-you-item';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { Training } from '../../types/training.type';
-import { getSpecialForUserTrainings } from '../../store/main-data/main-data.selectors';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
-import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getUser } from '../../store/user-process/user-process.selectors';
-import Loading from '../loading/loading';
 import IconButton from '../icon-button/icon-button';
-import { MAX_SPECIAL_TRAININGS_COUNT } from '../../const';
-import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { TrainingCategory } from '../../types/training-category';
+import ThumbnailSpecGym from '../thumbnail-spec-gym/thumbnail-spec-gym';
+import { memo } from 'react';
 
-function SpecialForYou(): JSX.Element {
-  const dispatch = useAppDispatch();
+type SpecialForYouProps = {
+  specialForUserTrainings: Training[];
+  isPreviousButtonDisabled: boolean;
+  isNextButtonDisabled: boolean;
+  onPreviousClick: (value: React.SetStateAction<number>) => void;
+  onNextClick: (value: React.SetStateAction<number>) => void;
+}
 
-  const currentUserId: string = useAppSelector(getCurrentUserId);
-  const user = useAppSelector(getUser);
-  const trainings: Training[] = useAppSelector(getSpecialForUserTrainings);
-
-  const [selectedPage, setSpecialPage] = useState<number>(1);
-
-  const isPreviousButtonDisabled = selectedPage === 1;
-  const isNextButtonDisabled = MAX_SPECIAL_TRAININGS_COUNT !== trainings.length;
-
+function SpecialForYou({specialForUserTrainings, isPreviousButtonDisabled, isNextButtonDisabled, onPreviousClick, onNextClick}: SpecialForYouProps): JSX.Element {
   const handlePreviousClick = () => {
-    setSpecialPage((prevPage) => Math.max(prevPage - 1, 1));
+    onPreviousClick((prevPage) => Math.max(prevPage - 1, 1));
   };
 
   const handleNextClick = () => {
-    setSpecialPage((prevPage) => prevPage + 1);
+    onNextClick((prevPage) => prevPage + 1);
   };
-
-  useEffect(() => {
-    if(currentUserId){
-      dispatch(fetchUserAction(currentUserId));
-    }
-  }, [dispatch , currentUserId]);
-
-  useEffect(() => {
-    if(user && user.workoutTypes.length > 0){
-      dispatch(fetchTrainingsAction({
-        category: TrainingCategory.FOR_USER,
-        page: selectedPage,
-        limit: MAX_SPECIAL_TRAININGS_COUNT,
-        workoutTypes: user.workoutTypes
-      }));
-    }
-  }, [dispatch , user, selectedPage, currentUserId]);
-
-  if(!user){
-    return (<Loading/>);
-  }
 
   return (
     <section className="special-for-you">
@@ -64,20 +32,22 @@ function SpecialForYou(): JSX.Element {
               <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
-          <ul className="special-for-you__list">
-            {trainings.map((training, index) => (
-              <SpecialForYouItem
-                key={`${training.name}-${training.calories}-${training.price}`}
-                trainingId={training.id}
-                title={training.workoutType}
-                imageSrc={`img/content/thumbnails/preview-0${index + 1}`}
-              />
-            ))}
-          </ul>
+          {specialForUserTrainings.length > 0 ?
+            <ul className="special-for-you__list">
+              {specialForUserTrainings.map((training, index) => (
+                <SpecialForYouItem
+                  key={`${training.name}-${training.calories}-${training.price}`}
+                  trainingId={training.id}
+                  title={training.workoutType}
+                  imageSrc={`img/content/thumbnails/preview-0${index + 1}`}
+                />
+              ))}
+            </ul> :
+            <ThumbnailSpecGym/>}
         </div>
       </div>
     </section>
   );
 }
 
-export default SpecialForYou;
+export default memo(SpecialForYou);

@@ -2,6 +2,7 @@ import { AuthorizationStatus, RegisterStatus } from '../const';
 import {store} from '../store/index';
 import { Gender } from './gender.enum';
 import { Location } from './location.enum';
+import { Notification } from './notification.type.js';
 import { Page } from './page.enum.js';
 import { Review } from './review.type';
 import { Role } from './role.enum';
@@ -51,6 +52,7 @@ export type DataState = {
   selectedTraining: Training | null;
   isSubmitting: boolean;
   pagination: {page?: number | undefined, limit?: number | undefined};
+  notifications: Notification[];
 }
 
 export type AppState = {

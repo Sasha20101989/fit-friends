@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getCurrentRole, getCurrentUserId, getSelectedPage } from '../../store/main-process/main-process.selectors';
 import { AppRoute } from '../../const';
@@ -6,6 +6,10 @@ import { Role } from '../../types/role.enum';
 import { Page } from '../../types/page.enum';
 import { setSelectedPage } from '../../store/main-process/main-process.slice';
 import { useEffect } from 'react';
+import { deleteFromNotificationsAction, fetchNotificationsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { getNotifications } from '../../store/main-data/main-data.selectors';
+import { formatCustomDateTimeString, formatDateString } from '../../utils/util';
+import { removeNotification } from '../../store/main-data/main-data.slice';
 
 type NavItem = {
   to: string;
@@ -17,27 +21,41 @@ type NavItem = {
 
 function Header (): JSX.Element {
   const dispatch = useAppDispatch();
+  const location = useLocation();
 
   const currentRole = useAppSelector(getCurrentRole);
   const currentUserId = useAppSelector(getCurrentUserId);
   const selectedPage = useAppSelector(getSelectedPage);
+  const notifications = useAppSelector(getNotifications);
 
   const handleNavItemClick = (page: Page) => {
-    dispatch(setSelectedPage(page));
+    if(page !== Page.NOTIFICATIONS){
+      dispatch(setSelectedPage(page));
+    }
+  };
+
+  const handleNotificationClick = (notificationId: string | undefined) => {
+    if(notificationId){
+      dispatch(removeNotification(notificationId));
+      dispatch(deleteFromNotificationsAction(notificationId));
+    }
   };
 
   const navItems: NavItem[] = [
     { to: `${currentRole === Role.Trainer ? '' : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUserId}` : `${AppRoute.UserRoom}/${currentUserId}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUserId}` : `${AppRoute.UserFriends}/${currentUserId}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
-    { to: '/notifications', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
+    { to: '', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
   ];
 
   useEffect(() => {
     const currentItem = navItems.find((item) => item.to === location.pathname);
 
-    dispatch(setSelectedPage(currentItem === undefined ? undefined : currentItem?.label));
-  }, [location.pathname]);
+    if (currentItem?.label !== selectedPage) {
+      dispatch(setSelectedPage(currentItem?.label));
+      dispatch(fetchNotificationsAction());
+    }
+  }, [location.pathname, selectedPage, notifications]);
 
   return(
     <header className="header">
@@ -65,24 +83,14 @@ function Header (): JSX.Element {
                   <div className="main-nav__dropdown">
                     <p className="main-nav__label">{item.label}</p>
                     <ul className="main-nav__sublist">
-                      <li className="main-nav__subitem">
-                        <Link className="notification is-active" to="">
-                          <p className="notification__text">Катерина пригласила вас на&nbsp;тренировку</p>
-                          <time className="notification__time" dateTime="2023-12-23 12:35">23 декабря, 12:35</time>
-                        </Link>
-                      </li>
-                      <li className="main-nav__subitem">
-                        <Link className="notification is-active" to="">
-                          <p className="notification__text">Никита отклонил приглашение на&nbsp;совместную тренировку</p>
-                          <time className="notification__time" dateTime="2023-12-22 09:22">22 декабря, 09:22</time>
-                        </Link>
-                      </li>
-                      <li className="main-nav__subitem">
-                        <Link className="notification is-active" to="">
-                          <p className="notification__text">Татьяна добавила вас в&nbsp;друзья</p>
-                          <time className="notification__time" dateTime="2023-12-18 18:50">18 декабря, 18:50</time>
-                        </Link>
-                      </li>
+                      {notifications.map((notification) => (
+                        <li key={`${notification.createdAt}-${notification.text}`} className="main-nav__subitem">
+                          <Link className="notification is-active" to="" onClick={ () => handleNotificationClick(notification.id)}>
+                            <p className="notification__text">{notification.text}</p>
+                            <time className="notification__time" dateTime={formatCustomDateTimeString(notification.createdAt)}>{formatDateString(notification.createdAt)}</time>
+                          </Link>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}

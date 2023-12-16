@@ -9,6 +9,9 @@ import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { debounce } from 'lodash';
 import { TrainingCategory } from '../../types/training-category';
+import GoBack from '../../components/go-back/go-back';
+import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
+import ShowMore from '../../components/show-more/show-more';
 
 function TrainerTrainingsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -67,6 +70,13 @@ function TrainerTrainingsScreen(): JSX.Element {
     });
   };
 
+  const handleShowMoreClick = () => {
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+    }));
+  };
+
   useEffect(() => {
     if (id) {
       setQueryParams((prevParams) => ({ ...prevParams, userId: id }));
@@ -88,11 +98,7 @@ function TrainerTrainingsScreen(): JSX.Element {
             <div className="my-training-form">
               <h2 className="visually-hidden">Мои тренировки Фильтр</h2>
               <div className="my-training-form__wrapper">
-                <button className="btn-flat btn-flat--underlined my-training-form__btnback" type="button">
-                  <svg width="14" height="10" aria-hidden="true">
-                    <use xlinkHref="#arrow-left"></use>
-                  </svg><span>Назад</span>
-                </button>
+                <GoBack sourceName={'btn-flat btn-flat--underlined my-training-form__btnback'} width={14} height={10} route={AppRoute.Main}/>
                 <h3 className="my-training-form__title">фильтры</h3>
                 <form className="my-training-form__form">
                   <div className="my-training-form__block my-training-form__block--price">
@@ -204,7 +210,7 @@ function TrainerTrainingsScreen(): JSX.Element {
               <div className="my-trainings">
                 <TrainingList trainings={trainings}/>
                 <div className="show-more my-trainings__show-more">
-                  <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
+                  <ShowMore onShowMoreClick={handleShowMoreClick}/>
                   <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
                 </div>
               </div>

@@ -29,7 +29,8 @@ export enum APIRoute {
   Users = '/users',
   Friends = '/friends',
   Orders = '/orders',
-  Reviews = '/reviews/training'
+  Reviews = '/reviews/training',
+  Notifications = '/notifications'
 }
 
 export enum AuthorizationStatus {
@@ -78,6 +79,7 @@ export const MAX_POPULAR_TRAININGS_COUNT = 4;
 export const MAX_LOOK_FOR_COMPANY_COUNT = 4;
 export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;
 export const MAX_USERS_COUNT = 6;
+export const MAX_TRAININGS_COUNT = 6;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
 export const isAuthorization = (status: AuthorizationStatus) =>

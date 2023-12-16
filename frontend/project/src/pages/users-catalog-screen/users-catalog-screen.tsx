@@ -12,11 +12,12 @@ import RadioItem from '../../components/radio-item/radio-item';
 import { AppRoute, MAX_USERS_COUNT, capitalizeFirstLetter } from '../../const';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { Role } from '../../types/role.enum';
-import { useNavigate } from 'react-router-dom';
+import GoBack from '../../components/go-back/go-back';
+import ShowMore from '../../components/show-more/show-more';
 
 function UsersCatalogScreen() : JSX.Element {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+
   const users = useAppSelector(getUsers);
 
   const initialQueryParams: UserQueryParams = {
@@ -65,10 +66,6 @@ function UsersCatalogScreen() : JSX.Element {
     dispatch(fetchUsersAction(queryParams));
   }, [dispatch, queryParams]);
 
-  const handleGoMain = (): void => {
-    navigate(AppRoute.Main);
-  };
-
   return(
     <Layout>
       <section className="inner-page">
@@ -78,12 +75,7 @@ function UsersCatalogScreen() : JSX.Element {
             <div className="user-catalog-form">
               <h2 className="visually-hidden">Каталог пользователя</h2>
               <div className="user-catalog-form__wrapper">
-                <button className="btn-flat btn-flat--underlined user-catalog-form__btnback" type="button" onClick={handleGoMain}>
-                  <svg width="14" height="10" aria-hidden="true">
-                    <use xlinkHref="#arrow-left"></use>
-                  </svg>
-                  <span>Назад</span>
-                </button>
+                <GoBack sourceName={'btn-flat btn-flat--underlined user-catalog-form__btnback'} width={14} height={10} route={AppRoute.Main}/>
                 <h3 className="user-catalog-form__title">Фильтры</h3>
                 <form className="user-catalog-form__form">
                   <Filter title="Локация, станция метро" filterName="location" values={Object.values(Location)} onFilterChange={handleFilterChange}/>
@@ -144,9 +136,7 @@ function UsersCatalogScreen() : JSX.Element {
                 </ul>
                 <div className="show-more users-catalog__show-more">
                   {users.length > 0 && queryParams.limit && users.length % queryParams.limit === 0 && (
-                    <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreClick}>
-                      Показать еще
-                    </button>
+                    <ShowMore onShowMoreClick={handleShowMoreClick}/>
                   )}
                   <button className="btn show-more__button show-more__button--to-top" type="button">
                     Вернуться в начало

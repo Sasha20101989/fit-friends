@@ -15,6 +15,7 @@ import { WorkoutType } from '../../../types/workout-type.enum';
 import { Location } from '../../../types/location.enum';
 import { getUsers } from '../../main-data/main-data.selectors';
 import { setPaginationParams } from '../../main-data/main-data.slice';
+import { Notification } from '../../../types/notification.type.js';
 
 export type UserQueryParams = {
   location?: Location[];
@@ -184,5 +185,32 @@ export const fetchSelectedUserAction = createAsyncThunk<User | Trainer | null, s
     } catch (error) {
       return null;
     }
+  },
+);
+
+export const fetchNotificationsAction = createAsyncThunk<Notification[], undefined, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchNotifications',
+  async (_, { dispatch, extra: api }) => {
+    try {
+      const { data } = await api.get<Notification[]>(APIRoute.Notifications);
+      return data;
+    } catch (error) {
+      return [];
+    }
+  },
+);
+
+export const deleteFromNotificationsAction = createAsyncThunk<void, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/deleteFromNotifications',
+  async (notificationId, { dispatch, extra: api }) => {
+    await api.delete(`${APIRoute.Notifications}/${notificationId}`);
   },
 );

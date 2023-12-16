@@ -1,55 +1,20 @@
-import { useEffect, useState } from 'react';
 import { Training } from '../../types/training.type';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
-import { getUser } from '../../store/user-process/user-process.selectors';
-import { getSpecialTrainings } from '../../store/main-data/main-data.selectors';
-import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { TrainingCategory } from '../../types/training-category';
-import { DISCOUNT_PERCENTAGE, MAX_SPECIAL_TRAININGS_COUNT } from '../../const';
-import Loading from '../loading/loading';
+import { DISCOUNT_PERCENTAGE } from '../../const';
 
-function PromoSlider():JSX.Element {
-  const [activeSlide, setActiveSlide] = useState(0);
+type PromoSliderProps = {
+  specialTrainings: Training[];
+  activeSlide: number;
+  onDotClick: (index: number) => void;
+}
 
-  const dispatch = useAppDispatch();
-
-  const currentUserId: string = useAppSelector(getCurrentUserId);
-  const user = useAppSelector(getUser);
-  const trainings: Training[] = useAppSelector(getSpecialTrainings);
-
-  const [selectedSpecialPage] = useState<number>(1);
-
-  useEffect(() => {
-    if(currentUserId){
-      dispatch(fetchUserAction(currentUserId));
-    }
-  }, [dispatch , currentUserId]);
-
-  useEffect(() => {
-    if(user && user.workoutTypes.length > 0){
-      dispatch(fetchTrainingsAction({
-        category: TrainingCategory.SPECIAL,
-        page: selectedSpecialPage,
-        limit: MAX_SPECIAL_TRAININGS_COUNT,
-        workoutTypes: user.workoutTypes,
-        isSpecial: true
-      }));
-    }
-  }, [dispatch , user, selectedSpecialPage, currentUserId]);
-
-  if(!user){
-    return (<Loading/>);
-  }
-
+function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderProps):JSX.Element {
   const handleDotClick = (index: number) => {
-    setActiveSlide(index);
+    onDotClick(index);
   };
 
   return (
     <ul className="special-offers__list">
-      {trainings.map((training, index) => {
+      {specialTrainings.map((training, index) => {
         const newPrice = (training.price * DISCOUNT_PERCENTAGE).toFixed(0);
         const fileExtension = training.backgroundImage.split('.').pop();
         const imageNameWithoutExtension = training.backgroundImage.replace(/\.[^/.]+$/, '');
@@ -79,7 +44,7 @@ function PromoSlider():JSX.Element {
               <span className="promo-slider__text"></span>
               <div className="promo-slider__bottom-container">
                 <div className="promo-slider__slider-dots">
-                  {trainings.map((dotItem, dotIndex) => (
+                  {specialTrainings.map((dotItem, dotIndex) => (
                     <button
                       key={dotItem.description}
                       className={`promo-slider__slider-dot ${dotIndex === activeSlide ? 'promo-slider__slider-dot--active' : ''}`}

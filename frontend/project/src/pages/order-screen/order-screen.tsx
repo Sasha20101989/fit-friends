@@ -6,11 +6,27 @@ import { fetchOrdersAction } from '../../store/api-actions/trainings-api-actions
 import { getOrders } from '../../store/main-data/main-data.selectors';
 import ThumbnailTrainingOrder from '../../components/thumbnail-training-order/thumbnail-training-order';
 import Layout from '../../components/layout/layout';
+import { AppRoute } from '../../const';
+import GoBack from '../../components/go-back/go-back';
 
 function OrderScreen() : JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
   const orders: TrainingOrder[] | null = useAppSelector(getOrders);
+
+  // const initialQueryParams: FetchTrainingsParams = {
+  //   category: TrainingCategory.BASE,
+  //   createdAtDirection: Sorting.Descending,
+  // };
+
+  // const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
+
+  // const handleShowMoreClick = () => {
+  //   setQueryParams((prevParams) => ({
+  //     ...prevParams,
+  //     limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+  //   }));
+  // };
 
   useEffect(() => {
     if(id){
@@ -23,11 +39,7 @@ function OrderScreen() : JSX.Element {
       <section className="my-orders">
         <div className="container">
           <div className="my-orders__wrapper">
-            <button className="btn-flat btn-flat--underlined my-orders__back" type="button">
-              <svg width="14" height="10" aria-hidden="true">
-                <use xlinkHref="#arrow-left"></use>
-              </svg><span>Назад</span>
-            </button>
+            <GoBack sourceName={'btn-flat btn-flat--underlined my-orders__back'} width={14} height={10} route={AppRoute.Main}/>
             <div className="my-orders__title-wrapper">
               <h1 className="my-orders__title">Мои заказы</h1>
               <div className="sort-for">
@@ -52,7 +64,7 @@ function OrderScreen() : JSX.Element {
               ))}
             </ul>
             <div className="show-more my-orders__show-more">
-              <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
+              {/* <ShowMore onShowMoreClick={handleShowMoreClick}/> */}
               <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
             </div>
           </div>

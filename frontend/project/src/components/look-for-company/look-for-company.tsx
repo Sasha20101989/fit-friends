@@ -1,29 +1,31 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { useAppDispatch } from '../../hooks/index';
 import ThumbnailUser from '../thumbnail-user/thumbnail-user';
-import { fetchUsersAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getUsers } from '../../store/main-data/main-data.selectors';
 import IconButton from '../icon-button/icon-button';
-import { AppRoute, MAX_LOOK_FOR_COMPANY_COUNT } from '../../const';
+import { AppRoute } from '../../const';
 import { useNavigate } from 'react-router-dom';
 import { setUsers } from '../../store/main-data/main-data.slice';
+import { User } from '../../types/user.interface';
+import ThumbnailSpecGym from '../thumbnail-spec-gym/thumbnail-spec-gym';
+import { memo } from 'react';
 
-const LookForCompany = () => {
+type LookForCompanyProps = {
+  lookForCompanyUsers: User[];
+  isPreviousButtonDisabled: boolean;
+  isNextButtonDisabled: boolean;
+  onPreviousClick: (value: React.SetStateAction<number>) => void;
+  onNextClick: (value: React.SetStateAction<number>) => void;
+}
+
+const LookForCompany = ({lookForCompanyUsers, isPreviousButtonDisabled, isNextButtonDisabled, onPreviousClick, onNextClick}: LookForCompanyProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const users = useAppSelector(getUsers);
-
-  const [selectedPage, setPage] = useState<number>(1);
-
-  const isPreviousButtonDisabled = selectedPage === 1;
-  const isNextButtonDisabled = MAX_LOOK_FOR_COMPANY_COUNT !== users.length;
 
   const handlePreviousClick = () => {
-    setPage((prevPage) => Math.max(prevPage - 1, 1));
+    onPreviousClick((prevPage) => Math.max(prevPage - 1, 1));
   };
 
   const handleNextClick = () => {
-    setPage((prevPage) => prevPage + 1);
+    onNextClick((prevPage) => prevPage + 1);
   };
 
   const handleShowAllClick = (evt: React.MouseEvent<HTMLButtonElement>): void => {
@@ -31,14 +33,6 @@ const LookForCompany = () => {
     dispatch(setUsers([]));
     navigate(AppRoute.UsersCatalog);
   };
-
-  useEffect(() => {
-    dispatch(fetchUsersAction({
-      readinessForWorkout: true,
-      page: selectedPage,
-      limit: MAX_LOOK_FOR_COMPANY_COUNT,
-    }));
-  }, [dispatch, selectedPage]);
 
   return (
     <section className="look-for-company">
@@ -57,21 +51,23 @@ const LookForCompany = () => {
               <IconButton sourceName={'btn-icon btn-icon--outlined look-for-company__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
-          <ul className="look-for-company__list">
-            {users.map((user) => (
-              <ThumbnailUser
-                sourceName={'look-for-company__item'}
-                childSourceName={'thumbnail-user thumbnail-user--role-user thumbnail-user--dark'}
-                buttonSourceName={'btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button'}
-                key={user.email}
-                user={user}
-              />
-            ))}
-          </ul>
+          {lookForCompanyUsers.length > 0 ?
+            <ul className="look-for-company__list">
+              {lookForCompanyUsers.map((user) => (
+                <ThumbnailUser
+                  sourceName={'look-for-company__item'}
+                  childSourceName={'thumbnail-user thumbnail-user--role-user thumbnail-user--dark'}
+                  buttonSourceName={'btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button'}
+                  key={user.email}
+                  user={user}
+                />
+              ))}
+            </ul> :
+            <ThumbnailSpecGym/>}
         </div>
       </div>
     </section>
   );
 };
 
-export default LookForCompany;
+export default memo(LookForCompany);

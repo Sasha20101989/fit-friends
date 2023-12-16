@@ -19,6 +19,9 @@ export interface NotificationEntity extends defaultClasses.Base {}
 
 export class NotificationEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, ref: UserEntity })
+  public owner!: Ref<UserEntity>;
+
+  @prop({ required: true, ref: UserEntity })
   public user!: Ref<UserEntity>;
 
   @prop({ required: true })

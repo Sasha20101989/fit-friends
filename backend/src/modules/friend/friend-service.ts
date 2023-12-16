@@ -70,18 +70,29 @@ export default class FriendService implements FriendServiceInterface {
 
   public async create(userId: MongoId, friendId: MongoId): Promise<DocumentType<FriendEntity> | null>{
     let userData = await this.findById(userId);
+    let friendData = await this.findById(friendId);
 
     if (!userData) {
-        const newUserData = await this.friendModel.create({user: userId});
-        await newUserData.save();
-        userData = newUserData;
+      const newUserData = await this.friendModel.create({ user: userId });
+      await newUserData.save();
+      userData = newUserData;
     }
 
+    if (!friendData) {
+      const newFriendData = await this.friendModel.create({ user: friendId });
+      await newFriendData.save();
+      friendData = newFriendData;
+    }
+
+    const user = await this.userModel.findOne({ _id: userId });
     const friend = await this.userModel.findOne({ _id: friendId});
 
-    if (userData && friend) {
+    if (userData && friendData && user && friend) {
       userData.AddFriend(friend);
       await userData.save();
+
+      friendData.AddFriend(user);
+        await friendData.save();
     }
 
     return userData.populate('friends');

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
@@ -12,10 +12,10 @@ import TrainerCard from '../../components/trainer-card/trainer-card';
 import { getMyFriends } from '../../store/user-process/user-process.selectors';
 import { User } from '../../types/user.interface';
 import { Trainer } from '../../types/trainer.interface';
+import GoBack from '../../components/go-back/go-back';
 
 function UserCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
@@ -36,10 +36,6 @@ function UserCardScreen() : JSX.Element {
       setIsFriend(friends.some((friend) => friend.id === id));
     }
   }, [friends, id]);
-
-  const handleGoCatalog = (): void => {
-    navigate(AppRoute.UsersCatalog);
-  };
 
   const handleAddFriend = () => {
     if (id) {
@@ -64,12 +60,7 @@ function UserCardScreen() : JSX.Element {
       <div className="inner-page inner-page--no-sidebar">
         <div className="container">
           <div className="inner-page__wrapper">
-            <button className="btn-flat inner-page__back" type="button" onClick={handleGoCatalog}>
-              <svg width="14" height="10" aria-hidden="true">
-                <use xlinkHref="#arrow-left"></use>
-              </svg>
-              <span>Назад</span>
-            </button>
+            <GoBack sourceName={'btn-flat inner-page__back'} width={14} height={10} route={AppRoute.UsersCatalog}/>
             <div className="inner-page__content">
               {user.role === Role.User && <UserCard user={user as User} isFriend={isFriend} onAddFriend={handleAddFriend} onRemoveFriend={handleRemoveFriend}/>}
               {user.role === Role.Trainer && <TrainerCard trainer={user as Trainer} isFriend={isFriend} onAddFriend={handleAddFriend} onRemoveFriend={handleRemoveFriend}/>}

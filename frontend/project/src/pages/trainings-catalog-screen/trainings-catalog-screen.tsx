@@ -11,6 +11,9 @@ import { getCurrentUserId } from '../../store/main-process/main-process.selector
 import { TrainingCategory } from '../../types/training-category';
 import { Sorting } from '../../types/sorting.enum';
 import { debounce } from 'lodash';
+import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
+import GoBack from '../../components/go-back/go-back';
+import ShowMore from '../../components/show-more/show-more';
 
 function TrainingsCatalogScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -114,6 +117,13 @@ function TrainingsCatalogScreen() : JSX.Element {
     });
   };
 
+  const handleShowMoreClick = () => {
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+    }));
+  };
+
   return(
     <Layout>
       <section className="inner-page">
@@ -123,11 +133,7 @@ function TrainingsCatalogScreen() : JSX.Element {
             <div className="gym-catalog-form">
               <h2 className="visually-hidden">Мои тренировки Фильтр</h2>
               <div className="gym-catalog-form__wrapper">
-                <button className="btn-flat btn-flat--underlined gym-catalog-form__btnback" type="button">
-                  <svg width="14" height="10" aria-hidden="true">
-                    <use xlinkHref="#arrow-left"></use>
-                  </svg><span>Назад</span>
-                </button>
+                <GoBack sourceName={'btn-flat btn-flat--underlined gym-catalog-form__btnback'} width={14} height={10} route={AppRoute.Main}/>
                 <h3 className="gym-catalog-form__title">Фильтры</h3>
                 <form className="gym-catalog-form__form">
                   <div className="gym-catalog-form__block gym-catalog-form__block--price">
@@ -330,7 +336,7 @@ function TrainingsCatalogScreen() : JSX.Element {
                 ))}
               </ul>
               <div className="show-more training-catalog__show-more">
-                <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
+                <ShowMore onShowMoreClick={handleShowMoreClick}/>
                 <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
               </div>
             </div>

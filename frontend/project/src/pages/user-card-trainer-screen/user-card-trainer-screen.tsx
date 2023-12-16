@@ -1,6 +1,8 @@
 import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import { Link } from 'react-router-dom';
 import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
+import GoBack from '../../components/go-back/go-back';
+import { AppRoute } from '../../const';
 
 function UserCardScreen() : JSX.Element {
   const id = null;
@@ -8,11 +10,7 @@ function UserCardScreen() : JSX.Element {
     <div className="inner-page inner-page--no-sidebar">
       <div className="container">
         <div className="inner-page__wrapper">
-          <button className="btn-flat inner-page__back" type="button">
-            <svg width="14" height="10" aria-hidden="true">
-              <use xlinkHref="#arrow-left"></use>
-            </svg><span>Назад</span>
-          </button>
+          <GoBack sourceName={'btn-flat inner-page__back'} width={14} height={10} route={AppRoute.Main}/>
           <div className="inner-page__content">
             <section className="user-card-coach">
               <h1 className="visually-hidden">Карточка пользователя роль тренер</h1>

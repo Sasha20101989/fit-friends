@@ -1,8 +1,8 @@
-import { Gender } from './gender.enum.js';
-import { Location } from './location.enum.js';
-import { TrainingLevel } from './training-level.enum.js';
-import { User } from './user.interface.js';
-import { WorkoutType } from './workout-type.enum.js';
+import { Gender } from './gender.enum';
+import { Location } from './location.enum';
+import { TrainingLevel } from './training-level.enum';
+import { User } from './user.interface';
+import { WorkoutType } from './workout-type.enum';
 
 export type BaseUser = {
   id?: string;

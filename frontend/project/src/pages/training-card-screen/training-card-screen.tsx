@@ -17,9 +17,12 @@ import VideoSection from '../../components/video-section/video-section';
 import TrainingCardButton from '../../components/training-card-button/training-card-button';
 import Loading from '../../components/loading/loading';
 import Layout from '../../components/layout/layout';
+import { AppRoute } from '../../const';
+import GoBack from '../../components/go-back/go-back';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
+
   const currentRole = useAppSelector(getCurrentRole);
   const training: Training | null = useAppSelector(getTraining);
   const reviews: Review[] = useAppSelector(getReviews);
@@ -98,7 +101,6 @@ function TrainingCardScreen() : JSX.Element {
     }
   };
 
-
   const hashtags = [`${training.workoutType}`, `${training.genderPreference}`, `${training.calories}ккал`, `${training.workoutDuration}`];
 
   return(
@@ -108,11 +110,7 @@ function TrainingCardScreen() : JSX.Element {
           <div className="inner-page__wrapper">
             <h1 className="visually-hidden">Карточка тренировки</h1>
             <aside className="reviews-side-bar">
-              <button className="btn-flat btn-flat--underlined reviews-side-bar__back" type="button">
-                <svg width="14" height="10" aria-hidden="true">
-                  <use xlinkHref="#arrow-left"></use>
-                </svg><span>Назад</span>
-              </button>
+              <GoBack sourceName={'btn-flat btn-flat--underlined reviews-side-bar__back'} width={14} height={10} route={AppRoute.Main}/>
               <h2 className="reviews-side-bar__title">Отзывы</h2>
               <ul className="reviews-side-bar__list">
                 {reviews.map((review) =>

@@ -82,6 +82,7 @@ export const createApi = (): AxiosInstance => {
       if(error.response){
         if (error.response.status !== StatusCodes.UNAUTHORIZED &&
           error.response.status !== StatusCodes.CONFLICT &&
+          error.response.status !== StatusCodes.NOT_FOUND &&
           error.response.data
         ) {
           const matchesValues = error.response.data.map((item) => item.constraints);

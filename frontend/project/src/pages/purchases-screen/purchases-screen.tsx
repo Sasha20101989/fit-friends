@@ -1,19 +1,32 @@
+import GoBack from '../../components/go-back/go-back';
 import Layout from '../../components/layout/layout';
 import ThumbnailPicture from '../../components/thumbnail-picture/thumbnail-picture';
 import ThumbnailTrainingWrapper from '../../components/thumbnail-training-wrapper/thumbnail-training-wrapper';
+import { AppRoute } from '../../const';
 
 function PurchasesScreen() : JSX.Element {
   const id = null;
+
+  // const initialQueryParams: FetchTrainingsParams = {
+  //   category: TrainingCategory.BASE,
+  //   createdAtDirection: Sorting.Descending,
+  // };
+
+  // const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
+
+  // const handleShowMoreClick = () => {
+  //   setQueryParams((prevParams) => ({
+  //     ...prevParams,
+  //     limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+  //   }));
+  // };
+
   return(
     <Layout>
       <section className="my-purchases">
         <div className="container">
           <div className="my-purchases__wrapper">
-            <button className="btn-flat my-purchases__back" type="button">
-              <svg width="14" height="10" aria-hidden="true">
-                <use xlinkHref="#arrow-left"></use>
-              </svg><span>Назад</span>
-            </button>
+            <GoBack sourceName={'btn-flat my-purchases__back'} width={14} height={10} route={AppRoute.Main}/>
             <div className="my-purchases__title-wrapper">
               <h1 className="my-purchases__title">Мои покупки</h1>
               <div className="my-purchases__controls">
@@ -66,7 +79,7 @@ function PurchasesScreen() : JSX.Element {
               </li>
             </ul>
             <div className="show-more my-purchases__show-more">
-              <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
+              {/* <ShowMore onShowMoreClick={handleShowMoreClick}/> */}
               <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
             </div>
           </div>

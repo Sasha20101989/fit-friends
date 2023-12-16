@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Image from '../image/image';
 import { AppRoute } from '../../const';
+import { memo } from 'react';
 
 type SpecialForYouItemProps = {
   title: string;
@@ -33,4 +34,4 @@ function SpecialForYouItem({ title, imageSrc, trainingId }: SpecialForYouItemPro
   );
 }
 
-export default SpecialForYouItem;
+export default memo(SpecialForYouItem);

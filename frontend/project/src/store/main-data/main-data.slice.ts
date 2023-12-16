@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchOrdersAction, fetchReviewsAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
-import { addToFriendsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
+import { addToFriendsAction, deleteFromNotificationsAction, fetchNotificationsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
 import { User } from '../../types/user.interface';
 
 export const initialState: DataState = {
@@ -14,6 +14,7 @@ export const initialState: DataState = {
   trainerTrainings: [],
   trainings: [],
   reviews: [],
+  notifications: [],
   orders: [],
   selectedTraining: null,
   isSubmitting: false,
@@ -27,6 +28,9 @@ export const mainData = createSlice({
   name: 'data',
   initialState: initialState,
   reducers: {
+    removeNotification: (state, action: PayloadAction<string>) => {
+      state.notifications = state.notifications.filter(notification => notification.id !== action.payload);
+    },
     setUsers: (state, action: PayloadAction<User[]>) => {
       state.users = action.payload;
     },
@@ -51,6 +55,25 @@ export const mainData = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(deleteFromNotificationsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(deleteFromNotificationsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(deleteFromNotificationsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(fetchNotificationsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(fetchNotificationsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+        state.notifications = action.payload;
+      })
+      .addCase(fetchNotificationsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
       .addCase(removeFromFriendAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
@@ -171,6 +194,7 @@ export const mainData = createSlice({
 });
 
 export const {
+  removeNotification,
   setUsers,
   setPaginationParams,
   setTrainings,
