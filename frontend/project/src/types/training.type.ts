@@ -19,5 +19,5 @@ export type Training = {
   rating: number;
   trainer: Trainer;
   specialOffer: boolean;
-  createdAt?: string;
+  createdAt: string;
 }

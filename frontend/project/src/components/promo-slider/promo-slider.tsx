@@ -21,7 +21,7 @@ function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderPro
         const hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
 
         return (
-          <li key={training.description} className={`special-offers__item ${index === activeSlide ? 'is-active' : ''}`}>
+          <li key={`${training.description}-${training.createdAt}`} className={`special-offers__item ${index === activeSlide ? 'is-active' : ''}`}>
             <aside className="promo-slider">
               <div className="promo-slider__overlay"></div>
               <div className="promo-slider__image">

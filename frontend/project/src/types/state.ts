@@ -50,7 +50,6 @@ export type DataState = {
   specialForUserTrainings: Training[];
   trainerTrainings: Training[];
   reviews: Review[];
-  orders: TrainingOrder[];
   selectedTraining: Training | null;
   isSubmitting: boolean;
   pagination: {
@@ -60,10 +59,16 @@ export type DataState = {
   notifications: Notification[];
 }
 
+export type OrderDataState = {
+  isSubmitting: boolean;
+  orders: TrainingOrder[];
+}
+
 export type AppState = {
   main: MainState;
   data: DataState;
   user: UserState;
+  order: OrderDataState;
 }
 
 export type State = ReturnType<typeof store.getState>;

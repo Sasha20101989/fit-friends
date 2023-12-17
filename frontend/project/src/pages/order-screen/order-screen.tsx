@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { TrainingOrder } from '../../types/training-order.type';
 import { useParams } from 'react-router-dom';
-import { fetchOrdersAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { getOrders } from '../../store/main-data/main-data.selectors';
 import Layout from '../../components/layout/layout';
 import { AppRoute} from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import OrderList from '../../components/order-list/order-list';
+import { fetchOrdersAction } from '../../store/api-actions/order-api-actions/order-api-actions';
+import { getOrders } from '../../store/order-data/order-data.selectors';
 
 function OrderScreen() : JSX.Element {
   const dispatch = useAppDispatch();

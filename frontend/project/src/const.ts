@@ -5,9 +5,11 @@ import { Role } from './types/role.enum';
 
 export enum NameSpace {
   Data = 'data',
+  Order = 'order',
   Main = 'main',
   User = 'user',
 }
+
 
 export enum HTTP_CODE {
   OK = 200,
@@ -74,6 +76,7 @@ export const isValidPassword = (password: string): boolean => {
   return regex.test(password);
 };
 
+
 export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
 export const MAX_POPULAR_TRAININGS_COUNT = 4;
@@ -82,6 +85,16 @@ export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;
 export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
 export const DISCOUNT_PERCENTAGE = 0.9;
+
+export const REVIEW_TEXT_CONSTRAINTS = {
+  MIN: 100,
+  MAX: 1024,
+};
+
+export const RATING_CONSTRAINTS = {
+  MIN: 1,
+  MAX: 5,
+};
 
 export const isAuthorization = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Auth;

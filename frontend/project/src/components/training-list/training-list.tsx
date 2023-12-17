@@ -12,7 +12,7 @@ function TrainingList({sourceName, itemSourceName, trainings}: TrainingListProps
   return (
     <ul className={sourceName}>
       {trainings.map((training) => (
-        <TrainingItem key={`${training.name}-${training.trainer.email}`} sourceName={itemSourceName} training={training} />
+        <TrainingItem key={`${training.name}-${training.createdAt}`} sourceName={itemSourceName} training={training} />
       ))}
     </ul>
   );

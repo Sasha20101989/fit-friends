@@ -1,13 +1,23 @@
+import React from 'react';
 import { useAppSelector } from '../../hooks/index';
 import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
 
-function TrainingCardButton(): JSX.Element {
+type TrainingCardButtonProps = {
+  onBuyClick: () => void;
+}
+
+function TrainingCardButton({onBuyClick}: TrainingCardButtonProps): JSX.Element {
   const currentRole = useAppSelector(getCurrentRole);
+
+  function handleBuyClick(evt: React.MouseEvent<HTMLButtonElement>): void {
+    evt.preventDefault();
+    onBuyClick();
+  }
 
   if (currentRole === Role.User) {
     return (
-      <button className="btn training-info__buy" type="button">
+      <button className="btn training-info__buy" type="button" onClick={handleBuyClick}>
         Купить
       </button>
     );

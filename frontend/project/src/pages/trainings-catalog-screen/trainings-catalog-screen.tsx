@@ -7,7 +7,6 @@ import { ChangeEvent, memo, useEffect, useMemo, useState } from 'react';
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { TrainingCategory } from '../../types/training-category';
 import { Sorting } from '../../types/sorting.enum';
-import { debounce } from 'lodash';
 import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import ShowMore from '../../components/show-more/show-more';
@@ -34,13 +33,6 @@ function TrainingsCatalogScreen() : JSX.Element {
 
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
 
-  const debouncedFetchTrainerTrainings = debounce(
-    (params: FetchTrainingsParams) => {
-      dispatch(fetchTrainingsAction(params));
-    },
-    400
-  );
-
   useEffect(() => {
     let fetchParams: FetchTrainingsParams = {
       ...queryParams
@@ -65,8 +57,8 @@ function TrainingsCatalogScreen() : JSX.Element {
       delete fetchParams.createdAtDirection;
     }
 
-    debouncedFetchTrainerTrainings(fetchParams);
-  }, [dispatch, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes, debouncedFetchTrainerTrainings]);
+    dispatch(fetchTrainingsAction(fetchParams));
+  }, [dispatch, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
 
   const handleSortingChange = (option: Sorting | undefined) => {
     setShowFreeOnly(false);

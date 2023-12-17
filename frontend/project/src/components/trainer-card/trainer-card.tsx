@@ -127,7 +127,6 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
           </div>
           <TrainingList sourceName={'user-card-coach__training-list'} itemSourceName={'user-card-coach__training-item'} trainings={trainings}/>
           <form className="user-card-coach__training-form">
-            <button className="btn user-card-coach__btn-training" type="button">Хочу персональную тренировку</button>
             <div className="user-card-coach__training-check">
               <div className="custom-toggle custom-toggle--checkbox">
                 <label>

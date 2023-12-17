@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { editTrainingAction, fetchReviewsAction, fetchTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
+import { editTrainingAction, fetchTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getLoadingStatus, getReviews, getTraining } from '../../store/main-data/main-data.selectors';
@@ -19,6 +19,14 @@ import Layout from '../../components/layout/layout';
 import { AppRoute } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import Image from '../../components/image/image';
+import PopupFeedback from '../../components/popup-feedback/popup-feedback';
+import { createReviewAction, fetchReviewsAction } from '../../store/api-actions/review-api-actions/review-api-actions';
+import CreateReviewDto from '../../dto/create-review.dto';
+import PopupBuy from '../../components/popup-buy/popup-buy';
+import { PurchaseType } from '../../types/purchase-type.enum';
+import { PaymentMethod } from '../../types/payment-method.enum';
+import CreateOrderDto from '../../dto/create-order.dto';
+import { createOrderAction } from '../../store/api-actions/order-api-actions/order-api-actions';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -35,6 +43,8 @@ function TrainingCardScreen() : JSX.Element {
   const [editedTrainingPrice, setEditedTrainingPrice] = useState<number | ''>('');
   const [error, setError] = useState('');
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
+  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
+  const [isBuyFormOpen, setIsBuyFormOpen] = useState(false);
 
   useEffect(() => {
     if(trainingId){
@@ -101,7 +111,49 @@ function TrainingCardScreen() : JSX.Element {
     }
   };
 
+  const handleShowReviewForm = () => {
+    setIsFeedbackFormOpen(true);
+  };
+
+  const handleCloseFeedbackForm = () => {
+    setIsFeedbackFormOpen(false);
+  };
+
+  const handleShowBuyForm = () => {
+    setIsBuyFormOpen(true);
+  };
+
+  const handleCloseBuyForm = () => {
+    setIsBuyFormOpen(false);
+  };
+
   const hashtags = [`${training.workoutType}`, `${training.genderPreference}`, `${training.calories}ккал`, `${training.workoutDuration}`];
+
+  const handleFeedbackSubmit = (rating: number, text: string): void => {
+    if(trainingId){
+      const reviewData: CreateReviewDto = {
+        rating,
+        text
+      };
+
+      dispatch(createReviewAction({trainingId, reviewData}));
+      handleCloseFeedbackForm();
+      dispatch(fetchReviewsAction({trainingId}));
+    }
+  };
+
+  const handleBuySubmit = (purchaseType: PurchaseType, quantity: number, paymentMethod: PaymentMethod): void => {
+    if(trainingId){
+      const orderData: CreateOrderDto = {
+        purchaseType,
+        quantity,
+        paymentMethod
+      };
+
+      dispatch(createOrderAction({trainingId, orderData}));
+      handleCloseBuyForm();
+    }
+  };
 
   return(
     <Layout>
@@ -117,8 +169,10 @@ function TrainingCardScreen() : JSX.Element {
                   <ReviewItem key={review.createdAt} review={review}/>
                 )}
               </ul>
-              {currentRole === Role.User ?? <button className="btn btn--medium reviews-side-bar__button" type="button">Оставить отзыв</button>}
+              {currentRole === Role.User && <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleShowReviewForm}>Оставить отзыв</button>}
             </aside>
+            {isFeedbackFormOpen && <PopupFeedback onClose={handleCloseFeedbackForm} onSubmit={handleFeedbackSubmit}/>}
+            {isBuyFormOpen && <PopupBuy trainingTitle={training.name} trainingImage={training.backgroundImage} trainingPrice={training.price} onClose={handleCloseBuyForm} onSubmit={handleBuySubmit}/>}
             <div className="training-card">
               <div className="training-info">
                 <h2 className="visually-hidden">Информация о тренировке</h2>
@@ -130,7 +184,7 @@ function TrainingCardScreen() : JSX.Element {
                       <span className="training-info__name">{training.trainer.name}</span>
                     </div>
                   </div>
-                  {currentRole === Role.Trainer ?? <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>}
+                  {currentRole === Role.Trainer && <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>}
                 </div>
                 <div className="training-info__main-content">
                   <form action="#" method="get">
@@ -188,7 +242,7 @@ function TrainingCardScreen() : JSX.Element {
                           </label>
                           {error && <div className="training-info__error">{error}</div>}
                         </div>
-                        <TrainingCardButton/>
+                        <TrainingCardButton onBuyClick={handleShowBuyForm}/>
                       </div>
                     </div>
                   </form>
