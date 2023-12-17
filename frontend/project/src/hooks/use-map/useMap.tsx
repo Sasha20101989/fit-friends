@@ -33,7 +33,7 @@ function useMap(
       setMap(instance);
       isRenderedRef.current = true;
     }
-  }, [mapRef, station]);
+  }, [mapRef, station, coordinates.latitude, coordinates.longitude, coordinates.zoom]);
 
   useEffect(() => {
     if (map !== null) {
@@ -42,7 +42,7 @@ function useMap(
         lng: coordinates.longitude,
       });
     }
-  }, [map, station, coordinates.latitude, coordinates.longitude, coordinates.zoom]);
+  }, [map, station, coordinates.latitude, coordinates.longitude]);
 
   return map;
 }

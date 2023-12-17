@@ -45,6 +45,9 @@ function UserProfileScreen(): JSX.Element {
   const [isGenderDropdownOpen, setIsGenderDropdownOpen] = useState(false);
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
+  const [locationError, setLocationError] = useState('');
+  const [genderError, setGenderError] = useState('');
+  const [levelError, setLevelError] = useState('');
 
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
@@ -171,6 +174,7 @@ function UserProfileScreen(): JSX.Element {
                   onValueChange={handleLocationChange}
                   object={Object.values(Location)}
                   onToggleDropdown={handleToggleLocationDropdown}
+                  error={locationError}
                 />
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isGenderDropdownOpen ? 'is-open' : ''}`}
@@ -179,6 +183,7 @@ function UserProfileScreen(): JSX.Element {
                   onValueChange={handleSexChange}
                   object={Object.values(Gender)}
                   onToggleDropdown={handleToggleGenderDropdown}
+                  error={genderError}
                 />
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLevelDropdownOpen ? 'is-open' : ''}`}
@@ -187,6 +192,7 @@ function UserProfileScreen(): JSX.Element {
                   onValueChange={handleLevelChange}
                   object={Object.values(TrainingLevel)}
                   onToggleDropdown={handleToggleLevelDropdown}
+                  error={levelError}
                 />
               </form>
             </section>

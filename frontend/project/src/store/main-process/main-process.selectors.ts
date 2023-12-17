@@ -21,3 +21,4 @@ export const getDescription = (state: State): string | undefined => state[NameSp
 export const getName = (state: State): string => state[NameSpace.Main].name;
 export const getAvatar = (state: State): string | undefined => state[NameSpace.Main].avatar;
 export const getSelectedPage = (state: State): Page | undefined => state[NameSpace.Main].selectedPage;
+export const getError = (state: State): string | undefined => state[NameSpace.Main].error;

@@ -39,6 +39,7 @@ export type MainState = {
   name: string;
   avatar: string | undefined;
   selectedPage: Page | undefined;
+  error: string | undefined;
 }
 
 export type DataState = {

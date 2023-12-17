@@ -87,6 +87,7 @@ export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
 export const MAX_BALANCE_COUNT = 8;
 export const DISCOUNT_PERCENTAGE = 0.9;
+export const MIN_PRICE = 0;
 
 export const REVIEW_TEXT_CONSTRAINTS = {
   MIN: 100,
@@ -96,6 +97,31 @@ export const REVIEW_TEXT_CONSTRAINTS = {
 export const RATING_CONSTRAINTS = {
   MIN: 1,
   MAX: 5,
+};
+
+export const TRAINING_NAME_CONSTRAINTS = {
+  MIN_LENGTH: 1,
+  MAX_LENGTH: 15,
+};
+
+export const CALORIES_CONSTRAINTS = {
+  MIN: 1000,
+  MAX: 5000,
+};
+
+export const DESCRIPTION_CONSTRAINTS = {
+  MIN_LENGTH: 10,
+  MAX_LENGTH: 140,
+};
+
+export const PASSWORD_CONSTRAINTS = {
+  MIN_LENGTH: 6,
+  MAX_LENGTH: 12,
+};
+
+export const USERNAME_CONSTRAINTS = {
+  MIN_LENGTH: 1,
+  MAX_LENGTH: 15,
 };
 
 export const isAuthorization = (status: AuthorizationStatus) =>

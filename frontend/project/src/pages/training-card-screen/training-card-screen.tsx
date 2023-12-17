@@ -16,7 +16,7 @@ import VideoSection from '../../components/video-section/video-section';
 import TrainingCardButton from '../../components/training-card-button/training-card-button';
 import Loading from '../../components/loading/loading';
 import Layout from '../../components/layout/layout';
-import { AppRoute } from '../../const';
+import { AppRoute, DESCRIPTION_CONSTRAINTS } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import Image from '../../components/image/image';
 import PopupFeedback from '../../components/popup-feedback/popup-feedback';
@@ -104,6 +104,7 @@ function TrainingCardScreen() : JSX.Element {
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
   };
+
 
   const handleSave = () => {
     if (currentRole === Role.Trainer) {
@@ -223,7 +224,7 @@ function TrainingCardScreen() : JSX.Element {
                         </div>
                         <div className="training-info__textarea">
                           <label><span className="training-info__label">Описание тренировки</span>
-                            <textarea name="description" value={training.description} disabled></textarea>
+                            <textarea name="description" value={training.description} disabled={!isFormEditable} minLength={DESCRIPTION_CONSTRAINTS.MIN_LENGTH} maxLength={DESCRIPTION_CONSTRAINTS.MAX_LENGTH}></textarea>
                           </label>
                         </div>
                       </div>

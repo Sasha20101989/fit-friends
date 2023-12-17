@@ -24,13 +24,17 @@ const initialState: MainState = {
   description: '',
   name: '',
   avatar: '',
-  selectedPage: undefined
+  selectedPage: undefined,
+  error: ''
 };
 
 export const mainProcess = createSlice({
   name: 'main',
   initialState: initialState,
   reducers: {
+    setError: (state, action: PayloadAction<string | undefined>) => {
+      state.error = action.payload;
+    },
     setSelectedPage: (state, action: PayloadAction<Page | undefined>) => {
       state.selectedPage = action.payload;
     },
@@ -87,4 +91,4 @@ export const mainProcess = createSlice({
     },
   },
 });
-export const { setSelectedPage, setAvatar, setName, setDescription, changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;
+export const { setError, setSelectedPage, setAvatar, setName, setDescription, changeReadiessToWorkout, setRole, setGender, setUserId, redirectToRoute, setLocation, changeFile, changeSortingOrder, addSpecialization, removeSpecialization, clearSpecializations, setSpecializations, changeLevel, changeDuration } = mainProcess.actions;

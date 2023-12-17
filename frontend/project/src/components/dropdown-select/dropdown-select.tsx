@@ -8,12 +8,13 @@ type DropdownSelectProps = {
   classType: string;
   label: string;
   selectedValue: string | null;
+  error: string;
   object: WorkoutDuration[] | WorkoutType[] | TrainingLevel[] | Location[] | Gender[];
   onValueChange: (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
   onToggleDropdown: () => void;
 }
 
-function DropdownSelect({classType, label, selectedValue, onValueChange, object, onToggleDropdown}: DropdownSelectProps): JSX.Element {
+function DropdownSelect({classType, label, selectedValue, error, onValueChange, object, onToggleDropdown}: DropdownSelectProps): JSX.Element {
   const handleValueChange = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     onValueChange(evt);
     onToggleDropdown();
@@ -43,6 +44,7 @@ function DropdownSelect({classType, label, selectedValue, onValueChange, object,
           </li>
         ))}
       </ul>
+      {error && <span className="custom-select__error custom-input__error">{error}</span>}
     </div>
   );
 }

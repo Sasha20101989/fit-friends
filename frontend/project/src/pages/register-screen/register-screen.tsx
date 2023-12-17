@@ -9,12 +9,13 @@ import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
-import { capitalizeFirstLetter } from '../../const';
+import { PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
 
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
+    locationError,
     nameRef,
     emailRef,
     passwordRef,
@@ -60,18 +61,19 @@ function RegisterScreen() : JSX.Element {
                     </div>
                   </div>
                   <div className="sign-up__data">
-                    <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef}/>
+                    <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef} minLength={USERNAME_CONSTRAINTS.MIN_LENGTH} maxLength={USERNAME_CONSTRAINTS.MAX_LENGTH}/>
                     <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" reference={emailRef}/>
                     <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" reference={birthdayRef}/>
                     <DropdownSelect
-                      classType={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'}`}
+                      classType={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'} ${locationError && 'is-invalid'}`}
                       label={'Ваша локация'}
                       onValueChange={handleLocationChange}
                       selectedValue={selectedLocation && capitalizeFirstLetter(selectedLocation)}
                       object={Object.values(Location)}
                       onToggleDropdown={handleToggleDropdown}
+                      error={locationError}
                     />
-                    <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" reference={passwordRef}/>
+                    <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" reference={passwordRef} minLength={PASSWORD_CONSTRAINTS.MIN_LENGTH} maxLength={PASSWORD_CONSTRAINTS.MAX_LENGTH}/>
                     <RadioSelect
                       name={'gender'}
                       classType={'sign-up__radio'}

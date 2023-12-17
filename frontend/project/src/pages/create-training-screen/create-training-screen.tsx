@@ -1,4 +1,4 @@
-import { FormEvent, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import { Gender } from '../../types/gender.enum';
@@ -12,7 +12,7 @@ import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { useNavigate } from 'react-router-dom';
-import { AppRoute, capitalizeFirstLetter, genderToPreference } from '../../const';
+import { AppRoute, CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, MIN_PRICE, TRAINING_NAME_CONSTRAINTS, capitalizeFirstLetter, genderToPreference } from '../../const';
 import { toast } from 'react-toastify';
 import { getGender } from '../../store/main-process/main-process.selectors';
 import { setGender } from '../../store/main-process/main-process.slice';
@@ -36,8 +36,11 @@ function CreateTrainingScreen(): JSX.Element {
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [isDurationDropdownOpen, setIsDurationDropdownOpen] = useState(false);
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
+  const [typeError, setTypeError] = useState('');
+  const [durationError, setDurationError] = useState('');
+  const [levelError, setLevelError] = useState('');
 
-  const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(evt.target.value);
   };
 
@@ -51,6 +54,21 @@ function CreateTrainingScreen(): JSX.Element {
 
   const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    if(selectedType === null){
+      setTypeError('Выберите тип тренировки');
+      return;
+    }
+
+    if(selectedLevel === null){
+      setLevelError('Выберите уровень тренировки');
+      return;
+    }
+
+    if(selectedDuration === null){
+      setDurationError('Сколько времени потратим');
+      return;
+    }
 
     if (nameRef.current !== null &&
         priceRef.current !== null &&
@@ -139,7 +157,7 @@ function CreateTrainingScreen(): JSX.Element {
                       <div className="custom-input create-training__input">
                         <label>
                           <span className="custom-input__wrapper">
-                            <input type="text" name="training-name" id="training-name" ref={nameRef} required/>
+                            <input type="text" name="training-name" id="training-name" ref={nameRef} required minLength={TRAINING_NAME_CONSTRAINTS.MIN_LENGTH} maxLength={TRAINING_NAME_CONSTRAINTS.MAX_LENGTH}/>
                           </span>
                         </label>
                       </div>
@@ -153,6 +171,7 @@ function CreateTrainingScreen(): JSX.Element {
                           selectedValue={selectedType && capitalizeFirstLetter(selectedType)}
                           object={Object.values(WorkoutType)}
                           onToggleDropdown={handleToggleTypeDropdown}
+                          error={typeError}
                         />
                         <LabeledInput
                           classType={'custom-input custom-input--with-text-right'}
@@ -160,6 +179,8 @@ function CreateTrainingScreen(): JSX.Element {
                           label="Сколько калорий потратим"
                           inputName="calories"
                           text="ккал"
+                          min={CALORIES_CONSTRAINTS.MIN}
+                          max={CALORIES_CONSTRAINTS.MAX}
                           reference={caloriesRef}
                         />
                         <DropdownSelect
@@ -168,6 +189,7 @@ function CreateTrainingScreen(): JSX.Element {
                           selectedValue={selectedDuration && capitalizeFirstLetter(selectedDuration)}
                           object={Object.values(WorkoutDuration)}
                           onToggleDropdown={handleDurationToggleDropdown}
+                          error={durationError}
                         />
                         <LabeledInput
                           classType={'custom-input custom-input--with-text-right'}
@@ -175,6 +197,7 @@ function CreateTrainingScreen(): JSX.Element {
                           label="Стоимость тренировки"
                           inputName="price"
                           text="₽"
+                          min={MIN_PRICE}
                           reference={priceRef}
                         />
                         <DropdownSelect
@@ -184,6 +207,7 @@ function CreateTrainingScreen(): JSX.Element {
                           selectedValue={selectedLevel && capitalizeFirstLetter(selectedLevel)}
                           object={Object.values(TrainingLevel)}
                           onToggleDropdown={handleLevelToggleDropdown}
+                          error={levelError}
                         />
                         <RadioSelect
                           name={'gender'}
@@ -208,8 +232,11 @@ function CreateTrainingScreen(): JSX.Element {
                             value={description ?? ''}
                             onChange={handleDescriptionChange}
                             required
+                            minLength={DESCRIPTION_CONSTRAINTS.MIN_LENGTH}
+                            maxLength={DESCRIPTION_CONSTRAINTS.MAX_LENGTH}
                           >
                           </textarea>
+
                         </label>
                       </div>
                     </div>

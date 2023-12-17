@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import { RegisterUserTransferData } from '../../types/register-transfer-data';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
@@ -40,6 +40,7 @@ function useRegisterForm(){
   const caloriesLoseRef = useRef<HTMLInputElement | null>(null);
   const caloriesWaste = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
+  const [locationError, setLocationError] = useState('');
 
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -66,11 +67,15 @@ function useRegisterForm(){
       return;
     }
 
+    if(selectedLocation === null){
+      setLocationError('Выберите локацию');
+      return;
+    }
+
     if (nameRef.current !== null &&
         passwordRef.current !== null &&
         emailRef.current !== null &&
         birthdayRef.current !== null &&
-        selectedLocation !== null &&
         selectedGender !== null &&
         currentRole !== null) {
 
@@ -134,6 +139,7 @@ function useRegisterForm(){
 
   const handleLocationChange = (evt: MouseEvent<HTMLLIElement>) => {
     const location: Location = evt.currentTarget.textContent as Location;
+    setLocationError('');
     dispatch(setLocation(location));
     setIsDropdownOpen(false);
   };
@@ -211,6 +217,7 @@ function useRegisterForm(){
   };
 
   return {
+    locationError,
     nameRef,
     emailRef,
     passwordRef,
