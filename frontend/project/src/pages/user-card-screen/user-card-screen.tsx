@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getSelectedUser, getSubscribes, getTrainings } from '../../store/main-data/main-data.selectors';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { addToFriendsAction, addToSubscribesAction, deleteFromSubscribesAction, fetchMyFriendsAction, fetchMySubscribesAction, fetchSelectedUserAction, removeFromFriendAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { Role } from '../../types/role.enum';
 import { AppRoute, MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
@@ -32,11 +32,11 @@ function UserCardScreen() : JSX.Element {
   const [isInSubscribers, setIsInSubscribers] = useState<boolean>(false);
   const [selectedPage, setPage] = useState<number>(1);
 
-  const initialQueryParams: FetchTrainingsParams = {
+  const initialQueryParams: FetchTrainingsParams = useMemo(() => ({
     category: TrainingCategory.BASE,
     createdAtDirection: Sorting.Descending,
-    limit: MAX_TRAINER_CARD_TRAININGS_COUNT
-  };
+    limit: MAX_TRAINER_CARD_TRAININGS_COUNT,
+  }), []);
 
   useEffect(() => {
     if(id){

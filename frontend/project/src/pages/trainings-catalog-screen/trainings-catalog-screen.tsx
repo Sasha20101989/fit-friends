@@ -3,7 +3,7 @@ import { Training } from '../../types/training.type';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getTrainings } from '../../store/main-data/main-data.selectors';
 import { WorkoutType } from '../../types/workout-type.enum';
-import { ChangeEvent, memo, useEffect, useState } from 'react';
+import { ChangeEvent, memo, useEffect, useMemo, useState } from 'react';
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { TrainingCategory } from '../../types/training-category';
 import { Sorting } from '../../types/sorting.enum';
@@ -26,11 +26,11 @@ function TrainingsCatalogScreen() : JSX.Element {
   const [showFreeOnly, setShowFreeOnly] = useState(false);
   const [selectedWorkoutTypes, setSelectedWorkoutTypes] = useState<WorkoutType[]>([]);
 
-  const initialQueryParams: FetchTrainingsParams = {
+  const initialQueryParams: FetchTrainingsParams = useMemo(() => ({
     category: TrainingCategory.BASE,
     createdAtDirection: Sorting.Descending,
     limit: MAX_TRAININGS_COUNT
-  };
+  }), []);
 
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
 
@@ -66,7 +66,7 @@ function TrainingsCatalogScreen() : JSX.Element {
     }
 
     debouncedFetchTrainerTrainings(fetchParams);
-  }, [dispatch, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes]);
+  }, [dispatch, sortingOption, showFreeOnly, queryParams, selectedWorkoutTypes, debouncedFetchTrainerTrainings]);
 
   const handleSortingChange = (option: Sorting | undefined) => {
     setShowFreeOnly(false);

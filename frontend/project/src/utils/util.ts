@@ -20,14 +20,13 @@ export function formatCustomDateTimeString(inputDate: string): string {
   const hours = date.getHours();
   const minutes = date.getMinutes();
 
-  const formattedDateTime = `${year}-${(month.length === 1 ? '0' : '') + (date.getMonth() + 1)}-${(day < 10 ? '0' : '') + day} ${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  const formattedDateTime = `${year}-${(month.length === 1 ? '0' : '') + String(date.getMonth() + 1)}-${(day < 10 ? '0' : '') + String(day)} ${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
 
   return formattedDateTime;
 }
 
-export const getMonthNameInGenitiveCase = (date = new Date) => {
-  return date.toLocaleString('ru', {
+export const getMonthNameInGenitiveCase = (date = new Date()) =>
+  date.toLocaleString('ru', {
     month: 'long',
     day: 'numeric',
   }).split(' ')[1];
-};

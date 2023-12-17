@@ -87,7 +87,7 @@ function TrainerTrainingsScreen(): JSX.Element {
     if (id) {
       debouncedFetchTrainerTrainings(queryParams);
     }
-  }, [id, queryParams]);
+  }, [id, queryParams, debouncedFetchTrainerTrainings]);
 
   return(
     <Layout>

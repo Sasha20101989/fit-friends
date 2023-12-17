@@ -1,15 +1,21 @@
 import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { Trainer } from '../../types/trainer.interface';
+import { TrainingCategory } from '../../types/training-category.js';
+import { WorkoutType } from '../../types/workout-type.enum.js';
 import { useAppDispatch } from '../index';
-import { User } from './../../types/user.interface';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
-export function useFetchTrainingsEffect(user: User | Trainer | null, query: FetchTrainingsParams ) {
+export function useFetchTrainingsEffect(
+  category: TrainingCategory,
+  page: number,
+  limit: number,
+  workoutTypes: WorkoutType[] | undefined = undefined,
+  isSpecial: boolean | undefined = undefined
+){
   const dispatch = useAppDispatch();
 
+  const memoizedQuery: FetchTrainingsParams = useMemo(() => ({ category, workoutTypes, page, limit, isSpecial }), [category, workoutTypes, page, limit, isSpecial]);
+
   useEffect(() => {
-    if (user && user.workoutTypes.length > 0) {
-      dispatch(fetchTrainingsAction(query));
-    }
-  }, [dispatch, user, query]);
+    dispatch(fetchTrainingsAction(memoizedQuery));
+  }, [dispatch, memoizedQuery]);
 }

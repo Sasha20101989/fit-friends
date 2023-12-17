@@ -60,32 +60,28 @@ function MainScreen(): JSX.Element {
     handleNextClick: handleLookForCompanyNextClick,
   } = usePreviousNextButtons(selectedLookForCompanyPage, setLookForCompanyPage);
 
-  useFetchTrainingsEffect(user, {
-    category: TrainingCategory.SPECIAL,
-    page: selectedSpecialPage,
-    limit: MAX_SPECIAL_TRAININGS_COUNT,
-    workoutTypes: user ? user.workoutTypes : [],
-    isSpecial: true,
-  });
+  useFetchTrainingsEffect(
+    TrainingCategory.SPECIAL,
+    selectedSpecialPage,
+    MAX_SPECIAL_TRAININGS_COUNT,
+    user ? user.workoutTypes : [],
+    true,
+  );
 
-  useFetchTrainingsEffect(user, {
-    category: TrainingCategory.FOR_USER,
-    page: selectedSpecialForUserPage,
-    limit: MAX_SPECIAL_TRAININGS_COUNT,
-    workoutTypes: user ? user.workoutTypes : [],
-  });
+  useFetchTrainingsEffect(
+    TrainingCategory.FOR_USER,
+    selectedSpecialForUserPage,
+    MAX_SPECIAL_TRAININGS_COUNT,
+    user ? user.workoutTypes : []
+  );
 
-  useFetchTrainingsEffect(user, {
-    category: TrainingCategory.POPULAR,
-    page: selectedPopularPage,
-    limit: MAX_POPULAR_TRAININGS_COUNT,
-  });
+  useFetchTrainingsEffect(
+    TrainingCategory.POPULAR,
+    selectedPopularPage,
+    MAX_POPULAR_TRAININGS_COUNT
+  );
 
-  useFetchUsersEffect({
-    readinessForWorkout: true,
-    page: selectedLookForCompanyPage,
-    limit: MAX_LOOK_FOR_COMPANY_COUNT,
-  });
+  useFetchUsersEffect(true, selectedLookForCompanyPage, MAX_LOOK_FOR_COMPANY_COUNT);
 
   useEffect(() => {
     if(currentUserId){
