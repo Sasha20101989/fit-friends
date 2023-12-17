@@ -54,7 +54,7 @@ function UserCardScreen() : JSX.Element {
         page: selectedPage,
       }));
     }
-  }, [dispatch, id, selectedPage, user]);
+  }, [dispatch, id, selectedPage, user, initialQueryParams]);
 
   useEffect(() => {
     if (id && friends.length > 0) {

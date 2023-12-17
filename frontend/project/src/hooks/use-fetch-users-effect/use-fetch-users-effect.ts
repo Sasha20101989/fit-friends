@@ -7,5 +7,5 @@ export function useFetchUsersEffect(query: UserQueryParams) {
 
   useEffect(() => {
     dispatch(fetchUsersAction(query));
-  }, [dispatch, query.page, query.limit, ...Object.values(query)]);
+  }, [dispatch, query]);
 }

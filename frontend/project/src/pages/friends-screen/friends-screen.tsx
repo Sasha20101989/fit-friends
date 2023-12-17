@@ -30,7 +30,7 @@ function FriendsScreen(): JSX.Element {
 
   useEffect(() => {
     dispatch(fetchMyFriendsAction(queryParams));
-  }, [dispatch]);
+  }, [dispatch, queryParams]);
 
   return(
     <Layout>

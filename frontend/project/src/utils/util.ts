@@ -25,8 +25,9 @@ export function formatCustomDateTimeString(inputDate: string): string {
   return formattedDateTime;
 }
 
-export const getMonthNameInGenitiveCase = (date = new Date) =>
-  date.toLocaleString('ru', {
+export const getMonthNameInGenitiveCase = (date = new Date) => {
+  return date.toLocaleString('ru', {
     month: 'long',
     day: 'numeric',
   }).split(' ')[1];
+};

@@ -5,7 +5,7 @@ import { AppRoute } from '../../const';
 import { Role } from '../../types/role.enum';
 import { Page } from '../../types/page.enum';
 import { setSelectedPage } from '../../store/main-process/main-process.slice';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { deleteFromNotificationsAction, fetchNotificationsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { getNotifications } from '../../store/main-data/main-data.selectors';
 import { formatCustomDateTimeString, formatDateString } from '../../utils/util';
@@ -41,12 +41,12 @@ function Header (): JSX.Element {
     }
   };
 
-  const navItems: NavItem[] = [
+  const navItems: NavItem[] = useMemo(() => [
     { to: `${currentRole === Role.Trainer ? '' : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUserId}` : `${AppRoute.UserRoom}/${currentUserId}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
     { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUserId}` : `${AppRoute.UserFriends}/${currentUserId}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
     { to: '', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
-  ];
+  ], [currentRole, currentUserId]);
 
   useEffect(() => {
     const currentItem = navItems.find((item) => item.to === location.pathname);
@@ -55,7 +55,7 @@ function Header (): JSX.Element {
       dispatch(setSelectedPage(currentItem?.label));
       dispatch(fetchNotificationsAction());
     }
-  }, [location.pathname, selectedPage, notifications]);
+  }, [dispatch, navItems, location.pathname, selectedPage, notifications]);
 
   return(
     <header className="header">

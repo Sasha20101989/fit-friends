@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 function ThumbnailSpecGym():JSX.Element {
   return (
     <div className="thumbnail-spec-gym">
@@ -15,4 +17,4 @@ function ThumbnailSpecGym():JSX.Element {
   );
 }
 
-export default ThumbnailSpecGym;
+export default memo(ThumbnailSpecGym);

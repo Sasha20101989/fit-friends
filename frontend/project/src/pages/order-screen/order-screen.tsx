@@ -21,12 +21,12 @@ function OrderScreen() : JSX.Element {
 
   //const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
 
-  const handleShowMoreClick = () => {
-    //setQueryParams((prevParams) => ({
-    //  ...prevParams,
-    //  limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
-    //}));
-  };
+  // const handleShowMoreClick = () => {
+  //   setQueryParams((prevParams) => ({
+  //     ...prevParams,
+  //     limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
+  //   }));
+  // };
 
   useEffect(() => {
     if(id){

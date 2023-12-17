@@ -30,7 +30,7 @@ export const mainData = createSlice({
   initialState: initialState,
   reducers: {
     removeNotification: (state, action: PayloadAction<string>) => {
-      state.notifications = state.notifications.filter(notification => notification.id !== action.payload);
+      state.notifications = state.notifications.filter((notification) => notification.id !== action.payload);
     },
     setUsers: (state, action: PayloadAction<User[]>) => {
       state.users = action.payload;

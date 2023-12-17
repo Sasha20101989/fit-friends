@@ -41,7 +41,7 @@ export type MainState = {
 }
 
 export type DataState = {
-  subscribes: Subscribe[],
+  subscribes: Subscribe[];
   selectedUser: User | Trainer | null;
   users: User[];
   popularTrainings: Training[];
@@ -53,7 +53,10 @@ export type DataState = {
   orders: TrainingOrder[];
   selectedTraining: Training | null;
   isSubmitting: boolean;
-  pagination: {page?: number | undefined, limit?: number | undefined};
+  pagination: {
+    page?: number | undefined;
+    limit?: number | undefined;
+  };
   notifications: Notification[];
 }
 

@@ -11,5 +11,5 @@ export function useFetchTrainingsEffect(user: User | Trainer | null, query: Fetc
     if (user && user.workoutTypes.length > 0) {
       dispatch(fetchTrainingsAction(query));
     }
-  }, [dispatch, user, query.page, query.limit, query.workoutTypes]);
+  }, [dispatch, user, query]);
 }

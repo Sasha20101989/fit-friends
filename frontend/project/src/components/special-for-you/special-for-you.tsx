@@ -1,8 +1,7 @@
-import SpecialForYouItem from './special-for-you-item';
 import { Training } from '../../types/training.type';
 import IconButton from '../icon-button/icon-button';
-import ThumbnailSpecGym from '../thumbnail-spec-gym/thumbnail-spec-gym';
 import { memo } from 'react';
+import SpecialForYouList from './special-for-you-list';
 
 type SpecialForYouProps = {
   specialForUserTrainings: Training[];
@@ -32,18 +31,7 @@ function SpecialForYou({specialForUserTrainings, isPreviousButtonDisabled, isNex
               <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>
           </div>
-          {specialForUserTrainings.length > 0 ?
-            <ul className="special-for-you__list">
-              {specialForUserTrainings.map((training, index) => (
-                <SpecialForYouItem
-                  key={`${training.name}-${training.calories}-${training.price}`}
-                  trainingId={training.id}
-                  title={training.workoutType}
-                  imageSrc={`img/content/thumbnails/preview-0${index + 1}`}
-                />
-              ))}
-            </ul> :
-            <ThumbnailSpecGym/>}
+          <SpecialForYouList specialForUserTrainings={specialForUserTrainings}/>
         </div>
       </div>
     </section>
