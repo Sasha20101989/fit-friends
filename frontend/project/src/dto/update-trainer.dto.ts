@@ -1,4 +1,5 @@
 import { Gender } from '../types/gender.enum';
+import { Location } from '../types/location.enum';
 import { TrainingLevel } from '../types/training-level.enum';
 import { WorkoutType } from '../types/workout-type.enum';
 
@@ -11,5 +12,6 @@ export default class UpdateTrainerDto {
   public gender?: Gender;
   public name?: string;
   public avatar?: string;
+  public location?: Location;
 }
 

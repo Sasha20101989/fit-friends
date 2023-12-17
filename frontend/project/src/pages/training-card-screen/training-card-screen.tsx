@@ -27,6 +27,10 @@ import { PurchaseType } from '../../types/purchase-type.enum';
 import { PaymentMethod } from '../../types/payment-method.enum';
 import CreateOrderDto from '../../dto/create-order.dto';
 import { createOrderAction } from '../../store/api-actions/order-api-actions/order-api-actions';
+import { getBalance } from '../../store/balance-data/balance-data.selectors';
+import { UserBalance } from '../../types/user-balance.type';
+import { addTrainingInBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
+import CreateBalanceDto from '../../dto/create-balance.dto';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
@@ -34,6 +38,8 @@ function TrainingCardScreen() : JSX.Element {
   const currentRole = useAppSelector(getCurrentRole);
   const training: Training | null = useAppSelector(getTraining);
   const reviews: Review[] = useAppSelector(getReviews);
+  const balance: UserBalance[] = useAppSelector(getBalance);
+  const trainings: Training[] = balance.map((userBalance) => userBalance.training);
 
   const isLoading = useAppSelector(getLoadingStatus);
 
@@ -45,6 +51,7 @@ function TrainingCardScreen() : JSX.Element {
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
   const [isBuyFormOpen, setIsBuyFormOpen] = useState(false);
+  const [isInBalance, setIsInBalance] = useState<boolean>(false);
 
   useEffect(() => {
     if(trainingId){
@@ -52,6 +59,12 @@ function TrainingCardScreen() : JSX.Element {
       dispatch(fetchReviewsAction({trainingId}));
     }
   }, [dispatch, trainingId]);
+
+  useEffect(() => {
+    if (trainingId && trainings.length > 0) {
+      setIsInBalance(trainings.some((trainingItem) => trainingItem.id === trainingId));
+    }
+  }, [trainings, trainingId]);
 
   if (isLoading) {
     return <Loading/>;
@@ -150,7 +163,12 @@ function TrainingCardScreen() : JSX.Element {
         paymentMethod
       };
 
+      const balanceData: CreateBalanceDto = {
+        availableQuantity: quantity,
+      };
+
       dispatch(createOrderAction({trainingId, orderData}));
+      dispatch(addTrainingInBalanceAction({trainingId, balanceData}));
       handleCloseBuyForm();
     }
   };
@@ -248,7 +266,7 @@ function TrainingCardScreen() : JSX.Element {
                   </form>
                 </div>
               </div>
-              <VideoSection/>
+              <VideoSection isInBalance={isInBalance}/>
             </div>
           </div>
         </div>

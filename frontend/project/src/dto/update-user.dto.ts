@@ -3,6 +3,7 @@ import { Gender } from '../types/gender.enum';
 import { TrainingLevel } from '../types/training-level.enum';
 import { WorkoutType } from '../types/workout-type.enum';
 import { WorkoutDuration } from '../types/workout-duration.enum';
+import { Location } from '../types/location.enum';
 
 export default class UpdateUserDto {
   public name?: string;

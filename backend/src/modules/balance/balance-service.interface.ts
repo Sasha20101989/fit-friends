@@ -11,5 +11,4 @@ export interface BalanceServiceInterface {
   create(dto: CreateBalanceDto, userId: MongoId, trainingId: MongoId): Promise<DocumentType<BalanceEntity>>;
   updateBalance(dto: UpdateBalanceDto, trainingId: MongoId): Promise<DocumentType<BalanceEntity> | null>;
   findByUserId(userId: MongoId, query: BalanceQueryParams): Promise<DocumentType<BalanceEntity>[]>;
-  deleteBalance(trainingId: MongoId): Promise<void>;
 }

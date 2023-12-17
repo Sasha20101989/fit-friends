@@ -7672,6 +7672,10 @@ input:active + .custom-textarea__text {
   padding: 17px 177px;
 }
 
+.popup__content-map {
+  position: relative;
+}
+
 .popup__content--feedback {
   padding: 35px 118px 60px;
 }

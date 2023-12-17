@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { useParams } from 'react-router-dom';
 import { getUser } from '../../store/user-process/user-process.selectors';
 import { useEffect, useState } from 'react';
-import { editTrainerAction, fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { editTrainerAction, editUserAction, fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import PersonalAccountUser from '../../components/personal-account-user/personal-account-user';
 import { Role } from '../../types/role.enum';
 import Layout from '../../components/layout/layout';
@@ -24,6 +24,7 @@ import { TrainingLevel } from '../../types/training-level.enum';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { getLoadingStatus } from '../../store/main-data/main-data.selectors';
 import Loading from '../../components/loading/loading';
+import UpdateUserDto from '../../dto/update-user.dto.js';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -109,7 +110,8 @@ function UserProfileScreen(): JSX.Element {
     if(currentRole === Role.Trainer){
       if(selectedName !== undefined && selectedName.trim() !== '' &&
         selectedGender !== null &&
-        specializations.length >= 1){
+        specializations.length >= 1 &&
+        selectedLocation !== null){
         const trainerData: UpdateTrainerDto = {
           description: selectedDescription,
           trainingLevel: selectedLevel,
@@ -117,10 +119,29 @@ function UserProfileScreen(): JSX.Element {
           workoutTypes: specializations,
           personalTraining: readinessToWorkout,
           name: selectedName,
-          avatar: selectedAvatar
+          avatar: selectedAvatar,
+          location: selectedLocation
         };
 
         dispatch(editTrainerAction(trainerData));
+      }
+    }else{
+      if(selectedName !== undefined && selectedName.trim() !== '' &&
+        selectedGender !== null &&
+        specializations.length >= 1 &&
+        selectedLocation !== null){
+        const userData: UpdateUserDto = {
+          description: selectedDescription,
+          trainingLevel: selectedLevel,
+          gender: selectedGender,
+          workoutTypes: specializations,
+          readinessForWorkout: readinessToWorkout,
+          name: selectedName,
+          avatar: selectedAvatar,
+          location: selectedLocation
+        };
+
+        dispatch(editUserAction(userData));
       }
     }
   };

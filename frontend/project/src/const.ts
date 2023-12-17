@@ -2,14 +2,13 @@ import { GenderPreference } from './types/gender-preference.enum';
 import { Gender } from './types/gender.enum';
 import { Role } from './types/role.enum';
 
-
 export enum NameSpace {
   Data = 'data',
   Order = 'order',
   Main = 'main',
   User = 'user',
+  Balance = 'balance'
 }
-
 
 export enum HTTP_CODE {
   OK = 200,
@@ -33,7 +32,8 @@ export enum APIRoute {
   Orders = '/orders',
   Reviews = '/reviews/training',
   Notifications = '/notifications',
-  Subscribes = '/subscribes'
+  Subscribes = '/subscribes',
+  Balance = '/balance'
 }
 
 export enum AuthorizationStatus {
@@ -71,11 +71,12 @@ export enum AppRoute {
   UserFriends = '/user/friends',
 }
 
+export const URL_USER_MARKER = '/img/svg/pin-user.svg';
+
 export const isValidPassword = (password: string): boolean => {
   const regex = /^.{6,12}$/;
   return regex.test(password);
 };
-
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
@@ -84,6 +85,7 @@ export const MAX_LOOK_FOR_COMPANY_COUNT = 4;
 export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;
 export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
+export const MAX_BALANCE_COUNT = 8;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
 export const REVIEW_TEXT_CONSTRAINTS = {

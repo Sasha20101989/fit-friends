@@ -90,15 +90,13 @@ export default class BalanceController extends Controller {
   ){
     const { trainingId } = params;
 
+    let balance;
+
     if(await this.balanceService.exists(trainingId)){
-      throw new HttpError(
-        StatusCodes.CONFLICT,
-        `Balance with training id ${trainingId} exists.`,
-        'BalanceController'
-      );
+      balance = await this.balanceService.updateBalance({ ...body }, trainingId);
     }
 
-    const balance = await this.balanceService.create({...body}, user.id, trainingId);
+    balance = await this.balanceService.create({...body}, user.id, trainingId);
     this.created(res, fillDTO(BalanceRdo, balance));
   }
 
@@ -108,20 +106,15 @@ export default class BalanceController extends Controller {
   ) {
     const { trainingId } = params;
 
-    if (await this.balanceService.exists(trainingId) && body.availableQuantity === 0) {
-      await this.balanceService.deleteBalance(trainingId);
-      this.ok(res, { message: 'Balance deleted' });
-    } else {
-      if (!await this.balanceService.exists(trainingId)) {
-        throw new HttpError(
-          StatusCodes.NOT_FOUND,
-          `Balance with training id ${trainingId} not exists.`,
-          'BalanceController'
-        );
-      }
-
-      const updatedBalance = await this.balanceService.updateBalance({ ...body }, trainingId);
-      this.ok(res, fillDTO(BalanceRdo, updatedBalance));
+    if (!await this.balanceService.exists(trainingId)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Balance with training id ${trainingId} not exists.`,
+        'BalanceController'
+      );
     }
+
+    const updatedBalance = await this.balanceService.updateBalance({ ...body }, trainingId);
+    this.ok(res, fillDTO(BalanceRdo, updatedBalance));
   }
 }

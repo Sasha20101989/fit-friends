@@ -36,8 +36,8 @@ function PopupFeedback({onClose, onSubmit}: PopupFeedbackProps): JSX.Element {
   };
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+    const handleKeyDown = (evt: KeyboardEvent) => {
+      if (evt.key === 'Escape') {
         onClose();
       }
     };

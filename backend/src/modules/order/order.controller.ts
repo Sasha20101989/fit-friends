@@ -56,7 +56,6 @@ export default class OrderController extends Controller {
       handler: this.create,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
         new ValidateDtoMiddleware(CreateOrderDto)

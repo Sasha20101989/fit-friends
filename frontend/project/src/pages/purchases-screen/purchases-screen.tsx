@@ -1,21 +1,40 @@
+import { useEffect, useState } from 'react';
 import GoBack from '../../components/go-back/go-back';
 import Layout from '../../components/layout/layout';
-import { AppRoute } from '../../const';
+import { AppRoute, MAX_BALANCE_COUNT } from '../../const';
+import { BalanceQueryParams, fetchBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
+import { Sorting } from '../../types/sorting.enum';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getBalance } from '../../store/balance-data/balance-data.selectors';
+import { UserBalance } from '../../types/user-balance.type';
+import TrainingList from '../../components/training-list/training-list';
+import ShowMore from '../../components/show-more/show-more';
+import { Training } from '../../types/training.type';
 
 function PurchasesScreen() : JSX.Element {
-  // const initialQueryParams: FetchTrainingsParams = {
-  //   category: TrainingCategory.BASE,
-  //   createdAtDirection: Sorting.Descending,
-  // };
+  const dispatch = useAppDispatch();
 
-  // const [queryParams, setQueryParams] = useState<FetchTrainingsParams>(initialQueryParams);
+  const balance: UserBalance[] = useAppSelector(getBalance);
 
-  // const handleShowMoreClick = () => {
-  //   setQueryParams((prevParams) => ({
-  //     ...prevParams,
-  //     limit: (prevParams.limit || 0) + MAX_TRAININGS_COUNT,
-  //   }));
-  // };
+  const initialQueryParams: BalanceQueryParams = {
+    createdAtDirection: Sorting.Descending,
+    limit: MAX_BALANCE_COUNT,
+  };
+
+  const [queryParams, setQueryParams] = useState<BalanceQueryParams>(initialQueryParams);
+
+  const handleShowMoreClick = () => {
+    setQueryParams((prevParams) => ({
+      ...prevParams,
+      limit: (prevParams.limit || 0) + MAX_BALANCE_COUNT,
+    }));
+  };
+
+  useEffect(() => {
+    dispatch(fetchBalanceAction(queryParams));
+  }, [dispatch, queryParams]);
+
+  const trainings: Training[] = balance.map((userBalance) => userBalance.training);
 
   return(
     <Layout>
@@ -39,8 +58,8 @@ function PurchasesScreen() : JSX.Element {
                 </div>
               </div>
             </div>
-            {/* <TrainingList sourceName={'my-purchases__list'} itemSourceName={'my-purchases__item'} trainings={trainings}/> */}
-            {/* <ShowMore sourceName={'show-more users-catalog__show-more'} length={trainings.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/> */}
+            <TrainingList sourceName={'my-purchases__list'} itemSourceName={'my-purchases__item'} trainings={trainings}/>
+            <ShowMore sourceName={'show-more users-catalog__show-more'} length={trainings.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
           </div>
         </div>
       </section>

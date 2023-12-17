@@ -14,7 +14,7 @@ export const createReviewAction = createAsyncThunk<Review, {trainingId: string; 
   state: State;
   extra: AxiosInstance;
 }>(
-  'data/createReview',
+  'review/createReview',
   async (query, { dispatch, extra: api }) => {
     const { data } = await api.post<Review>(`${APIRoute.Reviews}/${query.trainingId}`, query.reviewData);
     return data;
@@ -26,7 +26,7 @@ export const fetchReviewsAction = createAsyncThunk<Review[], FetchReviewsParams,
   state: State;
   extra: AxiosInstance;
 }>(
-  'data/fetchReviews',
+  'review/fetchReviews',
   async (params, { dispatch, extra: api }) => {
     try {
       const { data } = await api.get<Review[]>(`${APIRoute.Reviews}/${params.trainingId}`, {});

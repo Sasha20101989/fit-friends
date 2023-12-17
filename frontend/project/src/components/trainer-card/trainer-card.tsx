@@ -6,8 +6,10 @@ import { Trainer } from '../../types/trainer.interface';
 import { Training } from '../../types/training.type';
 import IconButton from '../icon-button/icon-button';
 import { MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import TrainingList from '../training-list/training-list';
+import PopupMap from '../popup-map/popup-map';
+import PopupCertificates from '../popup-certificates/popup-certificates';
 
 type TrainerCardProps = {
   trainer: Trainer;
@@ -24,7 +26,11 @@ type TrainerCardProps = {
 };
 
 function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPage, onAddFriend, onRemoveFriend, onAddSubscribe, onRemoveSubscribe, onPreviousTrainingsClick, onNextTrainingsClick }: TrainerCardProps) : JSX.Element {
-  const {name, location, description, workoutTypes, role, personalTraining} = trainer;
+  const {name, location, description, workoutTypes, role, personalTraining, certificate} = trainer;
+  const certificates = [certificate];
+
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isCertificatesPopupOpen, setIsCertificatesPopupOpen] = useState(false);
 
   const isPreviousButtonDisabled = selectedPage === 1;
   const isNextButtonDisabled = MAX_TRAINER_CARD_TRAININGS_COUNT !== trainings.length;
@@ -58,6 +64,22 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
     isInSubscribers ? handleRemoveSubscribe() : handleAddSubscribe();
   };
 
+  const handleShowMap = () => {
+    setIsMapOpen(true);
+  };
+
+  const handleCloseMap = () => {
+    setIsMapOpen(false);
+  };
+
+  const handleShowCertificatesPopup = () => {
+    setIsCertificatesPopupOpen(true);
+  };
+
+  const handleCloseCertificatesPopup = () => {
+    setIsCertificatesPopupOpen(false);
+  };
+
   return(
     <section className="user-card-coach">
       <h1 className="visually-hidden">Карточка пользователя роль тренер</h1>
@@ -68,7 +90,7 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
               <h2 className="user-card-coach__title">{name}</h2>
             </div>
             <div className="user-card-coach__label">
-              <Link to="">
+              <Link to="" onClick={handleShowMap}>
                 <svg className="user-card-coach__icon-location" width="12" height="14" aria-hidden="true">
                   <use xlinkHref="#icon-location"></use>
                 </svg>
@@ -93,7 +115,7 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
             <div className="user-card__text">
               {description && <p>{description}</p>}
             </div>
-            <button className="btn-flat user-card-coach-2__sertificate" type="button">
+            <button className="btn-flat user-card-coach-2__sertificate" type="button" onClick={handleShowCertificatesPopup}>
               <svg width="12" height="13" aria-hidden="true">
                 <use xlinkHref="#icon-teacher"></use>
               </svg>
@@ -148,6 +170,8 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
             </div>
           </form>
         </div>
+        {isMapOpen && <PopupMap station={location} onClose={handleCloseMap}/>}
+        {isCertificatesPopupOpen && <PopupCertificates certificates={certificates} onClose={handleCloseCertificatesPopup}/>}
       </div>
     </section>
   );

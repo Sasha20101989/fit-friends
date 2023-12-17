@@ -3,6 +3,8 @@ import HashtagList from '../../components/hashtag-list/hashtag-list';
 import { Role } from '../../types/role.enum';
 import { User } from '../../types/user.interface';
 import CardGalery from '../../components/card-galery/card-galery';
+import { useState } from 'react';
+import PopupMap from '../popup-map/popup-map';
 
 type UserCardProps = {
   user: User;
@@ -13,6 +15,7 @@ type UserCardProps = {
 
 function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps) : JSX.Element {
   const { name, location, description, workoutTypes, role, readinessForWorkout } = user;
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const handleAddFriend = () => {
     onAddFriend();
@@ -20,6 +23,14 @@ function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps
 
   const handleRemoveFriend = () => {
     onRemoveFriend();
+  };
+
+  const handleShowMap = () => {
+    setIsMapOpen(true);
+  };
+
+  const handleCloseMap = () => {
+    setIsMapOpen(false);
   };
 
   return(
@@ -31,7 +42,7 @@ function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps
             <h2 className="user-card__title">{name}</h2>
           </div>
           <div className="user-card__label">
-            <Link to="">
+            <Link to="" onClick={handleShowMap}>
               <svg className="user-card-coach__icon-location" width="12" height="14" aria-hidden="true">
                 <use xlinkHref="#icon-location"></use>
               </svg>
@@ -62,6 +73,7 @@ function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps
           )}
         </div>
         <CardGalery isCoach={role === Role.Trainer}/>
+        {isMapOpen && <PopupMap station={location} onClose={handleCloseMap}/>}
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import { DESCRIPTION_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../../user/user.c
 import { IsSinglePDF } from '../validators/is-single-pdf.validator.js';
 import { IsThreeWorkoutTypes } from '../validators/is-three-workout-types.js';
 import { Gender } from '../../../types/gender.enum.js';
+import { Location } from '../../../types/location.enum.js';
 
 export default class UpdateTrainerDto {
   @MinLength(DESCRIPTION_CONSTRAINTS.MIN_LENGTH, { message: `Minimum description length must be ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH}` })
@@ -42,4 +43,8 @@ export default class UpdateTrainerDto {
   @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
   @IsOptional()
   public avatar?: string;
+
+  @IsOptional()
+  @IsEnum(Location, { message: 'Invalid location' })
+  public location!: Location;
 }

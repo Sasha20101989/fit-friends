@@ -11,6 +11,7 @@ import { Trainer } from './trainer.interface';
 import { TrainingLevel } from './training-level.enum';
 import { TrainingOrder } from './training-order.type';
 import { Training } from './training.type';
+import { UserBalance } from './user-balance.type';
 import { User } from './user.interface';
 import { WorkoutDuration } from './workout-duration.enum';
 import { WorkoutType } from './workout-type.enum';
@@ -62,6 +63,11 @@ export type DataState = {
 export type OrderDataState = {
   isSubmitting: boolean;
   orders: TrainingOrder[];
+}
+
+export type BalanceDataState = {
+  isSubmitting: boolean;
+  balance: UserBalance[];
 }
 
 export type AppState = {

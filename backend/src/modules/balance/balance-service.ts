@@ -57,8 +57,4 @@ export default class BalanceService implements BalanceServiceInterface{
 
     return balance;
   }
-
-  public async deleteBalance(trainingId: MongoId): Promise<void> {
-    await this.balanceModel.deleteOne({ training: trainingId }).exec();
-  }
 }

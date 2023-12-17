@@ -46,7 +46,7 @@ function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderPro
                 <div className="promo-slider__slider-dots">
                   {specialTrainings.map((dotItem, dotIndex) => (
                     <button
-                      key={dotItem.description}
+                      key={`${dotItem.description}-${dotItem.createdAt}`}
                       className={`promo-slider__slider-dot ${dotIndex === activeSlide ? 'promo-slider__slider-dot--active' : ''}`}
                       aria-label={`слайд ${dotIndex + 1}`}
                       onClick={() => handleDotClick(dotIndex)}
