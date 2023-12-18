@@ -2,11 +2,18 @@ import { Role } from '../../types/role.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
+
 type SpecializationGroupProps = {
   role: Role;
+  error: string;
 }
 
-function SpecializationGroup({ role }: SpecializationGroupProps): JSX.Element {
+function SpecializationGroup({ role, error }: SpecializationGroupProps): JSX.Element {
   const name = role === Role.Trainer ? 'coach' : 'user';
   const { specializations, isDisabled, handleSpecializationChange } = useRegisterForm();
 
@@ -29,6 +36,7 @@ function SpecializationGroup({ role }: SpecializationGroupProps): JSX.Element {
             </label>
           </div>
         ))}
+        {error && <span style={errorStyle}>{error}</span>}
       </div>
     </div>
   );

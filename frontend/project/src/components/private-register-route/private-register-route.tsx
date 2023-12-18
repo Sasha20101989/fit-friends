@@ -10,7 +10,7 @@ type PrivateRegisterRouteProps = {
   currentRole: Role;
 }
 
-function PrivateTrainerRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element {
+function PrivateRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element | null {
   const {authorizationStatus, currentRole, registerStatus, children} = props;
 
   if((isTrainer(currentRole) || isUser(currentRole)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.InProgress){
@@ -25,7 +25,8 @@ function PrivateTrainerRegisterRoute(props: PrivateRegisterRouteProps): JSX.Elem
     return <Navigate to={AppRoute.Main}/>;
   }
 
-  return <Navigate to={AppRoute.MainRegister}/>;
+  return null;
 }
 
-export default PrivateTrainerRegisterRoute;
+export default PrivateRegisterRoute;
+

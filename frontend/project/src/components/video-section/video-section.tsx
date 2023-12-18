@@ -40,14 +40,15 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
         </div>
       )}
       <div className="training-video__buttons-wrapper">
-        <button
-          className="btn training-video__button training-video__button--start"
-          type="button"
-          disabled={!isInBalance}
-        >
+        {currentRole === Role.User ? (
+          <button
+            className="btn training-video__button training-video__button--start"
+            type="button"
+            disabled={!isInBalance}
+          >
           Приступить
         </button>
-        {currentRole === Role.Trainer && (
+        ) : (
           <div className="training-video__edit-buttons">
             <button className="btn" type="button">Сохранить</button>
             <button className="btn btn--outlined" type="button">Удалить</button>

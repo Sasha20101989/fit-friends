@@ -12,5 +12,6 @@ export default class CreateTrainingDto {
   public calories!: number;
   public description!: string;
   public genderPreference!: GenderPreference;
+  public specialOffer!: boolean;
   public video!: string;
 }

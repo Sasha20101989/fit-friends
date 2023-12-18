@@ -1,12 +1,20 @@
+import { USERNAME_CONSTRAINTS } from '../../const';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getDescription, getName } from '../../store/main-process/main-process.selectors';
 import { setDescription, setName } from '../../store/main-process/main-process.slice';
 
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
+
 type UserAboutProps = {
   isFormEditable: boolean;
+  error: string;
 }
 
-function UserAbout({isFormEditable}: UserAboutProps):JSX.Element {
+function UserAbout({isFormEditable, error}: UserAboutProps):JSX.Element {
   const dispatch = useAppDispatch();
   const name = useAppSelector(getName);
   const description = useAppSelector(getDescription);
@@ -33,6 +41,8 @@ function UserAbout({isFormEditable}: UserAboutProps):JSX.Element {
               onChange={handleNameChange}
               disabled={!isFormEditable}
               required
+              minLength={USERNAME_CONSTRAINTS.MIN_LENGTH}
+              maxLength={USERNAME_CONSTRAINTS.MAX_LENGTH}
             />
           </span>
         </label>
@@ -49,6 +59,7 @@ function UserAbout({isFormEditable}: UserAboutProps):JSX.Element {
             required
           >
           </textarea>
+          {error && <span style={errorStyle}>{error}</span>}
         </label>
       </div>
     </div>

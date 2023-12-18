@@ -8,11 +8,13 @@ import RadioSelect from '../../components/radio-select/radio-select';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
+import { CALORIES_CONSTRAINTS } from '../../const';
 
 function QuestionnaireUserScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
+    specializationsError,
     levelError,
     durationError,
     caloriesLoseRef,
@@ -34,7 +36,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                 <div className="questionnaire-user">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-user__wrapper">
-                    <SpecializationGroup role={Role.User}/>
+                    <SpecializationGroup role={Role.User} error={specializationsError}/>
                     <RadioSelect
                       name={'time'}
                       classType={'questionnaire-user__block'}
@@ -62,7 +64,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                         <div className="custom-input custom-input--with-text-right questionnaire-user__input">
                           <label>
                             <span className="custom-input__wrapper">
-                              <input type="number" name="calories-lose" ref={caloriesLoseRef} id="calories-lose" required/>
+                              <input type="number" name="calories-lose" ref={caloriesLoseRef} id="calories-lose" required max={CALORIES_CONSTRAINTS.MAX} min={CALORIES_CONSTRAINTS.MIN}/>
                               <span className="custom-input__text">ккал</span>
                             </span>
                           </label>
@@ -72,7 +74,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                         <div className="custom-input custom-input--with-text-right questionnaire-user__input">
                           <label>
                             <span className="custom-input__wrapper">
-                              <input type="number" name="calories-waste" ref={caloriesWaste} id="calories-waste" required/>
+                              <input type="number" name="calories-waste" ref={caloriesWaste} id="calories-waste" required max={CALORIES_CONSTRAINTS.MAX} min={CALORIES_CONSTRAINTS.MIN}/>
                               <span className="custom-input__text">ккал</span>
                             </span>
                           </label>

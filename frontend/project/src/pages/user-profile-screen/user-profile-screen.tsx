@@ -18,13 +18,13 @@ import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
 import { getAvatar, getDescription, getGender, getLevel, getLocation, getName, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
 import { changeLevel, setGender, setLocation } from '../../store/main-process/main-process.slice';
-import { capitalizeFirstLetter } from '../../const';
+import { DESCRIPTION_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { getLoadingStatus } from '../../store/main-data/main-data.selectors';
 import Loading from '../../components/loading/loading';
-import UpdateUserDto from '../../dto/update-user.dto.js';
+import UpdateUserDto from '../../dto/update-user.dto';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -48,6 +48,7 @@ function UserProfileScreen(): JSX.Element {
   const [locationError, setLocationError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [levelError, setLevelError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
 
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
@@ -128,6 +129,15 @@ function UserProfileScreen(): JSX.Element {
       return;
     }
 
+    if (selectedDescription &&
+      selectedDescription.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+      selectedDescription &&
+      selectedDescription.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    ){
+      setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
+      return;
+    }
+
     if(currentRole === Role.Trainer){
       if(selectedName !== undefined &&
         selectedName.trim() !== '' &&
@@ -180,7 +190,7 @@ function UserProfileScreen(): JSX.Element {
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>
-                <UserAbout isFormEditable={isFormEditable} />
+                <UserAbout isFormEditable={isFormEditable} error={descriptionError}/>
                 <UserStatus isFormEditable={isFormEditable} />
                 <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
                   <UserSpecializationGroup isFormEditable={isFormEditable} />

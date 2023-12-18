@@ -16,7 +16,9 @@ function TrainingEditButton({isFormEditable, onToggleFormEditable, onSave}: Trai
     }
   }, [isFormEditable, onSave, shouldSave]);
 
-  const handleToggleFormEditable = () => {
+  const handleToggleFormEditable = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+
     if (isFormEditable) {
       setShouldSave(true);
     }

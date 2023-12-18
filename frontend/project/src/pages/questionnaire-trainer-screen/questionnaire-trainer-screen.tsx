@@ -6,8 +6,17 @@ import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
 
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
+
 function QuestionnaireTrainerScreen(): JSX.Element {
   const {
+    specializationsError,
+    descriptionError,
+    certificateError,
     levelError,
     isSubmitting,
     descriptionRef,
@@ -32,7 +41,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                 <div className="questionnaire-coach">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-coach__wrapper">
-                    <SpecializationGroup role={Role.Trainer}/>
+                    <SpecializationGroup role={Role.Trainer} error={specializationsError}/>
                     <RadioSelect
                       name={'level'}
                       classType={'questionnaire-coach__block'}
@@ -44,7 +53,8 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       object={Object.values(TrainingLevel)}
                       error={levelError}
                     />
-                    <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
+                    <div className={`questionnaire-coach__block ${certificateError && 'is-invalid'}`}>
+                      <span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>
                           <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
@@ -53,6 +63,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             </svg>
                           </span>
                           <input type="file" name="import" tabIndex={-1} accept=".pdf, .jpg, .png" onChange={handleCertificateChange}/>
+                          {certificateError && <span style={errorStyle}>{certificateError}</span>}
                         </label>
                       </div>
                     </div>
@@ -69,6 +80,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             required
                           >
                           </textarea>
+                          {descriptionError && <span style={errorStyle}>{descriptionError}</span>}
                         </label>
                       </div>
                       <div className="questionnaire-coach__checkbox">

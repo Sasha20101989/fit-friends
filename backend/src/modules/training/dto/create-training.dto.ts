@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { GenderPreference } from '../../../types/gender-preference.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutDuration } from '../../../types/workout-duration.enum.js';
@@ -52,6 +52,10 @@ export default class CreateTrainingDto{
   @IsNotEmpty({ message: 'Video is required' })
   @Matches(/\.(mov|avi|mp4)$/, { message: 'Video must be in MOV or AVI or MP4 format' })
   public video!: string;
+
+  @IsNotEmpty({ message: 'Special Offer is required' })
+  @IsBoolean({ message: 'SpecialOffer must be a boolean (true or false)' })
+  public specialOffer?: boolean;
 
   public trainer!: string;
 }

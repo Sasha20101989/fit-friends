@@ -1,3 +1,5 @@
+import React from 'react';
+import Slider from 'rc-slider';
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
@@ -7,11 +9,15 @@ import { getTrainerTrainings } from '../../store/main-data/main-data.selectors';
 import { FetchTrainingsParams, fetchTrainerTrainingsAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
 import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
-import { debounce } from 'lodash';
 import { TrainingCategory } from '../../types/training-category';
 import GoBack from '../../components/go-back/go-back';
 import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
 import ShowMore from '../../components/show-more/show-more';
+
+const mySliderStyle = {
+  width: '100%', // Adjust as needed for slider width
+  marginTop: '10px', // Adjust as needed for spacing
+};
 
 function TrainerTrainingsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -28,13 +34,6 @@ function TrainerTrainingsScreen(): JSX.Element {
     category: TrainingCategory.FOR_TRAINER,
     trainer: id || '',
   });
-
-  const debouncedFetchTrainerTrainings = debounce(
-    (params: FetchTrainingsParams) => {
-      dispatch(fetchTrainerTrainingsAction(params));
-    },
-    400
-  );
 
   const handleInputChange = (
     evt: ChangeEvent<HTMLInputElement>,
@@ -85,9 +84,9 @@ function TrainerTrainingsScreen(): JSX.Element {
 
   useEffect(() => {
     if (id) {
-      debouncedFetchTrainerTrainings(queryParams);
+      dispatch(fetchTrainerTrainingsAction(queryParams));
     }
-  }, [id, queryParams, debouncedFetchTrainerTrainings]);
+  }, [id, queryParams]);
 
   return(
     <Layout>
@@ -113,21 +112,13 @@ function TrainerTrainingsScreen(): JSX.Element {
                         <label htmlFor="text-max">до</label>
                       </div>
                     </div>
-                    <div className="filter-range">
-                      <div className="filter-range__scale">
-                        <div className="filter-range__bar">
-                          <span className="visually-hidden">Полоса прокрутки</span>
-                        </div>
-                      </div>
-                      <div className="filter-range__control">
-                        <button className="filter-range__min-toggle">
-                          <span className="visually-hidden">Минимальное значение</span>
-                        </button>
-                        <button className="filter-range__max-toggle">
-                          <span className="visually-hidden">Максимальное значение</span>
-                        </button>
-                      </div>
-                    </div>
+                    {/* <div style={mySliderStyle} className="my-slider-wrapper">
+                    <fieldset className="img-upload__scale  scale">
+                    <button type="button" className="scale__control  scale__control--smaller">Уменьшить</button>
+                    <input type="text" className="scale__control  scale__control--value" minLength={25} step={25} maxLength={100} value="100%" title="Image Scale" name="scale" readOnly/>
+                    <button type="button" className="scale__control  scale__control--bigger">Увеличить</button>
+                     </fieldset>
+                    </div> */}
                   </div>
                   <div className="my-training-form__block my-training-form__block--calories">
                     <h4 className="my-training-form__block-title">Калории</h4>

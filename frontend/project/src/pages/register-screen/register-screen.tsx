@@ -70,6 +70,7 @@ function RegisterScreen() : JSX.Element {
                     </div>
                   </div>
                   <div className="sign-up__data">
+
                     <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef} minLength={USERNAME_CONSTRAINTS.MIN_LENGTH} maxLength={USERNAME_CONSTRAINTS.MAX_LENGTH}/>
                     <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" reference={emailRef}/>
                     <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" reference={birthdayRef}/>

@@ -20,7 +20,6 @@ import UserCardScreen from '../../pages/user-card-screen/user-card-screen';
 import TrainingsCatalogScreen from '../../pages/trainings-catalog-screen/trainings-catalog-screen';
 import React from 'react';
 import PrivateRegisterRoute from '../private-register-route/private-register-route';
-import PrivateTrainerRegisterRoute from '../private-register-route/private-register-route';
 import PrivateTrainerRoute from '../private-trainer-route/private-trainer-route';
 import PrivateUserRoute from '../private-user-route/private-user-route';
 import TrainingCardScreen from '../../pages/training-card-screen/training-card-screen';
@@ -168,9 +167,9 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.RegisterTrainer}
         element={
-          <PrivateTrainerRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
             <QuestionnaireTrainerScreen/>
-          </PrivateTrainerRegisterRoute>
+          </PrivateRegisterRoute>
         }
       />
       <Route

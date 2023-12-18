@@ -1,10 +1,9 @@
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import { RegisterUserTransferData } from '../../types/register-transfer-data';
-import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
+import { DESCRIPTION_CONSTRAINTS, MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 import { useAppDispatch, useAppSelector } from '..';
 import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
-import { toast } from 'react-toastify';
 import { Role } from '../../types/role.enum';
 import { Gender } from '../../types/gender.enum';
 import { Location } from '../../types/location.enum';
@@ -46,6 +45,9 @@ function useRegisterForm(){
   const [levelError, setLevelError] = useState('');
   const [roleError, setRoleError] = useState('');
   const [agreementError, setAgreementError] = useState('');
+  const [certificateError, setCertificateError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+  const [specializationsError, setSpecializationsError] = useState('');
 
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -134,11 +136,29 @@ function useRegisterForm(){
   const handleTrainerQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (descriptionRef.current !== null &&
-        specializations.length > 0 &&
-        selectedLevel !== null &&
-        selectedFile !== '') {
+    if(specializations.length === 0){
+      setSpecializationsError('Выберите хотябы один вид тренировки');
+      return;
+    }
 
+    if(selectedFile === ''){
+      setCertificateError('Выберите файл в предложенном формате');
+      return;
+    }
+
+    if (descriptionRef.current !== null &&
+        descriptionRef.current.value.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+        descriptionRef.current !== null &&
+        descriptionRef.current.value.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    ){
+      setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
+      return;
+    }
+
+    if (descriptionRef.current !== null &&
+        selectedLevel !== null &&
+        selectedFile !== ''
+    ){
       const userData: UpdateTrainerDto = {
         description: descriptionRef.current.value,
         workoutTypes: specializations,
@@ -197,6 +217,7 @@ function useRegisterForm(){
 
   const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const selectedType = evt.target.value as WorkoutType;
+    setSpecializationsError('');
 
     if (evt.target.checked) {
       dispatch(addSpecialization(selectedType));
@@ -208,7 +229,9 @@ function useRegisterForm(){
   const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(setDescription(evt.target.value));
+    const descriptionValue = evt.target.value;
+    dispatch(setDescription(descriptionValue));
+    setDescriptionError('');
   };
 
   const handleReadinessForWorkoutChange = () => {
@@ -222,17 +245,17 @@ function useRegisterForm(){
 
     if (isJpegOrPngOrPdf) {
       const fileName = file.name;
-      //const fileUrl = URL.createObjectURL(file);
+      setCertificateError('');
       dispatch(changeFile(fileName));
     } else {
-      toast.warn('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).', {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 5000,
-      });
+      setCertificateError('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).');
     }
   };
 
   return {
+    specializationsError,
+    descriptionError,
+    certificateError,
     agreementError,
     roleError,
     levelError,

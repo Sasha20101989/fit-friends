@@ -25,9 +25,10 @@ function OrderItem({ order }: OrderItemProps): JSX.Element {
     evt.preventDefault();
     const trainerId = user?.id;
     if (trainerId && training) {
-      navigate(`${AppRoute.Trainers}/${trainerId}${AppRoute.Trainings}/${training}`);
+      navigate(`${AppRoute.Trainings}/${training}`);
     }
   };
+
 
   return (
     <li className="my-orders__item">

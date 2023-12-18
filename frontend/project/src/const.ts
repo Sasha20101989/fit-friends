@@ -87,7 +87,6 @@ export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
 export const MAX_BALANCE_COUNT = 8;
 export const DISCOUNT_PERCENTAGE = 0.9;
-export const MIN_PRICE = 0;
 
 export const REVIEW_TEXT_CONSTRAINTS = {
   MIN: 100,
@@ -97,6 +96,10 @@ export const REVIEW_TEXT_CONSTRAINTS = {
 export const RATING_CONSTRAINTS = {
   MIN: 1,
   MAX: 5,
+};
+
+export const PRICE_CONSTRAINTS = {
+  MIN: 0,
 };
 
 export const TRAINING_NAME_CONSTRAINTS = {

@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { editTrainingAction, fetchTrainingAction } from '../../store/api-actions/trainings-api-actions/trainings-api-actions';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { getLoadingStatus, getReviews, getTraining } from '../../store/main-data/main-data.selectors';
 import { Training } from '../../types/training.type';
@@ -16,7 +16,7 @@ import VideoSection from '../../components/video-section/video-section';
 import TrainingCardButton from '../../components/training-card-button/training-card-button';
 import Loading from '../../components/loading/loading';
 import Layout from '../../components/layout/layout';
-import { AppRoute, DESCRIPTION_CONSTRAINTS } from '../../const';
+import { AppRoute, DESCRIPTION_CONSTRAINTS, DISCOUNT_PERCENTAGE, PRICE_CONSTRAINTS, TRAINING_NAME_CONSTRAINTS } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import Image from '../../components/image/image';
 import PopupFeedback from '../../components/popup-feedback/popup-feedback';
@@ -41,17 +41,31 @@ function TrainingCardScreen() : JSX.Element {
   const balance: UserBalance[] = useAppSelector(getBalance);
   const trainings: Training[] = balance.map((userBalance) => userBalance.training);
 
+  const nameRef = useRef<HTMLInputElement | null>(null);
+  const priceRef = useRef<HTMLInputElement | null>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+
   const isLoading = useAppSelector(getLoadingStatus);
 
   const { trainingId } = useParams<{ trainingId: string }>();
 
-  const [editedTrainingName, setEditedTrainingName] = useState<string | ''>('');
-  const [editedTrainingPrice, setEditedTrainingPrice] = useState<number | ''>('');
-  const [error, setError] = useState('');
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState(false);
   const [isBuyFormOpen, setIsBuyFormOpen] = useState(false);
   const [isInBalance, setIsInBalance] = useState<boolean>(false);
+  const [nameInputValue, setNameInputValue] = useState('');
+  const [descriptionInputValue, setDescriptionInputValue] = useState('');
+  const [priceInputValue, setPriceInputValue] = useState('');
+  const [specialValue, setSpecialValue] = useState(false);
+
+  useEffect(() => {
+    if(training){
+      setNameInputValue(training.name);
+      setDescriptionInputValue(training.description);
+      setSpecialValue(training.specialOffer);
+      setPriceInputValue(training.price.toString());
+    }
+  }, [training]);
 
   useEffect(() => {
     if(trainingId){
@@ -74,52 +88,53 @@ function TrainingCardScreen() : JSX.Element {
     return <NotFoundScreen/>;
   }
 
-  const handleTrainingNameChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    evt.preventDefault();
-
-    const newName = evt.currentTarget.value;
-    setEditedTrainingName(newName);
-
-    if (!newName) {
-      setError('Обязательное поле');
-    } else {
-      setError('');
-    }
-  };
-
-  const handleTrainingPriceChange = (evt: ChangeEvent<HTMLInputElement>) => {
-    evt.preventDefault();
-
-    const inputValue = evt.currentTarget.value;
-    const newPrice: number | '' = inputValue === '' ? '' : parseInt(inputValue, 10);
-
-    if (typeof newPrice === 'number' && !isNaN(newPrice)) {
-      setEditedTrainingPrice(newPrice);
-    } else {
-      setEditedTrainingPrice('');
-      setError('Введите число');
-    }
-  };
-
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
   };
 
+  const handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setNameInputValue(evt.target.value);
+  };
+
+  const handleDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>): void => {
+    setDescriptionInputValue(evt.target.value);
+  };
+
+  const handlePriceChange = (evt: ChangeEvent<HTMLInputElement>): void => {
+    const numericValue = evt.target.value.replace(/[^\d]/g, '');
+
+    setPriceInputValue(numericValue);
+
+    if (numericValue === '') {
+      setPriceInputValue('');
+    } else {
+      setPriceInputValue(numericValue);
+    }
+
+    setSpecialValue(false);
+  };
 
   const handleSave = () => {
     if (currentRole === Role.Trainer) {
       const trainingData: UpdateTrainingDto = {};
 
-      if (editedTrainingName && editedTrainingName.trim() !== '') {
-        trainingData.name = editedTrainingName;
+      if (nameRef.current && nameRef.current.value.trim() !== '') {
+        trainingData.name = nameRef.current.value;
       }
 
-      if (editedTrainingPrice !== '') {
-        trainingData.price = editedTrainingPrice;
+      if (priceRef.current && priceRef.current.value !== ' ₽') {
+        trainingData.price = parseInt(priceRef.current.value, 10);
+      }else if(priceRef.current && priceRef.current.value === ' ₽'){
+        trainingData.price = PRICE_CONSTRAINTS.MIN;
+      }
+
+      if (descriptionRef.current && descriptionRef.current.value !== '') {
+        trainingData.description = descriptionRef.current.value;
       }
 
       if (Object.keys(trainingData).length > 0) {
         trainingData.id = training.id;
+        trainingData.specialOffer = specialValue;
         dispatch(editTrainingAction(trainingData));
       }
     }
@@ -139,6 +154,14 @@ function TrainingCardScreen() : JSX.Element {
 
   const handleCloseBuyForm = () => {
     setIsBuyFormOpen(false);
+  };
+
+  const handleDiscountClick = () => {
+    if(priceRef.current){
+      setSpecialValue(true);
+      const newPrice = (parseInt(priceRef.current.value, 10) * DISCOUNT_PERCENTAGE).toFixed(0);
+      setPriceInputValue(newPrice);
+    }
   };
 
   const hashtags = [`${training.workoutType}`, `${training.genderPreference}`, `${training.calories}ккал`, `${training.workoutDuration}`];
@@ -215,16 +238,31 @@ function TrainingCardScreen() : JSX.Element {
                             <input
                               type="text"
                               name="training"
-                              value={editedTrainingName ? editedTrainingName : training.name}
+                              id="training"
+                              ref={nameRef}
+                              onChange={handleNameChange}
+                              value={nameInputValue}
                               disabled={!isFormEditable}
-                              onChange={handleTrainingNameChange}
+                              required
+                              minLength={TRAINING_NAME_CONSTRAINTS.MIN_LENGTH}
+                              maxLength={TRAINING_NAME_CONSTRAINTS.MAX_LENGTH}
                             />
                           </label>
-                          {error && <div className="training-info__error">{error}</div>}
                         </div>
                         <div className="training-info__textarea">
-                          <label><span className="training-info__label">Описание тренировки</span>
-                            <textarea name="description" value={training.description} disabled={!isFormEditable} minLength={DESCRIPTION_CONSTRAINTS.MIN_LENGTH} maxLength={DESCRIPTION_CONSTRAINTS.MAX_LENGTH}></textarea>
+                          <label>
+                            <span className="training-info__label">Описание тренировки</span>
+                            <textarea
+                              name="description"
+                              id="description"
+                              ref={descriptionRef}
+                              onChange={handleDescriptionChange}
+                              value={descriptionInputValue}
+                              disabled={!isFormEditable}
+                              minLength={DESCRIPTION_CONSTRAINTS.MIN_LENGTH}
+                              maxLength={DESCRIPTION_CONSTRAINTS.MAX_LENGTH}
+                            >
+                            </textarea>
                           </label>
                         </div>
                       </div>
@@ -254,14 +292,17 @@ function TrainingCardScreen() : JSX.Element {
                             <input
                               type="text"
                               name="price"
-                              value={editedTrainingPrice !== '' ? `${editedTrainingPrice} ₽` : `${training.price} ₽`}
-                              onChange={handleTrainingPriceChange}
+                              id="price"
+                              ref={priceRef}
+                              onChange={handlePriceChange}
+                              value={`${priceInputValue}${!isFormEditable ? ' ₽' : ''}`}
                               disabled={!isFormEditable}
+                              required
+                              min={PRICE_CONSTRAINTS.MIN}
                             />
                           </label>
-                          {error && <div className="training-info__error">{error}</div>}
                         </div>
-                        <TrainingCardButton onBuyClick={handleShowBuyForm}/>
+                        <TrainingCardButton onBuyClick={handleShowBuyForm} isSpecial={specialValue} isFormEditable={isFormEditable} onDiscountClick={handleDiscountClick}/>
                       </div>
                     </div>
                   </form>

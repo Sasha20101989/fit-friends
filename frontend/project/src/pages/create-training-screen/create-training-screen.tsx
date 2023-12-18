@@ -12,10 +12,15 @@ import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { useNavigate } from 'react-router-dom';
-import { AppRoute, CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, MIN_PRICE, TRAINING_NAME_CONSTRAINTS, capitalizeFirstLetter, genderToPreference } from '../../const';
-import { toast } from 'react-toastify';
+import { AppRoute, CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PRICE_CONSTRAINTS, TRAINING_NAME_CONSTRAINTS, capitalizeFirstLetter, genderToPreference } from '../../const';
 import { getGender } from '../../store/main-process/main-process.selectors';
 import { setGender } from '../../store/main-process/main-process.slice';
+
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
 
 function CreateTrainingScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -40,9 +45,12 @@ function CreateTrainingScreen(): JSX.Element {
   const [durationError, setDurationError] = useState('');
   const [levelError, setLevelError] = useState('');
   const [genderError, setGenderError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+  const [videoError, setVideoError] = useState('');
 
   const handleDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(evt.target.value);
+    setDescriptionError('');
   };
 
   const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
@@ -76,6 +84,20 @@ function CreateTrainingScreen(): JSX.Element {
       return;
     }
 
+    if (description &&
+      description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+      description &&
+      description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    ){
+      setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
+      return;
+    }
+
+    if(selectedVideo === null || selectedVideo === ''){
+      setVideoError('Выберите файл в предложенном формате');
+      return;
+    }
+
     if (nameRef.current !== null &&
         priceRef.current !== null &&
         caloriesRef.current !== null &&
@@ -91,7 +113,8 @@ function CreateTrainingScreen(): JSX.Element {
         calories: parseInt(caloriesRef.current.value, 10),
         description,
         genderPreference: genderToPreference(selectedGender),
-        video: selectedVideo
+        video: selectedVideo,
+        specialOffer: false
       };
 
       onCreate(trainingData);
@@ -133,11 +156,9 @@ function CreateTrainingScreen(): JSX.Element {
 
     if (isMovOrAviOrMp4) {
       setVideo(file.name);
+      setVideoError('');
     } else {
-      toast.warn('Выбранный файл должен быть формата (mov) или (avi) или (mp4).', {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 5000,
-      });
+      setVideoError('Выбранный файл должен быть формата (mov) или (avi) или (mp4).');
     }
   };
 
@@ -202,7 +223,7 @@ function CreateTrainingScreen(): JSX.Element {
                           label="Стоимость тренировки"
                           inputName="price"
                           text="₽"
-                          min={MIN_PRICE}
+                          min={PRICE_CONSTRAINTS.MIN}
                           reference={priceRef}
                         />
                         <DropdownSelect
@@ -238,11 +259,9 @@ function CreateTrainingScreen(): JSX.Element {
                             value={description ?? ''}
                             onChange={handleDescriptionChange}
                             required
-                            minLength={DESCRIPTION_CONSTRAINTS.MIN_LENGTH}
-                            maxLength={DESCRIPTION_CONSTRAINTS.MAX_LENGTH}
                           >
                           </textarea>
-
+                          {descriptionError && <span style={errorStyle}>{descriptionError}</span>}
                         </label>
                       </div>
                     </div>
@@ -257,6 +276,7 @@ function CreateTrainingScreen(): JSX.Element {
                           </span>
                           <input type="file" name="import" tabIndex={-1} accept=".mov, .avi, .mp4" id="video-input" onChange={handleVideoChange}/>
                         </label>
+                        {videoError && <span style={errorStyle}>{videoError}</span>}
                       </div>
                     </div>
                   </div>

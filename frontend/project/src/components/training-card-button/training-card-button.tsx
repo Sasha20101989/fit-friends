@@ -4,15 +4,23 @@ import { getCurrentRole } from '../../store/main-process/main-process.selectors'
 import { Role } from '../../types/role.enum';
 
 type TrainingCardButtonProps = {
+  isSpecial: boolean;
+  isFormEditable: boolean;
   onBuyClick: () => void;
+  onDiscountClick: () => void;
 }
 
-function TrainingCardButton({onBuyClick}: TrainingCardButtonProps): JSX.Element {
+function TrainingCardButton({isSpecial, isFormEditable, onBuyClick, onDiscountClick}: TrainingCardButtonProps): JSX.Element | null {
   const currentRole = useAppSelector(getCurrentRole);
 
   function handleBuyClick(evt: React.MouseEvent<HTMLButtonElement>): void {
     evt.preventDefault();
     onBuyClick();
+  }
+
+  function handleDiscountClick(evt: React.MouseEvent<HTMLButtonElement>): void {
+    evt.preventDefault();
+    onDiscountClick();
   }
 
   if (currentRole === Role.User) {
@@ -23,14 +31,18 @@ function TrainingCardButton({onBuyClick}: TrainingCardButtonProps): JSX.Element 
     );
   }
 
-  return (
-    <button className="btn-flat btn-flat--light btn-flat--underlined" type="button">
-      <svg width="14" height="14" aria-hidden="true">
-        <use xlinkHref="#icon-discount"></use>
-      </svg>
-      <span>Сделать скидку 10%</span>
-    </button>
-  );
+  if(!isSpecial && isFormEditable){
+    return (
+      <button className="btn-flat btn-flat--light btn-flat--underlined" type="button" onClick={handleDiscountClick}>
+        <svg width="14" height="14" aria-hidden="true">
+          <use xlinkHref="#icon-discount"></use>
+        </svg>
+        <span>Сделать скидку 10%</span>
+      </button>
+    );
+  }
+
+  return null;
 }
 
 export default TrainingCardButton;
