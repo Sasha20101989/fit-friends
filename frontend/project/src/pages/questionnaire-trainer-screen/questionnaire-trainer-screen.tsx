@@ -8,6 +8,7 @@ import Layout from '../../components/layout/layout';
 
 function QuestionnaireTrainerScreen(): JSX.Element {
   const {
+    levelError,
     isSubmitting,
     descriptionRef,
     selectedDescription,
@@ -41,6 +42,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       selectedValue={selectedLevel}
                       onValueChange={handleLevelChange}
                       object={Object.values(TrainingLevel)}
+                      error={levelError}
                     />
                     <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">

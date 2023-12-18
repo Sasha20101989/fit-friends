@@ -39,6 +39,7 @@ function CreateTrainingScreen(): JSX.Element {
   const [typeError, setTypeError] = useState('');
   const [durationError, setDurationError] = useState('');
   const [levelError, setLevelError] = useState('');
+  const [genderError, setGenderError] = useState('');
 
   const handleDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(evt.target.value);
@@ -70,15 +71,16 @@ function CreateTrainingScreen(): JSX.Element {
       return;
     }
 
+    if(selectedGender === null){
+      setGenderError('Выберите пол');
+      return;
+    }
+
     if (nameRef.current !== null &&
         priceRef.current !== null &&
         caloriesRef.current !== null &&
         description !== null &&
-        selectedLevel !== null &&
-        selectedType !== null &&
-        selectedVideo !== null &&
-        selectedGender !== null &&
-        selectedDuration !== null
+        selectedVideo !== null
     ){
       const trainingData: CreateTrainingDto = {
         name: nameRef.current.value,
@@ -104,18 +106,21 @@ function CreateTrainingScreen(): JSX.Element {
   const handleSpecializationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newType = evt.currentTarget.textContent as WorkoutType;
     setType(newType);
+    setTypeError('');
     setIsTypeDropdownOpen(false);
   };
 
   const handleDurationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newDuration = evt.currentTarget.textContent as WorkoutDuration;
     setDuration(newDuration);
+    setDurationError('');
     setIsDurationDropdownOpen(false);
   };
 
   const handleLevelChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newLevel = evt.currentTarget.textContent as TrainingLevel;
     setLevel(newLevel);
+    setLevelError('');
     setIsLevelDropdownOpen(false);
   };
 
@@ -166,7 +171,7 @@ function CreateTrainingScreen(): JSX.Element {
                       <h2 className="create-training__legend">Характеристики тренировки</h2>
                       <div className="create-training__info">
                         <DropdownSelect
-                          classType={`custom-select ${!isTypeDropdownOpen ? 'select--not-selected' : 'is-open'}`} label={'Выберите тип тренировки'}
+                          classType={`custom-select ${!isTypeDropdownOpen ? 'select--not-selected' : 'is-open'} ${typeError && 'is-invalid'}`} label={'Выберите тип тренировки'}
                           onValueChange={handleSpecializationChange}
                           selectedValue={selectedType && capitalizeFirstLetter(selectedType)}
                           object={Object.values(WorkoutType)}
@@ -184,7 +189,7 @@ function CreateTrainingScreen(): JSX.Element {
                           reference={caloriesRef}
                         />
                         <DropdownSelect
-                          classType={`custom-select ${!isDurationDropdownOpen ? 'select--not-selected' : 'is-open'}`} label={'Сколько времени потратим'}
+                          classType={`custom-select ${!isDurationDropdownOpen ? 'select--not-selected' : 'is-open'} ${durationError && 'is-invalid'}`} label={'Сколько времени потратим'}
                           onValueChange={handleDurationChange}
                           selectedValue={selectedDuration && capitalizeFirstLetter(selectedDuration)}
                           object={Object.values(WorkoutDuration)}
@@ -201,7 +206,7 @@ function CreateTrainingScreen(): JSX.Element {
                           reference={priceRef}
                         />
                         <DropdownSelect
-                          classType={`custom-select ${!isLevelDropdownOpen ? 'select--not-selected' : 'is-open'}`}
+                          classType={`custom-select ${!isLevelDropdownOpen ? 'select--not-selected' : 'is-open'} ${levelError && 'is-invalid'}`}
                           label={'Выберите уровень тренировки'}
                           onValueChange={handleLevelChange}
                           selectedValue={selectedLevel && capitalizeFirstLetter(selectedLevel)}
@@ -219,6 +224,7 @@ function CreateTrainingScreen(): JSX.Element {
                           selectedValue={selectedGender}
                           onValueChange={handleSexChange}
                           object={Object.values(Gender)}
+                          error={genderError}
                         />
                       </div>
                     </div>

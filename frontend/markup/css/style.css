@@ -1499,12 +1499,6 @@ input:disabled ~ .role-btn__btn,
   padding: 14px 20px 14px 60px;
 }
 
-.custom-input--error label input,
-.custom-textarea--error label input {
-  border: 1px solid #e4001b;
-  background-color: transparent;
-}
-
 .custom-input__label,
 .custom-textarea__label {
   color: #aeaeae;
@@ -1514,6 +1508,12 @@ input:disabled ~ .role-btn__btn,
 .is-disabled .custom-input__label,
 .is-disabled .custom-textarea__label {
   color: rgba(174, 174, 174, 0.5);
+}
+
+.custom-input--error label input,
+.custom-textarea--error label input {
+  border: 1px solid #e4001b;
+  background-color: transparent;
 }
 
 .custom-input__error,
@@ -1526,8 +1526,48 @@ input:disabled ~ .role-btn__btn,
   transition: opacity 0.3s ease;
 }
 
+div.radio-select-error {
+  color: #e4001b !important;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
 .custom-input--error .custom-input__error,
 .custom-input--error .custom-textarea__error {
+  opacity: 1;
+}
+
+.custom-select__error {
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  color: #e4001b;
+  opacity: 0;
+  -webkit-transition: opacity 0.1s ease;
+  -o-transition: opacity 0.1s ease;
+  transition: opacity 0.1s ease;
+}
+
+.custom-select.is-invalid .custom-select__error {
+  opacity: 1;
+}
+
+.custom-select.is-invalid .custom-select__button {
+  border: 2px solid #e4001b;
+}
+
+.training-info__error {
+  position: absolute;
+  bottom: -22px;
+  left: 0;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 14px;
+  color: #ff3e49;
+  opacity: 0;
+}
+
+.training-info__input.is-invalid .training-info__error {
   opacity: 1;
 }
 
@@ -1743,6 +1783,15 @@ input:active + .custom-textarea__text {
 
 .custom-toggle .input-message--valid {
   color: #c5ec2a;
+}
+
+.training-info__input.is-invalid input {
+  border: 1px solid #ff3e49;
+}
+
+.training-info__input.is-invalid input:hover,
+.training-info__input.is-invalid input:focus {
+  border: 1px solid #ff3e49;
 }
 
 .custom-toggle--switch-right label {
@@ -2077,16 +2126,7 @@ input:active + .custom-textarea__text {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.custom-select__error {
-  position: absolute;
-  bottom: -15px;
-  left: 0;
-  color: #e4001b;
-  opacity: 0;
-  -webkit-transition: opacity 0.1s ease;
-  -o-transition: opacity 0.1s ease;
-  transition: opacity 0.1s ease;
-}
+
 
 .custom-select__text {
   font-size: 20px;
@@ -2173,13 +2213,7 @@ input:active + .custom-textarea__text {
   opacity: 0;
 }
 
-.custom-select.is-invalid .custom-select__error {
-  opacity: 1;
-}
 
-.custom-select.is-invalid .custom-select__button {
-  border: 2px solid #e4001b;
-}
 
 .custom-select.is-invalid .custom-select__button:focus,
 .custom-select.is-invalid .custom-select__button:hover {
@@ -4042,18 +4076,7 @@ input:active + .custom-textarea__text {
   pointer-events: none;
 }
 
-.training-info__input.is-invalid input {
-  border: 1px solid #ff3e49;
-}
 
-.training-info__input.is-invalid input:hover,
-.training-info__input.is-invalid input:focus {
-  border: 1px solid #ff3e49;
-}
-
-.training-info__input.is-invalid .training-info__error {
-  opacity: 1;
-}
 
 .training-info__input.is-disabled input:disabled {
   border: 1px solid rgba(149, 149, 149, 0.1);
@@ -4118,16 +4141,7 @@ input:active + .custom-textarea__text {
   line-height: 16px;
 }
 
-.training-info__error {
-  position: absolute;
-  bottom: -22px;
-  left: 0;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 14px;
-  color: #ff3e49;
-  opacity: 0;
-}
+
 
 .training-info__textarea {
   width: 100%;

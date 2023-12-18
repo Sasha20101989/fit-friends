@@ -13,10 +13,17 @@ type RadioSelectProps = {
   selectedValue: Gender| WorkoutDuration | TrainingLevel | null;
   object: Gender[] | WorkoutDuration[] | TrainingLevel[];
   toNextLine?: boolean;
+  error: string;
   onValueChange: (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => void;
 }
 
-function RadioSelect({name, classType, classChildType, classLabelType, label, selectedValue, onValueChange, object, toNextLine}: RadioSelectProps): JSX.Element {
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
+
+function RadioSelect({name, classType, classChildType, classLabelType, label, selectedValue, onValueChange, object, toNextLine, error}: RadioSelectProps): JSX.Element {
 
   return(
     <div className={classType}>
@@ -27,6 +34,7 @@ function RadioSelect({name, classType, classChildType, classLabelType, label, se
           <RadioItem key={element} classType={'custom-toggle-radio__block'} name={name} value={element} selectedValue={selectedValue} onValueChange={onValueChange}/>
         ))}
       </div>
+      {error && <span style={errorStyle}>{error}</span>}
     </div>
   );
 }

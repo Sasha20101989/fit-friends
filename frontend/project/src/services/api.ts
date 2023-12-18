@@ -90,6 +90,7 @@ export const createApi = (): AxiosInstance => {
           matchesValues.forEach((matchesValue) => {
             showToast(matchesValue);
           });
+          return api(error.response);
         } else {
           await handleExpiredTokenError(error);
         }

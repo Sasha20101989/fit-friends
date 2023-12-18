@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import { RegisterUserTransferData } from '../../types/register-transfer-data';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
@@ -41,6 +41,11 @@ function useRegisterForm(){
   const caloriesWaste = useRef<HTMLInputElement | null>(null);
   const birthdayRef = useRef<HTMLInputElement | null>(null);
   const [locationError, setLocationError] = useState('');
+  const [genderError, setGenderError] = useState('');
+  const [durationError, setDurationError] = useState('');
+  const [levelError, setLevelError] = useState('');
+  const [roleError, setRoleError] = useState('');
+  const [agreementError, setAgreementError] = useState('');
 
   const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -62,22 +67,31 @@ function useRegisterForm(){
   const handleRegister = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if(!isAgreementChecked){
-      toast.error('Подтвердите согласие с политикой конфиденциальности');
-      return;
-    }
-
     if(selectedLocation === null){
       setLocationError('Выберите локацию');
       return;
     }
 
-    if (nameRef.current !== null &&
+    if(selectedGender === null){
+      setGenderError('Выберите пол');
+      return;
+    }
+
+    if(currentRole === Role.Unknown){
+      setRoleError('Выберите роль');
+      return;
+    }
+
+    if(!isAgreementChecked){
+      setAgreementError('Подтвердите согласие с политикой конфиденциальности');
+      return;
+    }
+
+    if(nameRef.current !== null &&
         passwordRef.current !== null &&
         emailRef.current !== null &&
-        birthdayRef.current !== null &&
-        selectedGender !== null &&
-        currentRole !== null) {
+        birthdayRef.current !== null
+    ){
 
       const formData: RegisterUserTransferData = {
         name: nameRef.current.value,
@@ -146,6 +160,7 @@ function useRegisterForm(){
 
   const handleRoleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const role: Role = evt.target.value as Role;
+    setRoleError('');
     dispatch(setRole(role));
   };
 
@@ -153,11 +168,12 @@ function useRegisterForm(){
     const gender = 'value' in evt.target ?
       (evt.target as HTMLInputElement).value as Gender :
         (evt.target as HTMLLIElement).dataset.value as Gender;
-
+    setGenderError('');
     dispatch(setGender(gender));
   };
 
   const handleAgreementChange = () => {
+    setAgreementError('');
     setIsAgreementChecked(!isAgreementChecked);
   };
 
@@ -167,7 +183,7 @@ function useRegisterForm(){
     const newLevel = 'value' in evt.target ?
       (evt.target as HTMLInputElement).value as TrainingLevel :
         (evt.target as HTMLLIElement).dataset.value as TrainingLevel;
-
+    setLevelError('');
     dispatch(changeLevel(newLevel));
   };
 
@@ -175,7 +191,7 @@ function useRegisterForm(){
     const newDuration = 'value' in evt.target ?
     (evt.target as HTMLInputElement).value as WorkoutDuration :
       (evt.target as HTMLLIElement).dataset.value as WorkoutDuration;
-
+    setDurationError('');
     dispatch(changeDuration(newDuration));
   };
 
@@ -217,6 +233,11 @@ function useRegisterForm(){
   };
 
   return {
+    agreementError,
+    roleError,
+    levelError,
+    durationError,
+    genderError,
     locationError,
     nameRef,
     emailRef,

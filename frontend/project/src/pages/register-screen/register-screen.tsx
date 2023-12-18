@@ -11,10 +11,19 @@ import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
 
+const errorStyle = {
+  color: '#e4001b',
+  opacity: 1,
+  marginTop: '6px'
+};
+
 function RegisterScreen() : JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
+    agreementError,
+    roleError,
+    genderError,
     locationError,
     nameRef,
     emailRef,
@@ -83,6 +92,7 @@ function RegisterScreen() : JSX.Element {
                       selectedValue={selectedGender}
                       onValueChange={handleSexChange}
                       object={Object.values(Gender)}
+                      error={genderError}
                     />
                   </div>
                   <div className="sign-up__role">
@@ -113,6 +123,7 @@ function RegisterScreen() : JSX.Element {
                           </div>
                         ))}
                     </div>
+                    {roleError && <span style={errorStyle}>{roleError}</span>}
                   </div>
                   <div className="sign-up__checkbox">
                     <label>
@@ -130,6 +141,7 @@ function RegisterScreen() : JSX.Element {
                       </span>
                       <span className="sign-up__checkbox-label">Я соглашаюсь с <span>политикой конфиденциальности</span> компании</span>
                     </label>
+                    {agreementError && <span style={errorStyle}>{agreementError}</span>}
                   </div>
                   <button className="btn sign-up__button" type="submit" disabled={isSubmitting}>Продолжить</button>
                 </div>

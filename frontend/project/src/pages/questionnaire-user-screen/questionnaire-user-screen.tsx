@@ -13,6 +13,8 @@ function QuestionnaireUserScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
+    levelError,
+    durationError,
     caloriesLoseRef,
     caloriesWaste,
     selectedDuration,
@@ -42,6 +44,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                       selectedValue={selectedDuration}
                       onValueChange={handleDurationChange}
                       object={Object.values(WorkoutDuration)}
+                      error={durationError}
                     />
                     <RadioSelect
                       name={'level'}
@@ -52,6 +55,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                       selectedValue={selectedLevel}
                       onValueChange={handleLevelChange}
                       object={Object.values(TrainingLevel)}
+                      error={levelError}
                     />
                     <div className="questionnaire-user__block">
                       <div className="questionnaire-user__calories-lose"><span className="questionnaire-user__legend">Сколько калорий хотите сбросить</span>

@@ -76,18 +76,21 @@ function UserProfileScreen(): JSX.Element {
   const handleLocationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const location: Location = evt.currentTarget.textContent as Location;
     dispatch(setLocation(location));
+    setLocationError('');
     setIsLocationDropdownOpen(false);
   };
 
   const handleSexChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const gender: Gender = evt.currentTarget.textContent as Gender;
     dispatch(setGender(gender));
+    setGenderError('');
     setIsGenderDropdownOpen(false);
   };
 
   const handleLevelChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newLevel: TrainingLevel = evt.currentTarget.textContent as TrainingLevel;
     dispatch(changeLevel(newLevel));
+    setLevelError('');
     setIsLevelDropdownOpen(false);
   };
 
@@ -110,11 +113,26 @@ function UserProfileScreen(): JSX.Element {
   };
 
   const handleSave = () => {
+    if(selectedLocation === null){
+      setLocationError('Выберите локацию');
+      return;
+    }
+
+    if(selectedGender === null){
+      setGenderError('Выберите пол');
+      return;
+    }
+
+    if(selectedLevel === null){
+      setLevelError('Выберите уровень');
+      return;
+    }
+
     if(currentRole === Role.Trainer){
-      if(selectedName !== undefined && selectedName.trim() !== '' &&
+      if(selectedName !== undefined &&
+        selectedName.trim() !== '' &&
         selectedGender !== null &&
-        specializations.length >= 1 &&
-        selectedLocation !== null){
+        specializations.length >= 1){
         const trainerData: UpdateTrainerDto = {
           description: selectedDescription,
           trainingLevel: selectedLevel,
@@ -129,10 +147,10 @@ function UserProfileScreen(): JSX.Element {
         dispatch(editTrainerAction(trainerData));
       }
     }else{
-      if(selectedName !== undefined && selectedName.trim() !== '' &&
+      if(selectedName !== undefined &&
+        selectedName.trim() !== '' &&
         selectedGender !== null &&
-        specializations.length >= 1 &&
-        selectedLocation !== null){
+        specializations.length >= 1){
         const userData: UpdateUserDto = {
           description: selectedDescription,
           trainingLevel: selectedLevel,
@@ -168,7 +186,7 @@ function UserProfileScreen(): JSX.Element {
                   <UserSpecializationGroup isFormEditable={isFormEditable} />
                 </div>
                 <DropdownSelect
-                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''}`}
+                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''} ${locationError && 'is-invalid'}`}
                   label={'Локация'}
                   selectedValue={`ст. м. ${selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}`}
                   onValueChange={handleLocationChange}
@@ -177,7 +195,7 @@ function UserProfileScreen(): JSX.Element {
                   error={locationError}
                 />
                 <DropdownSelect
-                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isGenderDropdownOpen ? 'is-open' : ''}`}
+                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isGenderDropdownOpen ? 'is-open' : ''} ${genderError && 'is-invalid'}`}
                   label={'Пол'}
                   selectedValue={selectedGender ? capitalizeFirstLetter(selectedGender) : ''}
                   onValueChange={handleSexChange}
@@ -186,7 +204,7 @@ function UserProfileScreen(): JSX.Element {
                   error={genderError}
                 />
                 <DropdownSelect
-                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLevelDropdownOpen ? 'is-open' : ''}`}
+                  classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLevelDropdownOpen ? 'is-open' : ''} ${levelError && 'is-invalid'}`}
                   label={'Уровень'}
                   selectedValue={selectedLevel ? capitalizeFirstLetter(selectedLevel) : ''}
                   onValueChange={handleLevelChange}
