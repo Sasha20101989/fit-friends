@@ -18,33 +18,32 @@ const defaultCustomIcon = new Icon({
 });
 
 type PopupMapProps = {
-  station: Location;
+  station: Location | null;
   onClose: () => void;
 }
 
-function PopupMap({ station, onClose }: PopupMapProps): JSX.Element {
+function PopupMap({ station, onClose }: PopupMapProps): JSX.Element | null {
   const mapRef = useRef<HTMLDivElement>(null);
-  const coordinates = locationCoordinates[station];
+
   const map = useMap(mapRef, station);
 
   useEffect(() => {
-    const markers: Marker[] = [];
+    if (station && station !== Location.Unknown) {
+      const coordinates = locationCoordinates[station];
+      const markers: Marker[] = [];
 
-    if(map && coordinates){
-      const marker: Marker = new Marker({
-        lat: coordinates.latitude,
-        lng: coordinates.longitude,
-      });
+      if(map && coordinates){
+        const marker: Marker = new Marker({
+          lat: coordinates.latitude,
+          lng: coordinates.longitude,
+        });
 
-      marker.setIcon(defaultCustomIcon);
-      marker.addTo(map);
-      markers.push(marker);
-
-      // return () => {
-      //   markers.forEach((marker) => marker.removeFrom(map));
-      // };
+        marker.setIcon(defaultCustomIcon);
+        marker.addTo(map);
+        markers.push(marker);
+      }
     }
-  }, [station, map, coordinates]);
+  }, [map, station, locationCoordinates]);
 
   useEffect(() => {
     const handleKeyDown = (evt: KeyboardEvent) => {
@@ -59,6 +58,10 @@ function PopupMap({ station, onClose }: PopupMapProps): JSX.Element {
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [onClose]);
+
+  if(!station){
+    return null;
+  }
 
   return (
     <div className="popup-form popup-form--map">

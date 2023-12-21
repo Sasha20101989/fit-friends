@@ -1,5 +1,4 @@
 import React from 'react';
-import Slider from 'rc-slider';
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
@@ -13,11 +12,6 @@ import { TrainingCategory } from '../../types/training-category';
 import GoBack from '../../components/go-back/go-back';
 import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
 import ShowMore from '../../components/show-more/show-more';
-
-const mySliderStyle = {
-  width: '100%', // Adjust as needed for slider width
-  marginTop: '10px', // Adjust as needed for spacing
-};
 
 function TrainerTrainingsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -117,7 +111,7 @@ function TrainerTrainingsScreen(): JSX.Element {
                     <button type="button" className="scale__control  scale__control--smaller">Уменьшить</button>
                     <input type="text" className="scale__control  scale__control--value" minLength={25} step={25} maxLength={100} value="100%" title="Image Scale" name="scale" readOnly/>
                     <button type="button" className="scale__control  scale__control--bigger">Увеличить</button>
-                     </fieldset>
+                    </fieldset>
                     </div> */}
                   </div>
                   <div className="my-training-form__block my-training-form__block--calories">

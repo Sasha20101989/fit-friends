@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../hooks/index';
-import { getCurrentRole } from '../../store/main-process/main-process.selectors';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 import { Role } from '../../types/role.enum';
 import Image from '../image/image';
 
@@ -7,8 +7,12 @@ type VideoSectionProps = {
   isInBalance: boolean;
 }
 
-function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
-  const currentRole = useAppSelector(getCurrentRole);
+function VideoSection({isInBalance}: VideoSectionProps):JSX.Element | null {
+  const currentUser = useAppSelector(getCurrentUser);
+
+  if(!currentUser){
+    return null;
+  }
 
   return (
     <div className="training-video">
@@ -21,7 +25,7 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
           </svg>
         </button>
       </div>
-      {currentRole === Role.Trainer && (
+      {currentUser.role === Role.Trainer && (
         <div className="training-video__drop-files">
           <form action="#" method="post">
             <div className="training-video__form-wrapper">
@@ -40,14 +44,14 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
         </div>
       )}
       <div className="training-video__buttons-wrapper">
-        {currentRole === Role.User ? (
+        {currentUser.role === Role.User ? (
           <button
             className="btn training-video__button training-video__button--start"
             type="button"
             disabled={!isInBalance}
           >
           Приступить
-        </button>
+          </button>
         ) : (
           <div className="training-video__edit-buttons">
             <button className="btn" type="button">Сохранить</button>

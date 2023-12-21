@@ -5,8 +5,7 @@ import { WorkoutDuration } from './workout-duration.enum';
 
 
 export interface User extends BaseUser {
-  role: Role;
-  workoutDuration: WorkoutDuration;
+  workoutDuration: WorkoutDuration | null;
   caloriesToBurn: number;
   caloriesToSpend: number;
   readinessForWorkout: boolean;

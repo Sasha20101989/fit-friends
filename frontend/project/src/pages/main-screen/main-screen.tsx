@@ -4,10 +4,8 @@ import PopularTrainings from '../../components/popular-trainings/popular-trainin
 import LookForCompany from '../../components/look-for-company/look-for-company';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import { useEffect, useState } from 'react';
-import { fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getUser } from '../../store/user-process/user-process.selectors';
+import { fetchCurrentUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { getPopularTrainings, getSpecialForUserTrainings, getSpecialTrainings, getUsers } from '../../store/main-data/main-data.selectors';
 import { Training } from '../../types/training.type';
 import { TrainingCategory } from '../../types/training-category';
@@ -15,6 +13,7 @@ import { MAX_LOOK_FOR_COMPANY_COUNT, MAX_POPULAR_TRAININGS_COUNT, MAX_SPECIAL_TR
 import { usePreviousNextButtons } from '../../hooks/use-previous-next-buttons/use-previous-next-buttons';
 import { useFetchTrainingsEffect } from '../../hooks/use-fetch-trainings-effect/use-fetch-trainings-effect';
 import { useFetchUsersEffect } from '../../hooks/use-fetch-users-effect/use-fetch-users-effect';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 function MainScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -23,8 +22,7 @@ function MainScreen(): JSX.Element {
   const specialForUserTrainings: Training[] = useAppSelector(getSpecialForUserTrainings);
   const popularTrainings: Training[] = useAppSelector(getPopularTrainings);
   const lookForCompanyUsers = useAppSelector(getUsers);
-  const currentUserId: string = useAppSelector(getCurrentUserId);
-  const user = useAppSelector(getUser);
+  const currentUser = useAppSelector(getCurrentUser);
 
   const [selectedSpecialPage] = useState<number>(1);
   const [activeSpecialSlide, setActiveSpecialSlide] = useState(0);
@@ -60,11 +58,17 @@ function MainScreen(): JSX.Element {
     handleNextClick: handleLookForCompanyNextClick,
   } = usePreviousNextButtons(selectedLookForCompanyPage, setLookForCompanyPage);
 
+  useEffect(() => {
+    if(currentUser && currentUser.id){
+      dispatch(fetchCurrentUserAction(currentUser.id));
+    }
+  }, [dispatch , currentUser]);
+
   useFetchTrainingsEffect(
     TrainingCategory.SPECIAL,
     selectedSpecialPage,
     MAX_SPECIAL_TRAININGS_COUNT,
-    user ? user.workoutTypes : [],
+    currentUser ? currentUser.workoutTypes : [],
     true,
   );
 
@@ -72,7 +76,7 @@ function MainScreen(): JSX.Element {
     TrainingCategory.FOR_USER,
     selectedSpecialForUserPage,
     MAX_SPECIAL_TRAININGS_COUNT,
-    user ? user.workoutTypes : []
+    currentUser ? currentUser.workoutTypes : []
   );
 
   useFetchTrainingsEffect(
@@ -82,12 +86,6 @@ function MainScreen(): JSX.Element {
   );
 
   useFetchUsersEffect(true, selectedLookForCompanyPage, MAX_LOOK_FOR_COMPANY_COUNT);
-
-  useEffect(() => {
-    if(currentUserId){
-      dispatch(fetchUserAction(currentUserId));
-    }
-  }, [dispatch , currentUserId]);
 
   return(
     <Layout>

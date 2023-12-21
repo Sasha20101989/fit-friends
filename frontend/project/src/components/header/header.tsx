@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getCurrentRole, getCurrentUserId, getSelectedPage } from '../../store/main-process/main-process.selectors';
+import { getSelectedPage } from '../../store/main-process/main-process.selectors';
 import { AppRoute } from '../../const';
 import { Role } from '../../types/role.enum';
 import { Page } from '../../types/page.enum';
@@ -10,6 +10,7 @@ import { deleteFromNotificationsAction, fetchNotificationsAction } from '../../s
 import { getNotifications } from '../../store/main-data/main-data.selectors';
 import { formatCustomDateTimeString, formatDateString } from '../../utils/util';
 import { removeNotification } from '../../store/main-data/main-data.slice';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 type NavItem = {
   to: string;
@@ -23,10 +24,33 @@ function Header (): JSX.Element {
   const dispatch = useAppDispatch();
   const location = useLocation();
 
-  const currentRole = useAppSelector(getCurrentRole);
-  const currentUserId = useAppSelector(getCurrentUserId);
   const selectedPage = useAppSelector(getSelectedPage);
+
   const notifications = useAppSelector(getNotifications);
+
+  const currentUser = useAppSelector(getCurrentUser);
+
+  const navItems: NavItem[] = useMemo(() => {
+    if(currentUser && currentUser.id){
+      return [
+        { to: `${currentUser.role === Role.Trainer ? '' : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
+        { to: `${currentUser.role === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUser.id}` : `${AppRoute.UserRoom}/${currentUser.id}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
+        { to: `${currentUser.role === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUser.id}` : `${AppRoute.UserFriends}/${currentUser.id}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
+        { to: '', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
+      ];
+    }
+
+    return [];
+  }, [currentUser]);
+
+  useEffect(() => {
+    const currentItem = navItems.find((item) => item.to === location.pathname);
+
+    if (currentItem?.label !== selectedPage) {
+      dispatch(setSelectedPage(currentItem?.label));
+      dispatch(fetchNotificationsAction());
+    }
+  }, [dispatch, navItems, location.pathname, selectedPage, notifications]);
 
   const handleNavItemClick = (page: Page) => {
     if(page !== Page.NOTIFICATIONS){
@@ -40,22 +64,6 @@ function Header (): JSX.Element {
       dispatch(deleteFromNotificationsAction(notificationId));
     }
   };
-
-  const navItems: NavItem[] = useMemo(() => [
-    { to: `${currentRole === Role.Trainer ? '' : AppRoute.Main}`, label: Page.MAIN, icon: '#icon-home', width: 18, height: 18 },
-    { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerRoom}/${currentUserId}` : `${AppRoute.UserRoom}/${currentUserId}`}`, label: Page.ROOM, icon: '#icon-user', width: 16, height: 18 },
-    { to: `${currentRole === Role.Trainer ? `${AppRoute.TrainerFriends}/${currentUserId}` : `${AppRoute.UserFriends}/${currentUserId}`}`, label: Page.FRIENDS, icon: '#icon-friends', width: 22, height: 16 },
-    { to: '', label: Page.NOTIFICATIONS, icon: '#icon-notification', width: 14, height: 18, },
-  ], [currentRole, currentUserId]);
-
-  useEffect(() => {
-    const currentItem = navItems.find((item) => item.to === location.pathname);
-
-    if (currentItem?.label !== selectedPage) {
-      dispatch(setSelectedPage(currentItem?.label));
-      dispatch(fetchNotificationsAction());
-    }
-  }, [dispatch, navItems, location.pathname, selectedPage, notifications]);
 
   return(
     <header className="header">

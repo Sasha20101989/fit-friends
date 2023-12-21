@@ -5,6 +5,8 @@ import { Role } from '../../types/role.enum';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
+import Loading from '../../components/loading/loading';
+import { Trainer } from '../../types/trainer.interface.js';
 
 const errorStyle = {
   color: '#e4001b',
@@ -21,7 +23,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     isSubmitting,
     descriptionRef,
     selectedDescription,
-    readinessToWorkout,
+    currentUser,
     selectedFile,
     selectedLevel,
     handleDescriptionChange,
@@ -29,6 +31,12 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     handleCertificateChange,
     handleTrainerQuestion,
     handleLevelChange } = useRegisterForm();
+
+  if(!currentUser){
+    return <Loading/>;
+  }
+
+  const trainer = currentUser as Trainer;
 
   return(
     <Layout includeHeader={false}>
@@ -89,7 +97,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                             type="checkbox"
                             value="individual-training"
                             name="individual-training"
-                            checked={readinessToWorkout}
+                            checked={trainer.personalTraining}
                             onChange={handleReadinessForWorkoutChange}
                           />
                           <span className="questionnaire-coach__checkbox-icon">

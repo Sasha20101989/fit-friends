@@ -4,31 +4,36 @@ import ThumbnailTrainingRate from '../training-rate/training-rate';
 import ThumbnailTrainingText from '../thumbnail-training-text/thumbnail-training-text';
 import { TrainingOrder } from '../../types/training-order.type';
 import { useAppSelector } from '../../hooks/index';
-import { getUser } from '../../store/user-process/user-process.selectors';
 import { AppRoute } from '../../const';
 import HashtagList from '../hashtag-list/hashtag-list';
 import Image from '../image/image';
 import { memo } from 'react';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 type OrderItemProps = {
   order: TrainingOrder;
 }
 
-function OrderItem({ order }: OrderItemProps): JSX.Element {
+function OrderItem({ order }: OrderItemProps): JSX.Element | null {
   const navigate = useNavigate();
 
   const { training, backgroundImage, price, name, workoutType, rating, description, totalSalesAmount, purchasedQuantity, calories } = order;
+
   const hashtags = [workoutType, `${calories}ккал`];
-  const user = useAppSelector(getUser);
+
+  const currentUser = useAppSelector(getCurrentUser);
+
+  if(!currentUser){
+    return null;
+  }
 
   const handleTrainingClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
     evt.preventDefault();
-    const trainerId = user?.id;
+    const trainerId = currentUser.id;
     if (trainerId && training) {
       navigate(`${AppRoute.Trainings}/${training}`);
     }
   };
-
 
   return (
     <li className="my-orders__item">

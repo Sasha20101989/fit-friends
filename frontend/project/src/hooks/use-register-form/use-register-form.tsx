@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import { RegisterUserTransferData } from '../../types/register-transfer-data';
-import { DESCRIPTION_CONSTRAINTS, MAX_SPECIALIZATIONS_COUNT } from '../../const';
+import { AppRoute, DESCRIPTION_CONSTRAINTS, MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 import { useAppDispatch, useAppSelector } from '..';
 import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
@@ -10,26 +10,28 @@ import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDescription, getDuration, getFile, getGender, getLevel, getLocation, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { addSpecialization, changeDuration, changeFile, changeLevel, changeReadiessToWorkout, removeSpecialization, setDescription, setGender, setLocation, setRole } from '../../store/main-process/main-process.slice';
+import { getDescription, getDuration, getFile, getGender, getLevel, getLocation } from '../../store/main-process/main-process.selectors';
+import { changeDuration, changeFile, changeLevel, redirectToRoute, setDescription, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { editTrainerAction, editUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import { getCurrentUser, getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import { addSpecialization, changeReadiessToWorkout, removeSpecialization, setRegisterData, setRole } from '../../store/user-process/user-process.slice';
+import { Trainer } from '../../types/trainer.interface';
+import { User } from '../../types/user.interface';
 
 function useRegisterForm(){
   const dispatch = useAppDispatch();
 
+  const currentUser = useAppSelector(getCurrentUser);
+
   //const isLoggedIn = useIsLoggedIn(AuthorizationStatus.Auth);
 
-  const specializations = useAppSelector(getSpecializations);
   const selectedLevel = useAppSelector(getLevel);
   const selectedDuration = useAppSelector(getDuration);
   const selectedFile = useAppSelector(getFile);
   const selectedLocation = useAppSelector(getLocation);
   const selectedGender = useAppSelector(getGender);
-  const readinessToWorkout = useAppSelector(getReadiessToWorkout);
-  const currentRole = useAppSelector(getCurrentRole);
   const selectedDescription = useAppSelector(getDescription);
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
@@ -54,10 +56,6 @@ function useRegisterForm(){
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const onSubmit = (registerData: RegisterUserTransferData) => {
-    dispatch(registerAction(registerData));
-  };
-
   const onUserQuestion = (userData: UpdateUserDto) => {
     dispatch(editUserAction(userData));
   };
@@ -66,65 +64,75 @@ function useRegisterForm(){
     dispatch(editTrainerAction(userData));
   };
 
-  const handleRegister = (evt: FormEvent<HTMLFormElement>) => {
+  const handleGoQuestion= (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if(selectedLocation === null){
-      setLocationError('Выберите локацию');
-      return;
-    }
-
-    if(selectedGender === null){
-      setGenderError('Выберите пол');
-      return;
-    }
-
-    if(currentRole === Role.Unknown){
-      setRoleError('Выберите роль');
-      return;
-    }
-
-    if(!isAgreementChecked){
-      setAgreementError('Подтвердите согласие с политикой конфиденциальности');
-      return;
-    }
-
-    if(nameRef.current !== null &&
-        passwordRef.current !== null &&
-        emailRef.current !== null &&
-        birthdayRef.current !== null
-    ){
-
-      const formData: RegisterUserTransferData = {
-        name: nameRef.current.value,
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-        location: selectedLocation,
-        gender: selectedGender,
-        role: currentRole,
-      };
-
-      if (birthdayRef.current !== null) {
-        formData.birthDate = birthdayRef.current.value;
+    if(currentUser){
+      if(selectedLocation === null){
+        setLocationError('Выберите локацию');
+        return;
       }
 
-      onSubmit(formData);
+      if(selectedGender === null){
+        setGenderError('Выберите пол');
+        return;
+      }
+
+      if(currentUser.role === null){
+        setRoleError('Выберите роль');
+        return;
+      }
+
+      if(!isAgreementChecked){
+        setAgreementError('Подтвердите согласие с политикой конфиденциальности');
+        return;
+      }
+
+      if(nameRef.current !== null &&
+          passwordRef.current !== null &&
+          emailRef.current !== null &&
+          birthdayRef.current !== null
+      ){
+
+        const formData: RegisterUserTransferData = {
+          name: nameRef.current.value,
+          email: emailRef.current.value,
+          password: passwordRef.current.value,
+          location: selectedLocation,
+          gender: selectedGender,
+          role: currentUser.role,
+        };
+
+
+        if (birthdayRef.current !== null) {
+          formData.birthDate = birthdayRef.current.value;
+        }
+
+        dispatch(setRegisterData(formData));
+
+        if(formData.role === Role.Trainer){
+          dispatch(redirectToRoute(AppRoute.RegisterTrainer));
+        }else if(formData.role === Role.User){
+          dispatch(redirectToRoute(AppRoute.RegisterUser));
+        }
+      }
     }
   };
 
   const handleUserQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (caloriesLoseRef.current !== null &&
+    if (currentUser &&
+        caloriesLoseRef.current !== null &&
         caloriesWaste.current !== null &&
-        specializations.length > 0 &&
+        currentUser.workoutTypes.length > 0 &&
         selectedLevel !== null &&
         selectedDuration !== null) {
 
       const userData: UpdateUserDto = {
         caloriesToBurn: parseInt(caloriesLoseRef.current.value, 10),
         caloriesToSpend: parseInt(caloriesWaste.current.value, 10),
-        workoutTypes: specializations,
+        workoutTypes: currentUser.workoutTypes,
         trainingLevel: selectedLevel,
         workoutDuration: selectedDuration
       };
@@ -136,7 +144,9 @@ function useRegisterForm(){
   const handleTrainerQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if(specializations.length === 0){
+    const trainer = currentUser as Trainer;
+
+    if(trainer && trainer.workoutTypes.length === 0){
       setSpecializationsError('Выберите хотябы один вид тренировки');
       return;
     }
@@ -155,15 +165,16 @@ function useRegisterForm(){
       return;
     }
 
-    if (descriptionRef.current !== null &&
+    if (trainer &&
+        descriptionRef.current !== null &&
         selectedLevel !== null &&
         selectedFile !== ''
     ){
       const userData: UpdateTrainerDto = {
         description: descriptionRef.current.value,
-        workoutTypes: specializations,
+        workoutTypes: trainer.workoutTypes,
         trainingLevel: selectedLevel,
-        personalTraining: readinessToWorkout,
+        personalTraining: trainer.personalTraining,
         certificate: selectedFile
       };
 
@@ -226,7 +237,15 @@ function useRegisterForm(){
     }
   };
 
-  const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
+  const isDisabled = (type: WorkoutType): boolean => {
+    if (currentUser) {
+      if (currentUser.workoutTypes.length >= MAX_SPECIALIZATIONS_COUNT) {
+        return !currentUser.workoutTypes.includes(type);
+      }
+    }
+
+    return false;
+  };
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const descriptionValue = evt.target.value;
@@ -235,7 +254,13 @@ function useRegisterForm(){
   };
 
   const handleReadinessForWorkoutChange = () => {
-    dispatch(changeReadiessToWorkout(!readinessToWorkout));
+    if(currentUser && currentUser.role === Role.Trainer){
+      const trainer = currentUser as Trainer;
+      dispatch(changeReadiessToWorkout(!trainer.personalTraining));
+    }else if(currentUser && currentUser.role === Role.User){
+      const user = currentUser as User;
+      dispatch(changeReadiessToWorkout(!user.readinessForWorkout));
+    }
   };
 
   const handleCertificateChange = (evt: ChangeEvent<HTMLInputElement>) => {
@@ -253,6 +278,7 @@ function useRegisterForm(){
   };
 
   return {
+    currentUser,
     specializationsError,
     descriptionError,
     certificateError,
@@ -270,19 +296,16 @@ function useRegisterForm(){
     caloriesWaste,
     descriptionRef,
     selectedLocation,
-    currentRole,
     isAgreementChecked,
     isDropdownOpen,
     selectedLevel,
-    specializations,
     selectedDescription,
-    readinessToWorkout,
     selectedDuration,
     selectedFile,
     selectedGender,
     isSubmitting,
     isDisabled,
-    handleRegister,
+    handleGoQuestion,
     handleLocationChange,
     handleSexChange,
     handleRoleChange,

@@ -1,16 +1,19 @@
 import { useAppSelector } from '../../hooks/index';
-import { getUser } from '../../store/user-process/user-process.selectors';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
+import { Role } from '../../types/role.enum';
 import { Trainer } from '../../types/trainer.interface';
 import CertificateList from '../certificate-list/certificate-list';
 
 function CoachAdditionalInfo(): JSX.Element | null {
-  const user = useAppSelector(getUser) as Trainer;
+  const currentUser = useAppSelector(getCurrentUser);
 
-  if(!user){
+  if(!currentUser || currentUser.role !== Role.Trainer){
     return null;
   }
 
-  const certificates: string[] = [user.certificate];
+  const trainer = currentUser as Trainer;
+
+  const certificates: string[] = [trainer.certificate];
 
   return(
     <div className="personal-account-coach__additional-info">
@@ -34,7 +37,7 @@ function CoachAdditionalInfo(): JSX.Element | null {
           </button>
         </div>
       </div>
-      {user.certificate && <CertificateList certificates={certificates}/>}
+      <CertificateList certificates={certificates}/>
     </div>
   );
 }

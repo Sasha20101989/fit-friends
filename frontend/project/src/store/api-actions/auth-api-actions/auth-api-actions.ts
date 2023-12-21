@@ -2,16 +2,16 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, AuthorizationStatus, RegisterStatus, roleRegisterRoutes } from '../../../const';
+import { APIRoute, RegisterStatus, roleRegisterRoutes } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
 import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
-import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/user-process.slice';
+import { setRegisterStatus } from '../../user-process/user-process.slice';
 import CreateUserDto from '../../../dto/create-user.dto';
 import { RegisterUserTransferData } from '../../../types/register-transfer-data';
 import { Role } from '../../../types/role.enum';
-import { redirectToRoute, setRole, setUserId } from '../../main-process/main-process.slice';
+import { redirectToRoute } from '../../main-process/main-process.slice';
 
-export const checkAuthAction = createAsyncThunk<void, undefined, {
+export const checkAuthAction = createAsyncThunk<UserData | null, undefined, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -19,17 +19,15 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
   'user/checkAuth',
   async (_arg, {dispatch, extra: api}) => {
     try{
-      const response = await api.get<UserData>(APIRoute.Login);
-      dispatch(setRole(response.data.role));
-      dispatch(setUserId(response.data.id));
-      dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
+      const {data} = await api.get<UserData>(APIRoute.Login);
+      return data;
     } catch(error) {
-      dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
+      return null;
     }
   }
 );
 
-export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
+export const loginAction = createAsyncThunk<UserData | null, AuthData, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -45,13 +43,10 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
       }
 
       dispatch(checkAuthAction());
-      dispatch(setRole(response.data.role));
-      dispatch(setUserId(response.data.id));
-      dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
+
       return response.data;
     } catch (error) {
-      dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
-      dispatch(setRole(Role.Unknown));
+      return null;
     }
   },
 );

@@ -2,17 +2,15 @@ import { useEffect, useState } from 'react';
 import Layout from '../../components/layout/layout';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { UserQueryParams, fetchMyFriendsAction } from '../../store/api-actions/user-api-actions/user-api-actions';
-import { getMyFriends } from '../../store/user-process/user-process.selectors';
 import Friend from '../../components/friend/friend';
 import { AppRoute, MAX_USERS_COUNT } from '../../const';
 import GoBack from '../../components/go-back/go-back';
 import ShowMore from '../../components/show-more/show-more';
 import { Sorting } from '../../types/sorting.enum';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
-function FriendsScreen(): JSX.Element {
+function FriendsScreen(): JSX.Element | null {
   const dispatch = useAppDispatch();
-
-  const friends = useAppSelector(getMyFriends);
 
   const initialQueryParams: UserQueryParams = {
     createdAtDirection: Sorting.Descending,
@@ -21,16 +19,22 @@ function FriendsScreen(): JSX.Element {
 
   const [queryParams, setQueryParams] = useState<UserQueryParams>(initialQueryParams);
 
+  const currentUser = useAppSelector(getCurrentUser);
+
+  useEffect(() => {
+    dispatch(fetchMyFriendsAction(queryParams));
+  }, [dispatch, queryParams]);
+
+  if(!currentUser){
+    return null;
+  }
+
   const handleShowMoreClick = () => {
     setQueryParams((prevParams) => ({
       ...prevParams,
       limit: (prevParams.limit || 0) + MAX_USERS_COUNT,
     }));
   };
-
-  useEffect(() => {
-    dispatch(fetchMyFriendsAction(queryParams));
-  }, [dispatch, queryParams]);
 
   return(
     <Layout>
@@ -50,11 +54,11 @@ function FriendsScreen(): JSX.Element {
               </div> */}
             </div>
             <ul className="friends-list__list">
-              {friends.map((friend) => (
+              {currentUser.friends.map((friend) => (
                 <Friend key={friend.email} friend={friend}/>
               ))}
             </ul>
-            <ShowMore sourceName={'show-more friends-list__show-more'} length={friends.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
+            <ShowMore sourceName={'show-more friends-list__show-more'} length={currentUser.friends.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>
           </div>
         </div>
       </section>

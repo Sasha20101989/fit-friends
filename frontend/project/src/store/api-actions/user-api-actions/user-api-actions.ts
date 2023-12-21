@@ -6,7 +6,6 @@ import { APIRoute, RegisterStatus } from '../../../const';
 import { setRegisterStatus } from '../../user-process/user-process.slice';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { changeLevel, changeReadiessToWorkout, setAvatar, setDescription, setGender, setLocation, setName, setSpecializations } from '../../main-process/main-process.slice';
 import { User } from '../../../types/user.interface';
 import { Trainer } from '../../../types/trainer.interface';
 import { Role } from '../../../types/role.enum';
@@ -71,29 +70,14 @@ export const editTrainerAction = createAsyncThunk<
   },
 );
 
-export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
+export const fetchCurrentUserAction = createAsyncThunk<User | Trainer | null, string, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
-  'user/fetchUser',
+  'user/fetchCurrentUser',
   async (userId: string, {dispatch, extra: api}) => {
     const { data } = await api.get<User | Trainer>(`${APIRoute.Users}/${userId}`);
-    dispatch(setSpecializations(data.workoutTypes));
-    dispatch(setLocation(data.location));
-    dispatch(setGender(data.gender));
-    dispatch(changeLevel(data.trainingLevel));
-    dispatch(setDescription(data.description));
-    dispatch(setName(data.name));
-    dispatch(setAvatar(data.avatar));
-
-    if(data.role === Role.Trainer){
-      const trainer = data as Trainer;
-      dispatch(changeReadiessToWorkout(trainer.personalTraining));
-    }else if(data && data.role === Role.User){
-      const trained = data as User;
-      dispatch(changeReadiessToWorkout(trained.readinessForWorkout));
-    }
 
     return data;
   },

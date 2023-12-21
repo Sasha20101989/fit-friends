@@ -1,12 +1,14 @@
 import { GenderPreference } from './types/gender-preference.enum';
 import { Gender } from './types/gender.enum';
 import { Role } from './types/role.enum';
+import { Trainer } from './types/trainer.interface.js';
+import { User } from './types/user.interface.js';
 
 export enum NameSpace {
   Data = 'data',
   Order = 'order',
   Main = 'main',
-  User = 'user',
+  UserData = 'user',
   Balance = 'balance'
 }
 
@@ -130,15 +132,19 @@ export const USERNAME_CONSTRAINTS = {
 export const isAuthorization = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Auth;
 
-export const isAuthorizationUnknown = (status: AuthorizationStatus, role: Role) =>
-  status === AuthorizationStatus.Unknown && role === Role.Unknown;
+export const isAuthorizationUnknown = (status: AuthorizationStatus, user: Trainer | User | null) => {
+  if(!user){
+    return false;
+  }
+
+  return status === AuthorizationStatus.Unknown && user.role === null;
+};
 
 export const RING_LOADER_COLOR = '#123abc';
 
 export const roleRegisterRoutes: Record<Role, AppRoute> = {
   [Role.User]: AppRoute.RegisterUser,
-  [Role.Trainer]: AppRoute.RegisterTrainer,
-  [Role.Unknown]: AppRoute.Login,
+  [Role.Trainer]: AppRoute.RegisterTrainer
 };
 
 export const isRegister = (status: RegisterStatus) =>
@@ -146,12 +152,6 @@ export const isRegister = (status: RegisterStatus) =>
 
 export const isRegisterUnknown = (status: RegisterStatus) =>
   status === RegisterStatus.Unknown;
-
-export const isUser = (role: Role) =>
-  role === Role.User;
-
-export const isTrainer = (role: Role) =>
-  role === Role.Trainer;
 
 export function capitalizeFirstLetter(str: string): string {
   if (str.length === 0) {

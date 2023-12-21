@@ -9,7 +9,6 @@ import QuestionnaireTrainerScreen from '../../pages/questionnaire-trainer-screen
 import { useAppSelector } from '../../hooks/index';
 import { getAuthorizationStatus, getRegisterStatus } from '../../store/user-process/user-process.selectors';
 import MainScreen from '../../pages/main-screen/main-screen';
-import { getCurrentRole, getCurrentUserId } from '../../store/main-process/main-process.selectors';
 import UserProfileScreen from '../../pages/user-profile-screen/user-profile-screen';
 import CreateTrainingScreen from '../../pages/create-training-screen/create-training-screen';
 import TrainerTrainingsScreen from '../../pages/trainer-trainings-screen/trainer-trainings-screen';
@@ -28,8 +27,6 @@ import FriendsScreen from '../../pages/friends-screen/friends-screen';
 function App(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const registerStatus = useAppSelector(getRegisterStatus);
-  const currentRole = useAppSelector(getCurrentRole);
-  const currentUserId = useAppSelector(getCurrentUserId);
 
   const UserProfileScreenMemoized = React.memo(UserProfileScreen);
   const FriendsScreenMemoized = React.memo(FriendsScreen);
@@ -49,7 +46,7 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.Main}
         element={
-          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole} userId={currentUserId}>
+          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <MainScreen/>
           </PrivateUserRoute>
         }
@@ -57,7 +54,7 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.TrainerRoom}/:id`}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <UserProfileScreenMemoized/>
           </PrivateTrainerRoute>
         }
@@ -65,7 +62,7 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.UserRoom}/:id`}
         element={
-          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole} userId={currentUserId}>
+          <PrivateUserRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <UserProfileScreenMemoized/>
           </PrivateUserRoute>
         }
@@ -73,7 +70,7 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.CreateTraining}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <CreateTrainingScreenMemoized/>
           </PrivateTrainerRoute>
         }
@@ -81,7 +78,7 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.Trainers}/:id${AppRoute.Trainings}`}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <TrainerTrainingsScreenMemoized/>
           </PrivateTrainerRoute>
         }
@@ -95,7 +92,7 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.Orders}/:id`}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <OrderScreenMemoized/>
           </PrivateTrainerRoute>
         }
@@ -103,7 +100,7 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.TrainerFriends}/:id`}
         element={
-          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateTrainerRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <FriendsScreenMemoized/>
           </PrivateTrainerRoute>
         }
@@ -159,7 +156,7 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.RegisterUser}
         element={
-          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <QuestionnaireUserScreen/>
           </PrivateRegisterRoute>
         }
@@ -167,7 +164,7 @@ function App(): JSX.Element {
       <Route
         path={AppRoute.RegisterTrainer}
         element={
-          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} currentRole={currentRole}>
+          <PrivateRegisterRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
             <QuestionnaireTrainerScreen/>
           </PrivateRegisterRoute>
         }

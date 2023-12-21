@@ -4,13 +4,18 @@ import { Location } from '../../types/location.enum';
 import { locationCoordinates } from '../../types/coordinates';
 
 function useMap(
-  mapRef: MutableRefObject<HTMLElement | null>, station: Location): Map | null {
+  mapRef: MutableRefObject<HTMLElement | null>, station: Location | null
+): Map | null {
   const [map, setMap] = useState<Map | null>(null);
   const isRenderedRef = useRef<boolean>(false);
 
-  const coordinates = locationCoordinates[station];
-
   useEffect(() => {
+    if (!station || station === Location.Unknown) {
+      return;
+    }
+
+    const coordinates = locationCoordinates[station];
+
     if (mapRef.current !== null && !isRenderedRef.current) {
       const instance = new Map(mapRef.current, {
         center: {
@@ -33,16 +38,17 @@ function useMap(
       setMap(instance);
       isRenderedRef.current = true;
     }
-  }, [mapRef, station, coordinates.latitude, coordinates.longitude, coordinates.zoom]);
+  }, [mapRef, station, isRenderedRef, locationCoordinates]);
 
   useEffect(() => {
-    if (map !== null) {
+    if (map !== null && station && station !== Location.Unknown) {
+      const coordinates = locationCoordinates[station];
       map.panTo({
         lat: coordinates.latitude,
         lng: coordinates.longitude,
       });
     }
-  }, [map, station, coordinates.latitude, coordinates.longitude]);
+  }, [map, station, locationCoordinates]);
 
   return map;
 }

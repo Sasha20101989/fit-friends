@@ -11,5 +11,5 @@ export const rootReducer = combineReducers( {
   [NameSpace.Order]: orderData.reducer,
   [NameSpace.Balance]: balanceData.reducer,
   [NameSpace.Main]: mainProcess.reducer,
-  [NameSpace.User]: userProcess.reducer,
+  [NameSpace.UserData]: userProcess.reducer,
 });

@@ -7,16 +7,15 @@ import PersonalAccountCoach from '../../components/personal-account-coach/person
 import UserEditButton from '../../components/user-edit-button/user-edit-button';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { useParams } from 'react-router-dom';
-import { getUser } from '../../store/user-process/user-process.selectors';
 import { useEffect, useState } from 'react';
-import { editTrainerAction, editUserAction, fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { editTrainerAction, editUserAction, fetchCurrentUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import PersonalAccountUser from '../../components/personal-account-user/personal-account-user';
 import { Role } from '../../types/role.enum';
 import Layout from '../../components/layout/layout';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
-import { getAvatar, getDescription, getGender, getLevel, getLocation, getName, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
+import { getAvatar, getDescription, getGender, getLevel, getLocation, getName } from '../../store/main-process/main-process.selectors';
 import { changeLevel, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import { DESCRIPTION_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
@@ -25,20 +24,19 @@ import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { getLoadingStatus } from '../../store/main-data/main-data.selectors';
 import Loading from '../../components/loading/loading';
 import UpdateUserDto from '../../dto/update-user.dto';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
+import { Trainer } from '../../types/trainer.interface';
+import { User } from '../../types/user.interface';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
-  const user = useAppSelector(getUser);
-  const currentRole = useAppSelector(getCurrentRole);
   const selectedGender = useAppSelector(getGender);
   const selectedLocation = useAppSelector(getLocation);
   const selectedLevel = useAppSelector(getLevel);
   const selectedDescription = useAppSelector(getDescription);
   const selectedName = useAppSelector(getName);
   const selectedAvatar = useAppSelector(getAvatar);
-  const readinessToWorkout = useAppSelector(getReadiessToWorkout);
-  const specializations = useAppSelector(getSpecializations);
   const isLoading = useAppSelector(getLoadingStatus);
 
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
@@ -50,17 +48,19 @@ function UserProfileScreen(): JSX.Element {
   const [levelError, setLevelError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
 
+  const currentUser = useAppSelector(getCurrentUser);
+
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
   };
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchUserAction(id));
+      dispatch(fetchCurrentUserAction(id));
     }
   }, [dispatch, id]);
 
-  if (!user || !id) {
+  if (!currentUser || !id) {
     return <NotFoundScreen/>;
   }
 
@@ -68,8 +68,8 @@ function UserProfileScreen(): JSX.Element {
     return <Loading/>;
   }
 
-  const contentComponent = currentRole === Role.Trainer ? (
-    <PersonalAccountCoach userId={id} avatar={user.avatar ?? ''} />
+  const contentComponent = currentUser && currentUser.role === Role.Trainer ? (
+    <PersonalAccountCoach userId={id} avatar={currentUser.avatar ?? ''} />
   ) : (
     <PersonalAccountUser />
   );
@@ -138,17 +138,19 @@ function UserProfileScreen(): JSX.Element {
       return;
     }
 
-    if(currentRole === Role.Trainer){
+    if(currentUser &&
+      currentUser.role === Role.Trainer){
+      const trainer = currentUser as Trainer;
       if(selectedName !== undefined &&
         selectedName.trim() !== '' &&
         selectedGender !== null &&
-        specializations.length >= 1){
+        trainer.workoutTypes.length >= 1){
         const trainerData: UpdateTrainerDto = {
           description: selectedDescription,
           trainingLevel: selectedLevel,
           gender: selectedGender,
-          workoutTypes: specializations,
-          personalTraining: readinessToWorkout,
+          workoutTypes: trainer.workoutTypes,
+          personalTraining: trainer.personalTraining,
           name: selectedName,
           avatar: selectedAvatar,
           location: selectedLocation
@@ -157,16 +159,17 @@ function UserProfileScreen(): JSX.Element {
         dispatch(editTrainerAction(trainerData));
       }
     }else{
+      const user = currentUser as User;
       if(selectedName !== undefined &&
         selectedName.trim() !== '' &&
         selectedGender !== null &&
-        specializations.length >= 1){
+        user.workoutTypes.length >= 1){
         const userData: UpdateUserDto = {
           description: selectedDescription,
           trainingLevel: selectedLevel,
           gender: selectedGender,
-          workoutTypes: specializations,
-          readinessForWorkout: readinessToWorkout,
+          workoutTypes: user.workoutTypes,
+          readinessForWorkout: user.readinessForWorkout,
           name: selectedName,
           avatar: selectedAvatar,
           location: selectedLocation
@@ -186,7 +189,7 @@ function UserProfileScreen(): JSX.Element {
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
                 <UserAvatar/>
-                {currentRole === Role.Trainer && isFormEditable && <UserControls />}
+                {currentUser && currentUser.role === Role.Trainer && isFormEditable && <UserControls />}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>

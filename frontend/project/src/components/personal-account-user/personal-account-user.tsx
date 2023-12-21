@@ -1,14 +1,18 @@
 import { AppRoute } from '../../const';
 import { useAppSelector } from '../../hooks/index';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 import Image from '../image/image';
 import ThumbnailLink from '../thumbnail-link/thumbnail-link';
 
-function PersonalAccountUser():JSX.Element {
-  const currentUserId = useAppSelector(getCurrentUserId);
+function PersonalAccountUser():JSX.Element | null {
+  const currentUser = useAppSelector(getCurrentUser);
+
+  if(!currentUser || !currentUser.id){
+    return null;
+  }
 
   const thumbnailLinks = [
-    { to: `${AppRoute.UserFriends}/${currentUserId}`, icon: '#icon-friends', text: 'Мои друзья' },
+    { to: `${AppRoute.UserFriends}/${currentUser.id}`, icon: '#icon-friends', text: 'Мои друзья' },
     { to: AppRoute.UserPurchases, icon: '#icon-shopping-cart', text: 'Мои покупки' },
   ];
 

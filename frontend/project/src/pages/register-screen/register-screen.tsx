@@ -10,7 +10,6 @@ import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
-
 const errorStyle = {
   color: '#e4001b',
   opacity: 1,
@@ -30,11 +29,11 @@ function RegisterScreen() : JSX.Element {
     passwordRef,
     birthdayRef,
     selectedLocation,
-    currentRole,
+    currentUser,
     isAgreementChecked,
     selectedGender,
     isDropdownOpen,
-    handleRegister,
+    handleGoQuestion,
     handleRoleChange,
     handleAgreementChange,
     handleLocationChange,
@@ -51,7 +50,7 @@ function RegisterScreen() : JSX.Element {
               <h1 className="popup-form__title">Регистрация</h1>
             </div>
             <div className="popup-form__form">
-              <form method="get" onSubmit={handleRegister}>
+              <form method="get" onSubmit={handleGoQuestion}>
                 <div className="sign-up">
                   <div className="sign-up__load-photo">
                     <div className="input-load-avatar">
@@ -100,7 +99,6 @@ function RegisterScreen() : JSX.Element {
                     <h2 className="sign-up__legend">Выберите роль</h2>
                     <div className="role-selector sign-up__role-selector">
                       {Object.values(Role)
-                        .filter((role) => role !== Role.Unknown)
                         .map((role) => (
                           <div key={role} className="role-btn">
                             <label>
@@ -109,7 +107,7 @@ function RegisterScreen() : JSX.Element {
                                 type="radio"
                                 name="role"
                                 value={role}
-                                checked={currentRole === role}
+                                checked={currentUser ? currentUser.role === role : false}
                                 onChange={handleRoleChange}
                               />
                               <span className="role-btn__icon">
