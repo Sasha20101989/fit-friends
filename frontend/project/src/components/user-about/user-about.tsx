@@ -1,7 +1,8 @@
 import { USERNAME_CONSTRAINTS } from '../../const';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getDescription, getName } from '../../store/main-process/main-process.selectors';
-import { setDescription, setName } from '../../store/main-process/main-process.slice';
+import { useAppDispatch } from '../../hooks/index';
+import { setCurrentUserDescription, setCurrentUserName } from '../../store/user-process/user-process.slice';
+import { Trainer } from '../../types/trainer.interface';
+import { User } from '../../types/user.interface';
 
 const errorStyle = {
   color: '#e4001b',
@@ -12,19 +13,18 @@ const errorStyle = {
 type UserAboutProps = {
   isFormEditable: boolean;
   error: string;
+  currentUser: User | Trainer;
 }
 
-function UserAbout({isFormEditable, error}: UserAboutProps):JSX.Element {
+function UserAbout({isFormEditable, error, currentUser}: UserAboutProps):JSX.Element {
   const dispatch = useAppDispatch();
-  const name = useAppSelector(getName);
-  const description = useAppSelector(getDescription);
 
   const handleNameChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setName(evt.target.value));
+    dispatch(setCurrentUserName(evt.target.value));
   };
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(setDescription(evt.target.value));
+    dispatch(setCurrentUserDescription(evt.target.value));
   };
 
   return (
@@ -37,7 +37,7 @@ function UserAbout({isFormEditable, error}: UserAboutProps):JSX.Element {
             <input
               type="text"
               name="name"
-              value={name}
+              value={currentUser.name}
               onChange={handleNameChange}
               disabled={!isFormEditable}
               required
@@ -53,7 +53,7 @@ function UserAbout({isFormEditable, error}: UserAboutProps):JSX.Element {
           <textarea
             name="description"
             placeholder=" "
-            value={description ?? ''}
+            value={currentUser.description ?? ''}
             onChange={handleDescriptionChange}
             disabled={!isFormEditable}
             required

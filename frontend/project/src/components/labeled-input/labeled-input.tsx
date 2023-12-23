@@ -8,11 +8,17 @@ type LabeledInputProps = {
   minLength?: number;
   min?: number;
   max?: string | number;
-  reference: React.MutableRefObject<HTMLInputElement | null>;
   autoComplete?: string;
+  onChange: (value: string) => void;
 }
 
-function LabeledInput({ classType, type, label, inputName, text, reference, min, max, minLength, maxLength, autoComplete }: LabeledInputProps): JSX.Element {
+function LabeledInput({ classType, type, label, inputName, text, min, max, minLength, maxLength, autoComplete, onChange }: LabeledInputProps): JSX.Element {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(evt.target.value);
+    }
+  };
+
   return (
     <div className={classType}>
       <label>
@@ -22,11 +28,11 @@ function LabeledInput({ classType, type, label, inputName, text, reference, min,
             type={type}
             name={inputName}
             id={inputName}
-            ref={reference}
             autoComplete={autoComplete || 'off'}
             required
             maxLength={type === 'text' || type === 'password' ? maxLength : undefined }
             minLength={type === 'text' || type === 'password' ? minLength : undefined }
+            onChange={handleChange}
             {...(type === 'number' && { min, max })}
             {...(type === 'date' && { max })}
             {...(type === 'password' && { autoComplete })}

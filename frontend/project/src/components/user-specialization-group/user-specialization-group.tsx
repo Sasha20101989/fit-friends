@@ -1,18 +1,18 @@
 import { WorkoutType } from '../../types/workout-type.enum';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { useAppDispatch } from '../../hooks/index';
 import { ChangeEvent } from 'react';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
-import { getCurrentUser } from '../../store/user-process/user-process.selectors';
-import { addSpecialization, removeSpecialization } from '../../store/user-process/user-process.slice';
+import { User } from '../../types/user.interface';
+import { Trainer } from '../../types/trainer.interface';
+import { addCurrentUserSpecialization, removeCurrentUserSpecialization } from '../../store/user-process/user-process.slice';
 
 type UserSpecializationGroupProps = {
   isFormEditable: boolean;
+  currentUser: User | Trainer;
 }
 
-function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps):JSX.Element | null {
+function UserSpecializationGroup({isFormEditable, currentUser}: UserSpecializationGroupProps):JSX.Element | null {
   const dispatch = useAppDispatch();
-
-  const currentUser = useAppSelector(getCurrentUser);
 
   if(!currentUser){
     return null;
@@ -23,9 +23,9 @@ function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps)
       const selectedType = evt.target.value as WorkoutType;
 
       if (evt.target.checked) {
-        dispatch(addSpecialization(selectedType));
+        dispatch(addCurrentUserSpecialization(selectedType));
       } else {
-        dispatch(removeSpecialization(selectedType));
+        dispatch(removeCurrentUserSpecialization(selectedType));
       }
     }
   };

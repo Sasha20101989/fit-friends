@@ -13,8 +13,6 @@ import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PRICE_CONSTRAINTS, TRAINING_NAME_CONSTRAINTS, capitalizeFirstLetter, genderToPreference } from '../../const';
-import { getGender } from '../../store/main-process/main-process.selectors';
-import { setGender } from '../../store/main-process/main-process.slice';
 
 const errorStyle = {
   color: '#e4001b',
@@ -27,17 +25,17 @@ function CreateTrainingScreen(): JSX.Element {
   const navigate = useNavigate();
 
   const isSubmitting = useAppSelector(getSubmittingStatus);
-  const selectedGender = useAppSelector(getGender);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
-  const caloriesRef = useRef<HTMLInputElement | null>(null);
-  const priceRef = useRef<HTMLInputElement | null>(null);
 
   const [description, setDescription] = useState<string | null>(null);
   const [selectedType, setType] = useState<WorkoutType | null>(null);
   const [selectedDuration, setDuration] = useState<WorkoutDuration | null>(null);
+  const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
   const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
   const [selectedVideo, setVideo] = useState<string | null>(null);
+  const [selectedCalories, setSelectedCalories] = useState<number>(0);
+  const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [isDurationDropdownOpen, setIsDurationDropdownOpen] = useState(false);
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
@@ -53,12 +51,20 @@ function CreateTrainingScreen(): JSX.Element {
     setDescriptionError('');
   };
 
-  const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+  const handleCaloriesChange = (value: string) => {
+    setSelectedCalories(parseInt(value, 10));
+  };
+
+  const handlePriceChange = (value: string) => {
+    setSelectedPrice(parseInt(value, 10));
+  };
+
+  const handleSexChange = (evt: ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
     const gender = 'value' in evt.target ?
       (evt.target as HTMLInputElement).value as Gender :
         (evt.target as HTMLLIElement).dataset.value as Gender;
 
-    dispatch(setGender(gender));
+    setSelectedGender(gender);
   };
 
   const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
@@ -99,8 +105,7 @@ function CreateTrainingScreen(): JSX.Element {
     }
 
     if (nameRef.current !== null &&
-        priceRef.current !== null &&
-        caloriesRef.current !== null &&
+        selectedCalories !== 0 &&
         description !== null &&
         selectedVideo !== null
     ){
@@ -109,8 +114,8 @@ function CreateTrainingScreen(): JSX.Element {
         trainingLevel: selectedLevel,
         workoutType: selectedType,
         workoutDuration: selectedDuration,
-        price: parseInt(priceRef.current.value, 10),
-        calories: parseInt(caloriesRef.current.value, 10),
+        price: selectedPrice,
+        calories: selectedCalories,
         description,
         genderPreference: genderToPreference(selectedGender),
         video: selectedVideo,
@@ -207,7 +212,7 @@ function CreateTrainingScreen(): JSX.Element {
                           text="ккал"
                           min={CALORIES_CONSTRAINTS.MIN}
                           max={CALORIES_CONSTRAINTS.MAX}
-                          reference={caloriesRef}
+                          onChange={handleCaloriesChange}
                         />
                         <DropdownSelect
                           classType={`custom-select ${!isDurationDropdownOpen ? 'select--not-selected' : 'is-open'} ${durationError && 'is-invalid'}`} label={'Сколько времени потратим'}
@@ -224,7 +229,7 @@ function CreateTrainingScreen(): JSX.Element {
                           inputName="price"
                           text="₽"
                           min={PRICE_CONSTRAINTS.MIN}
-                          reference={priceRef}
+                          onChange={handlePriceChange}
                         />
                         <DropdownSelect
                           classType={`custom-select ${!isLevelDropdownOpen ? 'select--not-selected' : 'is-open'} ${levelError && 'is-invalid'}`}

@@ -3,27 +3,33 @@ import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
 import { useAppSelector } from '../../hooks/index';
 import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
-import { Role } from '../../types/role.enum';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
 import { CALORIES_CONSTRAINTS } from '../../const';
+import { User } from '../../types/user.interface';
+import Loading from '../../components/loading/loading';
 
 function QuestionnaireUserScreen(): JSX.Element {
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
   const {
+    currentUser,
     specializationsError,
     levelError,
     durationError,
     caloriesLoseRef,
     caloriesWaste,
-    selectedDuration,
-    selectedLevel,
     handleUserQuestion,
     handleDurationChange,
     handleLevelChange} = useRegisterForm();
+
+  if(!currentUser){
+    return <Loading/>;
+  }
+
+  const user = currentUser as User;
 
   return(
     <Layout includeHeader={false}>
@@ -36,14 +42,14 @@ function QuestionnaireUserScreen(): JSX.Element {
                 <div className="questionnaire-user">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-user__wrapper">
-                    <SpecializationGroup role={Role.User} error={specializationsError}/>
+                    <SpecializationGroup currentUser={currentUser} error={specializationsError}/>
                     <RadioSelect
                       name={'time'}
                       classType={'questionnaire-user__block'}
                       classLabelType={'questionnaire-user__legend'}
                       label={'Сколько времени вы готовы уделять на тренировку в день'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-user__radio'}
-                      selectedValue={selectedDuration}
+                      selectedValue={user.workoutDuration}
                       onValueChange={handleDurationChange}
                       object={Object.values(WorkoutDuration)}
                       error={durationError}
@@ -54,7 +60,7 @@ function QuestionnaireUserScreen(): JSX.Element {
                       classLabelType={'questionnaire-user__legend'}
                       label={'Ваш уровень'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-user__radio'}
-                      selectedValue={selectedLevel}
+                      selectedValue={user.trainingLevel}
                       onValueChange={handleLevelChange}
                       object={Object.values(TrainingLevel)}
                       error={levelError}

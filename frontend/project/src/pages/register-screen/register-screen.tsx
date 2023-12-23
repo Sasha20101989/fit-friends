@@ -10,6 +10,7 @@ import LabeledInput from '../../components/labeled-input/labeled-input';
 import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
+import Loading from '../../components/loading/loading';
 const errorStyle = {
   color: '#e4001b',
   opacity: 1,
@@ -24,21 +25,23 @@ function RegisterScreen() : JSX.Element {
     roleError,
     genderError,
     locationError,
-    nameRef,
-    emailRef,
-    passwordRef,
-    birthdayRef,
-    selectedLocation,
     currentUser,
     isAgreementChecked,
-    selectedGender,
     isDropdownOpen,
+    handlePasswordChange,
+    handleBirthdayChange,
+    handleNameChange,
+    handleEmailChange,
     handleGoQuestion,
     handleRoleChange,
     handleAgreementChange,
     handleLocationChange,
     handleSexChange,
     handleToggleDropdown } = useRegisterForm();
+
+  if(!currentUser){
+    return <Loading/>;
+  }
 
   return(
     <Layout includeHeader={false}>
@@ -70,26 +73,26 @@ function RegisterScreen() : JSX.Element {
                   </div>
                   <div className="sign-up__data">
 
-                    <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" reference={nameRef} minLength={USERNAME_CONSTRAINTS.MIN_LENGTH} maxLength={USERNAME_CONSTRAINTS.MAX_LENGTH}/>
-                    <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" reference={emailRef}/>
-                    <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" reference={birthdayRef}/>
+                    <LabeledInput classType={'custom-input'} type={'text'} label={'Имя'} inputName="name" minLength={USERNAME_CONSTRAINTS.MIN_LENGTH} maxLength={USERNAME_CONSTRAINTS.MAX_LENGTH} onChange={handleNameChange}/>
+                    <LabeledInput classType={'custom-input'} type={'email'} label={'E-mail'} inputName="email" onChange={handleEmailChange}/>
+                    <LabeledInput classType={'custom-input'} type={'date'} max={'2099-12-31'} label={'Дата рождения'} inputName="birthday" onChange={handleBirthdayChange}/>
                     <DropdownSelect
                       classType={`custom-select ${!isDropdownOpen ? 'select--not-selected' : 'is-open'} ${locationError && 'is-invalid'}`}
                       label={'Ваша локация'}
                       onValueChange={handleLocationChange}
-                      selectedValue={selectedLocation && capitalizeFirstLetter(selectedLocation)}
+                      selectedValue={currentUser.location && capitalizeFirstLetter(currentUser.location)}
                       object={Object.values(Location)}
                       onToggleDropdown={handleToggleDropdown}
                       error={locationError}
                     />
-                    <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" reference={passwordRef} minLength={PASSWORD_CONSTRAINTS.MIN_LENGTH} maxLength={PASSWORD_CONSTRAINTS.MAX_LENGTH}/>
+                    <LabeledInput classType={'custom-input'} type={'password'} autoComplete='off' label={'Пароль'} inputName="password" minLength={PASSWORD_CONSTRAINTS.MIN_LENGTH} maxLength={PASSWORD_CONSTRAINTS.MAX_LENGTH} onChange={handlePasswordChange}/>
                     <RadioSelect
                       name={'gender'}
                       classType={'sign-up__radio'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big'}
                       classLabelType={'sign-up__label'}
                       label={'Пол'}
-                      selectedValue={selectedGender}
+                      selectedValue={currentUser.gender}
                       onValueChange={handleSexChange}
                       object={Object.values(Gender)}
                       error={genderError}

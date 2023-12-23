@@ -1,7 +1,6 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
 import useRegisterForm from '../../hooks/use-register-form/use-register-form';
-import { Role } from '../../types/role.enum';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
@@ -21,12 +20,9 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     certificateError,
     levelError,
     isSubmitting,
-    descriptionRef,
-    selectedDescription,
     currentUser,
-    selectedFile,
-    selectedLevel,
     handleDescriptionChange,
+    handleSpecializationChange,
     handleReadinessForWorkoutChange,
     handleCertificateChange,
     handleTrainerQuestion,
@@ -49,20 +45,20 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                 <div className="questionnaire-coach">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-coach__wrapper">
-                    <SpecializationGroup role={Role.Trainer} error={specializationsError}/>
+                    <SpecializationGroup currentUser={currentUser} error={specializationsError} onSpecializationChange={handleSpecializationChange}/>
                     <RadioSelect
                       name={'level'}
                       classType={'questionnaire-coach__block'}
                       classLabelType={'questionnaire-coach__legend'}
                       label={'Ваш уровень'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-coach__radio'}
-                      selectedValue={selectedLevel}
+                      selectedValue={trainer.trainingLevel}
                       onValueChange={handleLevelChange}
                       object={Object.values(TrainingLevel)}
                       error={levelError}
                     />
                     <div className={`questionnaire-coach__block ${certificateError && 'is-invalid'}`}>
-                      <span className="questionnaire-coach__legend">{selectedFile ? selectedFile : 'Ваши дипломы и сертификаты'}</span>
+                      <span className="questionnaire-coach__legend">{trainer.certificate ? trainer.certificate : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>
                           <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
@@ -82,8 +78,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                           <textarea
                             name="description"
                             placeholder=" "
-                            ref={descriptionRef}
-                            value={selectedDescription ?? ''}
+                            value={trainer.description ?? ''}
                             onChange={handleDescriptionChange}
                             required
                           >

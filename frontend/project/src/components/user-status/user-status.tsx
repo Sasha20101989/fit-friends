@@ -1,22 +1,16 @@
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getCurrentUser } from '../../store/user-process/user-process.selectors';
-import { changeReadiessToWorkout } from '../../store/user-process/user-process.slice';
+import { useAppDispatch } from '../../hooks/index';
+import { changeCurrentUserReadiessToWorkout } from '../../store/user-process/user-process.slice';
 import { Role } from '../../types/role.enum';
 import { Trainer } from '../../types/trainer.interface';
 import { User } from '../../types/user.interface';
 
 type UserStatusProps = {
   isFormEditable: boolean;
+  currentUser: User | Trainer;
 }
 
-function UserStatus({isFormEditable}: UserStatusProps):JSX.Element | null {
+function UserStatus({isFormEditable, currentUser}: UserStatusProps):JSX.Element | null {
   const dispatch = useAppDispatch();
-
-  const currentUser = useAppSelector(getCurrentUser);
-
-  if(!currentUser){
-    return null;
-  }
 
   let readness = false;
 
@@ -25,11 +19,11 @@ function UserStatus({isFormEditable}: UserStatusProps):JSX.Element | null {
       if(currentUser.role === Role.User){
         const user = currentUser as User;
         readness = !user.readinessForWorkout;
-        dispatch(changeReadiessToWorkout(!user.readinessForWorkout));
+        dispatch(changeCurrentUserReadiessToWorkout(!user.readinessForWorkout));
       }else if(currentUser.role === Role.Trainer){
         const trainer = currentUser as Trainer;
         readness = !trainer.personalTraining;
-        dispatch(changeReadiessToWorkout(!trainer.personalTraining));
+        dispatch(changeCurrentUserReadiessToWorkout(!trainer.personalTraining));
       }
     }
   };

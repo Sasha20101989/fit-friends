@@ -3,20 +3,32 @@ import { RegisterUserTransferData } from '../../types/register-transfer-data';
 import { AppRoute, DESCRIPTION_CONSTRAINTS, MAX_SPECIALIZATIONS_COUNT } from '../../const';
 
 import { useAppDispatch, useAppSelector } from '..';
-import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 import { Role } from '../../types/role.enum';
 import { Gender } from '../../types/gender.enum';
 import { Location } from '../../types/location.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
-import { getDescription, getDuration, getFile, getGender, getLevel, getLocation } from '../../store/main-process/main-process.selectors';
-import { changeDuration, changeFile, changeLevel, redirectToRoute, setDescription, setGender, setLocation } from '../../store/main-process/main-process.slice';
+import { redirectToRoute } from '../../store/main-process/main-process.slice';
 import UpdateUserDto from '../../dto/update-user.dto';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { editTrainerAction, editUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import { getCurrentUser, getSubmittingStatus } from '../../store/user-process/user-process.selectors';
-import { addSpecialization, changeReadiessToWorkout, removeSpecialization, setRegisterData, setRole } from '../../store/user-process/user-process.slice';
+import { addCurrentUserSpecialization,
+  changeCurrentUserDuration,
+  changeCurrentUserLevel,
+  changeCurrentUserReadiessToWorkout,
+  removeCurrentUserSpecialization,
+  setCurrentUserBirthday,
+  setCurrentUserCertificate,
+  setCurrentUserDescription,
+  setCurrentUserEmail,
+  setCurrentUserGender,
+  setCurrentUserLocation,
+  setCurrentUserName,
+  setCurrentUserPassword,
+  setCurrentUserRegisterData,
+  setCurrentUserRole } from '../../store/user-process/user-process.slice';
 import { Trainer } from '../../types/trainer.interface';
 import { User } from '../../types/user.interface';
 
@@ -27,20 +39,11 @@ function useRegisterForm(){
 
   //const isLoggedIn = useIsLoggedIn(AuthorizationStatus.Auth);
 
-  const selectedLevel = useAppSelector(getLevel);
-  const selectedDuration = useAppSelector(getDuration);
-  const selectedFile = useAppSelector(getFile);
-  const selectedLocation = useAppSelector(getLocation);
-  const selectedGender = useAppSelector(getGender);
-  const selectedDescription = useAppSelector(getDescription);
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
-  const nameRef = useRef<HTMLInputElement | null>(null);
-  const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
   const caloriesLoseRef = useRef<HTMLInputElement | null>(null);
   const caloriesWaste = useRef<HTMLInputElement | null>(null);
-  const birthdayRef = useRef<HTMLInputElement | null>(null);
+
   const [locationError, setLocationError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [durationError, setDurationError] = useState('');
@@ -50,8 +53,6 @@ function useRegisterForm(){
   const [certificateError, setCertificateError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
   const [specializationsError, setSpecializationsError] = useState('');
-
-  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [isAgreementChecked, setIsAgreementChecked] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -64,16 +65,16 @@ function useRegisterForm(){
     dispatch(editTrainerAction(userData));
   };
 
-  const handleGoQuestion= (evt: FormEvent<HTMLFormElement>) => {
+  const handleGoQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
     if(currentUser){
-      if(selectedLocation === null){
+      if(currentUser.location === null){
         setLocationError('Выберите локацию');
         return;
       }
 
-      if(selectedGender === null){
+      if(currentUser.gender === null){
         setGenderError('Выберите пол');
         return;
       }
@@ -88,27 +89,23 @@ function useRegisterForm(){
         return;
       }
 
-      if(nameRef.current !== null &&
-          passwordRef.current !== null &&
-          emailRef.current !== null &&
-          birthdayRef.current !== null
+      if(currentUser.name !== '' &&
+          currentUser.password !== undefined &&
+          currentUser.email !== '' &&
+          currentUser.birthDate !== undefined
       ){
 
         const formData: RegisterUserTransferData = {
-          name: nameRef.current.value,
-          email: emailRef.current.value,
-          password: passwordRef.current.value,
-          location: selectedLocation,
-          gender: selectedGender,
+          name: currentUser.name,
+          email: currentUser.email,
+          password: currentUser.password,
+          location: currentUser.location,
+          gender: currentUser.gender,
           role: currentUser.role,
+          birthDate: currentUser.birthDate
         };
 
-
-        if (birthdayRef.current !== null) {
-          formData.birthDate = birthdayRef.current.value;
-        }
-
-        dispatch(setRegisterData(formData));
+        dispatch(setCurrentUserRegisterData(formData));
 
         if(formData.role === Role.Trainer){
           dispatch(redirectToRoute(AppRoute.RegisterTrainer));
@@ -122,19 +119,21 @@ function useRegisterForm(){
   const handleUserQuestion = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (currentUser &&
+    const user = currentUser as User;
+
+    if (user &&
         caloriesLoseRef.current !== null &&
         caloriesWaste.current !== null &&
-        currentUser.workoutTypes.length > 0 &&
-        selectedLevel !== null &&
-        selectedDuration !== null) {
+        user.workoutTypes.length > 0 &&
+        user.trainingLevel !== null &&
+        user.workoutDuration !== null) {
 
       const userData: UpdateUserDto = {
         caloriesToBurn: parseInt(caloriesLoseRef.current.value, 10),
         caloriesToSpend: parseInt(caloriesWaste.current.value, 10),
-        workoutTypes: currentUser.workoutTypes,
-        trainingLevel: selectedLevel,
-        workoutDuration: selectedDuration
+        workoutTypes: user.workoutTypes,
+        trainingLevel: user.trainingLevel,
+        workoutDuration: user.workoutDuration
       };
 
       onUserQuestion(userData);
@@ -151,31 +150,31 @@ function useRegisterForm(){
       return;
     }
 
-    if(selectedFile === ''){
+    if(trainer.certificate === ''){
       setCertificateError('Выберите файл в предложенном формате');
       return;
     }
 
-    if (descriptionRef.current !== null &&
-        descriptionRef.current.value.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-        descriptionRef.current !== null &&
-        descriptionRef.current.value.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if (trainer.description !== undefined &&
+      trainer.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+      trainer.description !== undefined &&
+      trainer.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
     }
 
     if (trainer &&
-        descriptionRef.current !== null &&
-        selectedLevel !== null &&
-        selectedFile !== ''
+        trainer.description !== undefined &&
+        trainer.trainingLevel !== null &&
+        trainer.certificate !== ''
     ){
       const userData: UpdateTrainerDto = {
-        description: descriptionRef.current.value,
+        description: trainer.description,
         workoutTypes: trainer.workoutTypes,
-        trainingLevel: selectedLevel,
+        trainingLevel: trainer.trainingLevel,
         personalTraining: trainer.personalTraining,
-        certificate: selectedFile
+        certificate: trainer.certificate
       };
 
       onTrainerQuestion(userData);
@@ -185,14 +184,30 @@ function useRegisterForm(){
   const handleLocationChange = (evt: MouseEvent<HTMLLIElement>) => {
     const location: Location = evt.currentTarget.textContent as Location;
     setLocationError('');
-    dispatch(setLocation(location));
+    dispatch(setCurrentUserLocation(location));
     setIsDropdownOpen(false);
   };
 
   const handleRoleChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const role: Role = evt.target.value as Role;
     setRoleError('');
-    dispatch(setRole(role));
+    dispatch(setCurrentUserRole(role));
+  };
+
+  const handleNameChange = (name: string) => {
+    dispatch(setCurrentUserName(name));
+  };
+
+  const handleEmailChange = (email: string) => {
+    dispatch(setCurrentUserEmail(email));
+  };
+
+  const handleBirthdayChange = (date: string) => {
+    dispatch(setCurrentUserBirthday(date));
+  };
+
+  const handlePasswordChange = (password: string) => {
+    dispatch(setCurrentUserPassword(password));
   };
 
   const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
@@ -200,7 +215,7 @@ function useRegisterForm(){
       (evt.target as HTMLInputElement).value as Gender :
         (evt.target as HTMLLIElement).dataset.value as Gender;
     setGenderError('');
-    dispatch(setGender(gender));
+    dispatch(setCurrentUserGender(gender));
   };
 
   const handleAgreementChange = () => {
@@ -215,7 +230,7 @@ function useRegisterForm(){
       (evt.target as HTMLInputElement).value as TrainingLevel :
         (evt.target as HTMLLIElement).dataset.value as TrainingLevel;
     setLevelError('');
-    dispatch(changeLevel(newLevel));
+    dispatch(changeCurrentUserLevel(newLevel));
   };
 
   const handleDurationChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
@@ -223,7 +238,7 @@ function useRegisterForm(){
     (evt.target as HTMLInputElement).value as WorkoutDuration :
       (evt.target as HTMLLIElement).dataset.value as WorkoutDuration;
     setDurationError('');
-    dispatch(changeDuration(newDuration));
+    dispatch(changeCurrentUserDuration(newDuration));
   };
 
   const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
@@ -231,9 +246,9 @@ function useRegisterForm(){
     setSpecializationsError('');
 
     if (evt.target.checked) {
-      dispatch(addSpecialization(selectedType));
+      dispatch(addCurrentUserSpecialization(selectedType));
     } else {
-      dispatch(removeSpecialization(selectedType));
+      dispatch(removeCurrentUserSpecialization(selectedType));
     }
   };
 
@@ -249,17 +264,17 @@ function useRegisterForm(){
 
   const handleDescriptionChange = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     const descriptionValue = evt.target.value;
-    dispatch(setDescription(descriptionValue));
+    dispatch(setCurrentUserDescription(descriptionValue));
     setDescriptionError('');
   };
 
   const handleReadinessForWorkoutChange = () => {
     if(currentUser && currentUser.role === Role.Trainer){
       const trainer = currentUser as Trainer;
-      dispatch(changeReadiessToWorkout(!trainer.personalTraining));
+      dispatch(changeCurrentUserReadiessToWorkout(!trainer.personalTraining));
     }else if(currentUser && currentUser.role === Role.User){
       const user = currentUser as User;
-      dispatch(changeReadiessToWorkout(!user.readinessForWorkout));
+      dispatch(changeCurrentUserReadiessToWorkout(!user.readinessForWorkout));
     }
   };
 
@@ -271,7 +286,7 @@ function useRegisterForm(){
     if (isJpegOrPngOrPdf) {
       const fileName = file.name;
       setCertificateError('');
-      dispatch(changeFile(fileName));
+      dispatch(setCurrentUserCertificate(fileName));
     } else {
       setCertificateError('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).');
     }
@@ -288,22 +303,15 @@ function useRegisterForm(){
     durationError,
     genderError,
     locationError,
-    nameRef,
-    emailRef,
-    passwordRef,
-    birthdayRef,
     caloriesLoseRef,
     caloriesWaste,
-    descriptionRef,
-    selectedLocation,
     isAgreementChecked,
     isDropdownOpen,
-    selectedLevel,
-    selectedDescription,
-    selectedDuration,
-    selectedFile,
-    selectedGender,
     isSubmitting,
+    handlePasswordChange,
+    handleBirthdayChange,
+    handleEmailChange,
+    handleNameChange,
     isDisabled,
     handleGoQuestion,
     handleLocationChange,

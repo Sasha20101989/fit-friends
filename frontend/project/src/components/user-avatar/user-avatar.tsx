@@ -1,14 +1,17 @@
-import { useAppSelector } from '../../hooks/index';
-import { getAvatar } from '../../store/main-process/main-process.selectors';
+import { Trainer } from '../../types/trainer.interface';
+import { User } from '../../types/user.interface';
 
-function UserAvatar(): JSX.Element {
-  const avatar = useAppSelector(getAvatar);
+type UserAvatarProps = {
+  currentUser: User | Trainer;
+}
+
+function UserAvatar({currentUser}: UserAvatarProps): JSX.Element {
   let hostedImage = '';
   let fileExtension = '';
 
-  if (avatar) {
-    fileExtension = avatar.split('.').pop() || '';
-    const imageNameWithoutExtension = avatar.replace(/\.[^/.]+$/, '');
+  if (currentUser.avatar) {
+    fileExtension = currentUser.avatar.split('.').pop() || '';
+    const imageNameWithoutExtension = currentUser.avatar.replace(/\.[^/.]+$/, '');
     hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
   }
 

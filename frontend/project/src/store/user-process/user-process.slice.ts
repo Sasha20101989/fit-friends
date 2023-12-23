@@ -7,7 +7,11 @@ import { WorkoutType } from '../../types/workout-type.enum';
 import { Role } from '../../types/role.enum';
 import { User } from '../../types/user.interface';
 import { Trainer } from '../../types/trainer.interface';
-import { RegisterUserTransferData } from '../../types/register-transfer-data.js';
+import { RegisterUserTransferData } from '../../types/register-transfer-data';
+import { TrainingLevel } from '../../types/training-level.enum';
+import { WorkoutDuration } from '../../types/workout-duration.enum';
+import { Location } from '../../types/location.enum';
+import { Gender } from '../../types/gender.enum';
 
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -56,7 +60,73 @@ export const userProcess = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
-    setRegisterData: (state, action: PayloadAction<RegisterUserTransferData>) => {
+    setCurrentUserPassword: (state, action: PayloadAction<string>) => {
+      if (state.user.birthDate === Role.User) {
+        state.user.password = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.password = action.payload;
+      }
+    },
+    setCurrentUserBirthday: (state, action: PayloadAction<string>) => {
+      if (state.user.birthDate === Role.User) {
+        state.user.name = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.birthDate = action.payload;
+      }
+    },
+    setCurrentUserEmail: (state, action: PayloadAction<string>) => {
+      if (state.user.role === Role.User) {
+        state.user.email = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.email = action.payload;
+      }
+    },
+    setCurrentUserName: (state, action: PayloadAction<string>) => {
+      if (state.user.role === Role.User) {
+        state.user.name = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.name = action.payload;
+      }
+    },
+    setCurrentUserDescription: (state, action: PayloadAction<string>) => {
+      if (state.user.role === Role.User) {
+        state.user.description = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.description = action.payload;
+      }
+    },
+    setCurrentUserGender: (state, action: PayloadAction<Gender>) => {
+      if (state.user.role === Role.User) {
+        state.user.gender = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.gender = action.payload;
+      }
+    },
+    setCurrentUserLocation: (state, action: PayloadAction<Location>) => {
+      if (state.user.role === Role.User) {
+        state.user.location = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.location = action.payload;
+      }
+    },
+    setCurrentUserCertificate: (state, action: PayloadAction<string>) => {
+      if (state.trainer.role === Role.Trainer) {
+        state.trainer.certificate = action.payload;
+      }
+    },
+    changeCurrentUserDuration: (state, action: PayloadAction<WorkoutDuration>) => {
+      if (state.user.role === Role.User) {
+        state.user.workoutDuration = action.payload;
+      }
+    },
+    changeCurrentUserLevel: (state, action: PayloadAction<TrainingLevel>) => {
+      if (state.user.role === Role.User) {
+        state.user.trainingLevel = action.payload;
+      } else if (state.trainer.role === Role.Trainer) {
+        state.trainer.trainingLevel = action.payload;
+      }
+    },
+    setCurrentUserRegisterData: (state, action: PayloadAction<RegisterUserTransferData>) => {
       state.registerStatus = RegisterStatus.InProgress;
 
       if (action.payload.role === Role.User) {
@@ -79,7 +149,7 @@ export const userProcess = createSlice({
         state.trainer.location = action.payload.location;
       }
     },
-    setRole: (state, action: PayloadAction<Role>) => {
+    setCurrentUserRole: (state, action: PayloadAction<Role>) => {
       if (action.payload && action.payload === Role.User) {
         state.user.role = action.payload;
       } else if (action.payload && action.payload === Role.Trainer) {
@@ -95,21 +165,21 @@ export const userProcess = createSlice({
     setRegisterStatus: (state, action: PayloadAction<RegisterStatus>) => {
       state.registerStatus = action.payload;
     },
-    setSpecializations: (state, action: PayloadAction<WorkoutType[]>) => {
+    setCurrentUserSpecializations: (state, action: PayloadAction<WorkoutType[]>) => {
       if (state.user.role === Role.User) {
         state.user.workoutTypes = action.payload;
       } else if (state.trainer.role === Role.Trainer) {
         state.trainer.workoutTypes = action.payload;
       }
     },
-    addSpecialization: (state, action: PayloadAction<WorkoutType>) => {
+    addCurrentUserSpecialization: (state, action: PayloadAction<WorkoutType>) => {
       if (state.user.role === Role.User) {
         state.user.workoutTypes.push(action.payload);
       } else if (state.trainer.role === Role.Trainer) {
         state.trainer.workoutTypes.push(action.payload);
       }
     },
-    removeSpecialization: (state, action: PayloadAction<WorkoutType>) => {
+    removeCurrentUserSpecialization: (state, action: PayloadAction<WorkoutType>) => {
       if (state.user.role === Role.User) {
         state.user.workoutTypes = state.user.workoutTypes.filter(
           (spec) => spec !== action.payload
@@ -120,14 +190,14 @@ export const userProcess = createSlice({
         );
       }
     },
-    clearSpecializations: (state) => {
+    clearCurrentUserSpecializations: (state) => {
       if (state.user.role === Role.User) {
         state.user.workoutTypes = [];
       } else if (state.trainer.role === Role.Trainer) {
         state.trainer.workoutTypes = [];
       }
     },
-    changeReadiessToWorkout: (state, action: PayloadAction<boolean>) => {
+    changeCurrentUserReadiessToWorkout: (state, action: PayloadAction<boolean>) => {
       if (state.user.role === Role.User) {
         state.user.readinessForWorkout = action.payload;
       }else if(state.user.role === Role.Trainer){
@@ -222,12 +292,22 @@ export const userProcess = createSlice({
 });
 
 export const {
-  setRegisterData,
-  setRole,
-  changeReadiessToWorkout,
+  setCurrentUserPassword,
+  setCurrentUserBirthday,
+  setCurrentUserName,
+  setCurrentUserEmail,
+  setCurrentUserDescription,
+  setCurrentUserGender,
+  setCurrentUserLocation,
+  setCurrentUserCertificate,
+  changeCurrentUserDuration,
+  changeCurrentUserLevel,
+  setCurrentUserRegisterData,
+  setCurrentUserRole,
+  changeCurrentUserReadiessToWorkout,
   setIsSubmitting,
   setAuthorizationStatus,
   setRegisterStatus,
-  addSpecialization,
-  removeSpecialization
+  addCurrentUserSpecialization,
+  removeCurrentUserSpecialization
 } = userProcess.actions;

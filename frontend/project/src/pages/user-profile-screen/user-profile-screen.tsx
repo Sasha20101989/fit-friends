@@ -15,8 +15,6 @@ import Layout from '../../components/layout/layout';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
-import { getAvatar, getDescription, getGender, getLevel, getLocation, getName } from '../../store/main-process/main-process.selectors';
-import { changeLevel, setGender, setLocation } from '../../store/main-process/main-process.slice';
 import { DESCRIPTION_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
@@ -27,16 +25,12 @@ import UpdateUserDto from '../../dto/update-user.dto';
 import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 import { Trainer } from '../../types/trainer.interface';
 import { User } from '../../types/user.interface';
+import { changeCurrentUserLevel, setCurrentUserGender, setCurrentUserLocation } from '../../store/user-process/user-process.slice';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
-  const selectedGender = useAppSelector(getGender);
-  const selectedLocation = useAppSelector(getLocation);
-  const selectedLevel = useAppSelector(getLevel);
-  const selectedDescription = useAppSelector(getDescription);
-  const selectedName = useAppSelector(getName);
-  const selectedAvatar = useAppSelector(getAvatar);
+
   const isLoading = useAppSelector(getLoadingStatus);
 
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
@@ -76,21 +70,21 @@ function UserProfileScreen(): JSX.Element {
 
   const handleLocationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const location: Location = evt.currentTarget.textContent as Location;
-    dispatch(setLocation(location));
+    dispatch(setCurrentUserLocation(location));
     setLocationError('');
     setIsLocationDropdownOpen(false);
   };
 
   const handleSexChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const gender: Gender = evt.currentTarget.textContent as Gender;
-    dispatch(setGender(gender));
+    dispatch(setCurrentUserGender(gender));
     setGenderError('');
     setIsGenderDropdownOpen(false);
   };
 
   const handleLevelChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newLevel: TrainingLevel = evt.currentTarget.textContent as TrainingLevel;
-    dispatch(changeLevel(newLevel));
+    dispatch(changeCurrentUserLevel(newLevel));
     setLevelError('');
     setIsLevelDropdownOpen(false);
   };
@@ -114,25 +108,25 @@ function UserProfileScreen(): JSX.Element {
   };
 
   const handleSave = () => {
-    if(selectedLocation === null){
+    if(currentUser.location === null){
       setLocationError('Выберите локацию');
       return;
     }
 
-    if(selectedGender === null){
+    if(currentUser.gender === null){
       setGenderError('Выберите пол');
       return;
     }
 
-    if(selectedLevel === null){
+    if(currentUser.trainingLevel === null){
       setLevelError('Выберите уровень');
       return;
     }
 
-    if (selectedDescription &&
-      selectedDescription.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-      selectedDescription &&
-      selectedDescription.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if (currentUser.description &&
+      currentUser.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+      currentUser.description &&
+      currentUser.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
@@ -141,38 +135,42 @@ function UserProfileScreen(): JSX.Element {
     if(currentUser &&
       currentUser.role === Role.Trainer){
       const trainer = currentUser as Trainer;
-      if(selectedName !== undefined &&
-        selectedName.trim() !== '' &&
-        selectedGender !== null &&
+      if(trainer.name !== undefined &&
+        trainer.name.trim() !== '' &&
+        trainer.gender !== null &&
+        trainer.location &&
+        trainer.trainingLevel &&
         trainer.workoutTypes.length >= 1){
         const trainerData: UpdateTrainerDto = {
-          description: selectedDescription,
-          trainingLevel: selectedLevel,
-          gender: selectedGender,
+          description: trainer.description,
+          trainingLevel: trainer.trainingLevel,
+          gender: trainer.gender,
           workoutTypes: trainer.workoutTypes,
           personalTraining: trainer.personalTraining,
-          name: selectedName,
-          avatar: selectedAvatar,
-          location: selectedLocation
+          name: trainer.name,
+          avatar: trainer.avatar,
+          location: trainer.location
         };
 
         dispatch(editTrainerAction(trainerData));
       }
     }else{
       const user = currentUser as User;
-      if(selectedName !== undefined &&
-        selectedName.trim() !== '' &&
-        selectedGender !== null &&
+      if(user.name !== undefined &&
+        user.name.trim() !== '' &&
+        user.gender !== null &&
+        user.location &&
+        user.trainingLevel &&
         user.workoutTypes.length >= 1){
         const userData: UpdateUserDto = {
-          description: selectedDescription,
-          trainingLevel: selectedLevel,
-          gender: selectedGender,
+          description: user.description,
+          trainingLevel: user.trainingLevel,
+          gender: user.gender,
           workoutTypes: user.workoutTypes,
           readinessForWorkout: user.readinessForWorkout,
-          name: selectedName,
-          avatar: selectedAvatar,
-          location: selectedLocation
+          name: user.name,
+          avatar: user.avatar,
+          location: user.location
         };
 
         dispatch(editUserAction(userData));
@@ -188,20 +186,20 @@ function UserProfileScreen(): JSX.Element {
             <h1 className="visually-hidden">Личный кабинет</h1>
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
-                <UserAvatar/>
-                {currentUser && currentUser.role === Role.Trainer && isFormEditable && <UserControls />}
+                <UserAvatar currentUser={currentUser}/>
+                {currentUser.role === Role.Trainer && isFormEditable && <UserControls />}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>
-                <UserAbout isFormEditable={isFormEditable} error={descriptionError}/>
-                <UserStatus isFormEditable={isFormEditable} />
+                <UserAbout isFormEditable={isFormEditable} error={descriptionError} currentUser={currentUser}/>
+                <UserStatus isFormEditable={isFormEditable} currentUser={currentUser}/>
                 <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
-                  <UserSpecializationGroup isFormEditable={isFormEditable} />
+                  <UserSpecializationGroup isFormEditable={isFormEditable} currentUser={currentUser} />
                 </div>
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''} ${locationError && 'is-invalid'}`}
                   label={'Локация'}
-                  selectedValue={`ст. м. ${selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}`}
+                  selectedValue={`ст. м. ${currentUser.location ? capitalizeFirstLetter(currentUser.location) : ''}`}
                   onValueChange={handleLocationChange}
                   object={Object.values(Location)}
                   onToggleDropdown={handleToggleLocationDropdown}
@@ -210,7 +208,7 @@ function UserProfileScreen(): JSX.Element {
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isGenderDropdownOpen ? 'is-open' : ''} ${genderError && 'is-invalid'}`}
                   label={'Пол'}
-                  selectedValue={selectedGender ? capitalizeFirstLetter(selectedGender) : ''}
+                  selectedValue={currentUser.gender ? capitalizeFirstLetter(currentUser.gender) : ''}
                   onValueChange={handleSexChange}
                   object={Object.values(Gender)}
                   onToggleDropdown={handleToggleGenderDropdown}
@@ -219,7 +217,7 @@ function UserProfileScreen(): JSX.Element {
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLevelDropdownOpen ? 'is-open' : ''} ${levelError && 'is-invalid'}`}
                   label={'Уровень'}
-                  selectedValue={selectedLevel ? capitalizeFirstLetter(selectedLevel) : ''}
+                  selectedValue={currentUser.trainingLevel ? capitalizeFirstLetter(currentUser.trainingLevel) : ''}
                   onValueChange={handleLevelChange}
                   object={Object.values(TrainingLevel)}
                   onToggleDropdown={handleToggleLevelDropdown}
