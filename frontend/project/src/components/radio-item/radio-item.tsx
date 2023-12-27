@@ -6,7 +6,7 @@ type RadioItemProps = {
   classType: string;
   name: string;
   value: Gender | TrainingLevel | WorkoutDuration;
-  selectedValue: Gender | TrainingLevel | WorkoutDuration | null;
+  selectedValue: Gender | TrainingLevel | WorkoutDuration | undefined;
   onValueChange: (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => void;
 }
 

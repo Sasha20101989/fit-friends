@@ -7,7 +7,7 @@ import { Gender } from '../../types/gender.enum';
 type DropdownSelectProps = {
   classType: string;
   label: string;
-  selectedValue: string | null;
+  selectedValue: string | undefined;
   error: string;
   object: WorkoutDuration[] | WorkoutType[] | TrainingLevel[] | Location[] | Gender[];
   onValueChange: (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;

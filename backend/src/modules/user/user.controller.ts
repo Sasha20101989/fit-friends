@@ -31,6 +31,8 @@ import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists
 import TrainerRdo from '../trainer/rdo/trainer.rdo.js';
 import { TokenServiceInterface } from '../token/token-service.interface.js';
 import AccessTokenRdo from '../token/rdo/access-token.rdo.js';
+import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
+import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
 
 
 @injectable()
@@ -102,6 +104,22 @@ export default class UserController extends Controller {
         new DocumentExistsMiddleware(this.userService, 'User', 'userId')
       ]
     });
+    this.addRoute({
+      path: '/:userId/avatar',
+      method: HttpMethod.Post,
+      handler: this.uploadAvatar,
+      middlewares: [
+        new ValidateObjectIdMiddleware('userId'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'avatar'),
+      ]
+    });
+  }
+
+  public async uploadAvatar(req: Request, res: Response) {
+    const {userId} = req.params;
+    const uploadFile = {avatar: req.file?.filename};
+    await this.userService.updateById(userId, uploadFile);
+    this.created(res, fillDTO(UploadUserAvatarRdo, uploadFile));
   }
 
   public async showUserDetails(

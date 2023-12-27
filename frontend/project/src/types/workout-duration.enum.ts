@@ -3,4 +3,5 @@ export enum WorkoutDuration {
   Medium = '30-50 мин',
   Long = '50-80 мин',
   ExtraLong = '80-100 мин',
+  Unknown = 'UNKNOWN'
 }

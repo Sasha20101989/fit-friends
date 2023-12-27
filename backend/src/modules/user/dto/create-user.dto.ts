@@ -20,8 +20,8 @@ export default class CreateUserDto {
   @IsEmail({}, { message: 'Invalid email address' })
   public email!: string;
 
-  @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
   @IsOptional()
+  @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
   @IsFileValidSize(MAX_FILE_SIZE)
   public avatar?: string;
 
@@ -40,17 +40,17 @@ export default class CreateUserDto {
   @IsOptional()
   public birthDate?: string;
 
+  @IsOptional()
   @MinLength(DESCRIPTION_CONSTRAINTS.MIN_LENGTH, { message: `Minimum description length must be ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH}` })
   @MaxLength(DESCRIPTION_CONSTRAINTS.MAX_LENGTH, { message: `Maximum description length must be ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH}` })
-  @IsOptional()
   public description?: string;
 
   @IsNotEmpty({ message: 'Location is required' })
   @IsEnum(Location, { message: 'Invalid location' })
   public location!: Location;
 
-  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
   @IsOptional()
+  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
   public backgroundImage?: string;
 
   @IsOptional()

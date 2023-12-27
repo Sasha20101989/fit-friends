@@ -1,4 +1,5 @@
 export enum Role {
   Trainer = 'тренер',
-  User = 'пользователь'
+  User = 'пользователь',
+  Unknown = 'UNKNOWN'
 }

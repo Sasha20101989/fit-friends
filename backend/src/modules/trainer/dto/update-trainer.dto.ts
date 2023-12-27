@@ -40,9 +40,9 @@ export default class UpdateTrainerDto {
   @IsOptional()
   public name?: string;
 
-  @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
-  @IsOptional()
-  public avatar?: string;
+  // @Matches(/\.(jpg|png)$/, { message: 'Avatar must be in JPG or PNG format' })
+  // @IsOptional()
+  // public avatar?: string;
 
   @IsOptional()
   @IsEnum(Location, { message: 'Invalid location' })

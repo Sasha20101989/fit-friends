@@ -2,22 +2,24 @@ import { Gender } from './gender.enum';
 import { Location } from './location.enum';
 import { Role } from './role.enum';
 import { TrainingLevel } from './training-level.enum';
-import { User } from './user.interface';
+import { WorkoutDuration } from './workout-duration.enum';
 import { WorkoutType } from './workout-type.enum';
 
-export type BaseUser = {
-  id?: string;
+export type SignupUser = {
   name: string;
   email: string;
+  avatar?: string;
   password: string;
-  role: Role;
-  avatar?: string | undefined;
   gender: Gender;
+  role: Role;
   birthDate?: string;
+  description?: string;
   location: Location;
   backgroundImage?: string;
-  description?: string;
   trainingLevel: TrainingLevel;
   workoutTypes: WorkoutType[];
-  friends: User[];
+  workoutDuration: WorkoutDuration;
+  caloriesToBurn: number;
+  caloriesToSpend: number;
+  readinessForWorkout: boolean;
 }

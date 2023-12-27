@@ -26,8 +26,8 @@ function UsersCatalogScreen() : JSX.Element {
   };
 
   const [queryParams, setQueryParams] = useState<UserQueryParams>(initialQueryParams);
-  const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
-  const [sortingOption, setSortingOption] = useState<Role | null>(null);
+  const [selectedLevel, setLevel] = useState<TrainingLevel>(TrainingLevel.Unknown);
+  const [sortingOption, setSortingOption] = useState<Role>(Role.Unknown);
 
   const handleShowMoreClick = () => {
     setQueryParams((prevParams) => ({
@@ -83,16 +83,18 @@ function UsersCatalogScreen() : JSX.Element {
                   <div className="user-catalog-form__block user-catalog-form__block--level">
                     <h4 className="user-catalog-form__block-title">Ваш уровень</h4>
                     <div className="custom-toggle-radio">
-                      {Object.values(TrainingLevel).map((level) => (
-                        <RadioItem
-                          key={level}
-                          classType={'custom-toggle-radio__block'}
-                          name={'user-agreement'}
-                          value={capitalizeFirstLetter(level) as TrainingLevel}
-                          selectedValue={selectedLevel}
-                          onValueChange={handleLevelChange}
-                        />
-                      ))}
+                      {Object.values(TrainingLevel)
+                        .filter((level) => level !== TrainingLevel.Unknown)
+                        .map((level) => (
+                          <RadioItem
+                            key={level}
+                            classType={'custom-toggle-radio__block'}
+                            name={'user-agreement'}
+                            value={capitalizeFirstLetter(level) as TrainingLevel}
+                            selectedValue={selectedLevel}
+                            onValueChange={handleLevelChange}
+                          />
+                        ))}
                     </div>
                   </div>
                   <div className="user-catalog-form__block">

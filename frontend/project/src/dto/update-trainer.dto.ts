@@ -5,13 +5,12 @@ import { WorkoutType } from '../types/workout-type.enum';
 
 export default class UpdateTrainerDto {
   public description?: string;
-  public trainingLevel!: TrainingLevel;
+  public trainingLevel!: TrainingLevel | string;
   public workoutTypes!: WorkoutType[];
   public personalTraining?: boolean;
   public certificate?: string;
   public gender?: Gender;
   public name?: string;
-  public avatar?: string;
   public location?: Location;
 }
 

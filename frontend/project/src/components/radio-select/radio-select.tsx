@@ -10,7 +10,7 @@ type RadioSelectProps = {
   classChildType: string;
   classLabelType: string;
   label: string;
-  selectedValue: Gender| WorkoutDuration | TrainingLevel | null;
+  selectedValue: Gender | WorkoutDuration | TrainingLevel | undefined;
   object: Gender[] | WorkoutDuration[] | TrainingLevel[];
   toNextLine?: boolean;
   error: string;

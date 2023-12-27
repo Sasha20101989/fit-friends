@@ -13,101 +13,86 @@ import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
 
+export const initialUserState = {
+  id: undefined,
+  name: '',
+  email: '',
+  role: Role.Unknown,
+  avatar: '',
+  password: '',
+  gender: Gender.Unknown,
+  birthDate: undefined,
+  location: Location.Unknown,
+  backgroundImage: undefined,
+  description: undefined,
+  trainingLevel: TrainingLevel.Unknown,
+  workoutTypes: [],
+  friends: [],
+  readinessForWorkout: false,
+  workoutDuration: WorkoutDuration.Unknown,
+  caloriesToBurn: 0,
+  caloriesToSpend: 0,
+};
+
+export const initialTrainerState = {
+  id: undefined,
+  name: '',
+  email: '',
+  role: Role.Unknown,
+  avatar: '',
+  password: '',
+  gender: Gender.Unknown,
+  birthDate: undefined,
+  location: Location.Unknown,
+  backgroundImage: undefined,
+  description: undefined,
+  trainingLevel: TrainingLevel.Unknown,
+  workoutTypes: [],
+  friends: [],
+  certificate: '',
+  trainerAchievements: undefined,
+  personalTraining: false,
+};
+
 export const initialState: UserState = {
   authorizationStatus: AuthorizationStatus.Unknown,
   registerStatus: RegisterStatus.Unknown,
   isSubmitting: false,
-  trainer: {
-    id: undefined,
-    name: '',
-    email: '',
-    role: null,
-    avatar: '',
-    gender: null,
-    birthDate: undefined,
-    location: null,
-    backgroundImage: '',
-    description: '',
-    trainingLevel: null,
-    workoutTypes: [],
-    friends: [],
-    certificate: '',
-    trainerAchievements: '',
-    personalTraining: false,
-  },
-  user: {
-    id: undefined,
-    name: '',
-    email: '',
-    role: null,
-    avatar: '',
-    gender: null,
-    birthDate: undefined,
-    location: null,
-    backgroundImage: '',
-    description: '',
-    trainingLevel: null,
-    workoutTypes: [],
-    friends: [],
-    readinessForWorkout: false,
-    workoutDuration: null,
-    caloriesToBurn: 0,
-    caloriesToSpend: 0,
-  },
+  trainer: initialTrainerState,
+  user: initialUserState,
 };
 
 export const userProcess = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
+    setCurrentUserLocation: (state, action: PayloadAction<Location>) => {
+      state.user.location = action.payload;
+      state.trainer.location = action.payload;
+    },
     setCurrentUserPassword: (state, action: PayloadAction<string>) => {
-      if (state.user.birthDate === Role.User) {
-        state.user.password = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.password = action.payload;
-      }
+      state.user.password = action.payload;
+      state.trainer.password = action.payload;
     },
     setCurrentUserBirthday: (state, action: PayloadAction<string>) => {
-      if (state.user.birthDate === Role.User) {
-        state.user.name = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.birthDate = action.payload;
-      }
+      state.user.birthDate = action.payload;
+      state.trainer.birthDate = action.payload;
     },
     setCurrentUserEmail: (state, action: PayloadAction<string>) => {
-      if (state.user.role === Role.User) {
-        state.user.email = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.email = action.payload;
-      }
+      state.user.email = action.payload;
+      state.trainer.email = action.payload;
     },
     setCurrentUserName: (state, action: PayloadAction<string>) => {
-      if (state.user.role === Role.User) {
-        state.user.name = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.name = action.payload;
-      }
+      state.user.name = action.payload;
+      state.trainer.name = action.payload;
     },
     setCurrentUserDescription: (state, action: PayloadAction<string>) => {
-      if (state.user.role === Role.User) {
-        state.user.description = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.description = action.payload;
-      }
+      state.user.description = action.payload;
+      state.trainer.description = action.payload;
     },
     setCurrentUserGender: (state, action: PayloadAction<Gender>) => {
-      if (state.user.role === Role.User) {
-        state.user.gender = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.gender = action.payload;
-      }
-    },
-    setCurrentUserLocation: (state, action: PayloadAction<Location>) => {
-      if (state.user.role === Role.User) {
-        state.user.location = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.location = action.payload;
-      }
+      state.user.gender = action.payload;
+      state.trainer.gender = action.payload;
     },
     setCurrentUserCertificate: (state, action: PayloadAction<string>) => {
       if (state.trainer.role === Role.Trainer) {
@@ -120,11 +105,8 @@ export const userProcess = createSlice({
       }
     },
     changeCurrentUserLevel: (state, action: PayloadAction<TrainingLevel>) => {
-      if (state.user.role === Role.User) {
-        state.user.trainingLevel = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.trainingLevel = action.payload;
-      }
+      state.user.trainingLevel = action.payload;
+      state.trainer.trainingLevel = action.payload;
     },
     setCurrentUserRegisterData: (state, action: PayloadAction<RegisterUserTransferData>) => {
       state.registerStatus = RegisterStatus.InProgress;
@@ -150,9 +132,9 @@ export const userProcess = createSlice({
       }
     },
     setCurrentUserRole: (state, action: PayloadAction<Role>) => {
-      if (action.payload && action.payload === Role.User) {
+      if (action.payload === Role.User) {
         state.user.role = action.payload;
-      } else if (action.payload && action.payload === Role.Trainer) {
+      } else if (action.payload === Role.Trainer) {
         state.trainer.role = action.payload;
       }
     },
@@ -166,41 +148,30 @@ export const userProcess = createSlice({
       state.registerStatus = action.payload;
     },
     setCurrentUserSpecializations: (state, action: PayloadAction<WorkoutType[]>) => {
-      if (state.user.role === Role.User) {
-        state.user.workoutTypes = action.payload;
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.workoutTypes = action.payload;
-      }
+      state.user.workoutTypes = action.payload;
+      state.trainer.workoutTypes = action.payload;
     },
     addCurrentUserSpecialization: (state, action: PayloadAction<WorkoutType>) => {
-      if (state.user.role === Role.User) {
-        state.user.workoutTypes.push(action.payload);
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.workoutTypes.push(action.payload);
-      }
+      state.user.workoutTypes.push(action.payload);
+      state.trainer.workoutTypes.push(action.payload);
     },
     removeCurrentUserSpecialization: (state, action: PayloadAction<WorkoutType>) => {
-      if (state.user.role === Role.User) {
-        state.user.workoutTypes = state.user.workoutTypes.filter(
-          (spec) => spec !== action.payload
-        );
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.workoutTypes = state.trainer.workoutTypes.filter(
-          (spec) => spec !== action.payload
-        );
-      }
+      state.user.workoutTypes = state.user.workoutTypes.filter(
+        (spec) => spec !== action.payload
+      );
+
+      state.trainer.workoutTypes = state.trainer.workoutTypes.filter(
+        (spec) => spec !== action.payload
+      );
     },
     clearCurrentUserSpecializations: (state) => {
-      if (state.user.role === Role.User) {
-        state.user.workoutTypes = [];
-      } else if (state.trainer.role === Role.Trainer) {
-        state.trainer.workoutTypes = [];
-      }
+      state.user.workoutTypes = [];
+      state.trainer.workoutTypes = [];
     },
     changeCurrentUserReadiessToWorkout: (state, action: PayloadAction<boolean>) => {
       if (state.user.role === Role.User) {
         state.user.readinessForWorkout = action.payload;
-      }else if(state.user.role === Role.Trainer){
+      }else if(state.trainer.role === Role.Trainer){
         state.trainer.personalTraining = action.payload;
       }
     },
@@ -212,7 +183,6 @@ export const userProcess = createSlice({
       })
       .addCase(checkAuthAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.authorizationStatus = AuthorizationStatus.Auth;
 
         if (action.payload && action.payload.role === Role.User) {
           state.user.id = action.payload.id;
@@ -254,6 +224,7 @@ export const userProcess = createSlice({
       })
       .addCase(registerAction.fulfilled, (state, _action) => {
         state.isSubmitting = false;
+        state.registerStatus = RegisterStatus.Done;
       })
       .addCase(registerAction.rejected, (state, _action) => {
         state.isSubmitting = false;
@@ -279,11 +250,8 @@ export const userProcess = createSlice({
       .addCase(fetchMyFriendsAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
 
-        if (state.user.role === Role.User) {
-          state.user.friends = action.payload;
-        } else if (state.trainer.role === Role.Trainer) {
-          state.trainer.friends = action.payload;
-        }
+        state.user.friends = action.payload;
+        state.trainer.friends = action.payload;
       })
       .addCase(fetchMyFriendsAction.rejected, (state, _action) => {
         state.isSubmitting = false;

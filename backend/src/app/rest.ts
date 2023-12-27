@@ -25,6 +25,7 @@ import { ServerProducerInterface } from '../core/rabit-server/producer/server-pr
 import { ClientConsumerInterface } from '../core/rabbit-client/consumer/client-consumer.interface.js';
 import { ClientProducerInterface } from '../core/rabbit-client/producer/client-producer.interface.js';
 import { RabbitRouting } from '../types/rabbit-routing.enum.js';
+import { STATIC_FILES_ROUTE, STATIC_UPLOAD_ROUTE } from './rest.const.js';
 
 @injectable()
 export default class RestApplication {
@@ -138,12 +139,12 @@ export default class RestApplication {
     this.expressApplication.use(cookieParser());
 
     this.expressApplication.use(
-      '/upload',
+      STATIC_UPLOAD_ROUTE,
       express.static(this.config.get('UPLOAD_DIRECTORY'))
     );
 
     this.expressApplication.use(
-      '/static',
+      STATIC_FILES_ROUTE,
       express.static(this.config.get('STATIC_DIRECTORY_PATH'))
     );
 

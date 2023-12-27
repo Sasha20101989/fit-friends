@@ -1,4 +1,5 @@
 import { AuthorizationStatus, NameSpace, RegisterStatus } from '../../const';
+import { Role } from '../../types/role.enum';
 import { State } from '../../types/state';
 import { Trainer } from '../../types/trainer.interface';
 import { User } from '../../types/user.interface';
@@ -10,11 +11,11 @@ export const getRegisterStatus = (state: State): RegisterStatus => state[NameSpa
 export const getCurrentUser = (state: State): User | Trainer | null => {
   const userState = state[NameSpace.UserData];
 
-  if (userState.user && userState.user.role !== null) {
+  if (userState.user?.role !== Role.Unknown) {
     return userState.user;
   }
 
-  if (userState.trainer && userState.trainer.role !== null) {
+  if (userState.trainer?.role !== Role.Unknown) {
     return userState.trainer;
   }
 

@@ -2,14 +2,16 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, RegisterStatus, roleRegisterRoutes } from '../../../const';
+import { APIRoute, AppRoute, AuthorizationStatus } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
 import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
-import { setRegisterStatus } from '../../user-process/user-process.slice';
+import { setAuthorizationStatus } from '../../user-process/user-process.slice';
 import CreateUserDto from '../../../dto/create-user.dto';
-import { RegisterUserTransferData } from '../../../types/register-transfer-data';
 import { Role } from '../../../types/role.enum';
 import { redirectToRoute } from '../../main-process/main-process.slice';
+import CreateTrainerDto from '../../../dto/create-trainer.dto';
+import { User } from '../../../types/user.interface';
+import { Trainer } from '../../../types/trainer.interface';
 
 export const checkAuthAction = createAsyncThunk<UserData | null, undefined, {
   dispatch: AppDispatch;
@@ -20,6 +22,7 @@ export const checkAuthAction = createAsyncThunk<UserData | null, undefined, {
   async (_arg, {dispatch, extra: api}) => {
     try{
       const {data} = await api.get<UserData>(APIRoute.Login);
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       return data;
     } catch(error) {
       return null;
@@ -44,6 +47,12 @@ export const loginAction = createAsyncThunk<UserData | null, AuthData, {
 
       dispatch(checkAuthAction());
 
+      if(response.data.role === Role.Trainer){
+        dispatch(redirectToRoute(`${AppRoute.TrainerRoom}/${response.data.id}`));
+      }
+
+      dispatch(redirectToRoute(AppRoute.Main));
+
       return response.data;
     } catch (error) {
       return null;
@@ -51,7 +60,7 @@ export const loginAction = createAsyncThunk<UserData | null, AuthData, {
   },
 );
 
-export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
+export const registerAction = createAsyncThunk<void, CreateUserDto | CreateTrainerDto,
 {
   dispatch: AppDispatch;
   state: State;
@@ -59,21 +68,10 @@ export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
 }>(
   'user/register',
   async (registerData, { dispatch, extra: api }) => {
-    try {
-      const response: AxiosResponse<CreateUserDto> = registerData.role === Role.Trainer
-        ? await api.post(APIRoute.RegisterTrainer, registerData)
-        : await api.post(APIRoute.RegisterUser, registerData);
+    const response: AxiosResponse<User | Trainer> = registerData.role === Role.Trainer
+      ? await api.post(APIRoute.RegisterTrainer, registerData)
+      : await api.post(APIRoute.RegisterUser, registerData);
 
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
-      dispatch(loginAction({ email: response.data.email, password: registerData.password }));
-
-      const targetRoute = roleRegisterRoutes[response.data.role];
-
-      if (targetRoute) {
-        dispatch(redirectToRoute(targetRoute));
-      }
-    } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.Unknown));
-    }
+    dispatch(loginAction({ email: response.data.email, password: registerData.password }));
   },
 );

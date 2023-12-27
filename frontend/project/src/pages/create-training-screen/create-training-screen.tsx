@@ -29,10 +29,10 @@ function CreateTrainingScreen(): JSX.Element {
   const nameRef = useRef<HTMLInputElement | null>(null);
 
   const [description, setDescription] = useState<string | null>(null);
-  const [selectedType, setType] = useState<WorkoutType | null>(null);
-  const [selectedDuration, setDuration] = useState<WorkoutDuration | null>(null);
-  const [selectedGender, setSelectedGender] = useState<Gender | null>(null);
-  const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
+  const [selectedType, setType] = useState<WorkoutType | undefined>(undefined);
+  const [selectedDuration, setDuration] = useState<WorkoutDuration | undefined>(undefined);
+  const [selectedGender, setSelectedGender] = useState<Gender | undefined>(undefined);
+  const [selectedLevel, setLevel] = useState<TrainingLevel | undefined>(undefined);
   const [selectedVideo, setVideo] = useState<string | null>(null);
   const [selectedCalories, setSelectedCalories] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
@@ -70,22 +70,22 @@ function CreateTrainingScreen(): JSX.Element {
   const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if(selectedType === null){
+    if(selectedType === undefined){
       setTypeError('Выберите тип тренировки');
       return;
     }
 
-    if(selectedLevel === null){
+    if(selectedLevel === undefined){
       setLevelError('Выберите уровень тренировки');
       return;
     }
 
-    if(selectedDuration === null){
+    if(selectedDuration === undefined){
       setDurationError('Сколько времени потратим');
       return;
     }
 
-    if(selectedGender === null){
+    if(selectedGender === undefined){
       setGenderError('Выберите пол');
       return;
     }
@@ -199,7 +199,7 @@ function CreateTrainingScreen(): JSX.Element {
                         <DropdownSelect
                           classType={`custom-select ${!isTypeDropdownOpen ? 'select--not-selected' : 'is-open'} ${typeError && 'is-invalid'}`} label={'Выберите тип тренировки'}
                           onValueChange={handleSpecializationChange}
-                          selectedValue={selectedType && capitalizeFirstLetter(selectedType)}
+                          selectedValue={selectedType ?? capitalizeFirstLetter(selectedType)}
                           object={Object.values(WorkoutType)}
                           onToggleDropdown={handleToggleTypeDropdown}
                           error={typeError}
@@ -217,8 +217,8 @@ function CreateTrainingScreen(): JSX.Element {
                         <DropdownSelect
                           classType={`custom-select ${!isDurationDropdownOpen ? 'select--not-selected' : 'is-open'} ${durationError && 'is-invalid'}`} label={'Сколько времени потратим'}
                           onValueChange={handleDurationChange}
-                          selectedValue={selectedDuration && capitalizeFirstLetter(selectedDuration)}
-                          object={Object.values(WorkoutDuration)}
+                          selectedValue={selectedDuration ?? capitalizeFirstLetter(selectedDuration)}
+                          object={Object.values(WorkoutDuration).filter((duration) => duration !== WorkoutDuration.Unknown)}
                           onToggleDropdown={handleDurationToggleDropdown}
                           error={durationError}
                         />
@@ -235,8 +235,8 @@ function CreateTrainingScreen(): JSX.Element {
                           classType={`custom-select ${!isLevelDropdownOpen ? 'select--not-selected' : 'is-open'} ${levelError && 'is-invalid'}`}
                           label={'Выберите уровень тренировки'}
                           onValueChange={handleLevelChange}
-                          selectedValue={selectedLevel && capitalizeFirstLetter(selectedLevel)}
-                          object={Object.values(TrainingLevel)}
+                          selectedValue={selectedLevel ?? capitalizeFirstLetter(selectedLevel)}
+                          object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                           onToggleDropdown={handleLevelToggleDropdown}
                           error={levelError}
                         />
@@ -249,7 +249,7 @@ function CreateTrainingScreen(): JSX.Element {
                           classChildType={'custom-toggle-radio create-training__radio'}
                           selectedValue={selectedGender}
                           onValueChange={handleSexChange}
-                          object={Object.values(Gender)}
+                          object={Object.values(Gender).filter((gender) => gender !== Gender.Unknown)}
                           error={genderError}
                         />
                       </div>

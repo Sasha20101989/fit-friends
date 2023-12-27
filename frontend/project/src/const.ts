@@ -142,8 +142,8 @@ export const isAuthorizationUnknown = (status: AuthorizationStatus, user: Traine
 
 export const RING_LOADER_COLOR = '#123abc';
 
-export const roleRegisterRoutes: Record<Role, AppRoute> = {
-  [Role.User]: AppRoute.RegisterUser,
+export const roleRegisterRoutes: Record<Role | string, AppRoute> = {
+  [Role.User]: AppRoute.Main,
   [Role.Trainer]: AppRoute.RegisterTrainer
 };
 
@@ -153,8 +153,8 @@ export const isRegister = (status: RegisterStatus) =>
 export const isRegisterUnknown = (status: RegisterStatus) =>
   status === RegisterStatus.Unknown;
 
-export function capitalizeFirstLetter(str: string): string {
-  if (str.length === 0) {
+export function capitalizeFirstLetter(str: string | undefined): string | undefined {
+  if (str === undefined || str.length === 0) {
     return str;
   }
 

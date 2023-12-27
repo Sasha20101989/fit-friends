@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useAppDispatch } from '../../hooks/index';
 import { changeCurrentUserReadiessToWorkout } from '../../store/user-process/user-process.slice';
 import { Role } from '../../types/role.enum';
@@ -12,7 +13,15 @@ type UserStatusProps = {
 function UserStatus({isFormEditable, currentUser}: UserStatusProps):JSX.Element | null {
   const dispatch = useAppDispatch();
 
-  let readness = false;
+  let readness;
+
+  if(currentUser.role === Role.User){
+    const user = currentUser as User;
+    readness = user.readinessForWorkout;
+  }else if(currentUser.role === Role.Trainer){
+    const trainer = currentUser as Trainer;
+    readness = trainer.personalTraining;
+  }
 
   const handleReadinessForWorkoutChange = () => {
     if(isFormEditable){

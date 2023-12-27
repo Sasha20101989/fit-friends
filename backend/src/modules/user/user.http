@@ -21,7 +21,7 @@ POST http://localhost:4000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "User555@example.com",
+  "email": "mail@mail.ru",
   "password": "123456"
 }
 
@@ -75,3 +75,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAb
 GET http://localhost:4000/users/65436ea167322ac60741efe5 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IlVzZXI1NDU2QGV4YW1wbGUuY29tIiwicGFzc3dvcmQiOiIxMjM0NTYiLCJpZCI6IjY1NDM2ZWEwNjczMjJhYzYwNzQxZWZjYyIsInJvbGUiOiLQv9C-0LvRjNC30L7QstCw0YLQtdC70YwiLCJpYXQiOjE2OTg5MjkzMjMsImV4cCI6MTY5ODkzMDIyM30.EEn38K2hsTdJRtVc0WKTVFkfroSYXJVEah2ICkd2h2Q
 ###
+
+## Отправка аватарки пользователю
+
+POST http://localhost:4000/users/658c109b3c4372f6d1109cc8/avatar HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="avatar"; filename="Снимок экрана 2023-11-14 212802.png"
+Content-Type: image/png
+
+< C:\Users\Test\Pictures\Screenshots\Снимок экрана 2023-11-14 212802.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

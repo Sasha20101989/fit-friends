@@ -2,7 +2,6 @@ import * as crypto from 'node:crypto';
 import * as jose from 'jose';
 import { plainToInstance, ClassConstructor } from 'class-transformer';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 import { Response } from 'express';
 import { Token } from '../../modules/token/types/token.enum.js';
 import { Sorting } from '../../types/sorting.enum.js';
@@ -16,6 +15,7 @@ import { UserQueryParams } from '../../modules/user/types/user-query-params.js';
 import { UserFilter } from '../../modules/user/types/user-filter.type.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
+import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;

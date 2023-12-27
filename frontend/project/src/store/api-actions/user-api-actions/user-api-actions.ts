@@ -40,7 +40,7 @@ export const editUserAction = createAsyncThunk<
   'user/editUser',
   async (userData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateUserDto>(APIRoute.Users, userData);
+      await api.put<User>(APIRoute.Users, userData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
     } catch (error) {
@@ -61,12 +61,29 @@ export const editTrainerAction = createAsyncThunk<
   'user/editTrainer',
   async (trainerData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateTrainerDto>(APIRoute.UpdateTrainer, trainerData);
+      await api.put<Trainer>(APIRoute.UpdateTrainer, trainerData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
     } catch (error) {
       dispatch(setRegisterStatus(RegisterStatus.Unknown));
     }
+  },
+);
+
+export const updateAvatarAction = createAsyncThunk<void, {userId: string; avatar: File}, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/updateAvatar',
+  async (data, {dispatch, extra: api}) => {
+    const postAvatarApiRoute = `${APIRoute.Users}/${data.userId}/avatar`;
+
+    const formData = new FormData();
+
+    formData.append('avatar', data.avatar);
+
+    await api.post(postAvatarApiRoute, formData);
   },
 );
 

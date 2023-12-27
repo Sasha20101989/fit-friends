@@ -50,7 +50,7 @@ export class TrainerEntity extends defaultClasses.TimeStamps {
   public location: Location;
 
   @prop({ required: false })
-  public backgroundImage: string;
+  public backgroundImage?: string;
 
   @prop({ required: false, enum: TrainingLevel })
   public trainingLevel: TrainingLevel;

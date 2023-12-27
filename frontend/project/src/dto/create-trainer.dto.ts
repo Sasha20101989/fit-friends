@@ -1,11 +1,10 @@
 import { Gender } from '../types/gender.enum';
+import { Location } from '../types/location.enum';
 import { Role } from '../types/role.enum';
 import { TrainingLevel } from '../types/training-level.enum';
-import { WorkoutDuration } from '../types/workout-duration.enum';
-import { Location } from '../types/location.enum';
 import { WorkoutType } from '../types/workout-type.enum';
 
-export default class CreateUserDto {
+export default class CreateTrainerDto {
   public name!: string;
   public email!: string;
   public avatar?: string;
@@ -18,8 +17,7 @@ export default class CreateUserDto {
   public backgroundImage?: string;
   public trainingLevel!: TrainingLevel;
   public workoutTypes!: WorkoutType[];
-  public workoutDuration!: WorkoutDuration;
-  public caloriesToBurn!: number;
-  public caloriesToSpend!: number;
-  public readinessForWorkout!: boolean;
+  public personalTraining!: boolean;
+  public trainerAchievements?: string;
+  public certificate!: string;
 }

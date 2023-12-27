@@ -1,3 +1,5 @@
+export const STATIC_UPLOAD_ROUTE = '/upload';
+export const STATIC_FILES_ROUTE = '/static';
 export const DEFAULT_STATIC_IMAGES = [
   'training-1.jpg',
   'training-2.jpg',
@@ -6,5 +8,7 @@ export const DEFAULT_STATIC_IMAGES = [
 ];
 
 export const STATIC_RESOURCE_FIELDS = [
-  'background'
+  'avatar',
+  'video',
+  'backgroundImage'
 ];

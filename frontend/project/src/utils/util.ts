@@ -1,3 +1,8 @@
+import { BaseUser } from '../types/base-user.type';
+import { Role } from '../types/role.enum';
+import { Trainer } from '../types/trainer.interface';
+import { User } from '../types/user.interface';
+
 export function formatDateString(inputDate: string): string {
   const date = new Date(inputDate);
 
@@ -30,3 +35,11 @@ export const getMonthNameInGenitiveCase = (date = new Date()) =>
     month: 'long',
     day: 'numeric',
   }).split(' ')[1];
+
+export function createUser<T extends BaseUser>(user: Omit<User, keyof BaseUser> & T): User {
+  return { ...user, role: Role.User } as User;
+}
+
+export function createTrainer<T extends BaseUser>(trainer: Omit<Trainer, keyof BaseUser> & T): Trainer {
+  return { ...trainer, role: Role.Trainer } as Trainer;
+}

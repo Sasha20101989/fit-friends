@@ -7,8 +7,8 @@ import PersonalAccountCoach from '../../components/personal-account-coach/person
 import UserEditButton from '../../components/user-edit-button/user-edit-button';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { editTrainerAction, editUserAction, fetchCurrentUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { editTrainerAction, editUserAction, fetchCurrentUserAction, updateAvatarAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import PersonalAccountUser from '../../components/personal-account-user/personal-account-user';
 import { Role } from '../../types/role.enum';
 import Layout from '../../components/layout/layout';
@@ -43,6 +43,8 @@ function UserProfileScreen(): JSX.Element {
   const [descriptionError, setDescriptionError] = useState('');
 
   const currentUser = useAppSelector(getCurrentUser);
+
+  const [image, setImage] = useState<File | null>(null);
 
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
@@ -148,8 +150,7 @@ function UserProfileScreen(): JSX.Element {
           workoutTypes: trainer.workoutTypes,
           personalTraining: trainer.personalTraining,
           name: trainer.name,
-          avatar: trainer.avatar,
-          location: trainer.location
+          location: trainer.location,
         };
 
         dispatch(editTrainerAction(trainerData));
@@ -169,14 +170,32 @@ function UserProfileScreen(): JSX.Element {
           workoutTypes: user.workoutTypes,
           readinessForWorkout: user.readinessForWorkout,
           name: user.name,
-          avatar: user.avatar,
           location: user.location
         };
 
         dispatch(editUserAction(userData));
       }
     }
+
+    setImage(null);
   };
+
+  const handleImageUpload = (evt: ChangeEvent<HTMLInputElement>) => {
+    if (!evt.target.files) {
+      return;
+    }
+
+    const file = evt.target.files[0];
+    setImage(file);
+    //dispatch(setCurrentUserAvatar(file));
+  };
+
+
+  function handleImageSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    if(image && currentUser && currentUser.id){
+      dispatch(updateAvatarAction({userId:currentUser.id, avatar: image}));
+    }
+  }
 
   return (
     <Layout>
@@ -186,8 +205,8 @@ function UserProfileScreen(): JSX.Element {
             <h1 className="visually-hidden">Личный кабинет</h1>
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
-                <UserAvatar currentUser={currentUser}/>
-                {currentUser.role === Role.Trainer && isFormEditable && <UserControls />}
+                <UserAvatar currentUser={currentUser} onImageUpload={handleImageUpload} image={image}/>
+                {isFormEditable && <UserControls onImageSubmit={handleImageSubmit}/>}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>
@@ -201,7 +220,7 @@ function UserProfileScreen(): JSX.Element {
                   label={'Локация'}
                   selectedValue={`ст. м. ${currentUser.location ? capitalizeFirstLetter(currentUser.location) : ''}`}
                   onValueChange={handleLocationChange}
-                  object={Object.values(Location)}
+                  object={Object.values(Location).filter((location) => location !== Location.Unknown)}
                   onToggleDropdown={handleToggleLocationDropdown}
                   error={locationError}
                 />
@@ -210,7 +229,7 @@ function UserProfileScreen(): JSX.Element {
                   label={'Пол'}
                   selectedValue={currentUser.gender ? capitalizeFirstLetter(currentUser.gender) : ''}
                   onValueChange={handleSexChange}
-                  object={Object.values(Gender)}
+                  object={Object.values(Gender).filter((gender) => gender !== Gender.Unknown)}
                   onToggleDropdown={handleToggleGenderDropdown}
                   error={genderError}
                 />
@@ -219,7 +238,7 @@ function UserProfileScreen(): JSX.Element {
                   label={'Уровень'}
                   selectedValue={currentUser.trainingLevel ? capitalizeFirstLetter(currentUser.trainingLevel) : ''}
                   onValueChange={handleLevelChange}
-                  object={Object.values(TrainingLevel)}
+                  object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                   onToggleDropdown={handleToggleLevelDropdown}
                   error={levelError}
                 />

@@ -38,18 +38,18 @@ export default class CreateTrainerDto {
   @IsOptional()
   public birthDate?: string;
 
+  @IsOptional()
   @MinLength(DESCRIPTION_CONSTRAINTS.MIN_LENGTH, { message: `Minimum description length must be ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH}` })
   @MaxLength(DESCRIPTION_CONSTRAINTS.MAX_LENGTH, { message: `Maximum description length must be ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH}` })
-  @IsOptional()
   public description?: string;
 
   @IsNotEmpty({ message: 'Location is required' })
   @IsEnum(Location, { message: 'Invalid location' })
   public location!: Location;
 
-  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
   @IsOptional()
-  public backgroundImage!: string;
+  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
+  public backgroundImage?: string;
 
   @IsOptional()
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
@@ -63,9 +63,9 @@ export default class CreateTrainerDto {
   @IsOptional()
   public personalTraining!: boolean;
 
+  @IsOptional()
   @MinLength(ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH, { message: `Minimum achievements length must be ${ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH}` })
   @MaxLength(ARCHIEVEMENTS_CONSTRAINTS.MAX_LENGTH, { message: `Maximum achievements length must be ${ARCHIEVEMENTS_CONSTRAINTS.MAX_LENGTH}` })
-  @IsOptional()
   public trainerAchievements?: string;
 
   @IsOptional()

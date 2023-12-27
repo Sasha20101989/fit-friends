@@ -1,6 +1,5 @@
 import {Navigate} from 'react-router-dom';
 import {AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isAuthorizationUnknown} from '../../const';
-import { Role } from '../../types/role.enum';
 import Loading from '../loading/loading';
 import { useAppSelector } from '../../hooks/index';
 import { getCurrentUser } from '../../store/user-process/user-process.selectors';
@@ -16,7 +15,7 @@ function PrivateRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element | n
 
   const currentUser = useAppSelector(getCurrentUser);
 
-  if((currentUser && currentUser.role === Role.Trainer || currentUser && currentUser.role === Role.User) && registerStatus === RegisterStatus.InProgress){
+  if(registerStatus === RegisterStatus.InProgress){
     return children;
   }
 
@@ -24,7 +23,7 @@ function PrivateRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element | n
     return <Loading />;
   }
 
-  if((currentUser && currentUser.role === Role.Trainer || currentUser && currentUser.role === Role.User) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
+  if(isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
     return <Navigate to={AppRoute.Main}/>;
   }
 

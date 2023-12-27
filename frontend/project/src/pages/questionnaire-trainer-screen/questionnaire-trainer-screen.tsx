@@ -1,11 +1,19 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
 import Loading from '../../components/loading/loading';
-import { Trainer } from '../../types/trainer.interface.js';
+import { Trainer } from '../../types/trainer.interface';
+import { addCurrentUserSpecialization, changeCurrentUserLevel, removeCurrentUserSpecialization, setCurrentUserCertificate, setCurrentUserDescription } from '../../store/user-process/user-process.slice';
+import { WorkoutType } from '../../types/workout-type.enum';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { DESCRIPTION_CONSTRAINTS } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getCurrentUser, getSubmittingStatus } from '../../store/user-process/user-process.selectors';
+import QuestionnaireCoachReandiness from '../../components/questionnaire-coach-reandiness/questionnaire-coach-reandiness';
+import CreateTrainerDto from '../../dto/create-trainer.dto.js';
+import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 
 const errorStyle = {
   color: '#e4001b',
@@ -14,25 +22,107 @@ const errorStyle = {
 };
 
 function QuestionnaireTrainerScreen(): JSX.Element {
-  const {
-    specializationsError,
-    descriptionError,
-    certificateError,
-    levelError,
-    isSubmitting,
-    currentUser,
-    handleDescriptionChange,
-    handleSpecializationChange,
-    handleReadinessForWorkoutChange,
-    handleCertificateChange,
-    handleTrainerQuestion,
-    handleLevelChange } = useRegisterForm();
+  const dispatch = useAppDispatch();
+
+  const currentUser = useAppSelector(getCurrentUser);
+
+  const isSubmitting = useAppSelector(getSubmittingStatus);
+
+  const [levelError, setLevelError] = useState('');
+  const [certificateError, setCertificateError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+  const [specializationsError, setSpecializationsError] = useState('');
+
+  const onTrainerQuestion = (userData: CreateTrainerDto) => {
+    dispatch(registerAction(userData));
+  };
+
+  const handleTrainerQuestion = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    const trainer = currentUser as Trainer;
+
+    if(trainer && trainer.workoutTypes.length === 0){
+      setSpecializationsError('Выберите хотябы один вид тренировки');
+      return;
+    }
+
+    if(trainer.certificate === ''){
+      setCertificateError('Выберите файл в предложенном формате');
+      return;
+    }
+
+    if (trainer.description !== undefined &&
+      trainer.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
+      trainer.description !== undefined &&
+      trainer.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    ){
+      setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
+      return;
+    }
+
+    if (trainer &&
+        trainer.description !== undefined &&
+        trainer.trainingLevel !== null &&
+        trainer.certificate !== ''
+    ){
+      const userData: CreateTrainerDto = {
+        ...trainer,
+        description: trainer.description,
+        workoutTypes: trainer.workoutTypes,
+        trainingLevel: trainer.trainingLevel,
+        personalTraining: trainer.personalTraining,
+        certificate: trainer.certificate
+      };
+
+      onTrainerQuestion(userData);
+    }
+  };
+
+  const handleLevelChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newLevel = 'value' in evt.target ?
+      (evt.target as HTMLInputElement).value as TrainingLevel :
+        (evt.target as HTMLLIElement).dataset.value as TrainingLevel;
+    setLevelError('');
+    dispatch(changeCurrentUserLevel(newLevel));
+  };
+
+  const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = evt.target.value as WorkoutType;
+    setSpecializationsError('');
+
+    if (evt.target.checked) {
+      dispatch(addCurrentUserSpecialization(selectedType));
+    } else {
+      dispatch(removeCurrentUserSpecialization(selectedType));
+    }
+  };
+
+  const handleDescriptionChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const descriptionValue = evt.target.value;
+    dispatch(setCurrentUserDescription(descriptionValue));
+    setDescriptionError('');
+  };
+
+  const handleCertificateChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const file = evt.target.files?.[0];
+
+    const isJpegOrPngOrPdf = file?.type === 'image/jpeg' || file?.type === 'image/png' || file?.type === 'application/pdf';
+
+    if (isJpegOrPngOrPdf) {
+      const fileName = file.name;
+      setCertificateError('');
+      dispatch(setCurrentUserCertificate(fileName));
+    } else {
+      setCertificateError('Выбранный файл должен быть формата JPEG (jpg) или PNG (png) или PDF (pdf).');
+    }
+  };
+
+  const currentTrainer = currentUser as Trainer;
 
   if(!currentUser){
     return <Loading/>;
   }
-
-  const trainer = currentUser as Trainer;
 
   return(
     <Layout includeHeader={false}>
@@ -52,13 +142,13 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       classLabelType={'questionnaire-coach__legend'}
                       label={'Ваш уровень'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-coach__radio'}
-                      selectedValue={trainer.trainingLevel}
+                      selectedValue={currentTrainer.trainingLevel}
                       onValueChange={handleLevelChange}
-                      object={Object.values(TrainingLevel)}
+                      object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                       error={levelError}
                     />
                     <div className={`questionnaire-coach__block ${certificateError && 'is-invalid'}`}>
-                      <span className="questionnaire-coach__legend">{trainer.certificate ? trainer.certificate : 'Ваши дипломы и сертификаты'}</span>
+                      <span className="questionnaire-coach__legend">{currentTrainer.certificate ? currentTrainer.certificate : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>
                           <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
@@ -78,7 +168,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                           <textarea
                             name="description"
                             placeholder=" "
-                            value={trainer.description ?? ''}
+                            value={currentTrainer.description ?? ''}
                             onChange={handleDescriptionChange}
                             required
                           >
@@ -86,23 +176,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                           {descriptionError && <span style={errorStyle}>{descriptionError}</span>}
                         </label>
                       </div>
-                      <div className="questionnaire-coach__checkbox">
-                        <label>
-                          <input
-                            type="checkbox"
-                            value="individual-training"
-                            name="individual-training"
-                            checked={trainer.personalTraining}
-                            onChange={handleReadinessForWorkoutChange}
-                          />
-                          <span className="questionnaire-coach__checkbox-icon">
-                            <svg width="9" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-check"></use>
-                            </svg>
-                          </span>
-                          <span className="questionnaire-coach__checkbox-label">Хочу дополнительно индивидуально тренировать</span>
-                        </label>
-                      </div>
+                      <QuestionnaireCoachReandiness/>
                     </div>
                   </div>
                   <button className="btn questionnaire-coach__button" type="submit" disabled={isSubmitting}>Продолжить</button>
