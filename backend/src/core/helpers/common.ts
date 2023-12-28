@@ -52,14 +52,22 @@ export function transformProperty(
     });
 }
 
-export function transformObject(properties: string[], staticPath: string, uploadPath: string, data:UnknownRecord) {
-  return properties
-    .forEach((property) => {
-      transformProperty(property, data, (target: UnknownRecord) => {
+export function transformObject(properties: string[], staticPath: string, uploadPath: string, data: UnknownRecord) {
+  properties.forEach((property) => {
+    transformProperty(property, data, (target: UnknownRecord) => {
+      if (property === 'backgroundImage') {
+        const isDefaultImage = DEFAULT_STATIC_IMAGES.includes(target[property] as string);
+        const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+        target[property] = isDefaultImage
+          ? `${rootPath}/${target[property]}`
+          : `${rootPath}/img/content/user-card-coach/${target[property]}`;
+      } else {
         const rootPath = DEFAULT_STATIC_IMAGES.includes(target[property] as string) ? staticPath : uploadPath;
         target[property] = `${rootPath}/${target[property]}`;
-      });
+      }
     });
+  });
 }
 
 export function getRandomBackgroundImage(): string {

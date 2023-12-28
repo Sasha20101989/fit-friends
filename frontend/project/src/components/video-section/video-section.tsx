@@ -18,7 +18,7 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element | null {
     <div className="training-video">
       <h2 className="training-video__title">Видео</h2>
       <div className="training-video__video">
-        <Image imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
+        <Image imageSrc={'video-thumbnail.png'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
         <button className="training-video__play-button btn-reset" disabled={!isInBalance}>
           <svg width="18" height="30" aria-hidden="true">
             <use xlinkHref="#icon-arrow"></use>

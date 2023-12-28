@@ -88,7 +88,19 @@ export const createTrainingAction = createAsyncThunk<Training | null, CreateTrai
   'data/createTraining',
   async (trainingData: CreateTrainingDto, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.post<Training>(`${APIRoute.Trainings}/trainer-room`, trainingData);
+      const { video: {name}, ...restParams } = trainingData;
+      const { data } = await api.post<Training>(`${APIRoute.Trainings}/trainer-room`, {...restParams, video: name});
+
+      if(data.id){
+        const postVideoApiRoute = `${APIRoute.Trainings}/${data.id}/video`;
+
+        const formData = new FormData();
+
+        formData.append('video', trainingData.video);
+
+        await api.post(postVideoApiRoute, formData);
+      }
+
       return data;
     } catch (error) {
       return null;

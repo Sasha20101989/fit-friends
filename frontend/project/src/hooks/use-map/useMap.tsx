@@ -38,7 +38,7 @@ function useMap(
       setMap(instance);
       isRenderedRef.current = true;
     }
-  }, [mapRef, station, isRenderedRef, locationCoordinates]);
+  }, [mapRef, station, isRenderedRef]);
 
   useEffect(() => {
     if (map !== null && station && station !== Location.Unknown) {
@@ -48,7 +48,7 @@ function useMap(
         lng: coordinates.longitude,
       });
     }
-  }, [map, station, locationCoordinates]);
+  }, [map, station]);
 
   return map;
 }

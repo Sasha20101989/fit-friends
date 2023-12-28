@@ -125,10 +125,9 @@ function UserProfileScreen(): JSX.Element {
       return;
     }
 
-    if (currentUser.description &&
-      currentUser.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-      currentUser.description &&
-      currentUser.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if(
+      (currentUser.description && currentUser.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (currentUser.description && currentUser.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
@@ -218,7 +217,7 @@ function UserProfileScreen(): JSX.Element {
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''} ${locationError && 'is-invalid'}`}
                   label={'Локация'}
-                  selectedValue={`ст. м. ${currentUser.location ? capitalizeFirstLetter(currentUser.location) : ''}`}
+                  selectedValue={`ст. м. ${capitalizeFirstLetter(currentUser.location) || ''}`}
                   onValueChange={handleLocationChange}
                   object={Object.values(Location).filter((location) => location !== Location.Unknown)}
                   onToggleDropdown={handleToggleLocationDropdown}

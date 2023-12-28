@@ -52,10 +52,9 @@ function QuestionnaireTrainerScreen(): JSX.Element {
       return;
     }
 
-    if (trainer.description !== undefined &&
-      trainer.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-      trainer.description !== undefined &&
-      trainer.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if(
+      (trainer.description && trainer.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (trainer.description && trainer.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;

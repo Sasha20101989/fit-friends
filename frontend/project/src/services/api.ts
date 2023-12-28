@@ -6,7 +6,7 @@ import {StatusCodes} from 'http-status-codes';
 import { toast } from 'react-toastify';
 import { ApiErrorType, CustomError, ParsedResponse, parseResponse, shouldDisplayError, showToast } from './error-handler';
 
-const BACKEND_URL = 'http://localhost:4000';
+export const BACKEND_URL = 'http://localhost:4000';
 const REQUEST_TIMEOUT = 5000;
 
 export const createApi = (): AxiosInstance => {

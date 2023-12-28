@@ -33,7 +33,7 @@ function CreateTrainingScreen(): JSX.Element {
   const [selectedDuration, setDuration] = useState<WorkoutDuration | undefined>(undefined);
   const [selectedGender, setSelectedGender] = useState<Gender | undefined>(undefined);
   const [selectedLevel, setLevel] = useState<TrainingLevel | undefined>(undefined);
-  const [selectedVideo, setVideo] = useState<string | null>(null);
+  const [selectedVideo, setVideo] = useState<File | null>(null);
   const [selectedCalories, setSelectedCalories] = useState<number>(0);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
@@ -90,16 +90,15 @@ function CreateTrainingScreen(): JSX.Element {
       return;
     }
 
-    if (description &&
-      description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-      description &&
-      description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if(
+      (description && description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (description && description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
     }
 
-    if(selectedVideo === null || selectedVideo === ''){
+    if(selectedVideo === null || selectedVideo === null){
       setVideoError('Выберите файл в предложенном формате');
       return;
     }
@@ -160,7 +159,7 @@ function CreateTrainingScreen(): JSX.Element {
     const isMovOrAviOrMp4 = file?.type === 'video/quicktime' || file?.type === 'video/avi' || file?.type === 'video/mp4';
 
     if (isMovOrAviOrMp4) {
-      setVideo(file.name);
+      setVideo(file);
       setVideoError('');
     } else {
       setVideoError('Выбранный файл должен быть формата (mov) или (avi) или (mp4).');
@@ -274,7 +273,7 @@ function CreateTrainingScreen(): JSX.Element {
                       <h2 className="create-training__legend">Загрузите видео-тренировку</h2>
                       <div className="drag-and-drop create-training__drag-and-drop">
                         <label>
-                          <span className="drag-and-drop__label" tabIndex={0}>{selectedVideo ? selectedVideo : 'Загрузите сюда файлы формата MOV, AVI или MP4'}
+                          <span className="drag-and-drop__label" tabIndex={0}>{selectedVideo ? selectedVideo.name : 'Загрузите сюда файлы формата MOV, AVI или MP4'}
                             <svg width="20" height="20" aria-hidden="true">
                               <use xlinkHref="#icon-import-video"></use>
                             </svg>

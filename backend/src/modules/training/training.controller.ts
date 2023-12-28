@@ -27,6 +27,8 @@ import { TrainingQueryParams } from './types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
+import { UploadTrainingVideoRdo } from './rdo/upload-video-training.rdo.js';
+import { UploadVideoMiddleware } from '../../core/middlewares/upload-video.middleware.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -86,6 +88,22 @@ export default class TrainingController extends Controller {
         new PrivateRouteMiddleware()
       ]
     });
+    this.addRoute({
+      path: '/:trainingId/video',
+      method: HttpMethod.Post,
+      handler: this.uploadVideo,
+      middlewares: [
+        new ValidateObjectIdMiddleware('trainingId'),
+        new UploadVideoMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'video'),
+      ]
+    });
+  }
+
+  public async uploadVideo(req: Request, res: Response) {
+    const {trainingId} = req.params;
+    const uploadFile = {video: req.file?.filename};
+    await this.trainingService.update(trainingId, uploadFile);
+    this.created(res, fillDTO(UploadTrainingVideoRdo, uploadFile));
   }
 
   public async index(

@@ -24,7 +24,7 @@ function PersonalAccountCoach({userId, avatar}: PersonalAccountCoachProps):JSX.E
         ))}
         <div className="personal-account-coach__calendar">
           <div className="thumbnail-spec-gym">
-            <Image sourceName='thumbnail-spec-gym__image' imageSrc={avatar} width={330} height={190} alt={'аватар пользователя'}/>
+            <Image sourceName='thumbnail-spec-gym__image' imageSrc={'static/training-1.jpg'} width={330} height={190} alt={'ближайший зал'}/>
             <p className="thumbnail-spec-gym__type">Ближайший зал</p>
             <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }} >
               <h3 className="thumbnail-spec-gym__title">Скоро тут будет интересно</h3>

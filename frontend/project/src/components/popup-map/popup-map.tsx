@@ -43,7 +43,7 @@ function PopupMap({ station, onClose }: PopupMapProps): JSX.Element | null {
         markers.push(marker);
       }
     }
-  }, [map, station, locationCoordinates]);
+  }, [map, station]);
 
   useEffect(() => {
     const handleKeyDown = (evt: KeyboardEvent) => {

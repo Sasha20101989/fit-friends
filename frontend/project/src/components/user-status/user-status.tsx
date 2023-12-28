@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useAppDispatch } from '../../hooks/index';
 import { changeCurrentUserReadiessToWorkout } from '../../store/user-process/user-process.slice';
 import { Role } from '../../types/role.enum';

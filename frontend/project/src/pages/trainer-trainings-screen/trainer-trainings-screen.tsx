@@ -80,7 +80,7 @@ function TrainerTrainingsScreen(): JSX.Element {
     if (id) {
       dispatch(fetchTrainerTrainingsAction(queryParams));
     }
-  }, [id, queryParams]);
+  }, [dispatch, id, queryParams]);
 
   return(
     <Layout>
@@ -165,27 +165,29 @@ function TrainerTrainingsScreen(): JSX.Element {
                   <div className="my-training-form__block my-training-form__block--duration">
                     <h4 className="my-training-form__block-title">Длительность</h4>
                     <ul className="my-training-form__check-list">
-                      {Object.values(WorkoutDuration).map((duration) => (
-                        <li key={duration} className="my-training-form__check-list-item">
-                          <div className="custom-toggle custom-toggle--checkbox">
-                            <label>
-                              <input
-                                type="checkbox"
-                                name="duration"
-                                value={duration}
-                                checked={selectedDuration === duration}
-                                onChange={(evt) => handleDurationChange(evt, setDuration, 'workoutDuration')}
-                              />
-                              <span className="custom-toggle__icon">
-                                <svg width="9" height="6" aria-hidden="true">
-                                  <use xlinkHref="#arrow-check"></use>
-                                </svg>
-                              </span>
-                              <span className="custom-toggle__label">{duration}</span>
-                            </label>
-                          </div>
-                        </li>
-                      ))}
+                      {Object.values(WorkoutDuration)
+                        .filter((duration) => duration !== WorkoutDuration.Unknown)
+                        .map((duration) => (
+                          <li key={duration} className="my-training-form__check-list-item">
+                            <div className="custom-toggle custom-toggle--checkbox">
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  name="duration"
+                                  value={duration}
+                                  checked={selectedDuration === duration}
+                                  onChange={(evt) => handleDurationChange(evt, setDuration, 'workoutDuration')}
+                                />
+                                <span className="custom-toggle__icon">
+                                  <svg width="9" height="6" aria-hidden="true">
+                                    <use xlinkHref="#arrow-check"></use>
+                                  </svg>
+                                </span>
+                                <span className="custom-toggle__label">{duration}</span>
+                              </label>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 </form>
