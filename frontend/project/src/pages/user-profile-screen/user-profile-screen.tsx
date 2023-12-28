@@ -65,7 +65,7 @@ function UserProfileScreen(): JSX.Element {
   }
 
   const contentComponent = currentUser && currentUser.role === Role.Trainer ? (
-    <PersonalAccountCoach userId={id} avatar={currentUser.avatar ?? ''} />
+    <PersonalAccountCoach userId={id}/>
   ) : (
     <PersonalAccountUser />
   );

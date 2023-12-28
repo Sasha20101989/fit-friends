@@ -41,8 +41,8 @@ function OrderItem({ order }: OrderItemProps): JSX.Element | null {
         <div className="thumbnail-training__inner">
           <Image imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
           <p className="thumbnail-training__price">
-            <span className="thumbnail-training__price-value">{price === 0 ? 'Бесплатно' : `${price} ₽`}</span>
-            <span>₽</span>
+            <span className="thumbnail-training__price-value">{price === 0 ? 'Бесплатно' : price}</span>
+            {price !== 0 && <span>₽</span>}
           </p>
           <h2 className="thumbnail-training__title">{name}</h2>
           <div className="thumbnail-training__info">

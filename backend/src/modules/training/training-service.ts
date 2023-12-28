@@ -109,12 +109,12 @@ export default class TrainingService implements TrainingServiceInterface {
   }
 
   private applyFilters(query: TrainingQueryParams, filter: TrainingFilter): void {
-    if (query.minPrice !== undefined) {
-      filter.price = { $gte: query.minPrice };
-    }
-
     if (query.isSpecial !== undefined) {
       filter.specialOffer = query.isSpecial;
+    }
+
+    if (query.minPrice !== undefined) {
+      filter.price = { $gte: query.minPrice };
     }
 
     if (query.maxPrice !== undefined) {
@@ -135,11 +135,15 @@ export default class TrainingService implements TrainingServiceInterface {
       filter.calories.$lte = query.maxCalories;
     }
 
-    if (query.rating !== undefined) {
-      const rating = parseInt(query.rating, 10);
-      if (Number.isInteger(rating) && rating >= 0 && rating <= 5) {
-        filter.rating = rating;
+    if (query.minRating !== undefined) {
+      filter.rating = { $gte: query.minRating };
+    }
+
+    if (query.maxRating !== undefined) {
+      if (!filter.rating) {
+        filter.rating = {};
       }
+      filter.rating.$lte = query.maxRating;
     }
 
     if (query.trainer !== undefined) {

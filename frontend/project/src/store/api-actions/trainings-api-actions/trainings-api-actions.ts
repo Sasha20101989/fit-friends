@@ -18,6 +18,8 @@ export interface FetchTrainingsParams {
   minCalories?: number;
   maxCalories?: number;
   rating?: string;
+  minRating?: number;
+  maxRating?: number;
   workoutDuration?: WorkoutDuration[];
   workoutTypes?: WorkoutType[];
   sortByPrice?: Sorting;

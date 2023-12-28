@@ -49,9 +49,6 @@ export class TrainerEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, enum: Location })
   public location: Location;
 
-  @prop({ required: false })
-  public backgroundImage?: string;
-
   @prop({ required: false, enum: TrainingLevel })
   public trainingLevel: TrainingLevel;
 
@@ -78,7 +75,6 @@ export class TrainerEntity extends defaultClasses.TimeStamps {
     this.birthDate = trainerData.birthDate;
     this.description = trainerData.description;
     this.location = trainerData.location;
-    this.backgroundImage = trainerData.backgroundImage;
     this.trainingLevel = trainerData.trainingLevel;
     this.workoutTypes = trainerData.workoutTypes;
     this.certificate = trainerData.certificate;

@@ -51,9 +51,6 @@ export class UserEntity extends defaultClasses.TimeStamps {
   @prop({ required: true, enum: Location })
   public location: Location;
 
-  @prop({ required: false })
-  public backgroundImage?: string;
-
   @prop({ required: false, enum: TrainingLevel })
   public trainingLevel: TrainingLevel;
 
@@ -86,7 +83,6 @@ export class UserEntity extends defaultClasses.TimeStamps {
     this.birthDate = userData.birthDate;
     this.description = userData.description;
     this.location = userData.location;
-    this.backgroundImage = userData.backgroundImage;
     this.trainingLevel = userData.trainingLevel;
     this.workoutTypes = userData.workoutTypes;
     this.workoutDuration = userData.workoutDuration;

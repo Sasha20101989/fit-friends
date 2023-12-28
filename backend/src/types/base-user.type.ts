@@ -10,7 +10,6 @@ export type BaseUser = {
   gender: Gender;
   birthDate?: string;
   location: Location;
-  backgroundImage: string;
   description?: string;
   trainingLevel: TrainingLevel;
   workoutTypes: WorkoutType[];

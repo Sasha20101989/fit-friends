@@ -15,7 +15,8 @@ import { UserQueryParams } from '../../modules/user/types/user-query-params.js';
 import { UserFilter } from '../../modules/user/types/user-filter.type.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
-import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
+import { DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE, DEFAULT_STATIC_CERTIFICATES_IMAGES, DEFAULT_STATIC_CERTIFICATES_ROUTE, DEFAULT_STATIC_COACH_AVATAR_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES_ROUTE, DEFAULT_STATIC_USER_AVATAR_IMAGES } from '../../app/rest.const.js';
+import { Role } from '../../types/role.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -56,23 +57,51 @@ export function transformObject(properties: string[], staticPath: string, upload
   properties.forEach((property) => {
     transformProperty(property, data, (target: UnknownRecord) => {
       if (property === 'backgroundImage') {
-        const isDefaultImage = DEFAULT_STATIC_IMAGES.includes(target[property] as string);
+        const isDefaultImage = DEFAULT_STATIC_TRAINING_IMAGES.includes(target[property] as string);
         const rootPath = isDefaultImage ? staticPath : uploadPath;
 
         target[property] = isDefaultImage
-          ? `${rootPath}/${target[property]}`
-          : `${rootPath}/img/content/user-card-coach/${target[property]}`;
-      } else {
-        const rootPath = DEFAULT_STATIC_IMAGES.includes(target[property] as string) ? staticPath : uploadPath;
-        target[property] = `${rootPath}/${target[property]}`;
+          ? `${rootPath}${DEFAULT_STATIC_TRAINING_IMAGES_ROUTE}/${target[property]}`
+          : `${rootPath}/${target[property]}`;
+      } else if (property === 'certificate') {
+        const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(target[property] as string);
+        const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+        target[property] = isDefaultImage
+          ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${target[property]}`
+          : `${rootPath}/${target[property]}`;
+      } else if (property === 'avatar') {
+        if(data.role === Role.Trainer){
+          const isDefaultImage = DEFAULT_STATIC_COACH_AVATAR_IMAGES.includes(target[property] as string);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+          target[property] = isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE}/${target[property]}`
+            : `${rootPath}/${target[property]}`;
+        }
       }
     });
   });
 }
 
 export function getRandomBackgroundImage(): string {
-  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_IMAGES.length);
-  return DEFAULT_STATIC_IMAGES[randomIndex];
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_TRAINING_IMAGES.length);
+  return DEFAULT_STATIC_TRAINING_IMAGES[randomIndex];
+}
+
+export function getRandomCertificateImage(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_TRAINING_IMAGES.length);
+  return DEFAULT_STATIC_TRAINING_IMAGES[randomIndex];
+}
+
+export function getRandomCoachAvatar(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_COACH_AVATAR_IMAGES.length);
+  return DEFAULT_STATIC_COACH_AVATAR_IMAGES[randomIndex];
+}
+
+export function getRandomUserAvatar(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_USER_AVATAR_IMAGES.length);
+  return DEFAULT_STATIC_USER_AVATAR_IMAGES[randomIndex];
 }
 
 export function calculateSum<T>(array: T[], getValue: (item: T) => number): number {
