@@ -34,7 +34,3 @@ export const orderData = createSlice({
       });
   },
 });
-
-export const {
-
-} = orderData.actions;

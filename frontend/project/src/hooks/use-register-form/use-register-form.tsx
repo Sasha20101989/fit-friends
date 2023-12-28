@@ -146,10 +146,9 @@ function useRegisterForm(){
       return;
     }
 
-    if (descriptionRef.current !== null &&
-        descriptionRef.current.value.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH ||
-        descriptionRef.current !== null &&
-        descriptionRef.current.value.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH
+    if(
+      (descriptionRef.current !== null && descriptionRef.current.value.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (descriptionRef.current !== null && descriptionRef.current.value.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ){
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;

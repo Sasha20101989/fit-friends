@@ -47,7 +47,7 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
             disabled={!isInBalance}
           >
           Приступить
-        </button>
+          </button>
         ) : (
           <div className="training-video__edit-buttons">
             <button className="btn" type="button">Сохранить</button>
