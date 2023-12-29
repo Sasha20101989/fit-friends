@@ -25,9 +25,9 @@ import { generateRandomUser,
 } from './random.js';
 import { Request } from '../request/types/request.type.js';
 import { Review } from '../review/types/review.type.js';
-import { Notification } from '../notification/types/notification.type.js';
-import { generateNotification, getRandomBackgroundImage, getRandomCertificateImage, getRandomCoachAvatar, getRandomUserAvatar } from '../../core/helpers/index.js';
+import { getRandomBackgroundImage, getRandomCertificateImages, getRandomCoachAvatar, getRandomUserAvatar } from '../../core/helpers/index.js';
 import { RequestStatus } from '../request/types/request-status.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
 
 const generateTrainingOrders = (trainings: Training[], users: User[]): TrainingOrder[] =>
   trainings.map((training) => {
@@ -86,7 +86,7 @@ const generateTrainers = (numberOfTrainers: number): Trainer[] => {
       avatar: getRandomCoachAvatar(),
       trainingLevel: generateRandomTrainingLevel(),
       workoutTypes: generateRandomWorkoutTypes(3),
-      certificate: getRandomCertificateImage(),
+      certificates: getRandomCertificateImages(3),
       description: 'Моя любимая фраза: Ты будешь тренироваться до тех пор пока я не вспотею.',
       personalTraining: generateRandomBoolean()
     };
@@ -137,7 +137,10 @@ const generateRequests = (numberOfRequests: number): Request[] => {
       status,
       requestType,
     };
-    requests.push(request);
+
+    if(request.requestType !== RequestType.Friend){
+      requests.push(request);
+    }
   }
   return requests;
 };
@@ -156,25 +159,10 @@ const generateReviews = (numberOfReviews: number): Review[] => {
   return reviews;
 };
 
-const generateNotifications = (numberOfReviews: number): Notification[] => {
-  const notifications: Notification[] = [];
-  for (let i = 0; i < numberOfReviews; i++) {
-    const type = generateRandomRequestType();
-    const text = generateNotification(type);
-    const notification: Notification = {
-      text,
-      type
-    };
-    notifications.push(notification);
-  }
-  return notifications;
-};
-
 export const users: User[] = generateUsers(5);
 export const trainers: Trainer[] = generateTrainers(5);
 export const trainings = generateTrainigs(trainers, 10);
 export const orders = generateTrainingOrders(trainings, users);
 export const balances = generateBalances(trainings);
-export const requests = generateRequests(20);
+export const requests = generateRequests(30);
 export const reviews = generateReviews(20);
-export const notifications = generateNotifications(20);

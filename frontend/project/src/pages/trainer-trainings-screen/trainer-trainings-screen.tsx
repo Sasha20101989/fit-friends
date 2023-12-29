@@ -35,6 +35,7 @@ function TrainerTrainingsScreen(): JSX.Element {
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>({
     category: TrainingCategory.FOR_TRAINER,
     trainer: id || '',
+    limit: MAX_TRAININGS_COUNT
   });
 
   const handleInputChange = (

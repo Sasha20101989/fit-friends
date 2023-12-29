@@ -24,7 +24,7 @@ export const STATIC_RESOURCE_FIELDS = [
   'avatar',
   'video',
   'backgroundImage',
-  'certificate'
+  'certificates'
 ];
 
 export const DEFAULT_STATIC_COACH_AVATAR_IMAGES = [

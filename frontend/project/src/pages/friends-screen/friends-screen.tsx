@@ -8,8 +8,11 @@ import GoBack from '../../components/go-back/go-back';
 import ShowMore from '../../components/show-more/show-more';
 import { Sorting } from '../../types/sorting.enum';
 import { getCurrentUser } from '../../store/user-process/user-process.selectors';
+import Loading from '../../components/loading/loading';
+import { getRequests } from '../../store/request-data/request-data.selectors';
+import { fetchRequestsAction } from '../../store/api-actions/request-api-actions/request-api-actions';
 
-function FriendsScreen(): JSX.Element | null {
+function FriendsScreen(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const initialQueryParams: UserQueryParams = {
@@ -20,13 +23,15 @@ function FriendsScreen(): JSX.Element | null {
   const [queryParams, setQueryParams] = useState<UserQueryParams>(initialQueryParams);
 
   const currentUser = useAppSelector(getCurrentUser);
+  const requests = useAppSelector(getRequests);
 
   useEffect(() => {
     dispatch(fetchMyFriendsAction(queryParams));
+    dispatch(fetchRequestsAction());
   }, [dispatch, queryParams]);
 
-  if(!currentUser){
-    return null;
+  if(!currentUser?.friends){
+    return <Loading/>;
   }
 
   const handleShowMoreClick = () => {
@@ -44,18 +49,10 @@ function FriendsScreen(): JSX.Element | null {
             <GoBack sourceName={'btn-flat friends-list__back'} width={14} height={10} route={AppRoute.Main}/>
             <div className="friends-list__title-wrapper">
               <h1 className="friends-list__title">Мои друзья</h1>
-              {/* <div className="custom-toggle custom-toggle--switch custom-toggle--switch-right" data-validate-type="checkbox">
-                <label>
-                  <input type="checkbox" value="user-agreement-1" name="user-agreement"><span className="custom-toggle__icon">
-                    <svg width="9" height="6" aria-hidden="true">
-                      <use xlinkHref="#arrow-check"></use>
-                    </svg></span><span className="custom-toggle__label">Только онлайн</span>
-                </label>
-              </div> */}
             </div>
             <ul className="friends-list__list">
               {currentUser.friends.map((friend) => (
-                <Friend key={friend.email} friend={friend}/>
+                <Friend key={friend.email} friend={friend} requests={requests}/>
               ))}
             </ul>
             <ShowMore sourceName={'show-more friends-list__show-more'} length={currentUser.friends.length} limit={queryParams.limit} onShowMoreClick={handleShowMoreClick}/>

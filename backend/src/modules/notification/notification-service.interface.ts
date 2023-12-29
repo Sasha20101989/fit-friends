@@ -11,5 +11,5 @@ export interface NotificationServiceInterface {
   create(notification: Notification): Promise<DocumentType<NotificationEntity>>;
   destroy(documentId: string, userId: MongoId): Promise<NotificationEntity[]>;
   exists(documentId: MongoId): Promise<boolean>;
-  createNotification(targetUserId: string, requestType: RequestType): Promise<void>
+  createNotification(requestId: string, ownerUserName: string, ownerId: string, targetUserId: string, requestType: RequestType): Promise<void>;
 }

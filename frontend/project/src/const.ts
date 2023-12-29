@@ -1,15 +1,17 @@
 import { GenderPreference } from './types/gender-preference.enum';
 import { Gender } from './types/gender.enum';
+import { RequestType } from './types/request-type.enum';
 import { Role } from './types/role.enum';
-import { Trainer } from './types/trainer.interface.js';
-import { User } from './types/user.interface.js';
+import { Trainer } from './types/trainer.interface';
+import { User } from './types/user.interface';
 
 export enum NameSpace {
   Data = 'data',
   Order = 'order',
   Main = 'main',
   UserData = 'user',
-  Balance = 'balance'
+  Balance = 'balance',
+  RequestData = 'request'
 }
 
 export enum HTTP_CODE {
@@ -35,7 +37,8 @@ export enum APIRoute {
   Reviews = '/reviews/training',
   Notifications = '/notifications',
   Subscribes = '/subscribes',
-  Balance = '/balance'
+  Balance = '/balance',
+  Requests = '/requests',
 }
 
 export enum AuthorizationStatus {
@@ -87,6 +90,7 @@ export const MAX_LOOK_FOR_COMPANY_COUNT = 4;
 export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;
 export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
+export const MAX_ORDERS_COUNT = 6;
 export const MAX_BALANCE_COUNT = 8;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
@@ -182,3 +186,9 @@ export function preferenceToGender(preference: GenderPreference): Gender {
       return Gender.Other;
   }
 }
+
+export const notificationMessages: { [key in RequestType]: string } = {
+  [RequestType.Friend]: 'Запрос в друзья',
+  [RequestType.Group]: 'Запрос на тренировку',
+  [RequestType.Personal]: 'Запрос на персональную тренировку',
+};

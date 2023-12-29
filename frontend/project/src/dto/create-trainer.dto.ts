@@ -19,5 +19,5 @@ export default class CreateTrainerDto {
   public workoutTypes!: WorkoutType[];
   public personalTraining!: boolean;
   public trainerAchievements?: string;
-  public certificate!: string;
+  public certificates!: string[];
 }

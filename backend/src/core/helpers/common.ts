@@ -89,9 +89,15 @@ export function getRandomBackgroundImage(): string {
   return DEFAULT_STATIC_TRAINING_IMAGES[randomIndex];
 }
 
-export function getRandomCertificateImage(): string {
-  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_TRAINING_IMAGES.length);
-  return DEFAULT_STATIC_TRAINING_IMAGES[randomIndex];
+export function getRandomCertificateImages(count: number): string[] {
+  const randomImages = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_CERTIFICATES_IMAGES.length);
+    randomImages.push(DEFAULT_STATIC_CERTIFICATES_IMAGES[randomIndex]);
+  }
+
+  return randomImages;
 }
 
 export function getRandomCoachAvatar(): string {
@@ -128,9 +134,9 @@ export function getSortOptionsForCreatedAt(querySortDirection?: Sorting, default
   return sort;
 }
 
-export function generateNotification(requestType: RequestType): string {
+export function generateNotification(userName: string, requestType: RequestType): string {
   if (notificationMessages[requestType]) {
-    return notificationMessages[requestType];
+    return `${userName} ${notificationMessages[requestType]}`;
   } else {
     return 'Новое уведомление';
   }

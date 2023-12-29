@@ -10,7 +10,7 @@ export type DynamicUserProperties = {
 };
 
 export type DynamicTrainerProperties = {
-  certificate: string;
+  certificates: string[];
   trainerAchievements?: string;
   personalTraining: boolean;
 };

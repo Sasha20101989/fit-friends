@@ -9,8 +9,8 @@ type OrderListProps = {
 function OrderList({orders}: OrderListProps): JSX.Element {
   return (
     <ul className="my-orders__list">
-      {orders.map((order) => (
-        <OrderItem key={order.name} order={order} />
+      {orders.map((order, index) => (
+        <OrderItem key={`${order.name}-${index}`} order={order} />
       ))}
     </ul>
   );

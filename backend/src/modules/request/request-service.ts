@@ -19,6 +19,12 @@ export default class RequestService implements RequestServiceInterface {
     @inject(AppComponent.RequestModel) private readonly requestModel: types.ModelType<RequestEntity>
   ){}
 
+  public async findByUserId(userId: string): Promise<DocumentType<RequestEntity>[]> {
+    return await this.requestModel
+      .find({ user: userId})
+      .populate(['initiator', 'user']);
+  }
+
   public async updateStatus(dto: UpdateRequestDto, requestId: MongoId): Promise<DocumentType<RequestEntity> | null> {
     const existingRequest = await this.requestModel
       .findOne({_id: requestId})

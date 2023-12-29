@@ -13,8 +13,6 @@ function CoachAdditionalInfo(): JSX.Element | null {
 
   const trainer = currentUser as Trainer;
 
-  const certificates: string[] = [trainer.certificate];
-
   return(
     <div className="personal-account-coach__additional-info">
       <div className="personal-account-coach__label-wrapper">
@@ -37,7 +35,7 @@ function CoachAdditionalInfo(): JSX.Element | null {
           </button>
         </div>
       </div>
-      <CertificateList certificates={certificates}/>
+      <CertificateList certificates={trainer.certificates}/>
     </div>
   );
 }

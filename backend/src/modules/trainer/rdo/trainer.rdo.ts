@@ -44,7 +44,7 @@ export default class TrainerRdo {
   public workoutTypes!: WorkoutType[];
 
   @Expose()
-  public certificate!: string;
+  public certificates!: string[];
 
   @Expose()
   public trainerAchievements!: string;

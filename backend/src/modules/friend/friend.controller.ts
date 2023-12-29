@@ -24,6 +24,8 @@ import { NotificationServiceInterface } from '../notification/notification-servi
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { FriendQueryParams } from './types/friend-query-params.js';
 import { RequestType } from '../request/types/request-type.enum.js';
+import { RequestServiceInterface } from '../request/request-service.interface.js';
+import { RequestStatus } from '../request/types/request-status.enum.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -32,6 +34,7 @@ export default class FriendController extends Controller {
     @inject(AppComponent.FriendServiceInterface) private readonly friendService: FriendServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
+    @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
   ) {
     super(logger, configService);
@@ -109,11 +112,15 @@ export default class FriendController extends Controller {
       );
     }
 
+    const defaultStatus = RequestStatus.Pending;
+
     const result = await this.friendService.create(user.id, friendId);
+
+    const request = await this.requestService.create({requestType: RequestType.Friend}, user.id, friendId, defaultStatus);
 
     this.created(res, fillDTO(UserRdo, result));
 
-    await this.notificationService.createNotification(friendId, RequestType.Friend);
+    await this.notificationService.createNotification(request.id, existingUser.name, user.id, friendId, RequestType.Friend);
   }
 
   public async index(

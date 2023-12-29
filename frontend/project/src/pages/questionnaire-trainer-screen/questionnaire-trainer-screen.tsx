@@ -47,7 +47,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
       return;
     }
 
-    if(trainer.certificate === ''){
+    if(trainer.certificates.length === 0){
       setCertificateError('Выберите файл в предложенном формате');
       return;
     }
@@ -63,7 +63,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
     if (trainer &&
         trainer.description !== undefined &&
         trainer.trainingLevel !== null &&
-        trainer.certificate !== ''
+        trainer.certificates.length !== 0
     ){
       const userData: CreateTrainerDto = {
         ...trainer,
@@ -71,7 +71,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
         workoutTypes: trainer.workoutTypes,
         trainingLevel: trainer.trainingLevel,
         personalTraining: trainer.personalTraining,
-        certificate: trainer.certificate
+        certificates: trainer.certificates
       };
 
       onTrainerQuestion(userData);
@@ -147,7 +147,7 @@ function QuestionnaireTrainerScreen(): JSX.Element {
                       error={levelError}
                     />
                     <div className={`questionnaire-coach__block ${certificateError && 'is-invalid'}`}>
-                      <span className="questionnaire-coach__legend">{currentTrainer.certificate ? currentTrainer.certificate : 'Ваши дипломы и сертификаты'}</span>
+                      <span className="questionnaire-coach__legend">{currentTrainer.certificates[0] ? currentTrainer.certificates[0] : 'Ваши дипломы и сертификаты'}</span>
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label>
                           <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG

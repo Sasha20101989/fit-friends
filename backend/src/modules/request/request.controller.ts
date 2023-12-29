@@ -61,6 +61,23 @@ export default class RequestController extends Controller {
         new ValidateDtoMiddleware(UpdateRequestDto)
       ]
     });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware()
+      ],
+    });
+  }
+
+  public async index(
+    { user }: Request<core.ParamsDictionary, UnknownRecord>,
+    res: Response
+  ) {
+    const requests = await this.requestService.findByUserId(user.id);
+
+    this.ok(res, fillDTO(RequestRdo, requests));
   }
 
   public async create(
@@ -79,11 +96,21 @@ export default class RequestController extends Controller {
 
     const defaultStatus = RequestStatus.Pending;
 
+    const initiatorDetails = await this.userService.findById(initiator.id);
+
+    if(!initiatorDetails){
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Initiator not exists.`,
+        'RequestController'
+      );
+    }
+
     const request = await this.requestService.create({...body}, initiator.id, userId, defaultStatus);
 
     this.created(res, fillDTO(RequestRdo, request));
 
-    await this.notificationService.createNotification(userId, body.requestType);
+    await this.notificationService.createNotification(request.id ,initiatorDetails.name, initiator.id, userId, body.requestType);
   }
 
   public async update(

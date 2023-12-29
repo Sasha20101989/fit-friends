@@ -26,8 +26,7 @@ type TrainerCardProps = {
 };
 
 function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPage, onAddFriend, onRemoveFriend, onAddSubscribe, onRemoveSubscribe, onPreviousTrainingsClick, onNextTrainingsClick }: TrainerCardProps) : JSX.Element {
-  const {name, location, description, workoutTypes, role, personalTraining, certificate} = trainer;
-  const certificates = [certificate];
+  const {name, location, description, workoutTypes, role, personalTraining, certificates} = trainer;
 
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isCertificatesPopupOpen, setIsCertificatesPopupOpen] = useState(false);

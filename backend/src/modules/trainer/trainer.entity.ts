@@ -56,7 +56,7 @@ export class TrainerEntity extends defaultClasses.TimeStamps {
   public workoutTypes: WorkoutType[];
 
   @prop({ required: false })
-  public certificate: string;
+  public certificates: string[];
 
   @prop({ required: false })
   public trainerAchievements?: string;
@@ -77,7 +77,7 @@ export class TrainerEntity extends defaultClasses.TimeStamps {
     this.location = trainerData.location;
     this.trainingLevel = trainerData.trainingLevel;
     this.workoutTypes = trainerData.workoutTypes;
-    this.certificate = trainerData.certificate;
+    this.certificates = trainerData.certificates;
     this.trainerAchievements = trainerData.trainerAchievements;
     this.personalTraining = trainerData.personalTraining;
   }

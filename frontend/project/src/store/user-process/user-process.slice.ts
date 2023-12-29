@@ -49,7 +49,7 @@ export const initialTrainerState = {
   trainingLevel: TrainingLevel.Unknown,
   workoutTypes: [],
   friends: [],
-  certificate: '',
+  certificates: [],
   trainerAchievements: undefined,
   personalTraining: false,
 };
@@ -96,7 +96,7 @@ export const userProcess = createSlice({
     },
     setCurrentUserCertificate: (state, action: PayloadAction<string>) => {
       if (state.trainer.role === Role.Trainer) {
-        state.trainer.certificate = action.payload;
+        state.trainer.certificates.push(action.payload);
       }
     },
     changeCurrentUserDuration: (state, action: PayloadAction<WorkoutDuration>) => {

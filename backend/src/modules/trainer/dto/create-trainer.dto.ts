@@ -66,5 +66,5 @@ export default class CreateTrainerDto {
 
   @IsOptional()
   @IsSinglePDF({ message: 'Trainer certificate must be a single PDF file' })
-  public certificate!: string;
+  public certificates!: string[];
 }
