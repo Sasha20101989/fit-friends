@@ -50,8 +50,9 @@ import { FriendServiceInterface } from '../../modules/friend/friend-service.inte
 import FriendService from '../../modules/friend/friend-service.js';
 import { FriendModel } from '../../modules/friend/friend.entity.js';
 import { MongoId } from '../../types/common/mongo-id.type.js';
-import { generateNotification } from '../helpers/index.js';
+import { fillDTO, generateNotification } from '../helpers/index.js';
 import { RequestType } from '../../modules/request/types/request-type.enum.js';
+import RequestRdo from '../../modules/request/rdo/request.rdo.js';
 
 const DEFAULT_USER_PASSWORD = '123456';
 
@@ -242,7 +243,16 @@ export default class ImportCommand implements CliCommandInterface {
       usedPairs.add(pairKey);
 
       const result = await this.saveRequest(request, initiatorId, userId, request.status);
-      request.id = result.id;
+      const dto = fillDTO(RequestRdo, result);
+      request.id = dto.id;
+
+      request.initiator = dto.initiator
+        ? { ...dto.initiator, id: dto.initiator?.id }
+        : undefined;
+
+      request.user = dto.user
+        ? { ...dto.user, id: dto.user?.id }
+        : undefined;
 
       promises.push(Promise.resolve());
     }
@@ -270,29 +280,17 @@ export default class ImportCommand implements CliCommandInterface {
     this.logger.info('All reviews have been generated and saved.');
   }
 
-  private async generateAndSaveNotifications(userIds: string[], trainerIds: string[]): Promise<void> {
+  private async generateAndSaveNotifications(): Promise<void> {
     const promises: Promise<void>[] = [];
-    const usedPairs: Set<string> = new Set();
 
     for (const request of requests) {
-      let ownerId: string;
-      let userId: string;
-      let pairKey: string;
 
-      do {
-        ownerId = generateRandomUserId(userIds);
-        userId = generateRandomUserOrTrainerId([...trainerIds, ...userIds]);
-        pairKey = `${ownerId}-${userId}`;
-      } while (usedPairs.has(pairKey));
+      const user: User | undefined = users.find((user) => user.id === request.initiator?.id);
 
-      usedPairs.add(pairKey);
-
-      const user: User | undefined = users.find((user) => user.id === ownerId);
-
-      if(user){
+      if(user && request.initiator?.id && request.user?.id){
         const notification: Notification = {
-          owner: ownerId,
-          user: userId,
+          owner: request.initiator.id,
+          user: request.user.id,
           request: request.id,
           text: generateNotification(user.name, request.requestType),
           type: request.requestType
@@ -359,9 +357,9 @@ export default class ImportCommand implements CliCommandInterface {
       const trainingIds = await this.generateAndSaveTrainings(trainerIds);
       await this.generateAndSaveOrders(trainingIds, userIds);
       await this.generateAndSaveBalances(trainingIds, userIds);
-      await this.generateAndSaveRequests(trainingIds, userIds);
+      await this.generateAndSaveRequests(trainerIds, userIds);
       await this.generateAndSaveReviews(trainingIds, userIds);
-      await this.generateAndSaveNotifications(userIds, trainerIds);
+      await this.generateAndSaveNotifications();
       await this.generateAndSaveFriends(userIds, trainerIds);
     }catch(exception){
       this.logger.info(`User generation failed with an error: ${exception}`);

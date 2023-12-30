@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthorizationStatus, RegisterStatus } from '../../const';
 import { UserState } from '../../types/state';
 import { checkAuthAction, loginAction, registerAction } from '../api-actions/auth-api-actions/auth-api-actions';
-import { fetchMyFriendsAction, fetchCurrentUserAction } from '../api-actions/user-api-actions/user-api-actions';
+import { fetchMyFriendsAction, fetchCurrentUserAction, addToFriendsAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
 import { WorkoutType } from '../../types/workout-type.enum';
 import { Role } from '../../types/role.enum';
 import { User } from '../../types/user.interface';
@@ -66,6 +66,10 @@ export const userProcess = createSlice({
   name: 'user',
   initialState: initialState,
   reducers: {
+    removeFromFriends: (state, action: PayloadAction<string>) => {
+      state.user.friends = state.user.friends.filter(friend => friend.id !== action.payload);
+      state.trainer.friends = state.trainer.friends.filter(friend => friend.id !== action.payload);
+    },
     setCurrentUserLocation: (state, action: PayloadAction<Location>) => {
       state.user.location = action.payload;
       state.trainer.location = action.payload;
@@ -255,11 +259,30 @@ export const userProcess = createSlice({
       })
       .addCase(fetchMyFriendsAction.rejected, (state, _action) => {
         state.isSubmitting = false;
+      })
+      .addCase(removeFromFriendAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(removeFromFriendAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(removeFromFriendAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(addToFriendsAction.pending, (state, _action) => {
+        state.isSubmitting = true;
+      })
+      .addCase(addToFriendsAction.fulfilled, (state, action) => {
+        state.isSubmitting = false;
+      })
+      .addCase(addToFriendsAction.rejected, (state, _action) => {
+        state.isSubmitting = false;
       });
   },
 });
 
 export const {
+  removeFromFriends,
   setCurrentUserPassword,
   setCurrentUserBirthday,
   setCurrentUserName,

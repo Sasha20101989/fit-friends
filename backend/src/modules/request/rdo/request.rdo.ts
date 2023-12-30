@@ -5,6 +5,9 @@ import { RequestStatus } from '../types/request-status.enum.js';
 import { RequestType } from '../types/request-type.enum.js';
 
 export default class RequestRdo {
+  @Expose()
+  public id!: string;
+
   @Expose({ name: 'initiator'})
   @Type(() => UserRdo)
   public initiator!: UserRdo;

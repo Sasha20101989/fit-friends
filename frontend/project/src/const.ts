@@ -85,6 +85,7 @@ export const isValidPassword = (password: string): boolean => {
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
+export const MAX_CERTIFICATES_COUNT = 3;
 export const MAX_POPULAR_TRAININGS_COUNT = 4;
 export const MAX_LOOK_FOR_COMPANY_COUNT = 4;
 export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;

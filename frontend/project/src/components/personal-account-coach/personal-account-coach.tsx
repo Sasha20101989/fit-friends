@@ -5,9 +5,14 @@ import Image from '../image/image';
 
 type PersonalAccountCoachProps = {
   userId: string;
+  certificates: string[];
+  isPreviousButtonDisabled: boolean;
+  isNextButtonDisabled: boolean;
+  onPreviousClick: (value: React.SetStateAction<number>) => void;
+  onNextClick: (value: React.SetStateAction<number>) => void;
 }
 
-function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
+function PersonalAccountCoach({userId, certificates, isPreviousButtonDisabled, isNextButtonDisabled, onPreviousClick, onNextClick}: PersonalAccountCoachProps):JSX.Element {
   const thumbnailLinks = [
     { to: `${AppRoute.Trainers}/${userId}${AppRoute.Trainings}`, icon: '#icon-flash', text: 'Мои тренировки' },
     { to: AppRoute.CreateTraining, icon: '#icon-add', text: 'Создать тренировку' },
@@ -31,7 +36,7 @@ function PersonalAccountCoach({userId}: PersonalAccountCoachProps):JSX.Element {
           </div>
         </div>
       </div>
-      <CoachAdditionalInfo/>
+      <CoachAdditionalInfo certificates={certificates} isNextButtonDisabled={isNextButtonDisabled} isPreviousButtonDisabled={isPreviousButtonDisabled} onNextClick={onNextClick} onPreviousClick={onPreviousClick}/>
     </div>
   );
 }

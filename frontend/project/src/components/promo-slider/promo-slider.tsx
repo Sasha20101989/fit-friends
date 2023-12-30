@@ -18,7 +18,6 @@ function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderPro
         const newPrice = (training.price * DISCOUNT_PERCENTAGE).toFixed(0);
         const fileExtension = training.backgroundImage.split('.').pop();
         const imageNameWithoutExtension = training.backgroundImage.replace(/\.[^/.]+$/, '');
-        const hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
 
         return (
           <li key={`${training.description}-${training.createdAt}`} className={`special-offers__item ${index === activeSlide ? 'is-active' : ''}`}>
@@ -26,8 +25,8 @@ function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderPro
               <div className="promo-slider__overlay"></div>
               <div className="promo-slider__image">
                 <img
-                  src={`${hostedImage}${fileExtension ? `.${fileExtension}` : ''}`}
-                  srcSet={`${hostedImage}@2x.${fileExtension ? fileExtension : ''} 2x`}
+                  src={`${imageNameWithoutExtension}${fileExtension ? `.${fileExtension}` : ''}`}
+                  srcSet={`${imageNameWithoutExtension}@2x.${fileExtension ? fileExtension : ''} 2x`}
                   width="1040"
                   height="469"
                   alt={training.name}

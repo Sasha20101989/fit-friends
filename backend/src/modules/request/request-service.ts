@@ -22,7 +22,7 @@ export default class RequestService implements RequestServiceInterface {
   public async findByUserId(userId: string): Promise<DocumentType<RequestEntity>[]> {
     return await this.requestModel
       .find({ user: userId})
-      .populate(['initiator', 'user']);
+      .populate(['user', 'initiator']);;
   }
 
   public async updateStatus(dto: UpdateRequestDto, requestId: MongoId): Promise<DocumentType<RequestEntity> | null> {
@@ -47,16 +47,22 @@ export default class RequestService implements RequestServiceInterface {
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return this.requestModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.requestModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public existsRequestByType(initiatorId: MongoId, userId: MongoId, requestType: RequestType): Promise<boolean> {
-    return this.requestModel.exists({initiator: initiatorId, user: userId, requestType: requestType}).then((v) => v !== null);
+  public async existsRequestByType(initiatorId: MongoId, userId: MongoId, requestType: RequestType): Promise<boolean> {
+    return await this.requestModel.exists({initiator: initiatorId, user: userId, requestType: requestType}).then((v) => v !== null);
   }
 
   public async create(dto: CreateRequestDto, initiatorId: MongoId, userId: MongoId, requestStatus: RequestStatus): Promise<DocumentType<RequestEntity>> {
-    const request = await this.requestModel.create({...dto, initiator: initiatorId, user: userId, status: requestStatus});
+    const request = await this.requestModel.create({
+      ...dto,
+      initiator: initiatorId,
+      user: userId,
+      status: requestStatus,
+    });
+
     this.logger.info('Request created');
-    return await request.populate(['user', 'initiator']);
+    return await request.populate(['initiator', 'user']);
   }
 }

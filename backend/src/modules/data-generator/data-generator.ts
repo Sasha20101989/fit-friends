@@ -159,10 +159,10 @@ const generateReviews = (numberOfReviews: number): Review[] => {
   return reviews;
 };
 
-export const users: User[] = generateUsers(5);
-export const trainers: Trainer[] = generateTrainers(5);
+export const users: User[] = generateUsers(10);
+export const trainers: Trainer[] = generateTrainers(10);
 export const trainings = generateTrainigs(trainers, 10);
 export const orders = generateTrainingOrders(trainings, users);
 export const balances = generateBalances(trainings);
-export const requests = generateRequests(30);
+export const requests = generateRequests(20);
 export const reviews = generateReviews(20);

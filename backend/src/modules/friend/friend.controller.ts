@@ -62,7 +62,6 @@ export default class FriendController extends Controller {
       handler: this.delete,
       middlewares: [
         new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
       ]

@@ -28,7 +28,7 @@ export default class ReviewService implements ReviewServiceInterface {
 
     const sort = getSortOptionsForCreatedAt(query?.sortDirection);
 
-    return this.reviewModel
+    return await this.reviewModel
       .find({ training: trainingId })
       .sort(sort)
       .skip(skip)

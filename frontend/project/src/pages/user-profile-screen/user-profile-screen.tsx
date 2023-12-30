@@ -15,7 +15,7 @@ import Layout from '../../components/layout/layout';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
-import { DESCRIPTION_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
+import { DESCRIPTION_CONSTRAINTS, MAX_CERTIFICATES_COUNT, capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
@@ -26,6 +26,7 @@ import { getCurrentUser } from '../../store/user-process/user-process.selectors'
 import { Trainer } from '../../types/trainer.interface';
 import { User } from '../../types/user.interface';
 import { changeCurrentUserLevel, setCurrentUserGender, setCurrentUserLocation } from '../../store/user-process/user-process.slice';
+import { usePreviousNextButtons } from '../../hooks/use-previous-next-buttons/use-previous-next-buttons';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
@@ -41,10 +42,20 @@ function UserProfileScreen(): JSX.Element {
   const [genderError, setGenderError] = useState('');
   const [levelError, setLevelError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
+  const [selectedPage, setPage] = useState<number>(1);
+  const [image, setImage] = useState<File | null>(null);
 
   const currentUser = useAppSelector(getCurrentUser);
 
-  const [image, setImage] = useState<File | null>(null);
+  const certificates = (currentUser && 'certificates' in currentUser && currentUser.certificates) || [];
+
+  const isPreviousButtonDisabled = selectedPage === 1;
+  const isNextButtonDisabled = MAX_CERTIFICATES_COUNT !== certificates.length;
+
+  const {
+    handlePreviousClick: handlePreviousClick,
+    handleNextClick: handleNextClick,
+  } = usePreviousNextButtons(selectedPage, setPage);
 
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
@@ -65,7 +76,8 @@ function UserProfileScreen(): JSX.Element {
   }
 
   const contentComponent = currentUser && currentUser.role === Role.Trainer ? (
-    <PersonalAccountCoach userId={id}/>
+
+    <PersonalAccountCoach userId={id} certificates={certificates} onNextClick={handleNextClick} onPreviousClick={handlePreviousClick} isNextButtonDisabled={isNextButtonDisabled} isPreviousButtonDisabled={isPreviousButtonDisabled}/>
   ) : (
     <PersonalAccountUser />
   );

@@ -28,7 +28,7 @@ import CreateOrderDto from '../../dto/create-order.dto';
 import { createOrderAction } from '../../store/api-actions/order-api-actions/order-api-actions';
 import { getBalance } from '../../store/balance-data/balance-data.selectors';
 import { UserBalance } from '../../types/user-balance.type';
-import { addTrainingInBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
+import { addTrainingInBalanceAction, fetchBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
 import CreateBalanceDto from '../../dto/create-balance.dto';
 import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
@@ -72,6 +72,7 @@ function TrainingCardScreen() : JSX.Element {
     if(trainingId){
       dispatch(fetchTrainingAction({trainingId}));
       dispatch(fetchReviewsAction({trainingId}));
+      dispatch(fetchBalanceAction({}));
     }
   }, [dispatch, trainingId]);
 
@@ -79,7 +80,7 @@ function TrainingCardScreen() : JSX.Element {
     if (trainingId && trainings.length > 0) {
       setIsInBalance(trainings.some((trainingItem) => trainingItem.id === trainingId));
     }
-  }, [trainings, trainingId]);
+  }, [trainings, trainingId, isInBalance]);
 
   if (isLoading) {
     return <Loading/>;
@@ -193,7 +194,11 @@ function TrainingCardScreen() : JSX.Element {
       };
 
       dispatch(createOrderAction({trainingId, orderData}));
-      dispatch(addTrainingInBalanceAction({trainingId, balanceData}));
+      dispatch(addTrainingInBalanceAction({trainingId, balanceData}))
+        .then(() => {
+          dispatch(fetchBalanceAction({}));
+        });
+
       handleCloseBuyForm();
     }
   };

@@ -28,7 +28,7 @@ function TrainerTrainingsScreen(): JSX.Element {
   const [initialMaxPrice, setInitialMaxPrice] = useState<number>(0);
   const [minCalories, setMinCalories] = useState<number>(0);
   const [maxCalories, setMaxCalories] = useState<number>(0);
-  const [minRating, setMinRating] = useState<number>(0);
+  const [minRating, setMinRating] = useState<number>(1);
   const [maxRating, setMaxRating] = useState<number>(0);
   const [selectedDuration, setDuration] = useState<WorkoutDuration | ''>('');
 
@@ -201,6 +201,7 @@ function TrainerTrainingsScreen(): JSX.Element {
                         value={[minPrice, maxPrice]}
                         onChange={handleSliderPriceChange}
                       />
+
                     </div>
                   </div>
                   <div className="my-training-form__block my-training-form__block--calories">
@@ -236,6 +237,13 @@ function TrainerTrainingsScreen(): JSX.Element {
                         step={1}
                         value={[minRating, maxRating]}
                         onChange={handleSliderRatingChange}
+                        marks={{
+                          1: '1',
+                          2: '2',
+                          3: '3',
+                          4: '4',
+                          5: '5',
+                        }}
                       />
                     </div>
                   </div>

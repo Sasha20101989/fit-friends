@@ -46,7 +46,7 @@ export default class MessageHandler {
           subject: `Hello ${data.user.name}` ,
           date: new Date(),
           text: `
-            Hello ${data.user.name}
+            Hello ${data.user.name}, ${data.text}
           `,
         };
 

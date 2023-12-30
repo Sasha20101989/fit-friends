@@ -18,7 +18,7 @@ export default class BalanceService implements BalanceServiceInterface{
   ) {}
 
   public async exists(trainingId: MongoId): Promise<boolean> {
-    return this.balanceModel.exists({ training: trainingId }).then((v) => v !== null);
+    return await this.balanceModel.exists({ training: trainingId }).then((v) => v !== null);
   }
 
   public async create(dto: CreateBalanceDto, userId: MongoId, trainingId: MongoId): Promise<DocumentType<BalanceEntity>> {

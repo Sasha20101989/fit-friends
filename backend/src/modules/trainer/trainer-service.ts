@@ -36,19 +36,19 @@ export default class TrainerService implements TrainerServiceInterface {
   }
 
   public async findByEmail(email: string): Promise<DocumentType<TrainerEntity> | null> {
-    return this.trainerModel.findOne({email});
+    return await this.trainerModel.findOne({email});
   }
 
   public async findById(trainerId: string): Promise<DocumentType<TrainerEntity> | null> {
-    return this.trainerModel.findById(trainerId);
+    return await this.trainerModel.findById(trainerId);
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return this.trainerModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.trainerModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
   public async updateById(trainerId: MongoId, dto: UpdateTrainerDto): Promise<DocumentType<TrainerEntity> | null> {
-    return this.trainerModel
+    return await this.trainerModel
       .findByIdAndUpdate(trainerId, dto, {new: true})
       .exec();
   }

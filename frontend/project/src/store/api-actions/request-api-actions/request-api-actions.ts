@@ -3,6 +3,12 @@ import { AxiosInstance } from 'axios';
 import { AppDispatch, State } from '../../../types/state';
 import { APIRoute } from '../../../const';
 import { Request } from '../../../types/request.type';
+import { RequestStatus } from '../../../types/request-status.enum';
+
+export type RequestQueryParams = {
+  requestId: string;
+  status: RequestStatus;
+}
 
 export const fetchRequestsAction = createAsyncThunk<Request[], undefined, {
   dispatch: AppDispatch;
@@ -17,5 +23,17 @@ export const fetchRequestsAction = createAsyncThunk<Request[], undefined, {
     } catch (error) {
       return [];
     }
+  },
+);
+
+export const updateRequestStatusAction = createAsyncThunk<Request, RequestQueryParams, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'requests/updateRequestStatus',
+  async (params, { dispatch, extra: api }) => {
+    const { data } = await api.patch<Request>(`${APIRoute.Requests}/${params.requestId}`, {status: params.status});
+    return data;
   },
 );

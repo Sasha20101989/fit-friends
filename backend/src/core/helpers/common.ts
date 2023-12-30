@@ -15,7 +15,7 @@ import { UserQueryParams } from '../../modules/user/types/user-query-params.js';
 import { UserFilter } from '../../modules/user/types/user-filter.type.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
-import { DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE, DEFAULT_STATIC_CERTIFICATES_IMAGES, DEFAULT_STATIC_CERTIFICATES_ROUTE, DEFAULT_STATIC_COACH_AVATAR_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES_ROUTE, DEFAULT_STATIC_USER_AVATAR_IMAGES } from '../../app/rest.const.js';
+import { DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE, DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE, DEFAULT_STATIC_CERTIFICATES_IMAGES, DEFAULT_STATIC_CERTIFICATES_ROUTE, DEFAULT_STATIC_COACH_AVATAR_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES_ROUTE, DEFAULT_STATIC_USER_AVATAR_IMAGES } from '../../app/rest.const.js';
 import { Role } from '../../types/role.enum.js';
 
 export function getFullServerPath(host: string, port: number){
@@ -63,13 +63,24 @@ export function transformObject(properties: string[], staticPath: string, upload
         target[property] = isDefaultImage
           ? `${rootPath}${DEFAULT_STATIC_TRAINING_IMAGES_ROUTE}/${target[property]}`
           : `${rootPath}/${target[property]}`;
-      } else if (property === 'certificate') {
-        const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(target[property] as string);
-        const rootPath = isDefaultImage ? staticPath : uploadPath;
+      } else if (property === 'certificates') {
+        // const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(target[property] as string);
+        // const rootPath = isDefaultImage ? staticPath : uploadPath;
 
-        target[property] = isDefaultImage
-          ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${target[property]}`
-          : `${rootPath}/${target[property]}`;
+        // target[property] = isDefaultImage
+        //   ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${target[property]}`
+        //   : `${rootPath}/${target[property]}`;
+
+          const updatedCertificates = (target[property] as string[]).map((certificate) => {
+            const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(certificate);
+            const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+            return isDefaultImage
+              ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${certificate}`
+              : `${rootPath}/${certificate}`;
+          });
+
+          target[property] = updatedCertificates;
       } else if (property === 'avatar') {
         if(data.role === Role.Trainer){
           const isDefaultImage = DEFAULT_STATIC_COACH_AVATAR_IMAGES.includes(target[property] as string);
@@ -77,6 +88,13 @@ export function transformObject(properties: string[], staticPath: string, upload
 
           target[property] = isDefaultImage
             ? `${rootPath}${DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE}/${target[property]}`
+            : `${rootPath}/${target[property]}`;
+        }else if(data.role === Role.User){
+          const isDefaultImage = DEFAULT_STATIC_USER_AVATAR_IMAGES.includes(target[property] as string);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+          target[property] = isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE}/${target[property]}`
             : `${rootPath}/${target[property]}`;
         }
       }

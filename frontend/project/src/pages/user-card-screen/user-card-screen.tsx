@@ -47,6 +47,7 @@ function UserCardScreen() : JSX.Element {
     }
   }, [dispatch, id]);
 
+
   useEffect(() => {
     if (id && user?.role === Role.Trainer) {
       dispatch(fetchTrainingsAction({
@@ -58,7 +59,7 @@ function UserCardScreen() : JSX.Element {
   }, [dispatch, id, selectedPage, user, initialQueryParams]);
 
   useEffect(() => {
-    if (currentUser && id && currentUser.friends.length > 0) {
+    if (currentUser && id && currentUser.friends && currentUser.friends.length > 0) {
       setIsFriend(currentUser.friends.some((friend) => friend.id === id));
     }
   }, [currentUser, id]);

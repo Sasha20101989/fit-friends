@@ -35,9 +35,6 @@ export default class TrainerRdo {
   public location!: Location;
 
   @Expose()
-  public backgroundImage!: string;
-
-  @Expose()
   public trainingLevel!: TrainingLevel;
 
   @Expose()

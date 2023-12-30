@@ -18,7 +18,8 @@
     "react-scripts": "5.0.1",
     "react-slider": "^2.0.6",
     "react-spinners": "^0.13.8",
-    "react-toastify": "^9.1.3"
+    "react-toastify": "^9.1.3",
+    "rizzui": "^0.8.3"
   },
   "scripts": {
     "start": "react-scripts start",

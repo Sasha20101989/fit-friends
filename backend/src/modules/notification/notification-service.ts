@@ -43,7 +43,7 @@ export default class NotificationService implements NotificationServiceInterface
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return this.notificationModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.notificationModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
   public async createNotification(requestId: string, ownerUserName: string, ownerId: string, targetUserId: string, requestType: RequestType): Promise<void> {

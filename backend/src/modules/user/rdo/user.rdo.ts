@@ -33,9 +33,6 @@ export default class UserRdo {
   public location!: Location;
 
   @Expose()
-  public backgroundImage!: string;
-
-  @Expose()
   public description!: string;
 
   @Expose()
