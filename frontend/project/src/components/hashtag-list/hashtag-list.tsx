@@ -9,7 +9,7 @@ type HashtagListProps = {
 
 function HashtagList({classType, hashtagClassType, hashtagItemClassType, hashtags}: HashtagListProps): JSX.Element {
   return(
-    <ul className={classType}>
+    <ul className={classType} data-testid={classType}>
       {hashtags.map((hashtag) => (
         <li key={hashtag} className={hashtagClassType}>
           <div className={hashtagItemClassType}>

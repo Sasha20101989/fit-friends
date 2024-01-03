@@ -95,41 +95,33 @@ function App(): JSX.Element {
       <Route
         path={`${AppRoute.UserFriends}/:id`}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <FriendsScreen/>
-          // </PrivateRoute>
         }
       />
       <Route
         path={AppRoute.UserPurchases}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
-          <PurchasesScreen/>
-          // </PrivateRoute>
+          <PrivateUserRoute currentUser={currentUser} authorizationStatus={authorizationStatus} registerStatus={registerStatus}>
+            <PurchasesScreen/>
+          </PrivateUserRoute>
         }
       />
       <Route
         path={AppRoute.UsersCatalog}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <UsersCatalogScreen/>
-          // </PrivateRoute>
         }
       />
       <Route
         path={AppRoute.TrainingsCatalog}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <TrainingsCatalogScreen/>
-          // </PrivateRoute>
         }
       />
       <Route
         path={`${AppRoute.Users}/:id`}
         element={
-          // <PrivateRoute authorizationStatus={authorizationStatus} registerStatus={registerStatus} role={role}>
           <UserCardScreen/>
-          // </PrivateRoute>
         }
       />
       <Route

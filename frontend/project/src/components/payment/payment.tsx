@@ -25,7 +25,7 @@ function Payment({selectedPayment, onPaymentChange}: PopupBuyProps): JSX.Element
   };
 
   return(
-    <section className="payment-method">
+    <section className="payment-method" data-testid="payment-method">
       <h4 className="payment-method__title">Выберите способ оплаты</h4>
       <ul className="payment-method__list">
         {Object.values(PaymentMethod).map((method) => (

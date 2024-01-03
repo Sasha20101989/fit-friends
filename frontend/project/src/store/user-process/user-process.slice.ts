@@ -67,8 +67,8 @@ export const userProcess = createSlice({
   initialState: initialState,
   reducers: {
     removeFromFriends: (state, action: PayloadAction<string>) => {
-      state.user.friends = state.user.friends.filter(friend => friend.id !== action.payload);
-      state.trainer.friends = state.trainer.friends.filter(friend => friend.id !== action.payload);
+      state.user.friends = state.user.friends.filter((friend) => friend.id !== action.payload);
+      state.trainer.friends = state.trainer.friends.filter((friend) => friend.id !== action.payload);
     },
     setCurrentUserLocation: (state, action: PayloadAction<Location>) => {
       state.user.location = action.payload;

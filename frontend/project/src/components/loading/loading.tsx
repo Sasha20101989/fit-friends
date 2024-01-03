@@ -10,8 +10,8 @@ const loadingStyle = {
 
 function Loading():JSX.Element {
   return (
-    <div style={loadingStyle}>
-      <RingLoader size={150} color={RING_LOADER_COLOR} loading/>
+    <div style={loadingStyle} data-testid="loading-component">
+      <RingLoader size={150} color={RING_LOADER_COLOR} loading data-testid="ring-loader"/>
     </div>
   );
 }

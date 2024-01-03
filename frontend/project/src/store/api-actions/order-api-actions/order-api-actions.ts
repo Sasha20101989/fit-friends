@@ -5,7 +5,7 @@ import { APIRoute } from '../../../const';
 import { TrainingOrder } from '../../../types/training-order.type';
 import { OrderBuy } from '../../../types/order-buy';
 import CreateOrderDto from '../../../dto/create-order.dto';
-import { OrderQueryParams } from '../../../types/order-query-params.js';
+import { OrderQueryParams } from '../../../types/order-query-params';
 
 export interface FetchOrderParams {
   trainingId: string;
@@ -31,7 +31,7 @@ export const fetchOrdersAction = createAsyncThunk<TrainingOrder[], OrderQueryPar
   'order/fetchOrders',
   async (query, { dispatch, extra: api }) => {
     try {
-      const { data } = await api.get<TrainingOrder[]>(`${APIRoute.Orders}/trainer-room/${query.trainerId}`, { params: query });
+      const { data } = await api.get<TrainingOrder[]>(`${APIRoute.Orders}/trainer-room/${query.trainerId ? query.trainerId : ''}`, { params: query });
       return data;
     } catch (error) {
       return [];

@@ -20,7 +20,7 @@ function CoachAdditionalInfo({certificates, isPreviousButtonDisabled, isNextButt
   };
 
   return(
-    <div className="personal-account-coach__additional-info">
+    <div className="personal-account-coach__additional-info" data-testid="coach-additional-info">
       <div className="personal-account-coach__label-wrapper">
         <h2 className="personal-account-coach__label">Дипломы и сертификаты</h2>
         <button className="btn-flat btn-flat--underlined personal-account-coach__button" type="button">

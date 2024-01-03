@@ -26,37 +26,37 @@ function CertificateCard({ certificate }: CertificateCardProps): JSX.Element {
   };
 
   return (
-    <li className="personal-account-coach__item">
+    <li className="personal-account-coach__item" data-testid="certificate-card">
       <div className="certificate-card certificate-card--edit">
         <Image imageSrc={editedCertificate} sourceName={'certificate-card__image'} width={294} height={360} alt={'сертификат'}/>
         <div className="certificate-card__buttons">
           {isEditing ? (
             <>
-              <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={handleSaveClick} type="button">
+              <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={handleSaveClick} type="button" data-testid="save-button">
                 <svg width="12" height="12" aria-hidden="true">
                   <use xlinkHref="#icon-edit"></use>
                 </svg><span>Сохранить</span>
               </button>
-              <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={() => setIsEditing(false)} type="button">
+              <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={() => setIsEditing(false)} type="button" data-testid="cancel-button">
                 <svg width="12" height="12" aria-hidden="true">
                   <use xlinkHref="#icon-edit"></use>
                 </svg><span>Отмена</span>
               </button>
             </>
           ) : (
-            <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={handleEditClick} type="button">
+            <button className="btn-flat btn-flat--underlined certificate-card__button" onClick={handleEditClick} type="button" data-testid="edit-button">
               <svg width="12" height="12" aria-hidden="true">
                 <use xlinkHref="#icon-edit"></use>
               </svg><span>Изменить</span>
             </button>
           )}
           <div className="certificate-card__controls">
-            <button className="btn-icon certificate-card__control" type="button" aria-label="next" onClick={handleChangeClick}>
+            <button className="btn-icon certificate-card__control" type="button" aria-label="next" onClick={handleChangeClick} data-testid="change-button">
               <svg width="16" height="16" aria-hidden="true">
                 <use xlinkHref="#icon-change"></use>
               </svg>
             </button>
-            <button className="btn-icon certificate-card__control" type="button" aria-label="next" onClick={handleTrachClick}>
+            <button className="btn-icon certificate-card__control" type="button" aria-label="next" onClick={handleTrachClick} data-testid="trash-button">
               <svg width="14" height="16" aria-hidden="true">
                 <use xlinkHref="#icon-trash"></use>
               </svg>

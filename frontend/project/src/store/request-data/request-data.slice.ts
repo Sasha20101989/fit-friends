@@ -8,7 +8,7 @@ export const initialState: RequestDataState = {
 };
 
 export const requestProcess = createSlice({
-  name: 'order',
+  name: 'request',
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -40,7 +40,3 @@ export const requestProcess = createSlice({
       });
   },
 });
-
-export const {
-
-} = requestProcess.actions;

@@ -67,7 +67,7 @@ function Header (): JSX.Element {
 
   return(
     <header className="header">
-      <div className="container">
+      <div className="container" data-testid="header">
         <span className="header__logo">
           <svg width="187" height="70" aria-hidden="true">
             <use xlinkHref="#logo"></use>
@@ -76,7 +76,7 @@ function Header (): JSX.Element {
         <nav className="main-nav">
           <ul className="main-nav__list">
             {navItems.map((item, index) => (
-              <li key={item.label} className={`main-nav__item ${index === navItems.length - 1 ? 'main-nav__item--notifications' : ''}`}>
+              <li key={item.label} className={`main-nav__item ${index === navItems.length - 1 ? 'main-nav__item--notifications' : ''}`} data-testid={`nav-item-${item.label}`}>
                 <Link
                   className={`main-nav__link ${item.label === selectedPage ? 'is-active' : ''}`}
                   to={item.to}

@@ -53,8 +53,8 @@ function UserProfileScreen(): JSX.Element {
   const isNextButtonDisabled = MAX_CERTIFICATES_COUNT !== certificates.length;
 
   const {
-    handlePreviousClick: handlePreviousClick,
-    handleNextClick: handleNextClick,
+    handlePreviousClick: handlePreviousCertificateClick,
+    handleNextClick: handleNextCertificateClick,
   } = usePreviousNextButtons(selectedPage, setPage);
 
   const handleToggleFormEditable = (): void => {
@@ -77,7 +77,7 @@ function UserProfileScreen(): JSX.Element {
 
   const contentComponent = currentUser && currentUser.role === Role.Trainer ? (
 
-    <PersonalAccountCoach userId={id} certificates={certificates} onNextClick={handleNextClick} onPreviousClick={handlePreviousClick} isNextButtonDisabled={isNextButtonDisabled} isPreviousButtonDisabled={isPreviousButtonDisabled}/>
+    <PersonalAccountCoach userId={id} certificates={certificates} onNextClick={handleNextCertificateClick} onPreviousClick={handlePreviousCertificateClick} isNextButtonDisabled={isNextButtonDisabled} isPreviousButtonDisabled={isPreviousButtonDisabled}/>
   ) : (
     <PersonalAccountUser />
   );

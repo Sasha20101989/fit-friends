@@ -36,7 +36,7 @@ function Filter({ title, filterName, values, onFilterChange }: FilterProps): JSX
   };
 
   return (
-    <div className={`user-catalog-form__block user-catalog-form__block--${filterName}`}>
+    <div className={`user-catalog-form__block user-catalog-form__block--${filterName}`} data-testid={filterName}>
       <h4 className="user-catalog-form__block-title">{title}</h4>
       <ul className="user-catalog-form__check-list">
         {itemsToDisplay.map((item) => (

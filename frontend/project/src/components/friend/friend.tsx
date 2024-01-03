@@ -50,23 +50,22 @@ function Friend({ friend, request, onAccept, onReject }: FriendProps): JSX.Eleme
             <p className="thumbnail-friend__request-text">
               {notificationMessages[request.requestType]}
             </p>
-
-              <div className="thumbnail-friend__button-wrapper">
-                <button
-                  className="btn btn--medium btn--dark-bg thumbnail-friend__button"
-                  type="button"
-                  onClick={(evt) => onAccept(evt, request)}
-                >
-                  Принять
-                </button>
-                <button
-                  className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button"
-                  type="button"
-                  onClick={(evt) => onReject(evt, request)}
-                >
-                  Отклонить
-                </button>
-              </div>
+            <div className="thumbnail-friend__button-wrapper">
+              <button
+                className="btn btn--medium btn--dark-bg thumbnail-friend__button"
+                type="button"
+                onClick={(evt) => onAccept(evt, request)}
+              >
+                Принять
+              </button>
+              <button
+                className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button"
+                type="button"
+                onClick={(evt) => onReject(evt, request)}
+              >
+                Отклонить
+              </button>
+            </div>
           </div>
         )}
         {request && request.status === RequestStatus.Rejected && (
