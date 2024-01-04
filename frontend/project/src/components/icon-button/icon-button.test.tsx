@@ -23,19 +23,15 @@ describe('IconButton', () => {
       />
     );
 
-    // Проверяем, что компонент отрисован
     const iconButtonElement = screen.getByTestId('test-icon-button');
     expect(iconButtonElement).toBeInTheDocument();
 
-    // Проверяем атрибуты кнопки
     expect(iconButtonElement).toHaveAttribute('name', 'arrow-left');
     expect(iconButtonElement).toHaveAttribute('aria-label', 'Test Button');
 
-    // Проверяем, что иконка отрисована
     const svgElement = screen.getByRole('button');
     expect(svgElement).toBeInTheDocument();
 
-    // Симулируем клик по кнопке и проверяем, что функция обратного вызова была вызвана
     fireEvent.click(iconButtonElement);
     expect(onClick).toHaveBeenCalled();
   });

@@ -11,7 +11,6 @@ const onToggleDropdownMock = jest.fn();
 
 describe('DropdownSelect', () => {
   it('renders DropdownSelect component with correct values and calls functions on interaction', () => {
-    // Тестирование компонента с WorkoutDuration
     render(
       <DropdownSelect
         classType="workout-duration-select"
@@ -24,25 +23,19 @@ describe('DropdownSelect', () => {
       />
     );
 
-    // Проверяем, что компонент отрисован
     const dropdownSelectElement = screen.getByTestId('workout-duration-select');
     expect(dropdownSelectElement).toBeInTheDocument();
 
-    // Проверяем, что значения отображаются
     Object.values(WorkoutDuration).forEach((duration) => {
       expect(screen.getByText(duration)).toBeInTheDocument();
     });
 
-    // Симулируем клик по кнопке
     fireEvent.click(screen.getByLabelText('Выберите одну из опций'));
 
-    // Проверяем, что функция onToggleDropdown была вызвана
     expect(onToggleDropdownMock).toHaveBeenCalled();
 
-    // Симулируем выбор значения
     fireEvent.click(screen.getByText(WorkoutDuration.ExtraLong));
 
-    // Проверяем, что функция onValueChange была вызвана
     expect(onValueChangeMock).toHaveBeenCalled();
   });
 

@@ -11,7 +11,6 @@ describe('Image', () => {
 
     render(<Image imageSrc={imageSrc} sourceName={sourceName} width={width} height={height} alt={alt} />);
 
-    // Проверяем, что компонент отрисован
     const imageElement = screen.getByTestId('certificate-card-image');
     expect(imageElement).toBeInTheDocument();
   });

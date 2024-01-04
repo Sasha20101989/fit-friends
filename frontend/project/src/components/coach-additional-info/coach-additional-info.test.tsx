@@ -19,19 +19,15 @@ describe('CoachAdditionalInfo', () => {
       />
     );
 
-    // Проверяем, что компонент отрисован
     const coachAdditionalInfoElement = screen.getByTestId('coach-additional-info');
     expect(coachAdditionalInfoElement).toBeInTheDocument();
 
-    // Проверяем, что заголовок "Дипломы и сертификаты" отображается
     const labelElement = screen.getByText('Дипломы и сертификаты');
     expect(labelElement).toBeInTheDocument();
 
-    // Проверяем, что кнопка "Загрузить" отображается
     const uploadButtonElement = screen.getByText('Загрузить');
     expect(uploadButtonElement).toBeInTheDocument();
 
-    // Проверяем, что компонент CertificateList отрисован
     const certificateListElement = screen.getByTestId('certificate-list');
     expect(certificateListElement).toBeInTheDocument();
   });

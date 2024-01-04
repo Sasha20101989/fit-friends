@@ -49,7 +49,6 @@ describe('Friend', () => {
     const friendElement = screen.getByText(mockFriend.name);
     expect(friendElement).toBeInTheDocument();
 
-    // Проверяем, что запрос отображается и кнопки "Принять" и "Отклонить" также отображаются
     const requestStatusElement = screen.getByText(notificationMessages[mockRequest.requestType]);
     expect(requestStatusElement).toBeInTheDocument();
 
@@ -58,11 +57,9 @@ describe('Friend', () => {
     expect(acceptButton).toBeInTheDocument();
     expect(rejectButton).toBeInTheDocument();
 
-    // Симулируем клик по кнопке "Принять" и проверяем, что функция обратного вызова onAccept вызывается
     fireEvent.click(acceptButton);
     expect(onAcceptMock).toHaveBeenCalledWith(expect.anything(), mockRequest);
 
-    // Симулируем клик по кнопке "Отклонить" и проверяем, что функция обратного вызова onReject вызывается
     fireEvent.click(rejectButton);
     expect(onRejectMock).toHaveBeenCalledWith(expect.anything(), mockRequest);
   });

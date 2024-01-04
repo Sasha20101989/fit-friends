@@ -13,7 +13,7 @@ function PromoSlider({specialTrainings, activeSlide, onDotClick}: PromoSliderPro
   };
 
   return (
-    <ul className="special-offers__list">
+    <ul className="special-offers__list" data-testid="special-offers-list">
       {specialTrainings.map((training, index) => {
         const newPrice = (training.price * DISCOUNT_PERCENTAGE).toFixed(0);
         const fileExtension = training.backgroundImage.split('.').pop();

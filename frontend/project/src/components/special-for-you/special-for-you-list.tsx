@@ -12,7 +12,7 @@ function SpecialForYouList({specialForUserTrainings}: SpecialForYouListProps): J
   return (
     specialForUserTrainings.length > 0 ?
       <ul className="special-for-you__list">
-        {specialForUserTrainings.map((training, index) => (
+        {specialForUserTrainings.map((training) => (
           <SpecialForYouItem
             key={`${training.name}-${training.calories}-${training.price}`}
             trainingId={training.id}

@@ -3,7 +3,6 @@ import Filter from './filter';
 import { Location } from '../../types/location.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
 
-// Mock функции
 const onFilterChangeMock = jest.fn();
 
 describe('Filter', () => {
@@ -24,25 +23,19 @@ describe('Filter', () => {
       expect(screen.getByText(location)).toBeInTheDocument();
     });
 
-    // Проверяем, что "Посмотреть все" кнопка отображается, так как есть более 5 элементов
     expect(screen.getByText('Посмотреть все')).toBeInTheDocument();
 
-    // Симулируем клик по "Посмотреть все"
     fireEvent.click(screen.getByText('Посмотреть все'));
 
-    // Проверяем, что все элементы отображаются
     Object.values(Location).forEach((location) => {
       expect(screen.getByText(location)).toBeInTheDocument();
     });
 
-    // Симулируем изменение чекбокса
     const checkbox = screen.getByLabelText(Location.Petrograd);
     fireEvent.click(checkbox);
 
-    // Проверяем, что функция обратного вызова onFilterChange вызывается с правильными аргументами
     expect(onFilterChangeMock).toHaveBeenCalledWith('location', [Location.Petrograd]);
 
-    // Проверяем, что состояние компонента обновлено
     expect(checkbox).toBeChecked();
   });
 
@@ -63,25 +56,19 @@ describe('Filter', () => {
       expect(screen.getByText(type)).toBeInTheDocument();
     });
 
-    // Проверяем, что "Посмотреть все" кнопка отображается, так как есть более 5 элементов
     expect(screen.getByText('Посмотреть все')).toBeInTheDocument();
 
-    // Симулируем клик по "Посмотреть все"
     fireEvent.click(screen.getByText('Посмотреть все'));
 
-    // Проверяем, что все элементы отображаются
     Object.values(WorkoutType).forEach((type) => {
       expect(screen.getByText(type)).toBeInTheDocument();
     });
 
-    // Симулируем изменение чекбокса
     const checkbox = screen.getByLabelText(WorkoutType.Aerobics);
     fireEvent.click(checkbox);
 
-    // Проверяем, что функция обратного вызова onFilterChange вызывается с правильными аргументами
     expect(onFilterChangeMock).toHaveBeenCalledWith('spezialization', [WorkoutType.Aerobics]);
 
-    // Проверяем, что состояние компонента обновлено
     expect(checkbox).toBeChecked();
   });
 });
