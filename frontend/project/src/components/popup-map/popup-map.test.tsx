@@ -6,8 +6,9 @@ describe('PopupMap', () => {
   const onCloseMock = jest.fn();
 
   it('renders PopupMap component with correct attributes and handles close button click', () => {
+    const name = 'Валерия';
     render(
-      <PopupMap station={Location.Pioneer} onClose={onCloseMock} />
+      <PopupMap name={name} station={Location.Pioneer} onClose={onCloseMock} />
     );
 
     expect(screen.getByText('Валерия')).toBeInTheDocument();

@@ -6,7 +6,7 @@ type CardGaleryProps = {
 
 function CardGalery({ isCoach }: CardGaleryProps): JSX.Element {
   return(
-    <div className={`user-card${isCoach ? '-coach' : ''}__gallary`}>
+    <div className={`user-card${isCoach ? '-coach' : ''}__gallary`} data-testid="card-galery">
       <ul className={`user-card${isCoach ? '-coach' : ''}__gallary-list`}>
         <li className={`user-card${isCoach ? '-coach' : ''}__gallary-item`}>
           <img

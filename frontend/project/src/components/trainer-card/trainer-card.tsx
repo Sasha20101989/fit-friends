@@ -169,7 +169,7 @@ function TrainerCard({ trainer, trainings, isFriend, isInSubscribers, selectedPa
             </div>
           </form>
         </div>
-        {isMapOpen && <PopupMap station={location} onClose={handleCloseMap}/>}
+        {isMapOpen && <PopupMap name={name} station={location} onClose={handleCloseMap}/>}
         {isCertificatesPopupOpen && <PopupCertificates certificates={certificates} onClose={handleCloseCertificatesPopup}/>}
       </div>
     </section>

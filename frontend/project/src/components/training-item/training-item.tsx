@@ -15,7 +15,7 @@ function TrainingItem({ sourceName, training }: TrainingItemProps):JSX.Element {
   const hashtags = [workoutType];
 
   return (
-    <li className={sourceName}>
+    <li className={sourceName} data-testid="training-item">
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
           <Image imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>

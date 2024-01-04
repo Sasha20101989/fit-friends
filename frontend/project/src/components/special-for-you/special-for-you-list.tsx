@@ -11,7 +11,7 @@ type SpecialForYouListProps = {
 function SpecialForYouList({specialForUserTrainings}: SpecialForYouListProps): JSX.Element {
   return (
     specialForUserTrainings.length > 0 ?
-      <ul className="special-for-you__list">
+      <ul className="special-for-you__list" data-testid="special-for-you-list">
         {specialForUserTrainings.map((training) => (
           <SpecialForYouItem
             key={`${training.name}-${training.calories}-${training.price}`}

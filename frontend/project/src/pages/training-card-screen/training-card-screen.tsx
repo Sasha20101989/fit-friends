@@ -308,7 +308,7 @@ function TrainingCardScreen() : JSX.Element {
                             />
                           </label>
                         </div>
-                        <TrainingCardButton onBuyClick={handleShowBuyForm} isSpecial={specialValue} isFormEditable={isFormEditable} onDiscountClick={handleDiscountClick}/>
+                        {currentUser && <TrainingCardButton role={currentUser.role} onBuyClick={handleShowBuyForm} isSpecial={specialValue} isFormEditable={isFormEditable} onDiscountClick={handleDiscountClick}/>}
                       </div>
                     </div>
                   </form>

@@ -18,11 +18,12 @@ const defaultCustomIcon = new Icon({
 });
 
 type PopupMapProps = {
+  name: string;
   station: Location | null;
   onClose: () => void;
 }
 
-function PopupMap({ station, onClose }: PopupMapProps): JSX.Element | null {
+function PopupMap({name, station, onClose }: PopupMapProps): JSX.Element | null {
   const mapRef = useRef<HTMLDivElement>(null);
 
   const map = useMap(mapRef, station);
@@ -64,11 +65,11 @@ function PopupMap({ station, onClose }: PopupMapProps): JSX.Element | null {
   }
 
   return (
-    <div className="popup-form popup-form--map">
+    <div className="popup-form popup-form--map" data-testid="popup-map">
       <section className="popup">
         <div className="popup__wrapper popup__wrapper--map">
           <div className="popup-head popup-head--address">
-            <h2 className="popup-head__header">Валерия</h2>
+            <h2 className="popup-head__header">{name}</h2>
             <p className="popup-head__address">
               <svg className="popup-head__icon-location" width="12" height="14" aria-hidden="true">
                 <use xlinkHref="#icon-location"></use>
