@@ -13,17 +13,18 @@ describe('SpecialForYou', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYou
-          specialForUserTrainings={mockTrainings}
-          isPreviousButtonDisabled={false}
-          isNextButtonDisabled={false}
-          onPreviousClick={() => {}}
-          onNextClick={() => {}}
-        />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYou
+            specialForUserTrainings={mockTrainings}
+            isPreviousButtonDisabled={false}
+            isNextButtonDisabled={false}
+            onPreviousClick={jest.fn()}
+            onNextClick={jest.fn()}
+          />
+        </MemoryRouter>
+      </Provider>
     );
 
     const titleElement = screen.getByText('Специально подобрано для вас');
@@ -41,17 +42,18 @@ describe('SpecialForYou', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYou
-          specialForUserTrainings={mockTrainings}
-          isPreviousButtonDisabled={false}
-          isNextButtonDisabled={false}
-          onPreviousClick={onPreviousClickMock}
-          onNextClick={() => {}}
-        />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYou
+            specialForUserTrainings={mockTrainings}
+            isPreviousButtonDisabled={false}
+            isNextButtonDisabled={false}
+            onPreviousClick={onPreviousClickMock}
+            onNextClick={jest.fn()}
+          />
+        </MemoryRouter>
+      </Provider>
     );
 
     const previousButton = screen.getByLabelText('previous');
@@ -66,17 +68,18 @@ describe('SpecialForYou', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYou
-          specialForUserTrainings={mockTrainings}
-          isPreviousButtonDisabled={false}
-          isNextButtonDisabled={false}
-          onPreviousClick={() => {}}
-          onNextClick={onNextClickMock}
-        />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYou
+            specialForUserTrainings={mockTrainings}
+            isPreviousButtonDisabled={false}
+            isNextButtonDisabled={false}
+            onPreviousClick={jest.fn()}
+            onNextClick={onNextClickMock}
+          />
+        </MemoryRouter>
+      </Provider>
     );
 
     const nextButton = screen.getByLabelText('next');

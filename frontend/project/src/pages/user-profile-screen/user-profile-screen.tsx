@@ -200,12 +200,11 @@ function UserProfileScreen(): JSX.Element {
     setImage(file);
   };
 
-
-  function handleImageSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+  const handleImageSubmit = (): void => {
     if(image && currentUser && currentUser.id){
       dispatch(updateAvatarAction({userId:currentUser.id, avatar: image}));
     }
-  }
+  };
 
   return (
     <Layout>
@@ -215,7 +214,7 @@ function UserProfileScreen(): JSX.Element {
             <h1 className="visually-hidden">Личный кабинет</h1>
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
-                <UserAvatar currentUser={currentUser} onImageUpload={handleImageUpload} image={image}/>
+                <UserAvatar currentUser={currentUser} onImageUpload={handleImageUpload} image={image && URL.createObjectURL(image)}/>
                 {isFormEditable && <UserControls onImageSubmit={handleImageSubmit}/>}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">

@@ -13,11 +13,12 @@ describe('SpecialForYouList', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYouList specialForUserTrainings={mockTrainings} />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYouList specialForUserTrainings={mockTrainings} />
+        </MemoryRouter>
+      </Provider>
     );
 
     const trainingElements = screen.getAllByTestId('special-for-you-item');
@@ -28,11 +29,12 @@ describe('SpecialForYouList', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYouList specialForUserTrainings={[]} />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYouList specialForUserTrainings={[]} />
+        </MemoryRouter>
+      </Provider>
     );
 
     const thumbnailSpecGymElement = screen.getByTestId('thumbnail-spec-gym');

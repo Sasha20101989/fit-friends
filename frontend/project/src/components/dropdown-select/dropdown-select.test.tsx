@@ -5,7 +5,6 @@ import { TrainingLevel } from '../../types/training-level.enum';
 import { Location } from '../../types/location.enum';
 import { Gender } from '../../types/gender.enum';
 
-// Mock функции
 const onValueChangeMock = jest.fn();
 const onToggleDropdownMock = jest.fn();
 

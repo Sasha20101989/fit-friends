@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import PopupRateList from './popup-rate-list';
 
 describe('PopupRateList', () => {

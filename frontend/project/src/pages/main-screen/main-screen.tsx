@@ -62,7 +62,7 @@ function MainScreen(): JSX.Element {
     if(currentUser && currentUser.id){
       dispatch(fetchCurrentUserAction(currentUser.id));
     }
-  }, [dispatch]);
+  });
 
   useFetchTrainingsEffect(
     TrainingCategory.SPECIAL,

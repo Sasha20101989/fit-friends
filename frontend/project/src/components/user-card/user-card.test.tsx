@@ -18,13 +18,16 @@ describe('UserCard Component', () => {
   };
 
   it('renders user information correctly', () => {
+    const mockOnAddFriend = jest.fn();
+    const mockOnRemoveFriend = jest.fn();
+
     render(
       <MemoryRouter>
         <UserCard
           user={mockUser}
           isFriend={false}
-          onAddFriend={() => {}}
-          onRemoveFriend={() => {}}
+          onAddFriend={mockOnAddFriend}
+          onRemoveFriend={mockOnRemoveFriend}
         />
       </MemoryRouter>
     );
@@ -54,6 +57,7 @@ describe('UserCard Component', () => {
 
   it('handles Add to Friends button click', () => {
     const mockOnAddFriend = jest.fn();
+    const mockOnRemoveFriend = jest.fn();
 
     render(
       <MemoryRouter>
@@ -61,7 +65,7 @@ describe('UserCard Component', () => {
           user={mockUser}
           isFriend={false}
           onAddFriend={mockOnAddFriend}
-          onRemoveFriend={() => {}}
+          onRemoveFriend={mockOnRemoveFriend}
         />
       </MemoryRouter>
     );
@@ -73,14 +77,15 @@ describe('UserCard Component', () => {
   });
 
   it('handles Remove from Friends button click', () => {
+    const mockOnAddFriend = jest.fn();
     const mockOnRemoveFriend = jest.fn();
 
     render(
       <MemoryRouter>
         <UserCard
           user={mockUser}
-          isFriend={true}
-          onAddFriend={() => {}}
+          isFriend
+          onAddFriend={mockOnAddFriend}
           onRemoveFriend={mockOnRemoveFriend}
         />
       </MemoryRouter>
@@ -93,13 +98,16 @@ describe('UserCard Component', () => {
   });
 
   it('handles Show Map link click', () => {
+    const mockOnAddFriend = jest.fn();
+    const mockOnRemoveFriend = jest.fn();
+
     render(
       <MemoryRouter>
         <UserCard
           user={mockUser}
           isFriend={false}
-          onAddFriend={() => {}}
-          onRemoveFriend={() => {}}
+          onAddFriend={mockOnAddFriend}
+          onRemoveFriend={mockOnRemoveFriend}
         />
       </MemoryRouter>
     );

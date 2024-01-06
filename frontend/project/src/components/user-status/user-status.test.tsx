@@ -62,7 +62,7 @@ describe('UserStatus Component', () => {
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <UserStatus isFormEditable={true} currentUser={state.user.user} />
+          <UserStatus isFormEditable currentUser={state.user.user} />
         </MemoryRouter>
       </Provider>
     );
@@ -86,7 +86,7 @@ describe('UserStatus Component', () => {
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <UserStatus isFormEditable={true} currentUser={state.user.trainer} />
+          <UserStatus isFormEditable currentUser={state.user.trainer} />
         </MemoryRouter>
       </Provider>
     );

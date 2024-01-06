@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import RadioSelect from './radio-select';
 import { Gender } from '../../types/gender.enum';
 

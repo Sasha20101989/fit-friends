@@ -5,7 +5,7 @@ import { User } from '../../types/user.interface';
 type UserAvatarProps = {
   currentUser: User | Trainer;
   onImageUpload: (evt: ChangeEvent<HTMLInputElement>) => void;
-  image: File | null;
+  image: string | null;
 }
 
 function UserAvatar({currentUser, onImageUpload, image}: UserAvatarProps): JSX.Element {
@@ -28,7 +28,7 @@ function UserAvatar({currentUser, onImageUpload, image}: UserAvatarProps): JSX.E
         <span className="input-load-avatar__avatar">
           {image ? (
             <img
-              src={URL.createObjectURL(image)}
+              src={image}
               width="98"
               height="98"
               alt="user avatar"

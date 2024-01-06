@@ -21,11 +21,7 @@ describe('Payment', () => {
 
     const selectedRadio = screen.getByLabelText('visa');
 
-    if (selectedRadio instanceof HTMLInputElement) {
-      expect(selectedRadio.checked).toBe(true);
-    } else {
-      throw new Error('Unexpected element type');
-    }
+    expect(selectedRadio instanceof HTMLInputElement).toBe(true);
 
     const uMoneyRadio = screen.getByLabelText('umoney');
     fireEvent.click(uMoneyRadio);

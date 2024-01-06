@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import UserAbout from './user-about';
@@ -19,7 +19,7 @@ describe('UserAbout', () => {
     render(
       <Provider store={store}>
         <MemoryRouter>
-          <UserAbout isFormEditable={true} error="" currentUser={state.user.user} />
+          <UserAbout isFormEditable error="" currentUser={state.user.user} />
         </MemoryRouter>
       </Provider>
     );

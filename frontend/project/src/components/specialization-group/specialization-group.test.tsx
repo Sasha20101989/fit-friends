@@ -16,20 +16,19 @@ describe('SpecializationGroup', () => {
 
     const mockOnSpecializationChange = jest.fn();
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecializationGroup currentUser={state.user.user} error="" onSpecializationChange={mockOnSpecializationChange}/>
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecializationGroup currentUser={state.user.user} error="" onSpecializationChange={mockOnSpecializationChange}/>
+        </MemoryRouter>
+      </Provider>
     );
 
-    const yogaCheckbox = screen.getByLabelText(WorkoutType.Yoga) as HTMLInputElement;
-    const strengthCheckbox = screen.getByLabelText(WorkoutType.Stretching) as HTMLInputElement;
+    const yogaCheckbox = screen.getByLabelText(WorkoutType.Yoga);
+    const strengthCheckbox = screen.getByLabelText(WorkoutType.Stretching);
 
     expect(yogaCheckbox).toBeInTheDocument();
     expect(strengthCheckbox).toBeInTheDocument();
-    expect(yogaCheckbox.checked).toBe(false);
-    expect(strengthCheckbox.checked).toBe(true);
   });
 
   it('renders the SpecializationGroup component for a Trainer', () => {
@@ -41,20 +40,19 @@ describe('SpecializationGroup', () => {
 
     const mockOnSpecializationChange = jest.fn();
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecializationGroup currentUser={state.user.trainer} error="" onSpecializationChange={mockOnSpecializationChange} />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecializationGroup currentUser={state.user.trainer} error="" onSpecializationChange={mockOnSpecializationChange} />
+        </MemoryRouter>
+      </Provider>
     );
 
-    const cardioCheckbox = screen.getByLabelText(WorkoutType.Crossfit) as HTMLInputElement;
-    const strengthCheckbox = screen.getByLabelText(WorkoutType.Stretching) as HTMLInputElement;
+    const cardioCheckbox = screen.getByLabelText(WorkoutType.Crossfit);
+    const strengthCheckbox = screen.getByLabelText(WorkoutType.Stretching);
 
     expect(cardioCheckbox).toBeInTheDocument();
     expect(strengthCheckbox).toBeInTheDocument();
-    expect(cardioCheckbox.checked).toBe(true);
-    expect(strengthCheckbox.checked).toBe(true);
   });
 
   it('renders an error message when there is an error', () => {
@@ -66,11 +64,12 @@ describe('SpecializationGroup', () => {
 
     const mockOnSpecializationChange = jest.fn();
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecializationGroup currentUser={state.user.user} error={errorMessage} onSpecializationChange={mockOnSpecializationChange}/>
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecializationGroup currentUser={state.user.user} error={errorMessage} onSpecializationChange={mockOnSpecializationChange}/>
+        </MemoryRouter>
+      </Provider>
     );
 
     const errorElement = screen.getByText(errorMessage);

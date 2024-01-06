@@ -64,13 +64,6 @@ export function transformObject(properties: string[], staticPath: string, upload
           ? `${rootPath}${DEFAULT_STATIC_TRAINING_IMAGES_ROUTE}/${target[property]}`
           : `${rootPath}/${target[property]}`;
       } else if (property === 'certificates') {
-        // const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(target[property] as string);
-        // const rootPath = isDefaultImage ? staticPath : uploadPath;
-
-        // target[property] = isDefaultImage
-        //   ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${target[property]}`
-        //   : `${rootPath}/${target[property]}`;
-
           const updatedCertificates = (target[property] as string[]).map((certificate) => {
             const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(certificate);
             const rootPath = isDefaultImage ? staticPath : uploadPath;

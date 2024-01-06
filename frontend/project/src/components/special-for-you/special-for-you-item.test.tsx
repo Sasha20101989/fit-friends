@@ -15,11 +15,12 @@ describe('SpecialForYouItem', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYouItem {...mockProps} />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYouItem {...mockProps} />
+        </MemoryRouter>
+      </Provider>
     );
 
     const titleElement = screen.getByText(mockProps.title);
@@ -30,11 +31,12 @@ describe('SpecialForYouItem', () => {
     const state = mockState();
     const store = mockStore(state);
 
-    render(<Provider store={store}>
-      <MemoryRouter>
-        <SpecialForYouItem {...mockProps} />
-      </MemoryRouter>
-    </Provider>
+    render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <SpecialForYouItem {...mockProps} />
+        </MemoryRouter>
+      </Provider>
     );
 
     const imageElement = screen.getByAltText('special card');

@@ -64,8 +64,6 @@ export default class TrainerController extends Controller {
 
     const result = await this.trainerService.create({...body, role: Role.Trainer}, this.configService.get('SALT_ROUNDS'));
 
-    //setAccessTokenCookie(res, result.accessToken, this.configService.get('ACCESS_TOKEN_EXPIRATION_TIME'));
-
     this.created(res, fillDTO(TrainerRdo, result.user));
   }
 
