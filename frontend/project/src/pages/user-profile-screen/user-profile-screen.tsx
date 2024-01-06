@@ -198,7 +198,6 @@ function UserProfileScreen(): JSX.Element {
 
     const file = evt.target.files[0];
     setImage(file);
-    //dispatch(setCurrentUserAvatar(file));
   };
 
 
@@ -224,7 +223,7 @@ function UserProfileScreen(): JSX.Element {
                 <UserAbout isFormEditable={isFormEditable} error={descriptionError} currentUser={currentUser}/>
                 <UserStatus isFormEditable={isFormEditable} currentUser={currentUser}/>
                 <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
-                  <UserSpecializationGroup isFormEditable={isFormEditable} currentUser={currentUser} />
+                  <UserSpecializationGroup isFormEditable={isFormEditable} workoutTypes={currentUser.workoutTypes} />
                 </div>
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''} ${locationError && 'is-invalid'}`}

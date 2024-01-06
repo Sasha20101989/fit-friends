@@ -2,21 +2,18 @@ import { WorkoutType } from '../../types/workout-type.enum';
 import { useAppDispatch } from '../../hooks/index';
 import { ChangeEvent } from 'react';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
-import { User } from '../../types/user.interface';
-import { Trainer } from '../../types/trainer.interface';
-import { addCurrentUserSpecialization, removeCurrentUserSpecialization } from '../../store/user-process/user-process.slice';
+import {
+  addCurrentUserSpecialization,
+  removeCurrentUserSpecialization
+} from '../../store/user-process/user-process.slice';
 
 type UserSpecializationGroupProps = {
   isFormEditable: boolean;
-  currentUser: User | Trainer;
+  workoutTypes: WorkoutType[];
 }
 
-function UserSpecializationGroup({isFormEditable, currentUser}: UserSpecializationGroupProps):JSX.Element | null {
+function UserSpecializationGroup({isFormEditable, workoutTypes}: UserSpecializationGroupProps):JSX.Element {
   const dispatch = useAppDispatch();
-
-  if(!currentUser){
-    return null;
-  }
 
   const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
     if(isFormEditable){
@@ -31,10 +28,8 @@ function UserSpecializationGroup({isFormEditable, currentUser}: UserSpecializati
   };
 
   const isDisabled = (type: WorkoutType): boolean => {
-    if (currentUser) {
-      if (currentUser.workoutTypes.length >= MAX_SPECIALIZATIONS_COUNT) {
-        return !currentUser.workoutTypes.includes(type);
-      }
+    if (workoutTypes.length >= MAX_SPECIALIZATIONS_COUNT) {
+      return !workoutTypes.includes(type);
     }
 
     return false;
@@ -52,7 +47,7 @@ function UserSpecializationGroup({isFormEditable, currentUser}: UserSpecializati
                 type="checkbox"
                 name="specialisation"
                 value={type}
-                checked={currentUser.workoutTypes.includes(type)}
+                checked={workoutTypes.includes(type)}
                 onChange={handleSpecializationChange}
                 disabled={isDisabled(type)}
               />
