@@ -12,7 +12,6 @@ import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { ValidateDtoMiddleware } from '../../core/middlewares/validate-dto.middleware.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateTrainerDto from './dto/create-trainer.dto.js';
 import TrainerRdo from './rdo/trainer.rdo.js';
@@ -20,6 +19,7 @@ import { Role } from '../../types/role.enum.js';
 import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import UpdateTrainerDto from './dto/update-trainer.dto.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class TrainerController extends Controller {

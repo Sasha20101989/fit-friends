@@ -16,8 +16,8 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import { ParamsGetNotification } from '../../types/params/params-get-notification.type.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class NotificationController extends Controller {

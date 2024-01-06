@@ -11,7 +11,6 @@ import { AppComponent } from '../../types/common/app-component.enum.js';
 import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateRequestDto from './dto/create-request.dto.js';
 import RequestRdo from './rdo/request.rdo.js';
@@ -27,6 +26,7 @@ import { ParamsGetRequest } from '../../types/params/params-get-request.type.js'
 import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class RequestController extends Controller {

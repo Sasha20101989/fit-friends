@@ -17,7 +17,7 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class SubscriberController extends Controller {

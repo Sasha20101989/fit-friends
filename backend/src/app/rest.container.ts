@@ -10,6 +10,10 @@ import RestApplication from './rest.js';
 import { RestSchema } from '../core/config/rest.schema.js';
 import ConfigService from '../core/config/config.service.js';
 import MongoClientService from '../core/database-client/database-client.service.js';
+import { ExceptionFilter } from '../core/exception-filter/exception-filter.interface.js';
+import { AppExceptionFilter } from '../core/exception-filter/app.exception-filter.js';
+import { HttpErrorExceptionFilter } from '../core/exception-filter/http-error.exception-filter.js';
+import { ValidationExceptionFilter } from '../core/exception-filter/validation.exception-filter.js';
 
 export function createRestApplicationContainer() {
   const restApplicationContainer = new Container();
@@ -18,6 +22,9 @@ export function createRestApplicationContainer() {
   restApplicationContainer.bind<LoggerInterface>(AppComponent.LoggerInterface).to(PinoService).inSingletonScope();
   restApplicationContainer.bind<ConfigInterface<RestSchema>>(AppComponent.ConfigInterface).to(ConfigService).inSingletonScope();
   restApplicationContainer.bind<DatabaseClientInterface>(AppComponent.DatabaseClientInterface).to(MongoClientService).inSingletonScope();
+  restApplicationContainer.bind<ExceptionFilter>(AppComponent.ExceptionFilter).to(AppExceptionFilter).inSingletonScope();
+  restApplicationContainer.bind<ExceptionFilter>(AppComponent.HttpExceptionFilter).to(HttpErrorExceptionFilter).inSingletonScope();
+  restApplicationContainer.bind<ExceptionFilter>(AppComponent.ValidationExceptionFilter).to(ValidationExceptionFilter).inSingletonScope();
 
   return restApplicationContainer;
 }

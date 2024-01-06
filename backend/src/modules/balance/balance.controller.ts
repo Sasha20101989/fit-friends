@@ -11,7 +11,6 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { BalanceServiceInterface } from './balance-service.interface.js';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/common.js';
 import { Role } from '../../types/role.enum.js';
 
@@ -26,6 +25,7 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { BalanceQueryParams } from './types/balance-query-params.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 
 @injectable()

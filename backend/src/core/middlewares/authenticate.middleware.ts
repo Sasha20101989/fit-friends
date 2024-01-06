@@ -3,7 +3,7 @@ import { jwtVerify } from 'jose';
 import { StatusCodes } from 'http-status-codes';
 import { createSecretKey } from 'node:crypto';
 import { MiddlewareInterface } from './types/middleware.interface.js';
-import HttpError from '../errors/http-error.js';
+import { HttpError } from '../errors/http-error.js';
 
 export class AuthenticateMiddleware implements MiddlewareInterface {
   constructor(private readonly jwtSecret: string) {}

@@ -8,7 +8,7 @@ Content-Type: application/json
   "name": "Sasha",
   "email": "feliug4in5wq1ek512@mail.net",
   "password": "123456",
-  "gender": "мужской",
+  "gender": "мужско",
   "role": "пользователь",
   "location": "звёздная"
 }

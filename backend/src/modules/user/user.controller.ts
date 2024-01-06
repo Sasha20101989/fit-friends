@@ -14,7 +14,6 @@ import { AppComponent } from '../../types/common/app-component.enum.js';
 import { Token } from '../token/types/token.enum.js';
 import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
-import HttpError from '../../core/errors/http-error.js';
 import { clearCookie, fillDTO } from '../../core/helpers/index.js';
 import CreateUserDto from './dto/create-user.dto.js';
 import LoginUserDto from './dto/refresh-token.dto.js';
@@ -33,6 +32,7 @@ import { TokenServiceInterface } from '../token/token-service.interface.js';
 import AccessTokenRdo from '../token/rdo/access-token.rdo.js';
 import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 
 @injectable()

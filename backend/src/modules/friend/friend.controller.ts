@@ -11,7 +11,6 @@ import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { Request, Response } from 'express';
 import { Role } from '../../types/role.enum.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import UserRdo from '../user/rdo/user.rdo.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
@@ -26,6 +25,7 @@ import { FriendQueryParams } from './types/friend-query-params.js';
 import { RequestType } from '../request/types/request-type.enum.js';
 import { RequestServiceInterface } from '../request/request-service.interface.js';
 import { RequestStatus } from '../request/types/request-status.enum.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class FriendController extends Controller {

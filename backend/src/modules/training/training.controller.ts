@@ -19,7 +19,6 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import TrainingRdo from './rdo/training.rdo.js';
-import HttpError from '../../core/errors/http-error.js';
 import { StatusCodes } from 'http-status-codes';
 import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
@@ -29,6 +28,7 @@ import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js'
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { UploadTrainingVideoRdo } from './rdo/upload-video-training.rdo.js';
 import { UploadVideoMiddleware } from '../../core/middlewares/upload-video.middleware.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class TrainingController extends Controller {

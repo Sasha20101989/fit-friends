@@ -17,6 +17,9 @@ import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
 import { DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE, DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE, DEFAULT_STATIC_CERTIFICATES_IMAGES, DEFAULT_STATIC_CERTIFICATES_ROUTE, DEFAULT_STATIC_COACH_AVATAR_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES_ROUTE, DEFAULT_STATIC_USER_AVATAR_IMAGES } from '../../app/rest.const.js';
 import { Role } from '../../types/role.enum.js';
+import { ValidationError } from 'class-validator';
+import { ValidationErrorField } from '../../types/validation-error-field.type.js';
+import { ApplicationError } from '../../types/application-error.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -219,4 +222,16 @@ export function applyTrainingLevelFilter(query: UserQueryParams, filter: UserFil
   if (query.trainingLevel && Object.values(TrainingLevel).includes(query.trainingLevel)) {
     filter.trainingLevel = query.trainingLevel.toLowerCase();
   }
+}
+
+export function reduceValidationErrors(errors: ValidationError[]): ValidationErrorField[] {
+  return errors.map(({ property, value, constraints}) => ({
+    property,
+    value,
+    messages: constraints ? Object.values(constraints) : []
+  }));
+}
+
+export function createErrorObject(errorType: ApplicationError, error: string, details: ValidationErrorField[] = []) {
+  return { errorType, error, details };
 }

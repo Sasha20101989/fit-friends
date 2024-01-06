@@ -24,10 +24,10 @@ import { ParamsGetTraining } from '../../types/params/params-get-training.type.j
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import OrderRdo from './rdo/order.rdo.js';
+import { HttpError } from '../../core/errors/http-error.js';
 
 @injectable()
 export default class OrderController extends Controller {
