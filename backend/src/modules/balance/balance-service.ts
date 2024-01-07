@@ -45,7 +45,6 @@ export default class BalanceService implements BalanceServiceInterface{
     const balanceLimit = Math.min(query?.limit || DEFAULT_BALANCE_COUNT, DEFAULT_BALANCE_COUNT);
     const page = query?.page || 1;
     const skip = (page - 1) * balanceLimit;
-
     const sort = getSortOptionsForCreatedAt(query.createdAtDirection);
 
     const balance = await this.balanceModel
