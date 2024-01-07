@@ -1,9 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
-=======
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
->>>>>>> refactoring
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
@@ -143,8 +140,6 @@ function TrainerTrainingsScreen(): JSX.Element {
       }, 600);
     }
   }, [dispatch, id, queryParams]);
-<<<<<<< HEAD
-=======
 
   useEffect(() => {
     if (initialLoad && trainings.length > 0) {
@@ -172,7 +167,6 @@ function TrainerTrainingsScreen(): JSX.Element {
 
   const minCaloriesValue = minCalories === 0 ? CALORIES_CONSTRAINTS.MIN : Number(minCalories);
   const maxCaloriesValue = Number(maxCalories !== 0 ? maxCalories : CALORIES_CONSTRAINTS.MAX);
->>>>>>> refactoring
 
   return(
     <Layout>
