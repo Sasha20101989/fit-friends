@@ -14,7 +14,7 @@
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "copy": "npx json -f package.json -e 'del(.devDependencies)' > dist/package.json && copy README.md dist\\",
+    "copy": "copy package.json dist\\ && copy README.md dist\\",
     "ts": "ts-node",
     "start:dev": "nodemon"
   },
