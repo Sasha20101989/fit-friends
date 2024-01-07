@@ -90,10 +90,17 @@ function CreateTrainingScreen(): JSX.Element {
       return;
     }
 
+<<<<<<< HEAD
+    if (
+      (description && description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (description && description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
+    ) {
+=======
     if(
       (description && description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
       (description && description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ){
+>>>>>>> refactoring
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
     }
