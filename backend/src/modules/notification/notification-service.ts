@@ -38,19 +38,21 @@ export default class NotificationService implements NotificationServiceInterface
   }
 
   public async create(notification: Notification): Promise<DocumentType<NotificationEntity>> {
-    const newNotification = await this.notificationModel.create({user: notification.user, text: notification.text, type: notification.type });
+    const newNotification = await this.notificationModel.create({owner: notification.owner, user: notification.user, text: notification.text, type: notification.type, request: notification.request });
     return newNotification.populate('user');
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return this.notificationModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.notificationModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
-  public async createNotification(targetUserId: string, requestType: RequestType): Promise<void> {
+  public async createNotification(requestId: string, ownerUserName: string, ownerId: string, targetUserId: string, requestType: RequestType): Promise<void> {
     const notification: Notification = {
+      owner: ownerId,
       user: targetUserId,
+      request: requestId,
       type: requestType,
-      text: generateNotification(requestType),
+      text: generateNotification(ownerUserName, requestType),
     };
 
     await this.create(notification);

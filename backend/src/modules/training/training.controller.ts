@@ -19,7 +19,6 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import TrainingRdo from './rdo/training.rdo.js';
-import HttpError from '../../core/errors/http-error.js';
 import { StatusCodes } from 'http-status-codes';
 import UpdateTrainingDto from './dto/update-training.dto.js';
 import { Role } from '../../types/role.enum.js';
@@ -27,6 +26,10 @@ import { TrainingQueryParams } from './types/training-query-params.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
+import { UploadTrainingVideoRdo } from './rdo/upload-video-training.rdo.js';
+import { UploadVideoMiddleware } from '../../core/middlewares/upload-video.middleware.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -35,6 +38,7 @@ export default class TrainingController extends Controller {
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.TrainerServiceInterface) private readonly traininerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
 
@@ -44,7 +48,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Post,
       handler: this.createTraining,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateDtoMiddleware(CreateTrainingDto)
       ]
@@ -53,7 +57,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.showTrainingDetails,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
       ]
@@ -62,7 +66,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Put,
       handler: this.updateTraining,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
@@ -73,7 +77,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.indexForTrainer,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainerId'),
         new DocumentExistsMiddleware(this.traininerService, 'Trainer', 'trainerId'),
@@ -83,9 +87,25 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
+    this.addRoute({
+      path: '/:trainingId/video',
+      method: HttpMethod.Post,
+      handler: this.uploadVideo,
+      middlewares: [
+        new ValidateObjectIdMiddleware('trainingId'),
+        new UploadVideoMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'video'),
+      ]
+    });
+  }
+
+  public async uploadVideo(req: Request, res: Response) {
+    const {trainingId} = req.params;
+    const uploadFile = {video: req.file?.filename};
+    await this.trainingService.update(trainingId, uploadFile);
+    this.created(res, fillDTO(UploadTrainingVideoRdo, uploadFile));
   }
 
   public async index(

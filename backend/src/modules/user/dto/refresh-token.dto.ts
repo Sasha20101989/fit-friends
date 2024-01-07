@@ -5,7 +5,7 @@ export default class RefreshTokenDto {
   public email?: string;
   public role?: Role;
   public password?: string;
-  public refreshToken?: string
+  public refreshToken?: string;
   public exp?: number;
   public iat?: number;
 }

@@ -8,7 +8,6 @@ import { Location } from '../types/location.enum';
 export default class UpdateUserDto {
   public name?: string;
   public email?: string;
-  public avatar?: string;
   public password?: string;
   public role?: Role;
   public gender?: Gender;

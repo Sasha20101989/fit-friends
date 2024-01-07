@@ -1,19 +1,26 @@
-import { useAppSelector } from '../../hooks/index';
-import { getUser } from '../../store/user-process/user-process.selectors';
-import { Trainer } from '../../types/trainer.interface';
 import CertificateList from '../certificate-list/certificate-list';
+import IconButton from '../icon-button/icon-button';
 
-function CoachAdditionalInfo(): JSX.Element | null {
-  const user = useAppSelector(getUser) as Trainer;
+type CoachAdditionalInfoProps = {
+  certificates: string[];
+  isPreviousButtonDisabled: boolean;
+  isNextButtonDisabled: boolean;
+  onPreviousClick: (value: React.SetStateAction<number>) => void;
+  onNextClick: (value: React.SetStateAction<number>) => void;
+}
 
-  if(!user){
-    return null;
-  }
+function CoachAdditionalInfo({certificates, isPreviousButtonDisabled, isNextButtonDisabled, onPreviousClick, onNextClick}: CoachAdditionalInfoProps): JSX.Element {
 
-  const certificates: string[] = [user.certificate];
+  const handlePreviousClick = () => {
+    onPreviousClick((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextClick = () => {
+    onNextClick((prevPage) => prevPage + 1);
+  };
 
   return(
-    <div className="personal-account-coach__additional-info">
+    <div className="personal-account-coach__additional-info" data-testid="coach-additional-info">
       <div className="personal-account-coach__label-wrapper">
         <h2 className="personal-account-coach__label">Дипломы и сертификаты</h2>
         <button className="btn-flat btn-flat--underlined personal-account-coach__button" type="button">
@@ -22,20 +29,13 @@ function CoachAdditionalInfo(): JSX.Element | null {
           </svg><span>Загрузить</span>
         </button>
         <div className="personal-account-coach__controls">
-          <button className="btn-icon personal-account-coach__control" type="button" aria-label="previous">
-            <svg width="16" height="14" aria-hidden="true">
-              <use xlinkHref="#arrow-left"></use>
-            </svg>
-          </button>
-          <button className="btn-icon personal-account-coach__control" type="button" aria-label="next">
-            <svg width="16" height="14" aria-hidden="true">
-              <use xlinkHref="#arrow-right"></use>
-            </svg>
-          </button>
+          <IconButton sourceName={'btn-icon personal-account-coach__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" width={16} height={14} disabled={isPreviousButtonDisabled}/>
+          <IconButton sourceName={'btn-icon personal-account-coach__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
         </div>
       </div>
-      {user.certificate && <CertificateList certificates={certificates}/>}
+      <CertificateList certificates={certificates}/>
     </div>
+
   );
 }
 

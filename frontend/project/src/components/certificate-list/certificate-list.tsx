@@ -6,9 +6,9 @@ type CertificateListProps = {
 
 function CertificateList({ certificates }: CertificateListProps): JSX.Element {
   return (
-    <ul className="personal-account-coach__list">
+    <ul className="personal-account-coach__list" data-testid="certificate-list">
       {certificates.map((certificate) => (
-        <CertificateCard key={certificate} certificate={certificate}/>
+        <CertificateCard key={`${certificate}`} certificate={certificate}/>
       ))}
     </ul>
   );

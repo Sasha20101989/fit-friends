@@ -25,9 +25,9 @@ import { generateRandomUser,
 } from './random.js';
 import { Request } from '../request/types/request.type.js';
 import { Review } from '../review/types/review.type.js';
-import { Notification } from '../notification/types/notification.type.js';
-import { generateNotification } from '../../core/helpers/index.js';
+import { getRandomBackgroundImage, getRandomCertificateImages, getRandomCoachAvatar, getRandomUserAvatar } from '../../core/helpers/index.js';
 import { RequestStatus } from '../request/types/request-status.enum.js';
+import { RequestType } from '../request/types/request-type.enum.js';
 
 const generateTrainingOrders = (trainings: Training[], users: User[]): TrainingOrder[] =>
   trainings.map((training) => {
@@ -51,7 +51,7 @@ const generateTrainigs = (trainers: Trainer[], numberOfTrainings: number) => {
     for (let i = 1; i <= numberOfTrainings; i++) {
       const training: Training = {
         name: `Training${i}`,
-        backgroundImage: 'http.jpg',
+        backgroundImage: getRandomBackgroundImage(),
         trainingLevel: generateRandomTrainingLevel(),
         workoutType: generateRandomWorkoutType(),
         workoutDuration: generateRandomWorkoutDuration(),
@@ -83,11 +83,11 @@ const generateTrainers = (numberOfTrainers: number): Trainer[] => {
       role: Role.Trainer,
       gender: generateRandomGender(),
       location: generateRandomLocation(),
-      backgroundImage: 'http.jpg',
+      avatar: getRandomCoachAvatar(),
       trainingLevel: generateRandomTrainingLevel(),
       workoutTypes: generateRandomWorkoutTypes(3),
-      certificate: 'http1.pdf',
-      trainerAchievements: 'Моя любимая фраза: Ты будешь тренироваться до тех пор пока я не вспотею.',
+      certificates: getRandomCertificateImages(3),
+      description: 'Моя любимая фраза: Ты будешь тренироваться до тех пор пока я не вспотею.',
       personalTraining: generateRandomBoolean()
     };
     trainers.push(trainer);
@@ -110,7 +110,7 @@ const generateUsers = (numberOfUsers: number) => {
       readinessForWorkout: generateRandomBoolean(),
       gender: generateRandomGender(),
       location: generateRandomLocation(),
-      backgroundImage: 'http.jpg',
+      avatar: getRandomUserAvatar(),
       trainingLevel: generateRandomTrainingLevel(),
       workoutTypes: generateRandomWorkoutTypes(3)
     };
@@ -137,7 +137,10 @@ const generateRequests = (numberOfRequests: number): Request[] => {
       status,
       requestType,
     };
-    requests.push(request);
+
+    if(request.requestType !== RequestType.Friend){
+      requests.push(request);
+    }
   }
   return requests;
 };
@@ -156,25 +159,10 @@ const generateReviews = (numberOfReviews: number): Review[] => {
   return reviews;
 };
 
-const generateNotifications = (numberOfReviews: number): Notification[] => {
-  const notifications: Notification[] = [];
-  for (let i = 0; i < numberOfReviews; i++) {
-    const type = generateRandomRequestType();
-    const text = generateNotification(type);
-    const notification: Notification = {
-      text,
-      type
-    };
-    notifications.push(notification);
-  }
-  return notifications;
-};
-
-export const users: User[] = generateUsers(5);
-export const trainers: Trainer[] = generateTrainers(5);
+export const users: User[] = generateUsers(10);
+export const trainers: Trainer[] = generateTrainers(10);
 export const trainings = generateTrainigs(trainers, 10);
 export const orders = generateTrainingOrders(trainings, users);
 export const balances = generateBalances(trainings);
 export const requests = generateRequests(20);
 export const reviews = generateReviews(20);
-export const notifications = generateNotifications(20);

@@ -13,8 +13,6 @@ import RadioSelect from '../../components/radio-select/radio-select';
 import Layout from '../../components/layout/layout';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute, CALORIES_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PRICE_CONSTRAINTS, TRAINING_NAME_CONSTRAINTS, capitalizeFirstLetter, genderToPreference } from '../../const';
-import { getGender } from '../../store/main-process/main-process.selectors';
-import { setGender } from '../../store/main-process/main-process.slice';
 
 const errorStyle = {
   color: '#e4001b',
@@ -27,17 +25,17 @@ function CreateTrainingScreen(): JSX.Element {
   const navigate = useNavigate();
 
   const isSubmitting = useAppSelector(getSubmittingStatus);
-  const selectedGender = useAppSelector(getGender);
 
   const nameRef = useRef<HTMLInputElement | null>(null);
-  const caloriesRef = useRef<HTMLInputElement | null>(null);
-  const priceRef = useRef<HTMLInputElement | null>(null);
 
   const [description, setDescription] = useState<string | null>(null);
-  const [selectedType, setType] = useState<WorkoutType | null>(null);
-  const [selectedDuration, setDuration] = useState<WorkoutDuration | null>(null);
-  const [selectedLevel, setLevel] = useState<TrainingLevel | null>(null);
-  const [selectedVideo, setVideo] = useState<string | null>(null);
+  const [selectedType, setType] = useState<WorkoutType | undefined>(undefined);
+  const [selectedDuration, setDuration] = useState<WorkoutDuration | undefined>(undefined);
+  const [selectedGender, setSelectedGender] = useState<Gender | undefined>(undefined);
+  const [selectedLevel, setLevel] = useState<TrainingLevel | undefined>(undefined);
+  const [selectedVideo, setVideo] = useState<File | null>(null);
+  const [selectedCalories, setSelectedCalories] = useState<number>(0);
+  const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const [isDurationDropdownOpen, setIsDurationDropdownOpen] = useState(false);
   const [isLevelDropdownOpen, setIsLevelDropdownOpen] = useState(false);
@@ -53,53 +51,67 @@ function CreateTrainingScreen(): JSX.Element {
     setDescriptionError('');
   };
 
-  const handleSexChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+  const handleCaloriesChange = (value: string) => {
+    setSelectedCalories(parseInt(value, 10));
+  };
+
+  const handlePriceChange = (value: string) => {
+    setSelectedPrice(parseInt(value, 10));
+  };
+
+  const handleSexChange = (evt: ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
     const gender = 'value' in evt.target ?
       (evt.target as HTMLInputElement).value as Gender :
         (evt.target as HTMLLIElement).dataset.value as Gender;
 
-    dispatch(setGender(gender));
+    setSelectedGender(gender);
   };
 
   const handleCreate = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if(selectedType === null){
+    if(selectedType === undefined){
       setTypeError('Выберите тип тренировки');
       return;
     }
 
-    if(selectedLevel === null){
+    if(selectedLevel === undefined){
       setLevelError('Выберите уровень тренировки');
       return;
     }
 
-    if(selectedDuration === null){
+    if(selectedDuration === undefined){
       setDurationError('Сколько времени потратим');
       return;
     }
 
-    if(selectedGender === null){
+    if(selectedGender === undefined){
       setGenderError('Выберите пол');
       return;
     }
 
+<<<<<<< HEAD
     if (
       (description && description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
       (description && description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ) {
+=======
+    if(
+      (description && description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (description && description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
+    ){
+>>>>>>> refactoring
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
     }
 
-    if(selectedVideo === null || selectedVideo === ''){
+    if(selectedVideo === null || selectedVideo === null){
       setVideoError('Выберите файл в предложенном формате');
       return;
     }
 
     if (nameRef.current !== null &&
-        priceRef.current !== null &&
-        caloriesRef.current !== null &&
+        selectedCalories !== 0 &&
         description !== null &&
         selectedVideo !== null
     ){
@@ -108,8 +120,8 @@ function CreateTrainingScreen(): JSX.Element {
         trainingLevel: selectedLevel,
         workoutType: selectedType,
         workoutDuration: selectedDuration,
-        price: parseInt(priceRef.current.value, 10),
-        calories: parseInt(caloriesRef.current.value, 10),
+        price: selectedPrice,
+        calories: selectedCalories,
         description,
         genderPreference: genderToPreference(selectedGender),
         video: selectedVideo,
@@ -154,7 +166,7 @@ function CreateTrainingScreen(): JSX.Element {
     const isMovOrAviOrMp4 = file?.type === 'video/quicktime' || file?.type === 'video/avi' || file?.type === 'video/mp4';
 
     if (isMovOrAviOrMp4) {
-      setVideo(file.name);
+      setVideo(file);
       setVideoError('');
     } else {
       setVideoError('Выбранный файл должен быть формата (mov) или (avi) или (mp4).');
@@ -193,7 +205,7 @@ function CreateTrainingScreen(): JSX.Element {
                         <DropdownSelect
                           classType={`custom-select ${!isTypeDropdownOpen ? 'select--not-selected' : 'is-open'} ${typeError && 'is-invalid'}`} label={'Выберите тип тренировки'}
                           onValueChange={handleSpecializationChange}
-                          selectedValue={selectedType && capitalizeFirstLetter(selectedType)}
+                          selectedValue={selectedType ?? capitalizeFirstLetter(selectedType)}
                           object={Object.values(WorkoutType)}
                           onToggleDropdown={handleToggleTypeDropdown}
                           error={typeError}
@@ -206,13 +218,13 @@ function CreateTrainingScreen(): JSX.Element {
                           text="ккал"
                           min={CALORIES_CONSTRAINTS.MIN}
                           max={CALORIES_CONSTRAINTS.MAX}
-                          reference={caloriesRef}
+                          onChange={handleCaloriesChange}
                         />
                         <DropdownSelect
                           classType={`custom-select ${!isDurationDropdownOpen ? 'select--not-selected' : 'is-open'} ${durationError && 'is-invalid'}`} label={'Сколько времени потратим'}
                           onValueChange={handleDurationChange}
-                          selectedValue={selectedDuration && capitalizeFirstLetter(selectedDuration)}
-                          object={Object.values(WorkoutDuration)}
+                          selectedValue={selectedDuration ?? capitalizeFirstLetter(selectedDuration)}
+                          object={Object.values(WorkoutDuration).filter((duration) => duration !== WorkoutDuration.Unknown)}
                           onToggleDropdown={handleDurationToggleDropdown}
                           error={durationError}
                         />
@@ -223,14 +235,14 @@ function CreateTrainingScreen(): JSX.Element {
                           inputName="price"
                           text="₽"
                           min={PRICE_CONSTRAINTS.MIN}
-                          reference={priceRef}
+                          onChange={handlePriceChange}
                         />
                         <DropdownSelect
                           classType={`custom-select ${!isLevelDropdownOpen ? 'select--not-selected' : 'is-open'} ${levelError && 'is-invalid'}`}
                           label={'Выберите уровень тренировки'}
                           onValueChange={handleLevelChange}
-                          selectedValue={selectedLevel && capitalizeFirstLetter(selectedLevel)}
-                          object={Object.values(TrainingLevel)}
+                          selectedValue={selectedLevel ?? capitalizeFirstLetter(selectedLevel)}
+                          object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                           onToggleDropdown={handleLevelToggleDropdown}
                           error={levelError}
                         />
@@ -243,7 +255,7 @@ function CreateTrainingScreen(): JSX.Element {
                           classChildType={'custom-toggle-radio create-training__radio'}
                           selectedValue={selectedGender}
                           onValueChange={handleSexChange}
-                          object={Object.values(Gender)}
+                          object={Object.values(Gender).filter((gender) => gender !== Gender.Unknown)}
                           error={genderError}
                         />
                       </div>
@@ -268,7 +280,7 @@ function CreateTrainingScreen(): JSX.Element {
                       <h2 className="create-training__legend">Загрузите видео-тренировку</h2>
                       <div className="drag-and-drop create-training__drag-and-drop">
                         <label>
-                          <span className="drag-and-drop__label" tabIndex={0}>{selectedVideo ? selectedVideo : 'Загрузите сюда файлы формата MOV, AVI или MP4'}
+                          <span className="drag-and-drop__label" tabIndex={0}>{selectedVideo ? selectedVideo.name : 'Загрузите сюда файлы формата MOV, AVI или MP4'}
                             <svg width="20" height="20" aria-hidden="true">
                               <use xlinkHref="#icon-import-video"></use>
                             </svg>

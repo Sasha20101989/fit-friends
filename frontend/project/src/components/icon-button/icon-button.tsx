@@ -17,9 +17,11 @@ function IconButton({ sourceName, direction, onClick, ariaLabel, width, height, 
     <button
       className={sourceName}
       type="button"
+      name={arrowIcon}
       aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
+      data-testid="test-icon-button"
     >
       <svg width={width} height={height} aria-hidden="true">
         <use xlinkHref={`#${arrowIcon}`}></use>

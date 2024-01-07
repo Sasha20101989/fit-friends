@@ -6,7 +6,9 @@ export type TrainingFilter = {
   maxPrice?: number;
   minCalories?: number;
   maxCalories?: number;
-  rating?: number;
+  minRating?: number;
+  maxRating?: number;
+  rating?: { $gte?: number; $lte?: number };
   workoutDuration?: { $in: string[] };
   price?: { $gte?: number; $lte?: number };
   calories?: { $gte?: number; $lte?: number };

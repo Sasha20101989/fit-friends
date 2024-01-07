@@ -18,33 +18,33 @@ const defaultCustomIcon = new Icon({
 });
 
 type PopupMapProps = {
-  station: Location;
+  name: string;
+  station: Location | null;
   onClose: () => void;
 }
 
-function PopupMap({ station, onClose }: PopupMapProps): JSX.Element {
+function PopupMap({name, station, onClose }: PopupMapProps): JSX.Element | null {
   const mapRef = useRef<HTMLDivElement>(null);
-  const coordinates = locationCoordinates[station];
+
   const map = useMap(mapRef, station);
 
   useEffect(() => {
-    const markers: Marker[] = [];
+    if (station && station !== Location.Unknown) {
+      const coordinates = locationCoordinates[station];
+      const markers: Marker[] = [];
 
-    if(map && coordinates){
-      const marker: Marker = new Marker({
-        lat: coordinates.latitude,
-        lng: coordinates.longitude,
-      });
+      if(map && coordinates){
+        const marker: Marker = new Marker({
+          lat: coordinates.latitude,
+          lng: coordinates.longitude,
+        });
 
-      marker.setIcon(defaultCustomIcon);
-      marker.addTo(map);
-      markers.push(marker);
-
-      // return () => {
-      //   markers.forEach((marker) => marker.removeFrom(map));
-      // };
+        marker.setIcon(defaultCustomIcon);
+        marker.addTo(map);
+        markers.push(marker);
+      }
     }
-  }, [station, map, coordinates]);
+  }, [map, station]);
 
   useEffect(() => {
     const handleKeyDown = (evt: KeyboardEvent) => {
@@ -60,12 +60,16 @@ function PopupMap({ station, onClose }: PopupMapProps): JSX.Element {
     };
   }, [onClose]);
 
+  if(!station){
+    return null;
+  }
+
   return (
-    <div className="popup-form popup-form--map">
+    <div className="popup-form popup-form--map" data-testid="popup-map">
       <section className="popup">
         <div className="popup__wrapper popup__wrapper--map">
           <div className="popup-head popup-head--address">
-            <h2 className="popup-head__header">Валерия</h2>
+            <h2 className="popup-head__header">{name}</h2>
             <p className="popup-head__address">
               <svg className="popup-head__icon-location" width="12" height="14" aria-hidden="true">
                 <use xlinkHref="#icon-location"></use>

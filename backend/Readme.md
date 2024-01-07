@@ -145,4 +145,5 @@ docker compose --file ./docker-compose.dev.yml --project-name "fit-friends" up -
 Выполните команду для заполнения базы.
 ```bash
 npm run ts ./src/main.cli.ts -- --import <имя пользователя базы данных> <пароль пользователя базы данных> <хост базы данных> <название базы данных> <соль>
+npm run ts ./src/main.cli.ts -- --import admin admin 127.0.0.1 fit-friends secret 
 ```

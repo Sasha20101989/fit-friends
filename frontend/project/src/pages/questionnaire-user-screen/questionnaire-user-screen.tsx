@@ -1,29 +1,95 @@
 import BackgroundLogo from '../../components/background-logo/background-logo';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
 import SpecializationGroup from '../../components/specialization-group/specialization-group';
-import { useAppSelector } from '../../hooks/index';
-import { getSubmittingStatus } from '../../store/user-process/user-process.selectors';
-import { Role } from '../../types/role.enum';
+import { useAppDispatch, useAppSelector } from '../../hooks/index';
+import { getCurrentUser, getSubmittingStatus } from '../../store/user-process/user-process.selectors';
 import RadioSelect from '../../components/radio-select/radio-select';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import Layout from '../../components/layout/layout';
 import { CALORIES_CONSTRAINTS } from '../../const';
+import { User } from '../../types/user.interface';
+import Loading from '../../components/loading/loading';
+import { addCurrentUserSpecialization, changeCurrentUserDuration, changeCurrentUserLevel, removeCurrentUserSpecialization } from '../../store/user-process/user-process.slice';
+import { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import { WorkoutType } from '../../types/workout-type.enum';
+import CreateUserDto from '../../dto/create-user.dto';
+import { registerAction } from '../../store/api-actions/auth-api-actions/auth-api-actions';
 
 function QuestionnaireUserScreen(): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const currentUser = useAppSelector(getCurrentUser);
+
   const isSubmitting = useAppSelector(getSubmittingStatus);
 
-  const {
-    specializationsError,
-    levelError,
-    durationError,
-    caloriesLoseRef,
-    caloriesWaste,
-    selectedDuration,
-    selectedLevel,
-    handleUserQuestion,
-    handleDurationChange,
-    handleLevelChange} = useRegisterForm();
+  const caloriesLoseRef = useRef<HTMLInputElement | null>(null);
+  const caloriesWaste = useRef<HTMLInputElement | null>(null);
+
+  const [durationError, setDurationError] = useState('');
+  const [levelError, setLevelError] = useState('');
+  const [specializationsError, setSpecializationsError] = useState('');
+
+  const onUserQuestion = (userData: CreateUserDto) => {
+    dispatch(registerAction(userData));
+  };
+
+  const handleUserQuestion = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+
+    const user = currentUser as User;
+
+    if (user &&
+        caloriesLoseRef.current !== null &&
+        caloriesWaste.current !== null &&
+        user.workoutTypes.length > 0 &&
+        user.trainingLevel !== undefined &&
+        user.workoutDuration !== null) {
+
+      const userData: CreateUserDto = {
+        ...user,
+        caloriesToBurn: parseInt(caloriesLoseRef.current.value, 10),
+        caloriesToSpend: parseInt(caloriesWaste.current.value, 10),
+        workoutTypes: user.workoutTypes,
+        trainingLevel: user.trainingLevel,
+        workoutDuration: user.workoutDuration
+      };
+
+      onUserQuestion(userData);
+    }
+  };
+
+  const handleLevelChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newLevel = 'value' in evt.target ?
+      (evt.target as HTMLInputElement).value as TrainingLevel :
+        (evt.target as HTMLLIElement).dataset.value as TrainingLevel;
+    setLevelError('');
+    dispatch(changeCurrentUserLevel(newLevel));
+  };
+
+  const handleDurationChange = (evt: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement>) => {
+    const newDuration = 'value' in evt.target ?
+    (evt.target as HTMLInputElement).value as WorkoutDuration :
+      (evt.target as HTMLLIElement).dataset.value as WorkoutDuration;
+    setDurationError('');
+    dispatch(changeCurrentUserDuration(newDuration));
+  };
+
+  const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = evt.target.value as WorkoutType;
+    setSpecializationsError('');
+
+    if (evt.target.checked) {
+      dispatch(addCurrentUserSpecialization(selectedType));
+    } else {
+      dispatch(removeCurrentUserSpecialization(selectedType));
+    }
+  };
+
+  if(!currentUser){
+    return <Loading/>;
+  }
+
+  const user = currentUser as User;
 
   return(
     <Layout includeHeader={false}>
@@ -36,16 +102,16 @@ function QuestionnaireUserScreen(): JSX.Element {
                 <div className="questionnaire-user">
                   <h1 className="visually-hidden">Опросник</h1>
                   <div className="questionnaire-user__wrapper">
-                    <SpecializationGroup role={Role.User} error={specializationsError}/>
+                    <SpecializationGroup currentUser={currentUser} error={specializationsError} onSpecializationChange={handleSpecializationChange}/>
                     <RadioSelect
                       name={'time'}
                       classType={'questionnaire-user__block'}
                       classLabelType={'questionnaire-user__legend'}
                       label={'Сколько времени вы готовы уделять на тренировку в день'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-user__radio'}
-                      selectedValue={selectedDuration}
+                      selectedValue={user.workoutDuration}
                       onValueChange={handleDurationChange}
-                      object={Object.values(WorkoutDuration)}
+                      object={Object.values(WorkoutDuration).filter((duration) => duration !== WorkoutDuration.Unknown)}
                       error={durationError}
                     />
                     <RadioSelect
@@ -54,9 +120,9 @@ function QuestionnaireUserScreen(): JSX.Element {
                       classLabelType={'questionnaire-user__legend'}
                       label={'Ваш уровень'}
                       classChildType={'custom-toggle-radio custom-toggle-radio--big questionnaire-user__radio'}
-                      selectedValue={selectedLevel}
+                      selectedValue={user.trainingLevel}
                       onValueChange={handleLevelChange}
-                      object={Object.values(TrainingLevel)}
+                      object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                       error={levelError}
                     />
                     <div className="questionnaire-user__block">

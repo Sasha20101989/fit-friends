@@ -20,7 +20,7 @@ function SpecialForYouItem({ title, imageSrc, trainingId }: SpecialForYouItemPro
   };
 
   return (
-    <li className="special-for-you__item">
+    <li className="special-for-you__item" data-testid="special-for-you-item">
       <div className="thumbnail-preview">
         <Image imageSrc={imageSrc} sourceName={'thumbnail-preview__image'} width={452} height={191} alt={'special card'}/>
         <div className="thumbnail-preview__inner">

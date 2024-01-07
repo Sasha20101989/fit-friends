@@ -17,14 +17,6 @@ function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps
   const { name, location, description, workoutTypes, role, readinessForWorkout } = user;
   const [isMapOpen, setIsMapOpen] = useState(false);
 
-  const handleAddFriend = () => {
-    onAddFriend();
-  };
-
-  const handleRemoveFriend = () => {
-    onRemoveFriend();
-  };
-
   const handleShowMap = () => {
     setIsMapOpen(true);
   };
@@ -63,17 +55,17 @@ function UserCard({ user, isFriend, onAddFriend, onRemoveFriend }: UserCardProps
             hashtags={workoutTypes}
           />
           {isFriend ? (
-            <button className="btn btn--outlined user-card__friend-btn" type="button" onClick={handleRemoveFriend}>
+            <button className="btn btn--outlined user-card__friend-btn" type="button" onClick={onRemoveFriend}>
               Убрать из друзей
             </button>
           ) : (
-            <button className="btn user-card__friend-btn" type="button" onClick={handleAddFriend}>
+            <button className="btn user-card__friend-btn" type="button" onClick={onAddFriend}>
               Добавить в друзья
             </button>
           )}
         </div>
         <CardGalery isCoach={role === Role.Trainer}/>
-        {isMapOpen && <PopupMap station={location} onClose={handleCloseMap}/>}
+        {isMapOpen && <PopupMap name={name} station={location} onClose={handleCloseMap}/>}
       </div>
     </section>
   );

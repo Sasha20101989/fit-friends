@@ -49,7 +49,7 @@ export default class UserService implements UserServiceInterface {
     delete filteredBody.email;
     delete filteredBody.password;
 
-    return this.userModel
+    return await this.userModel
       .findByIdAndUpdate(userId, filteredBody, {new: true})
       .exec();
   }
@@ -64,7 +64,7 @@ export default class UserService implements UserServiceInterface {
       return null;
     }
 
-    return this.tokenService.updateAccessToken(decodedRefreshToken);
+    return await this.tokenService.updateAccessToken(decodedRefreshToken);
   }
 
   public async create(dto: CreateUserDto, saltRounds: number): Promise<VerifyUserResponse<UserEntity>> {
@@ -88,7 +88,7 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async exists(documentId: string): Promise<boolean> {
-    return this.userModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.userModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
   public async verifyUser(dto: LoginUserDto): Promise<VerifyUserResponse<UserEntity> | null> {

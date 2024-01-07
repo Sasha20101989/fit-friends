@@ -26,7 +26,7 @@ function SpecialForYou({specialForUserTrainings, isPreviousButtonDisabled, isNex
         <div className="special-for-you__wrapper">
           <div className="special-for-you__title-wrapper">
             <h2 className="special-for-you__title">Специально подобрано для вас</h2>
-            <div className="special-for-you__controls">
+            <div className="special-for-you__controls" data-testid="special-for-you-controls">
               <IconButton sourceName={'btn-icon special-for-you__control'} direction="left" onClick={handlePreviousClick} ariaLabel="previous" width={16} height={14} disabled={isPreviousButtonDisabled}/>
               <IconButton sourceName={'btn-icon special-for-you__control'} direction="right" onClick={handleNextClick} ariaLabel="next" width={16} height={14} disabled={isNextButtonDisabled}/>
             </div>

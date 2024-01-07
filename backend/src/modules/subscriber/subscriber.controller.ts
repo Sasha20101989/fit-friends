@@ -17,7 +17,8 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { UserServiceInterface } from '../user/user-service.interface.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class SubscriberController extends Controller {
@@ -25,7 +26,8 @@ export default class SubscriberController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.SubscriberServiceInterface) private readonly subscriberService: SubscriberServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for SubscriberController...');
@@ -34,7 +36,7 @@ export default class SubscriberController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainerId'),
         new DocumentExistsMiddleware(this.userService, 'Traininer', 'trainerId')
       ]
@@ -43,7 +45,7 @@ export default class SubscriberController extends Controller {
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainerId'),
         new DocumentExistsMiddleware(this.userService, 'Traininer', 'trainerId')
       ]
@@ -52,7 +54,7 @@ export default class SubscriberController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
   }

@@ -8,7 +8,6 @@ import { Role } from '../../types/role.enum';
 import { AppRoute, MAX_TRAINER_CARD_TRAININGS_COUNT } from '../../const';
 import UserCard from '../../components/user-card/user-card';
 import TrainerCard from '../../components/trainer-card/trainer-card';
-import { getMyFriends } from '../../store/user-process/user-process.selectors';
 import { User } from '../../types/user.interface';
 import { Trainer } from '../../types/trainer.interface';
 import GoBack from '../../components/go-back/go-back';
@@ -17,13 +16,15 @@ import { FetchTrainingsParams, fetchTrainingsAction } from '../../store/api-acti
 import { Sorting } from '../../types/sorting.enum';
 import { Training } from '../../types/training.type';
 import { TrainingCategory } from '../../types/training-category';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 function UserCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
 
   const { id } = useParams<{ id: string }>();
 
-  const friends = useAppSelector(getMyFriends);
+  const currentUser = useAppSelector(getCurrentUser);
+
   const subscribes = useAppSelector(getSubscribes);
   const user = useAppSelector(getSelectedUser);
   const trainings: Training[] = useAppSelector(getTrainings);
@@ -46,6 +47,7 @@ function UserCardScreen() : JSX.Element {
     }
   }, [dispatch, id]);
 
+
   useEffect(() => {
     if (id && user?.role === Role.Trainer) {
       dispatch(fetchTrainingsAction({
@@ -57,10 +59,10 @@ function UserCardScreen() : JSX.Element {
   }, [dispatch, id, selectedPage, user, initialQueryParams]);
 
   useEffect(() => {
-    if (id && friends.length > 0) {
-      setIsFriend(friends.some((friend) => friend.id === id));
+    if (currentUser && id && currentUser.friends && currentUser.friends.length > 0) {
+      setIsFriend(currentUser.friends.some((friend) => friend.id === id));
     }
-  }, [friends, id]);
+  }, [currentUser, id]);
 
   useEffect(() => {
     if (id && subscribes.length > 0) {

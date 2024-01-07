@@ -1,18 +1,24 @@
+import { Request } from '../../types/request.type';
 import { User } from '../../types/user.interface';
 import Image from '../image/image';
+import { notificationMessages } from '../../const';
+import { RequestStatus } from '../../types/request-status.enum';
+import { RequestType } from '../../types/request-type.enum';
 
 type FriendProps = {
   friend: User;
+  request: Request | undefined;
+  onAccept: (evt: React.MouseEvent<HTMLButtonElement>, request: Request) => void;
+  onReject: (evt: React.MouseEvent<HTMLButtonElement>, request: Request) => void;
 }
 
-function Friend({friend}: FriendProps): JSX.Element{
+function Friend({ friend, request, onAccept, onReject }: FriendProps): JSX.Element {
   const { name, location, workoutTypes, readinessForWorkout } = friend;
-  const theme = 'light';
 
   return(
     <li className="friends-list__item">
       <div className="thumbnail-friend">
-        <div className={`thumbnail-friend__info thumbnail-friend__info--theme-${theme}`}>
+        <div className='thumbnail-friend__info thumbnail-friend__info--theme-light'>
           <div className="thumbnail-friend__image-status">
             <Image sourceName={'thumbnail-friend__image'} imageSrc={friend.avatar ? friend.avatar : ''} width={78} height={78} alt={'аватар пользователя'}/>
           </div>
@@ -39,13 +45,43 @@ function Friend({friend}: FriendProps): JSX.Element{
             </div>
           </div>
         </div>
-        <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
-          <p className="thumbnail-friend__request-text">Запрос на&nbsp;персональную тренировку</p>
-          <div className="thumbnail-friend__button-wrapper">
-            <button className="btn btn--medium btn--dark-bg thumbnail-friend__button" type="button">Принять</button>
-            <button className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button" type="button">Отклонить</button>
+        {request && request.status === RequestStatus.Pending && (
+          <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
+            <p className="thumbnail-friend__request-text">
+              {notificationMessages[request.requestType]}
+            </p>
+            <div className="thumbnail-friend__button-wrapper">
+              <button
+                className="btn btn--medium btn--dark-bg thumbnail-friend__button"
+                type="button"
+                onClick={(evt) => onAccept(evt, request)}
+              >
+                Принять
+              </button>
+              <button
+                className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button"
+                type="button"
+                onClick={(evt) => onReject(evt, request)}
+              >
+                Отклонить
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+        {request && request.status === RequestStatus.Rejected && (
+          <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
+            <p className="thumbnail-friend__request-text">
+              {notificationMessages[request.requestType]} отклонён
+            </p>
+          </div>
+        )}
+        {request && request.status === RequestStatus.Accepted && request.requestType !== RequestType.Friend && (
+          <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
+            <p className="thumbnail-friend__request-text">
+              {notificationMessages[request.requestType]} принят
+            </p>
+          </div>
+        )}
       </div>
     </li>
   );

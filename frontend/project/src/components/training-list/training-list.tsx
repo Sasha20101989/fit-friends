@@ -10,7 +10,7 @@ type TrainingListProps = {
 
 function TrainingList({sourceName, itemSourceName, trainings}: TrainingListProps): JSX.Element {
   return (
-    <ul className={sourceName}>
+    <ul className={sourceName} data-testid="popular-trainings-list">
       {trainings.map((training) => (
         <TrainingItem key={`${training.name}-${training.createdAt}`} sourceName={itemSourceName} training={training} />
       ))}

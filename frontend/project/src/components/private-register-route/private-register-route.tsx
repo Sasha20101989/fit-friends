@@ -1,27 +1,29 @@
 import {Navigate} from 'react-router-dom';
-import {AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isAuthorizationUnknown, isTrainer, isUser} from '../../const';
-import { Role } from '../../types/role.enum';
+import {AppRoute, AuthorizationStatus, RegisterStatus, isAuthorization, isAuthorizationUnknown} from '../../const';
 import Loading from '../loading/loading';
+import { useAppSelector } from '../../hooks/index';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 type PrivateRegisterRouteProps = {
   authorizationStatus: AuthorizationStatus;
   children: JSX.Element;
   registerStatus?: RegisterStatus;
-  currentRole: Role;
 }
 
 function PrivateRegisterRoute(props: PrivateRegisterRouteProps): JSX.Element | null {
-  const {authorizationStatus, currentRole, registerStatus, children} = props;
+  const {authorizationStatus, registerStatus, children} = props;
 
-  if((isTrainer(currentRole) || isUser(currentRole)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.InProgress){
+  const currentUser = useAppSelector(getCurrentUser);
+
+  if(registerStatus === RegisterStatus.InProgress){
     return children;
   }
 
-  if(isAuthorizationUnknown(authorizationStatus, currentRole)) {
+  if(isAuthorizationUnknown(authorizationStatus, currentUser)) {
     return <Loading />;
   }
 
-  if((isTrainer(currentRole) || isUser(currentRole)) && isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
+  if(isAuthorization(authorizationStatus) && registerStatus === RegisterStatus.Done){
     return <Navigate to={AppRoute.Main}/>;
   }
 

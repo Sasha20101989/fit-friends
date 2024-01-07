@@ -44,10 +44,6 @@ export default class UpdateUserDto {
   public location?: Location;
 
   @IsOptional()
-  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
-  public backgroundImage?: string;
-
-  @IsOptional()
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
   public trainingLevel?: TrainingLevel;
 

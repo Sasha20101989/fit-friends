@@ -68,7 +68,7 @@ export default class TokenService implements TokenServiceInterface {
   }
 
   public async exists(refreshToken: string): Promise<boolean> {
-    return this.tokenModel.exists({ refreshToken: refreshToken }).then((v) => v !== null);
+    return await this.tokenModel.exists({ refreshToken: refreshToken }).then((v) => v !== null);
   }
 
   public async updateRefreshToken(refreshToken: string): Promise<Auth | null> {
@@ -84,8 +84,8 @@ export default class TokenService implements TokenServiceInterface {
   }
 
   public async updateAccessToken(decodedRefreshToken: RefreshTokenDto): Promise<string> {
-      const tokens = this.generateTokens(decodedRefreshToken);
-      return tokens.accessToken;
+    const tokens = this.generateTokens(decodedRefreshToken);
+    return tokens.accessToken;
   }
 
   public async decodeRefreshToken(refreshToken: string): Promise<JwtPayload | null> {

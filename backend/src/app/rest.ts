@@ -25,6 +25,8 @@ import { ServerProducerInterface } from '../core/rabit-server/producer/server-pr
 import { ClientConsumerInterface } from '../core/rabbit-client/consumer/client-consumer.interface.js';
 import { ClientProducerInterface } from '../core/rabbit-client/producer/client-producer.interface.js';
 import { RabbitRouting } from '../types/rabbit-routing.enum.js';
+import { STATIC_FILES_ROUTE, STATIC_UPLOAD_ROUTE } from './rest.const.js';
+import { ExceptionFilter } from '../core/exception-filter/exception-filter.interface.js';
 
 @injectable()
 export default class RestApplication {
@@ -50,6 +52,10 @@ export default class RestApplication {
     @inject(AppComponent.ServerProducerInterface) private readonly serverProducer: ServerProducerInterface,
     @inject(AppComponent.ClientConsumerInterface) private readonly clientConsumer: ClientConsumerInterface,
     @inject(AppComponent.ClientProducerInterface) private readonly clientProducer: ClientProducerInterface,
+    @inject(AppComponent.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: ExceptionFilter,
+    @inject(AppComponent.HttpExceptionFilter) private readonly httpExceptionFilter: ExceptionFilter,
+    @inject(AppComponent.ValidationExceptionFilter) private readonly validationExceptionFilter: ExceptionFilter,
   ) {
     this.expressApplication = express();
   }
@@ -138,19 +144,26 @@ export default class RestApplication {
     this.expressApplication.use(cookieParser());
 
     this.expressApplication.use(
-      '/upload',
+      STATIC_UPLOAD_ROUTE,
       express.static(this.config.get('UPLOAD_DIRECTORY'))
     );
 
     this.expressApplication.use(
-      '/static',
+      STATIC_FILES_ROUTE,
       express.static(this.config.get('STATIC_DIRECTORY_PATH'))
     );
 
-    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_ACCESS_SECRET'));
+    const authenticateMiddleware = new AuthenticateMiddleware(this.authExceptionFilter, this.config.get('JWT_ACCESS_SECRET'));
     this.expressApplication.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
 
     this.logger.info('Global middleware initialization completed');
+  }
+
+  private async _initExceptionFilters() {
+    this.expressApplication.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
+    this.expressApplication.use(this.validationExceptionFilter.catch.bind(this.validationExceptionFilter));
+    this.expressApplication.use(this.httpExceptionFilter.catch.bind(this.httpExceptionFilter));
+    this.expressApplication.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
   }
 
   private async _initRoutes() {
@@ -190,6 +203,10 @@ export default class RestApplication {
     await this._initMiddleware();
 
     await this._initRoutes();
+
+    this.logger.info('Init exception filters');
+    await this._initExceptionFilters();
+    this.logger.info('Exception filters initialization compleated');
 
     await this._initServer().catch((error) => {
       this.logger.error(`Error server initialization: ${error.message}`);

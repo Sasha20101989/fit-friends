@@ -3,8 +3,6 @@ import ThumbnailTrainingTotal from '../thumbnail-training-total/thumbnail-traini
 import ThumbnailTrainingRate from '../training-rate/training-rate';
 import ThumbnailTrainingText from '../thumbnail-training-text/thumbnail-training-text';
 import { TrainingOrder } from '../../types/training-order.type';
-import { useAppSelector } from '../../hooks/index';
-import { getUser } from '../../store/user-process/user-process.selectors';
 import { AppRoute } from '../../const';
 import HashtagList from '../hashtag-list/hashtag-list';
 import Image from '../image/image';
@@ -18,17 +16,16 @@ function OrderItem({ order }: OrderItemProps): JSX.Element {
   const navigate = useNavigate();
 
   const { training, backgroundImage, price, name, workoutType, rating, description, totalSalesAmount, purchasedQuantity, calories } = order;
+
   const hashtags = [workoutType, `${calories}ккал`];
-  const user = useAppSelector(getUser);
 
   const handleTrainingClick = (evt: React.MouseEvent<HTMLAnchorElement>): void => {
     evt.preventDefault();
-    const trainerId = user?.id;
-    if (trainerId && training) {
+
+    if (training) {
       navigate(`${AppRoute.Trainings}/${training}`);
     }
   };
-
 
   return (
     <li className="my-orders__item">
@@ -36,8 +33,8 @@ function OrderItem({ order }: OrderItemProps): JSX.Element {
         <div className="thumbnail-training__inner">
           <Image imageSrc={backgroundImage} sourceName={'thumbnail-training__image'} width={330} height={190} alt={'тренировка'}/>
           <p className="thumbnail-training__price">
-            <span className="thumbnail-training__price-value">{price === 0 ? 'Бесплатно' : `${price} ₽`}</span>
-            <span>₽</span>
+            <span className="thumbnail-training__price-value">{price === 0 ? 'Бесплатно' : price}</span>
+            {price !== 0 && <span>₽</span>}
           </p>
           <h2 className="thumbnail-training__title">{name}</h2>
           <div className="thumbnail-training__info">

@@ -6,7 +6,6 @@ import { getLoadingStatus, getReviews, getTraining } from '../../store/main-data
 import { Training } from '../../types/training.type';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import HashtagList from '../../components/hashtag-list/hashtag-list';
-import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
 import { Review } from '../../types/review.type';
 import ReviewItem from '../../components/review-item/review-item';
@@ -29,13 +28,15 @@ import CreateOrderDto from '../../dto/create-order.dto';
 import { createOrderAction } from '../../store/api-actions/order-api-actions/order-api-actions';
 import { getBalance } from '../../store/balance-data/balance-data.selectors';
 import { UserBalance } from '../../types/user-balance.type';
-import { addTrainingInBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
+import { addTrainingInBalanceAction, fetchBalanceAction } from '../../store/api-actions/balance-api-actions/balance-api-actions';
 import CreateBalanceDto from '../../dto/create-balance.dto';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 
 function TrainingCardScreen() : JSX.Element {
   const dispatch = useAppDispatch();
 
-  const currentRole = useAppSelector(getCurrentRole);
+  const currentUser = useAppSelector(getCurrentUser);
+
   const training: Training | null = useAppSelector(getTraining);
   const reviews: Review[] = useAppSelector(getReviews);
   const balance: UserBalance[] = useAppSelector(getBalance);
@@ -71,6 +72,7 @@ function TrainingCardScreen() : JSX.Element {
     if(trainingId){
       dispatch(fetchTrainingAction({trainingId}));
       dispatch(fetchReviewsAction({trainingId}));
+      dispatch(fetchBalanceAction({}));
     }
   }, [dispatch, trainingId]);
 
@@ -78,7 +80,7 @@ function TrainingCardScreen() : JSX.Element {
     if (trainingId && trainings.length > 0) {
       setIsInBalance(trainings.some((trainingItem) => trainingItem.id === trainingId));
     }
-  }, [trainings, trainingId]);
+  }, [trainings, trainingId, isInBalance]);
 
   if (isLoading) {
     return <Loading/>;
@@ -115,7 +117,7 @@ function TrainingCardScreen() : JSX.Element {
   };
 
   const handleSave = () => {
-    if (currentRole === Role.Trainer) {
+    if (currentUser && currentUser.role === Role.Trainer) {
       const trainingData: UpdateTrainingDto = {};
 
       if (nameRef.current && nameRef.current.value.trim() !== '') {
@@ -192,7 +194,11 @@ function TrainingCardScreen() : JSX.Element {
       };
 
       dispatch(createOrderAction({trainingId, orderData}));
-      dispatch(addTrainingInBalanceAction({trainingId, balanceData}));
+      dispatch(addTrainingInBalanceAction({trainingId, balanceData}))
+        .then(() => {
+          dispatch(fetchBalanceAction({}));
+        });
+
       handleCloseBuyForm();
     }
   };
@@ -211,7 +217,7 @@ function TrainingCardScreen() : JSX.Element {
                   <ReviewItem key={review.createdAt} review={review}/>
                 )}
               </ul>
-              {currentRole === Role.User && <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleShowReviewForm}>Оставить отзыв</button>}
+              {currentUser && currentUser.role === Role.User && <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleShowReviewForm}>Оставить отзыв</button>}
             </aside>
             {isFeedbackFormOpen && <PopupFeedback onClose={handleCloseFeedbackForm} onSubmit={handleFeedbackSubmit}/>}
             {isBuyFormOpen && <PopupBuy trainingTitle={training.name} trainingImage={training.backgroundImage} trainingPrice={training.price} onClose={handleCloseBuyForm} onSubmit={handleBuySubmit}/>}
@@ -226,7 +232,7 @@ function TrainingCardScreen() : JSX.Element {
                       <span className="training-info__name">{training.trainer.name}</span>
                     </div>
                   </div>
-                  {currentRole === Role.Trainer && <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>}
+                  {currentUser && currentUser.role === Role.Trainer && <TrainingEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>}
                 </div>
                 <div className="training-info__main-content">
                   <form action="#" method="get">
@@ -302,7 +308,7 @@ function TrainingCardScreen() : JSX.Element {
                             />
                           </label>
                         </div>
-                        <TrainingCardButton onBuyClick={handleShowBuyForm} isSpecial={specialValue} isFormEditable={isFormEditable} onDiscountClick={handleDiscountClick}/>
+                        {currentUser && <TrainingCardButton role={currentUser.role} onBuyClick={handleShowBuyForm} isSpecial={specialValue} isFormEditable={isFormEditable} onDiscountClick={handleDiscountClick}/>}
                       </div>
                     </div>
                   </form>

@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 type ImageProps = {
   sourceName: string;
@@ -9,14 +9,21 @@ type ImageProps = {
 }
 
 function Image({imageSrc, sourceName, width, height, alt}: ImageProps): JSX.Element {
-  const fileExtension = imageSrc.split('.').pop();
-  const imageNameWithoutExtension = imageSrc.replace(/\.[^/.]+$/, '');
-  const hostedImage = `http://localhost:3000/${imageNameWithoutExtension}`;
+  const [hostedImage, setHostedImage] = useState<string>('');
+  const [fileExtension, setFileExtension] = useState<string>('');
+
+  useEffect(() => {
+    if (imageSrc) {
+      const extension = imageSrc.split('.').pop() || '';
+      const imageNameWithoutExtension = imageSrc.replace(/\.[^/.]+$/, '');
+      setHostedImage(imageNameWithoutExtension);
+      setFileExtension(extension);
+    }
+  }, [imageSrc]);
 
   return (
-    <div className={sourceName}>
+    <div className={sourceName} data-testid="certificate-card-image">
       <picture>
-        <source type="image/webp" srcSet={`${hostedImage}.webp, ${hostedImage}@2x.webp 2x`}/>
         <img
           src={`${hostedImage}${fileExtension ? `.${fileExtension}` : ''}`}
           srcSet={`${hostedImage}@2x.${fileExtension ? fileExtension : ''} 2x`}
@@ -25,7 +32,6 @@ function Image({imageSrc, sourceName, width, height, alt}: ImageProps): JSX.Elem
           alt={alt}
         />
       </picture>
-      {/* <div className="thumbnail-friend__online-status thumbnail-friend__online-status--is-online"></div> */}
     </div>
   );
 }

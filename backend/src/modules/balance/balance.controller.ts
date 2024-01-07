@@ -11,7 +11,6 @@ import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.mid
 import { BalanceServiceInterface } from './balance-service.interface.js';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/common.js';
 import { Role } from '../../types/role.enum.js';
 
@@ -26,6 +25,8 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists.middleware.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { BalanceQueryParams } from './types/balance-query-params.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 
 @injectable()
@@ -34,7 +35,8 @@ export default class BalanceController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.BalanceServiceInterface) private readonly balanceService: BalanceServiceInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for BalanceController...');
@@ -44,7 +46,7 @@ export default class BalanceController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User)
       ],
     });
@@ -54,7 +56,7 @@ export default class BalanceController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
         new ValidateDtoMiddleware(CreateBalanceDto)
@@ -66,7 +68,7 @@ export default class BalanceController extends Controller {
       method: HttpMethod.Patch,
       handler: this.updateBalance,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),

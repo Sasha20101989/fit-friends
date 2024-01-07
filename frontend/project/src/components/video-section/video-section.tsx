@@ -1,5 +1,5 @@
 import { useAppSelector } from '../../hooks/index';
-import { getCurrentRole } from '../../store/main-process/main-process.selectors';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
 import { Role } from '../../types/role.enum';
 import Image from '../image/image';
 
@@ -7,21 +7,25 @@ type VideoSectionProps = {
   isInBalance: boolean;
 }
 
-function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
-  const currentRole = useAppSelector(getCurrentRole);
+function VideoSection({isInBalance}: VideoSectionProps):JSX.Element | null {
+  const currentUser = useAppSelector(getCurrentUser);
+
+  if(!currentUser){
+    return null;
+  }
 
   return (
-    <div className="training-video">
+    <div className="training-video" data-testid="training-video">
       <h2 className="training-video__title">Видео</h2>
       <div className="training-video__video">
-        <Image imageSrc={'img/content/training-video/video-thumbnail'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
+        <Image imageSrc={'video-thumbnail.png'} sourceName={'training-video__thumbnail'} width={922} height={566} alt={'Обложка видео'} />
         <button className="training-video__play-button btn-reset" disabled={!isInBalance}>
           <svg width="18" height="30" aria-hidden="true">
             <use xlinkHref="#icon-arrow"></use>
           </svg>
         </button>
       </div>
-      {currentRole === Role.Trainer && (
+      {currentUser.role === Role.Trainer && (
         <div className="training-video__drop-files">
           <form action="#" method="post">
             <div className="training-video__form-wrapper">
@@ -40,7 +44,7 @@ function VideoSection({isInBalance}: VideoSectionProps):JSX.Element {
         </div>
       )}
       <div className="training-video__buttons-wrapper">
-        {currentRole === Role.User ? (
+        {currentUser.role === Role.User ? (
           <button
             className="btn training-video__button training-video__button--start"
             type="button"

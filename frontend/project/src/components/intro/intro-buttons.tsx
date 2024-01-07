@@ -7,7 +7,7 @@ type IntroButtonsProps = {
 
 function IntroButtons({ handleGoToRegisterClick, handleGoToLoginClick }: IntroButtonsProps): JSX.Element {
   return (
-    <div className="intro__buttons">
+    <div className="intro__buttons" data-testid="intro-buttons">
       <button className="btn intro__button" type="button" onClick={handleGoToRegisterClick}>Регистрация</button>
       <p className="intro__text">Есть аккаунт?
         <Link className="intro__link" to="" onClick={handleGoToLoginClick}>Вход</Link>

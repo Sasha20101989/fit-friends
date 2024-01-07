@@ -4,4 +4,5 @@ export enum Location {
   Udelnaya = 'удельная',
   Zvezdnaya = 'звёздная',
   Sportivnaya = 'спортивная',
+  Unknown = 'UNKNOWN'
 }

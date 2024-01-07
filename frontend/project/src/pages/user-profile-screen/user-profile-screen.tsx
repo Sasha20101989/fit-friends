@@ -7,38 +7,31 @@ import PersonalAccountCoach from '../../components/personal-account-coach/person
 import UserEditButton from '../../components/user-edit-button/user-edit-button';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
 import { useParams } from 'react-router-dom';
-import { getUser } from '../../store/user-process/user-process.selectors';
-import { useEffect, useState } from 'react';
-import { editTrainerAction, editUserAction, fetchUserAction } from '../../store/api-actions/user-api-actions/user-api-actions';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { editTrainerAction, editUserAction, fetchCurrentUserAction, updateAvatarAction } from '../../store/api-actions/user-api-actions/user-api-actions';
 import PersonalAccountUser from '../../components/personal-account-user/personal-account-user';
 import { Role } from '../../types/role.enum';
 import Layout from '../../components/layout/layout';
 import NotFoundScreen from '../not-found-screen/not-found-screen';
 import DropdownSelect from '../../components/dropdown-select/dropdown-select';
 import { Location } from '../../types/location.enum';
-import { getAvatar, getDescription, getGender, getLevel, getLocation, getName, getReadiessToWorkout, getCurrentRole, getSpecializations } from '../../store/main-process/main-process.selectors';
-import { changeLevel, setGender, setLocation } from '../../store/main-process/main-process.slice';
-import { DESCRIPTION_CONSTRAINTS, capitalizeFirstLetter } from '../../const';
+import { DESCRIPTION_CONSTRAINTS, MAX_CERTIFICATES_COUNT, capitalizeFirstLetter } from '../../const';
 import { Gender } from '../../types/gender.enum';
 import { TrainingLevel } from '../../types/training-level.enum';
 import UpdateTrainerDto from '../../dto/update-trainer.dto';
 import { getLoadingStatus } from '../../store/main-data/main-data.selectors';
 import Loading from '../../components/loading/loading';
 import UpdateUserDto from '../../dto/update-user.dto';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
+import { Trainer } from '../../types/trainer.interface';
+import { User } from '../../types/user.interface';
+import { changeCurrentUserLevel, setCurrentUserGender, setCurrentUserLocation } from '../../store/user-process/user-process.slice';
+import { usePreviousNextButtons } from '../../hooks/use-previous-next-buttons/use-previous-next-buttons';
 
 function UserProfileScreen(): JSX.Element {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
-  const user = useAppSelector(getUser);
-  const currentRole = useAppSelector(getCurrentRole);
-  const selectedGender = useAppSelector(getGender);
-  const selectedLocation = useAppSelector(getLocation);
-  const selectedLevel = useAppSelector(getLevel);
-  const selectedDescription = useAppSelector(getDescription);
-  const selectedName = useAppSelector(getName);
-  const selectedAvatar = useAppSelector(getAvatar);
-  const readinessToWorkout = useAppSelector(getReadiessToWorkout);
-  const specializations = useAppSelector(getSpecializations);
+
   const isLoading = useAppSelector(getLoadingStatus);
 
   const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
@@ -49,6 +42,20 @@ function UserProfileScreen(): JSX.Element {
   const [genderError, setGenderError] = useState('');
   const [levelError, setLevelError] = useState('');
   const [descriptionError, setDescriptionError] = useState('');
+  const [selectedPage, setPage] = useState<number>(1);
+  const [image, setImage] = useState<File | null>(null);
+
+  const currentUser = useAppSelector(getCurrentUser);
+
+  const certificates = (currentUser && 'certificates' in currentUser && currentUser.certificates) || [];
+
+  const isPreviousButtonDisabled = selectedPage === 1;
+  const isNextButtonDisabled = MAX_CERTIFICATES_COUNT !== certificates.length;
+
+  const {
+    handlePreviousClick: handlePreviousCertificateClick,
+    handleNextClick: handleNextCertificateClick,
+  } = usePreviousNextButtons(selectedPage, setPage);
 
   const handleToggleFormEditable = (): void => {
     setIsFormEditable(!isFormEditable);
@@ -56,11 +63,11 @@ function UserProfileScreen(): JSX.Element {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchUserAction(id));
+      dispatch(fetchCurrentUserAction(id));
     }
   }, [dispatch, id]);
 
-  if (!user || !id) {
+  if (!currentUser || !id) {
     return <NotFoundScreen/>;
   }
 
@@ -68,29 +75,30 @@ function UserProfileScreen(): JSX.Element {
     return <Loading/>;
   }
 
-  const contentComponent = currentRole === Role.Trainer ? (
-    <PersonalAccountCoach userId={id} avatar={user.avatar ?? ''} />
+  const contentComponent = currentUser && currentUser.role === Role.Trainer ? (
+
+    <PersonalAccountCoach userId={id} certificates={certificates} onNextClick={handleNextCertificateClick} onPreviousClick={handlePreviousCertificateClick} isNextButtonDisabled={isNextButtonDisabled} isPreviousButtonDisabled={isPreviousButtonDisabled}/>
   ) : (
     <PersonalAccountUser />
   );
 
   const handleLocationChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const location: Location = evt.currentTarget.textContent as Location;
-    dispatch(setLocation(location));
+    dispatch(setCurrentUserLocation(location));
     setLocationError('');
     setIsLocationDropdownOpen(false);
   };
 
   const handleSexChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const gender: Gender = evt.currentTarget.textContent as Gender;
-    dispatch(setGender(gender));
+    dispatch(setCurrentUserGender(gender));
     setGenderError('');
     setIsGenderDropdownOpen(false);
   };
 
   const handleLevelChange = (evt: React.MouseEvent<HTMLLIElement>) => {
     const newLevel: TrainingLevel = evt.currentTarget.textContent as TrainingLevel;
-    dispatch(changeLevel(newLevel));
+    dispatch(changeCurrentUserLevel(newLevel));
     setLevelError('');
     setIsLevelDropdownOpen(false);
   };
@@ -114,65 +122,94 @@ function UserProfileScreen(): JSX.Element {
   };
 
   const handleSave = () => {
-    if(selectedLocation === null){
+    if(currentUser.location === null){
       setLocationError('Выберите локацию');
       return;
     }
 
-    if(selectedGender === null){
+    if(currentUser.gender === null){
       setGenderError('Выберите пол');
       return;
     }
 
-    if(selectedLevel === null){
+    if(currentUser.trainingLevel === null){
       setLevelError('Выберите уровень');
       return;
     }
 
+<<<<<<< HEAD
     if (
       (selectedDescription && selectedDescription.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
       (selectedDescription && selectedDescription.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
     ) {
+=======
+    if(
+      (currentUser.description && currentUser.description.length < DESCRIPTION_CONSTRAINTS.MIN_LENGTH) ||
+      (currentUser.description && currentUser.description.length > DESCRIPTION_CONSTRAINTS.MAX_LENGTH)
+    ){
+>>>>>>> refactoring
       setDescriptionError(`Длина описания должна быть от ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH} до ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH} символов`);
       return;
     }
 
-    if(currentRole === Role.Trainer){
-      if(selectedName !== undefined &&
-        selectedName.trim() !== '' &&
-        selectedGender !== null &&
-        specializations.length >= 1){
+    if(currentUser &&
+      currentUser.role === Role.Trainer){
+      const trainer = currentUser as Trainer;
+      if(trainer.name !== undefined &&
+        trainer.name.trim() !== '' &&
+        trainer.gender !== null &&
+        trainer.location &&
+        trainer.trainingLevel &&
+        trainer.workoutTypes.length >= 1){
         const trainerData: UpdateTrainerDto = {
-          description: selectedDescription,
-          trainingLevel: selectedLevel,
-          gender: selectedGender,
-          workoutTypes: specializations,
-          personalTraining: readinessToWorkout,
-          name: selectedName,
-          avatar: selectedAvatar,
-          location: selectedLocation
+          description: trainer.description,
+          trainingLevel: trainer.trainingLevel,
+          gender: trainer.gender,
+          workoutTypes: trainer.workoutTypes,
+          personalTraining: trainer.personalTraining,
+          name: trainer.name,
+          location: trainer.location,
         };
 
         dispatch(editTrainerAction(trainerData));
       }
     }else{
-      if(selectedName !== undefined &&
-        selectedName.trim() !== '' &&
-        selectedGender !== null &&
-        specializations.length >= 1){
+      const user = currentUser as User;
+      if(user.name !== undefined &&
+        user.name.trim() !== '' &&
+        user.gender !== null &&
+        user.location &&
+        user.trainingLevel &&
+        user.workoutTypes.length >= 1){
         const userData: UpdateUserDto = {
-          description: selectedDescription,
-          trainingLevel: selectedLevel,
-          gender: selectedGender,
-          workoutTypes: specializations,
-          readinessForWorkout: readinessToWorkout,
-          name: selectedName,
-          avatar: selectedAvatar,
-          location: selectedLocation
+          description: user.description,
+          trainingLevel: user.trainingLevel,
+          gender: user.gender,
+          workoutTypes: user.workoutTypes,
+          readinessForWorkout: user.readinessForWorkout,
+          name: user.name,
+          location: user.location
         };
 
         dispatch(editUserAction(userData));
       }
+    }
+
+    setImage(null);
+  };
+
+  const handleImageUpload = (evt: ChangeEvent<HTMLInputElement>) => {
+    if (!evt.target.files) {
+      return;
+    }
+
+    const file = evt.target.files[0];
+    setImage(file);
+  };
+
+  const handleImageSubmit = (): void => {
+    if(image && currentUser && currentUser.id){
+      dispatch(updateAvatarAction({userId:currentUser.id, avatar: image}));
     }
   };
 
@@ -184,40 +221,40 @@ function UserProfileScreen(): JSX.Element {
             <h1 className="visually-hidden">Личный кабинет</h1>
             <section className={`user-info${isFormEditable ? '-edit' : ''}`}>
               <div className={`user-info${isFormEditable ? '-edit' : ''}__header`}>
-                <UserAvatar/>
-                {currentRole === Role.Trainer && isFormEditable && <UserControls />}
+                <UserAvatar currentUser={currentUser} onImageUpload={handleImageUpload} image={image && URL.createObjectURL(image)}/>
+                {isFormEditable && <UserControls onImageSubmit={handleImageSubmit}/>}
               </div>
               <form className={`user-info${isFormEditable ? '-edit' : ''}__form`} action="#" method="post">
                 <UserEditButton isFormEditable={isFormEditable} onToggleFormEditable={handleToggleFormEditable} onSave={handleSave}/>
-                <UserAbout isFormEditable={isFormEditable} error={descriptionError}/>
-                <UserStatus isFormEditable={isFormEditable} />
+                <UserAbout isFormEditable={isFormEditable} error={descriptionError} currentUser={currentUser}/>
+                <UserStatus isFormEditable={isFormEditable} currentUser={currentUser}/>
                 <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
-                  <UserSpecializationGroup isFormEditable={isFormEditable} />
+                  <UserSpecializationGroup isFormEditable={isFormEditable} workoutTypes={currentUser.workoutTypes} />
                 </div>
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLocationDropdownOpen ? 'is-open' : ''} ${locationError && 'is-invalid'}`}
                   label={'Локация'}
-                  selectedValue={`ст. м. ${selectedLocation ? capitalizeFirstLetter(selectedLocation) : ''}`}
+                  selectedValue={`ст. м. ${capitalizeFirstLetter(currentUser.location) || ''}`}
                   onValueChange={handleLocationChange}
-                  object={Object.values(Location)}
+                  object={Object.values(Location).filter((location) => location !== Location.Unknown)}
                   onToggleDropdown={handleToggleLocationDropdown}
                   error={locationError}
                 />
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isGenderDropdownOpen ? 'is-open' : ''} ${genderError && 'is-invalid'}`}
                   label={'Пол'}
-                  selectedValue={selectedGender ? capitalizeFirstLetter(selectedGender) : ''}
+                  selectedValue={currentUser.gender ? capitalizeFirstLetter(currentUser.gender) : ''}
                   onValueChange={handleSexChange}
-                  object={Object.values(Gender)}
+                  object={Object.values(Gender).filter((gender) => gender !== Gender.Unknown)}
                   onToggleDropdown={handleToggleGenderDropdown}
                   error={genderError}
                 />
                 <DropdownSelect
                   classType={`${!isFormEditable ? '-custom-select--readonly' : ''} custom-select user-info${isFormEditable ? '-edit' : ''}__select ${isLevelDropdownOpen ? 'is-open' : ''} ${levelError && 'is-invalid'}`}
                   label={'Уровень'}
-                  selectedValue={selectedLevel ? capitalizeFirstLetter(selectedLevel) : ''}
+                  selectedValue={currentUser.trainingLevel ? capitalizeFirstLetter(currentUser.trainingLevel) : ''}
                   onValueChange={handleLevelChange}
-                  object={Object.values(TrainingLevel)}
+                  object={Object.values(TrainingLevel).filter((level) => level !== TrainingLevel.Unknown)}
                   onToggleDropdown={handleToggleLevelDropdown}
                   error={levelError}
                 />

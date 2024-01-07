@@ -35,16 +35,13 @@ export default class TrainerRdo {
   public location!: Location;
 
   @Expose()
-  public backgroundImage!: string;
-
-  @Expose()
   public trainingLevel!: TrainingLevel;
 
   @Expose()
   public workoutTypes!: WorkoutType[];
 
   @Expose()
-  public certificate!: string;
+  public certificates!: string[];
 
   @Expose()
   public trainerAchievements!: string;

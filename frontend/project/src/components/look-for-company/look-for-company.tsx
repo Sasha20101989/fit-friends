@@ -35,12 +35,12 @@ const LookForCompany = ({lookForCompanyUsers, isPreviousButtonDisabled, isNextBu
   };
 
   return (
-    <section className="look-for-company">
+    <section className="look-for-company" data-testid="look-for-company">
       <div className="container">
         <div className="look-for-company__wrapper">
           <div className="look-for-company__title-wrapper">
             <h2 className="look-for-company__title">Ищут компанию для тренировки</h2>
-            <button className="btn-flat btn-flat--light look-for-company__button" type="button" onClick={handleShowAllClick}>
+            <button className="btn-flat btn-flat--light look-for-company__button" type="button" onClick={(evt) => handleShowAllClick(evt)}>
               <span>Смотреть все</span>
               <svg width="14" height="10" aria-hidden="true">
                 <use xlinkHref="#arrow-right"></use>
@@ -52,7 +52,7 @@ const LookForCompany = ({lookForCompanyUsers, isPreviousButtonDisabled, isNextBu
             </div>
           </div>
           {lookForCompanyUsers.length > 0 ?
-            <ul className="look-for-company__list">
+            <ul className="look-for-company__list" data-testid="look-for-company-users">
               {lookForCompanyUsers.map((user) => (
                 <ThumbnailUser
                   sourceName={'look-for-company__item'}

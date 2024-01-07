@@ -1,13 +1,13 @@
-//import { useGoToMain } from '../../hooks/use-go-to-main/use-go-to-main';
-
+import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
+import { AppRoute } from '../../const';
 
 function NotFoundScreen() : JSX.Element {
-  //const handleGoToMainClick = useGoToMain();
+  const navigate = useNavigate();
 
-  const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //event.preventDefault();
-    //handleGoToMainClick(event);
+  const handleButtonClick = (evt: React.MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    navigate(AppRoute.Main);
   };
 
   return(

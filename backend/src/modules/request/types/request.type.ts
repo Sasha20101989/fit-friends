@@ -4,6 +4,7 @@ import { RequestStatus } from './request-status.enum.js';
 import { RequestType } from './request-type.enum.js';
 
 export type Request = {
+  id?: string;
   initiator?: User;
   user?: User | Trainer;
   status: RequestStatus;

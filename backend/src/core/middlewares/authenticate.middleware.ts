@@ -1,14 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import { jwtVerify } from 'jose';
-import { StatusCodes } from 'http-status-codes';
 import { createSecretKey } from 'node:crypto';
 import { MiddlewareInterface } from './types/middleware.interface.js';
-import HttpError from '../errors/http-error.js';
+import { ExceptionFilter } from '../exception-filter/exception-filter.interface.js';
+import { AccessTokenException } from '../exception-filter/access-token.exception.js';
 
 export class AuthenticateMiddleware implements MiddlewareInterface {
-  constructor(private readonly jwtSecret: string) {}
+  constructor(
+    private readonly authExceptionFilter: ExceptionFilter,
+    private readonly jwtSecret: string
+  ) {}
 
-  public async execute(req: Request, _res: Response, next: NextFunction): Promise<void> {
+  public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
     const authorizationHeader = req.headers?.authorization?.split(' ');
     if (!authorizationHeader) {
       return next();
@@ -26,18 +29,8 @@ export class AuthenticateMiddleware implements MiddlewareInterface {
       return next();
     } catch (error) {
       if(error instanceof Error){
-        return next(new HttpError(
-          StatusCodes.UNAUTHORIZED,
-          error.name,
-          'AuthenticateMiddleware')
-        );
+        return next(this.authExceptionFilter.catch(new AccessTokenException(error.name), req, res, next));
       }
-
-      return next(new HttpError(
-        StatusCodes.UNAUTHORIZED,
-        'Invalid Token',
-        'AuthenticateMiddleware')
-      );
     }
   }
 }

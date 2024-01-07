@@ -1,9 +1,4 @@
-import { BaseUser } from './base-user.type.js';
-import { Role } from './role.enum.js';
+import { BaseUser } from './base-user.type';
+import { DynamicTrainerProperties } from './dynamic.properties';
 
-export interface Trainer extends BaseUser {
-  role: Role;
-  certificate: string;
-  trainerAchievements?: string;
-  personalTraining: boolean;
-}
+export interface Trainer extends BaseUser, DynamicTrainerProperties {}

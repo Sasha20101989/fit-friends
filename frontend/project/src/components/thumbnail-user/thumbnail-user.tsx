@@ -28,11 +28,6 @@ function ThumbnailUser({ sourceName, childSourceName, buttonSourceName, user }: 
     <li className={sourceName}>
       <div className={childSourceName}>
         <Image sourceName={'thumbnail-user__image'} imageSrc={avatar ? avatar : ''} width={82} height={82} alt={'аватар пользователя'}/>
-        {/* <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
-                      <svg width="12" height="12" aria-hidden="true">
-                        <use xlinkHref="#icon-crown"></use>
-                      </svg>
-                    </div> */}
         <div className="thumbnail-user__header">
           <h3 className="thumbnail-user__name">{name}</h3>
           <div className="thumbnail-user__location">

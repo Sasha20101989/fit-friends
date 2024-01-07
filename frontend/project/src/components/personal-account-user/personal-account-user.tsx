@@ -1,16 +1,29 @@
+import { ChangeEvent, useState } from 'react';
 import { AppRoute } from '../../const';
 import { useAppSelector } from '../../hooks/index';
-import { getCurrentUserId } from '../../store/main-process/main-process.selectors';
+import { getCurrentUser } from '../../store/user-process/user-process.selectors';
+import { User } from '../../types/user.interface.js';
 import Image from '../image/image';
 import ThumbnailLink from '../thumbnail-link/thumbnail-link';
 
-function PersonalAccountUser():JSX.Element {
-  const currentUserId = useAppSelector(getCurrentUserId);
+function PersonalAccountUser():JSX.Element | null {
+  const currentUser = useAppSelector(getCurrentUser) as User;
 
   const thumbnailLinks = [
-    { to: `${AppRoute.UserFriends}/${currentUserId}`, icon: '#icon-friends', text: 'Мои друзья' },
+    { to: `${AppRoute.UserFriends}/${currentUser.id ? currentUser.id : ''}`, icon: '#icon-friends', text: 'Мои друзья' },
     { to: AppRoute.UserPurchases, icon: '#icon-shopping-cart', text: 'Мои покупки' },
   ];
+
+  const [dailyCalories, setDailyCalories] = useState<number>(currentUser.caloriesToBurn);
+  const [weeklyCalories, setWeeklyCalories] = useState<number>(currentUser.caloriesToBurn);
+
+  const handleDailyCaloriesChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setDailyCalories(parseInt(event.target.value, 10) || 0);
+  };
+
+  const handleWeeklyCaloriesChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setWeeklyCalories(parseInt(event.target.value, 10) || 0);
+  };
 
   return (
     <div className="personal-account-user">
@@ -20,13 +33,23 @@ function PersonalAccountUser():JSX.Element {
             <div className="personal-account-user__input">
               <label>
                 <span className="personal-account-user__label">План на день, ккал</span>
-                <input type="text" name="schedule-for-the-day" value="3300"/>
+                <input
+                  type="text"
+                  name="schedule-for-the-day"
+                  value={dailyCalories}
+                  onChange={handleDailyCaloriesChange}
+                />
               </label>
             </div>
             <div className="personal-account-user__input">
               <label>
                 <span className="personal-account-user__label">План на неделю, ккал</span>
-                <input type="text" name="schedule-for-the-week" value="23100"/>
+                <input
+                  type="text"
+                  name="schedule-for-the-week"
+                  value={weeklyCalories}
+                  onChange={handleWeeklyCaloriesChange}
+                />
               </label>
             </div>
           </div>

@@ -2,16 +2,18 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserData } from '../../../types/user-data';
 import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
-import { APIRoute, AuthorizationStatus, RegisterStatus, roleRegisterRoutes } from '../../../const';
+import { APIRoute, AppRoute, AuthorizationStatus } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
-import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
-import { setAuthorizationStatus, setRegisterStatus } from '../../user-process/user-process.slice';
+import { updateAccessToken, updateRefreshToken } from '../../../services/token';
+import { setAuthorizationStatus } from '../../user-process/user-process.slice';
 import CreateUserDto from '../../../dto/create-user.dto';
-import { RegisterUserTransferData } from '../../../types/register-transfer-data';
 import { Role } from '../../../types/role.enum';
-import { redirectToRoute, setRole, setUserId } from '../../main-process/main-process.slice';
+import { redirectToRoute } from '../../main-process/main-process.slice';
+import CreateTrainerDto from '../../../dto/create-trainer.dto';
+import { User } from '../../../types/user.interface';
+import { Trainer } from '../../../types/trainer.interface';
 
-export const checkAuthAction = createAsyncThunk<void, undefined, {
+export const checkAuthAction = createAsyncThunk<UserData | null, undefined, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -19,17 +21,17 @@ export const checkAuthAction = createAsyncThunk<void, undefined, {
   'user/checkAuth',
   async (_arg, {dispatch, extra: api}) => {
     try{
-      const response = await api.get<UserData>(APIRoute.Login);
-      dispatch(setRole(response.data.role));
-      dispatch(setUserId(response.data.id));
+      const {data} = await api.get<UserData>(APIRoute.Login);
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
+      return data;
     } catch(error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
+      return null;
     }
   }
 );
 
-export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
+export const loginAction = createAsyncThunk<UserData | null, AuthData, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
@@ -40,23 +42,28 @@ export const loginAction = createAsyncThunk<UserData | undefined, AuthData, {
       const response = await api.post<UserData>(APIRoute.Login, { email, password });
 
       if (response.data.accessToken && response.data.refreshToken) {
-        updateAccessToken(response.data.accessToken as Token.Access);
-        updateRefreshToken(response.data.refreshToken as Token.Refresh);
+        updateAccessToken(response.data.accessToken);
+        updateRefreshToken(response.data.refreshToken);
       }
 
       dispatch(checkAuthAction());
-      dispatch(setRole(response.data.role));
-      dispatch(setUserId(response.data.id));
+
+      if(response.data.role === Role.Trainer){
+        dispatch(redirectToRoute(`${AppRoute.TrainerRoom}/${response.data.id}`));
+      }
+
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
+      dispatch(redirectToRoute(AppRoute.Main));
+
       return response.data;
     } catch (error) {
       dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
-      dispatch(setRole(Role.Unknown));
+      return null;
     }
   },
 );
 
-export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
+export const registerAction = createAsyncThunk<void, CreateUserDto | CreateTrainerDto,
 {
   dispatch: AppDispatch;
   state: State;
@@ -64,21 +71,10 @@ export const registerAction = createAsyncThunk<void, RegisterUserTransferData,
 }>(
   'user/register',
   async (registerData, { dispatch, extra: api }) => {
-    try {
-      const response: AxiosResponse<CreateUserDto> = registerData.role === Role.Trainer
-        ? await api.post(APIRoute.RegisterTrainer, registerData)
-        : await api.post(APIRoute.RegisterUser, registerData);
+    const response: AxiosResponse<User | Trainer> = registerData.role === Role.Trainer
+      ? await api.post(APIRoute.RegisterTrainer, registerData)
+      : await api.post(APIRoute.RegisterUser, registerData);
 
-      dispatch(setRegisterStatus(RegisterStatus.InProgress));
-      dispatch(loginAction({ email: response.data.email, password: registerData.password }));
-
-      const targetRoute = roleRegisterRoutes[response.data.role];
-
-      if (targetRoute) {
-        dispatch(redirectToRoute(targetRoute));
-      }
-    } catch (error) {
-      dispatch(setRegisterStatus(RegisterStatus.Unknown));
-    }
+    dispatch(loginAction({ email: response.data.email, password: registerData.password }));
   },
 );

@@ -11,7 +11,6 @@ import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { Request, Response } from 'express';
 import { Role } from '../../types/role.enum.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import UserRdo from '../user/rdo/user.rdo.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
@@ -24,6 +23,10 @@ import { NotificationServiceInterface } from '../notification/notification-servi
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
 import { FriendQueryParams } from './types/friend-query-params.js';
 import { RequestType } from '../request/types/request-type.enum.js';
+import { RequestServiceInterface } from '../request/request-service.interface.js';
+import { RequestStatus } from '../request/types/request-status.enum.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -32,7 +35,9 @@ export default class FriendController extends Controller {
     @inject(AppComponent.FriendServiceInterface) private readonly friendService: FriendServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for FriendController...');
@@ -41,7 +46,7 @@ export default class FriendController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
@@ -51,15 +56,14 @@ export default class FriendController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
     this.addRoute({ path: '/:friendId',
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
-        new PrivateRouteMiddleware(),
-        new RoleCheckMiddleware(Role.User),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
       ]
@@ -109,11 +113,15 @@ export default class FriendController extends Controller {
       );
     }
 
+    const defaultStatus = RequestStatus.Pending;
+
     const result = await this.friendService.create(user.id, friendId);
+
+    const request = await this.requestService.create({requestType: RequestType.Friend}, user.id, friendId, defaultStatus);
 
     this.created(res, fillDTO(UserRdo, result));
 
-    await this.notificationService.createNotification(friendId, RequestType.Friend);
+    await this.notificationService.createNotification(request.id, existingUser.name, user.id, friendId, RequestType.Friend);
   }
 
   public async index(

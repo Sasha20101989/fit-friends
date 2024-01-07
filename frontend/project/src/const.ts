@@ -1,13 +1,17 @@
 import { GenderPreference } from './types/gender-preference.enum';
 import { Gender } from './types/gender.enum';
+import { RequestType } from './types/request-type.enum';
 import { Role } from './types/role.enum';
+import { Trainer } from './types/trainer.interface';
+import { User } from './types/user.interface';
 
 export enum NameSpace {
   Data = 'data',
   Order = 'order',
   Main = 'main',
-  User = 'user',
-  Balance = 'balance'
+  UserData = 'user',
+  Balance = 'balance',
+  RequestData = 'request'
 }
 
 export enum HTTP_CODE {
@@ -17,6 +21,8 @@ export enum HTTP_CODE {
   UNAUTHORIZED = 401,
   NOT_FOUND = 404,
   CONFLICT = 409,
+  EXPECTATION_FAILED = 419,
+  FORBIDDEN = 403
 }
 
 export enum APIRoute {
@@ -33,7 +39,8 @@ export enum APIRoute {
   Reviews = '/reviews/training',
   Notifications = '/notifications',
   Subscribes = '/subscribes',
-  Balance = '/balance'
+  Balance = '/balance',
+  Requests = '/requests',
 }
 
 export enum AuthorizationStatus {
@@ -80,11 +87,13 @@ export const isValidPassword = (password: string): boolean => {
 
 export const MAX_SPECIALIZATIONS_COUNT = 3;
 export const MAX_SPECIAL_TRAININGS_COUNT = 3;
+export const MAX_CERTIFICATES_COUNT = 3;
 export const MAX_POPULAR_TRAININGS_COUNT = 4;
 export const MAX_LOOK_FOR_COMPANY_COUNT = 4;
 export const MAX_TRAINER_CARD_TRAININGS_COUNT = 4;
 export const MAX_USERS_COUNT = 6;
 export const MAX_TRAININGS_COUNT = 6;
+export const MAX_ORDERS_COUNT = 6;
 export const MAX_BALANCE_COUNT = 8;
 export const DISCOUNT_PERCENTAGE = 0.9;
 
@@ -130,15 +139,19 @@ export const USERNAME_CONSTRAINTS = {
 export const isAuthorization = (status: AuthorizationStatus) =>
   status === AuthorizationStatus.Auth;
 
-export const isAuthorizationUnknown = (status: AuthorizationStatus, role: Role) =>
-  status === AuthorizationStatus.Unknown && role === Role.Unknown;
+export const isAuthorizationUnknown = (status: AuthorizationStatus, user: Trainer | User | null) => {
+  if(!user){
+    return true;
+  }
+
+  return status === AuthorizationStatus.Unknown && user.role === Role.Unknown;
+};
 
 export const RING_LOADER_COLOR = '#123abc';
 
-export const roleRegisterRoutes: Record<Role, AppRoute> = {
-  [Role.User]: AppRoute.RegisterUser,
-  [Role.Trainer]: AppRoute.RegisterTrainer,
-  [Role.Unknown]: AppRoute.Login,
+export const roleRegisterRoutes: Record<Role | string, AppRoute> = {
+  [Role.User]: AppRoute.Main,
+  [Role.Trainer]: AppRoute.RegisterTrainer
 };
 
 export const isRegister = (status: RegisterStatus) =>
@@ -147,14 +160,8 @@ export const isRegister = (status: RegisterStatus) =>
 export const isRegisterUnknown = (status: RegisterStatus) =>
   status === RegisterStatus.Unknown;
 
-export const isUser = (role: Role) =>
-  role === Role.User;
-
-export const isTrainer = (role: Role) =>
-  role === Role.Trainer;
-
-export function capitalizeFirstLetter(str: string): string {
-  if (str.length === 0) {
+export function capitalizeFirstLetter(str: string | undefined): string | undefined {
+  if (str === undefined || str.length === 0) {
     return str;
   }
 
@@ -182,3 +189,9 @@ export function preferenceToGender(preference: GenderPreference): Gender {
       return Gender.Other;
   }
 }
+
+export const notificationMessages: { [key in RequestType]: string } = {
+  [RequestType.Friend]: 'Запрос в друзья',
+  [RequestType.Group]: 'Запрос на тренировку',
+  [RequestType.Personal]: 'Запрос на персональную тренировку',
+};

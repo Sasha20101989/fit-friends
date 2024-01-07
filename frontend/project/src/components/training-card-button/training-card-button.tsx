@@ -1,18 +1,15 @@
 import React from 'react';
-import { useAppSelector } from '../../hooks/index';
-import { getCurrentRole } from '../../store/main-process/main-process.selectors';
 import { Role } from '../../types/role.enum';
 
 type TrainingCardButtonProps = {
+  role: Role;
   isSpecial: boolean;
   isFormEditable: boolean;
   onBuyClick: () => void;
   onDiscountClick: () => void;
 }
 
-function TrainingCardButton({isSpecial, isFormEditable, onBuyClick, onDiscountClick}: TrainingCardButtonProps): JSX.Element | null {
-  const currentRole = useAppSelector(getCurrentRole);
-
+function TrainingCardButton({role, isSpecial, isFormEditable, onBuyClick, onDiscountClick}: TrainingCardButtonProps): JSX.Element | null {
   function handleBuyClick(evt: React.MouseEvent<HTMLButtonElement>): void {
     evt.preventDefault();
     onBuyClick();
@@ -23,7 +20,7 @@ function TrainingCardButton({isSpecial, isFormEditable, onBuyClick, onDiscountCl
     onDiscountClick();
   }
 
-  if (currentRole === Role.User) {
+  if (role === Role.User) {
     return (
       <button className="btn training-info__buy" type="button" onClick={handleBuyClick}>
         Купить

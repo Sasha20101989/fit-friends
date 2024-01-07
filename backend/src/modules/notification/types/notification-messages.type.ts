@@ -1,7 +1,7 @@
 import { RequestType } from '../../request/types/request-type.enum.js';
 
 export const notificationMessages: { [key in RequestType]: string } = {
-  [RequestType.Friend]: 'запрос в друзья',
-  [RequestType.Group]: 'отправил запрос на тренировку',
-  [RequestType.Personal]: 'запрос на персональную тренировку',
+  [RequestType.Friend]: 'добавил(а) вас в в друзья',
+  [RequestType.Group]: 'пригласил(а) вас на тренировку',
+  [RequestType.Personal]: 'пригласил(а) вас на персональную тренировку',
 };

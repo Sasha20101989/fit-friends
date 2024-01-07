@@ -2,7 +2,6 @@ import * as crypto from 'node:crypto';
 import * as jose from 'jose';
 import { plainToInstance, ClassConstructor } from 'class-transformer';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import { DEFAULT_STATIC_IMAGES } from '../../app/rest.const.js';
 import { Response } from 'express';
 import { Token } from '../../modules/token/types/token.enum.js';
 import { Sorting } from '../../types/sorting.enum.js';
@@ -16,6 +15,11 @@ import { UserQueryParams } from '../../modules/user/types/user-query-params.js';
 import { UserFilter } from '../../modules/user/types/user-filter.type.js';
 import { Location } from '../../types/location.enum.js';
 import { TrainingLevel } from '../../types/training-level.enum.js';
+import { DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE, DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE, DEFAULT_STATIC_CERTIFICATES_IMAGES, DEFAULT_STATIC_CERTIFICATES_ROUTE, DEFAULT_STATIC_COACH_AVATAR_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES, DEFAULT_STATIC_TRAINING_IMAGES_ROUTE, DEFAULT_STATIC_USER_AVATAR_IMAGES } from '../../app/rest.const.js';
+import { Role } from '../../types/role.enum.js';
+import { ValidationError } from 'class-validator';
+import { ValidationErrorField } from '../../types/validation-error-field.type.js';
+import { ApplicationError } from '../../types/application-error.enum.js';
 
 export function getFullServerPath(host: string, port: number){
   return `http://${host}:${port}`;
@@ -52,19 +56,70 @@ export function transformProperty(
     });
 }
 
-export function transformObject(properties: string[], staticPath: string, uploadPath: string, data:UnknownRecord) {
-  return properties
-    .forEach((property) => {
-      transformProperty(property, data, (target: UnknownRecord) => {
-        const rootPath = DEFAULT_STATIC_IMAGES.includes(target[property] as string) ? staticPath : uploadPath;
-        target[property] = `${rootPath}/${target[property]}`;
-      });
+export function transformObject(properties: string[], staticPath: string, uploadPath: string, data: UnknownRecord) {
+  properties.forEach((property) => {
+    transformProperty(property, data, (target: UnknownRecord) => {
+      if (property === 'backgroundImage') {
+        const isDefaultImage = DEFAULT_STATIC_TRAINING_IMAGES.includes(target[property] as string);
+        const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+        target[property] = isDefaultImage
+          ? `${rootPath}${DEFAULT_STATIC_TRAINING_IMAGES_ROUTE}/${target[property]}`
+          : `${rootPath}/${target[property]}`;
+      } else if (property === 'certificates') {
+        const updatedCertificates = (target[property] as string[]).map((certificate) => {
+          const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(certificate);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+          return isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${certificate}`
+            : `${rootPath}/${certificate}`;
+        });
+        target[property] = updatedCertificates;
+      } else if (property === 'avatar') {
+        if(data.role === Role.Trainer){
+          const isDefaultImage = DEFAULT_STATIC_COACH_AVATAR_IMAGES.includes(target[property] as string);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+          target[property] = isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE}/${target[property]}`
+            : `${rootPath}/${target[property]}`;
+        }else if(data.role === Role.User){
+          const isDefaultImage = DEFAULT_STATIC_USER_AVATAR_IMAGES.includes(target[property] as string);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+
+          target[property] = isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE}/${target[property]}`
+            : `${rootPath}/${target[property]}`;
+        }
+      }
     });
+  });
 }
 
 export function getRandomBackgroundImage(): string {
-  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_IMAGES.length);
-  return DEFAULT_STATIC_IMAGES[randomIndex];
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_TRAINING_IMAGES.length);
+  return DEFAULT_STATIC_TRAINING_IMAGES[randomIndex];
+}
+
+export function getRandomCertificateImages(count: number): string[] {
+  const randomImages = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_CERTIFICATES_IMAGES.length);
+    randomImages.push(DEFAULT_STATIC_CERTIFICATES_IMAGES[randomIndex]);
+  }
+
+  return randomImages;
+}
+
+export function getRandomCoachAvatar(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_COACH_AVATAR_IMAGES.length);
+  return DEFAULT_STATIC_COACH_AVATAR_IMAGES[randomIndex];
+}
+
+export function getRandomUserAvatar(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_STATIC_USER_AVATAR_IMAGES.length);
+  return DEFAULT_STATIC_USER_AVATAR_IMAGES[randomIndex];
 }
 
 export function calculateSum<T>(array: T[], getValue: (item: T) => number): number {
@@ -91,9 +146,9 @@ export function getSortOptionsForCreatedAt(querySortDirection?: Sorting, default
   return sort;
 }
 
-export function generateNotification(requestType: RequestType): string {
+export function generateNotification(userName: string, requestType: RequestType): string {
   if (notificationMessages[requestType]) {
-    return notificationMessages[requestType];
+    return `${userName} ${notificationMessages[requestType]}`;
   } else {
     return 'Новое уведомление';
   }
@@ -165,4 +220,16 @@ export function applyTrainingLevelFilter(query: UserQueryParams, filter: UserFil
   if (query.trainingLevel && Object.values(TrainingLevel).includes(query.trainingLevel)) {
     filter.trainingLevel = query.trainingLevel.toLowerCase();
   }
+}
+
+export function reduceValidationErrors(errors: ValidationError[]): ValidationErrorField[] {
+  return errors.map(({ property, value, constraints}) => ({
+    property,
+    value,
+    messages: constraints ? Object.values(constraints) : []
+  }));
+}
+
+export function createErrorObject(errorType: ApplicationError, error: string, details: ValidationErrorField[] = []) {
+  return { errorType, error, details };
 }

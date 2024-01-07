@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DataState } from '../../types/state';
 import { createTrainingAction, editTrainingAction, fetchTrainerTrainingsAction, fetchTrainingAction, fetchTrainingsAction } from '../api-actions/trainings-api-actions/trainings-api-actions';
 import { Training } from '../../types/training.type';
-import { addToFriendsAction, addToSubscribesAction, deleteFromNotificationsAction, deleteFromSubscribesAction, fetchMySubscribesAction, fetchNotificationsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction, removeFromFriendAction } from '../api-actions/user-api-actions/user-api-actions';
+import { addToSubscribesAction, deleteFromNotificationsAction, deleteFromSubscribesAction, fetchMySubscribesAction, fetchNotificationsAction, fetchSelectedUserAction, fetchUsersAction, fetchUsersWithPaginationAction } from '../api-actions/user-api-actions/user-api-actions';
 import { User } from '../../types/user.interface';
 import { createReviewAction, fetchReviewsAction } from '../api-actions/review-api-actions/review-api-actions';
 
@@ -101,24 +101,6 @@ export const mainData = createSlice({
         state.notifications = action.payload;
       })
       .addCase(fetchNotificationsAction.rejected, (state, _action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(removeFromFriendAction.pending, (state, _action) => {
-        state.isSubmitting = true;
-      })
-      .addCase(removeFromFriendAction.fulfilled, (state, action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(removeFromFriendAction.rejected, (state, _action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(addToFriendsAction.pending, (state, _action) => {
-        state.isSubmitting = true;
-      })
-      .addCase(addToFriendsAction.fulfilled, (state, action) => {
-        state.isSubmitting = false;
-      })
-      .addCase(addToFriendsAction.rejected, (state, _action) => {
         state.isSubmitting = false;
       })
       .addCase(fetchUsersWithPaginationAction.pending, (state, _action) => {

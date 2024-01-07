@@ -3,7 +3,6 @@ import { IsNotEmpty, MaxLength, MinLength, IsEnum, IsOptional, Matches } from 'c
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { DESCRIPTION_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../../user/user.const.js';
-import { IsSinglePDF } from '../validators/is-single-pdf.validator.js';
 import { IsThreeWorkoutTypes } from '../validators/is-three-workout-types.js';
 import { Gender } from '../../../types/gender.enum.js';
 import { Location } from '../../../types/location.enum.js';
@@ -27,8 +26,7 @@ export default class UpdateTrainerDto {
   public personalTraining!: boolean;
 
   @IsOptional()
-  @IsSinglePDF({ message: 'Trainer certificate must be a single PDF file' })
-  public certificate?: string;
+  public certificates?: string[];
 
   @IsOptional()
   @IsEnum(Gender, { message: 'Invalid gender' })

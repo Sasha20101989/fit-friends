@@ -6,7 +6,7 @@ type TrainingRateProps = {
 
 function TrainingRate({ rate }: TrainingRateProps): JSX.Element {
   return (
-    <div className="thumbnail-training__rate">
+    <div className="thumbnail-training__rate" data-testid="training-rate">
       <svg width="16" height="16" aria-hidden="true">
         <use xlinkHref="#icon-star"></use>
       </svg>

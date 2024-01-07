@@ -4,7 +4,6 @@ import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { ARCHIEVEMENTS_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../../user/user.const.js';
-import { IsSinglePDF } from '../validators/is-single-pdf.validator.js';
 import { IsThreeWorkoutTypes } from '../validators/is-three-workout-types.js';
 import { Role } from '../../../types/role.enum.js';
 
@@ -38,18 +37,14 @@ export default class CreateTrainerDto {
   @IsOptional()
   public birthDate?: string;
 
+  @IsOptional()
   @MinLength(DESCRIPTION_CONSTRAINTS.MIN_LENGTH, { message: `Minimum description length must be ${DESCRIPTION_CONSTRAINTS.MIN_LENGTH}` })
   @MaxLength(DESCRIPTION_CONSTRAINTS.MAX_LENGTH, { message: `Maximum description length must be ${DESCRIPTION_CONSTRAINTS.MAX_LENGTH}` })
-  @IsOptional()
   public description?: string;
 
   @IsNotEmpty({ message: 'Location is required' })
   @IsEnum(Location, { message: 'Invalid location' })
   public location!: Location;
-
-  @Matches(/\.(jpg|png)$/, { message: 'Background image must be in JPG or PNG format' })
-  @IsOptional()
-  public backgroundImage!: string;
 
   @IsOptional()
   @IsEnum(TrainingLevel, { message: 'Invalid training level' })
@@ -63,12 +58,11 @@ export default class CreateTrainerDto {
   @IsOptional()
   public personalTraining!: boolean;
 
+  @IsOptional()
   @MinLength(ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH, { message: `Minimum achievements length must be ${ARCHIEVEMENTS_CONSTRAINTS.MIN_LENGTH}` })
   @MaxLength(ARCHIEVEMENTS_CONSTRAINTS.MAX_LENGTH, { message: `Maximum achievements length must be ${ARCHIEVEMENTS_CONSTRAINTS.MAX_LENGTH}` })
-  @IsOptional()
   public trainerAchievements?: string;
 
   @IsOptional()
-  @IsSinglePDF({ message: 'Trainer certificate must be a single PDF file' })
-  public certificate!: string;
+  public certificates!: string[];
 }

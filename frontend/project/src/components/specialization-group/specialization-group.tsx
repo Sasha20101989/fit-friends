@@ -1,6 +1,9 @@
 import { Role } from '../../types/role.enum';
 import { WorkoutType } from '../../types/workout-type.enum';
-import useRegisterForm from '../../hooks/use-register-form/use-register-form';
+import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
+import { User } from '../../types/user.interface';
+import { Trainer } from '../../types/trainer.interface';
+import { ChangeEvent } from 'react';
 
 const errorStyle = {
   color: '#e4001b',
@@ -9,13 +12,23 @@ const errorStyle = {
 };
 
 type SpecializationGroupProps = {
-  role: Role;
+  currentUser: User | Trainer;
   error: string;
+  onSpecializationChange?: (evt: ChangeEvent<HTMLInputElement>) => void;
 }
 
-function SpecializationGroup({ role, error }: SpecializationGroupProps): JSX.Element {
-  const name = role === Role.Trainer ? 'coach' : 'user';
-  const { specializations, isDisabled, handleSpecializationChange } = useRegisterForm();
+function SpecializationGroup({ currentUser, error, onSpecializationChange }: SpecializationGroupProps): JSX.Element {
+  const name = currentUser.role === Role.Trainer ? 'coach' : 'user';
+
+  const isDisabled = (type: WorkoutType): boolean => {
+    if (currentUser) {
+      if (currentUser.workoutTypes.length >= MAX_SPECIALIZATIONS_COUNT) {
+        return !currentUser.workoutTypes.includes(type);
+      }
+    }
+
+    return false;
+  };
 
   return(
     <div className={`questionnaire-${name}__block`}><span className={`questionnaire-${name}__legend`}>Ваша специализация (тип) тренировок</span>
@@ -28,8 +41,8 @@ function SpecializationGroup({ role, error }: SpecializationGroupProps): JSX.Ele
                 type="checkbox"
                 name="specialisation"
                 value={type}
-                checked={specializations.includes(type)}
-                onChange={handleSpecializationChange}
+                checked={currentUser.workoutTypes.includes(type)}
+                onChange={onSpecializationChange}
                 disabled={isDisabled(type)}
               />
               <span className="btn-checkbox__btn">{type}</span>
@@ -43,4 +56,3 @@ function SpecializationGroup({ role, error }: SpecializationGroupProps): JSX.Ele
 }
 
 export default SpecializationGroup;
-

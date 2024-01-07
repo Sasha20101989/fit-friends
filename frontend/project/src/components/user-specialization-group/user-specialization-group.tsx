@@ -1,32 +1,39 @@
 import { WorkoutType } from '../../types/workout-type.enum';
-import { addSpecialization, removeSpecialization } from '../../store/main-process/main-process.slice';
-import { useAppDispatch, useAppSelector } from '../../hooks/index';
-import { getSpecializations } from '../../store/main-process/main-process.selectors';
+import { useAppDispatch } from '../../hooks/index';
 import { ChangeEvent } from 'react';
 import { MAX_SPECIALIZATIONS_COUNT } from '../../const';
+import {
+  addCurrentUserSpecialization,
+  removeCurrentUserSpecialization
+} from '../../store/user-process/user-process.slice';
 
 type UserSpecializationGroupProps = {
   isFormEditable: boolean;
+  workoutTypes: WorkoutType[];
 }
 
-function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps):JSX.Element {
+function UserSpecializationGroup({isFormEditable, workoutTypes}: UserSpecializationGroupProps):JSX.Element {
   const dispatch = useAppDispatch();
-
-  const specializations = useAppSelector(getSpecializations);
 
   const handleSpecializationChange = (evt: ChangeEvent<HTMLInputElement>) => {
     if(isFormEditable){
       const selectedType = evt.target.value as WorkoutType;
 
       if (evt.target.checked) {
-        dispatch(addSpecialization(selectedType));
+        dispatch(addCurrentUserSpecialization(selectedType));
       } else {
-        dispatch(removeSpecialization(selectedType));
+        dispatch(removeCurrentUserSpecialization(selectedType));
       }
     }
   };
 
-  const isDisabled = (type: WorkoutType): boolean => specializations.length >= MAX_SPECIALIZATIONS_COUNT && !specializations.includes(type);
+  const isDisabled = (type: WorkoutType): boolean => {
+    if (workoutTypes.length >= MAX_SPECIALIZATIONS_COUNT) {
+      return !workoutTypes.includes(type);
+    }
+
+    return false;
+  };
 
   return (
     <div className={`user-info${isFormEditable ? '-edit' : ''}__section`}>
@@ -40,7 +47,7 @@ function UserSpecializationGroup({isFormEditable}: UserSpecializationGroupProps)
                 type="checkbox"
                 name="specialisation"
                 value={type}
-                checked={specializations.includes(type)}
+                checked={workoutTypes.includes(type)}
                 onChange={handleSpecializationChange}
                 disabled={isDisabled(type)}
               />

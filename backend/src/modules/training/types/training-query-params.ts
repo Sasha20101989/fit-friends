@@ -7,6 +7,8 @@ export type TrainingQueryParams = {
   maxPrice?: number;
   minCalories?: number;
   maxCalories?: number;
+  minRating?: number;
+  maxRating?: number;
   rating?: string;
   workoutDuration?: WorkoutDuration[];
   workoutTypes?: WorkoutType[];

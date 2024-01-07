@@ -79,10 +79,10 @@ export default class OrderService implements OrderServiceInterface {
   }
 
   public async exists(documentId: MongoId): Promise<boolean> {
-    return this.orderModel.exists({ _id: documentId }).then((v) => v !== null);
+    return await this.orderModel.exists({ _id: documentId }).then((v) => v !== null);
   }
 
   public async findByTrainingId(trainingId: MongoId): Promise<DocumentType<OrderEntity>[]> {
-    return this.orderModel.find({ training: trainingId }).populate('training');
+    return await this.orderModel.find({ training: trainingId }).populate('training');
   }
 }

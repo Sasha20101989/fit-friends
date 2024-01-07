@@ -11,7 +11,6 @@ import { AppComponent } from '../../types/common/app-component.enum.js';
 import { HttpMethod } from '../../types/common/http-method.enum.js';
 import { RestSchema } from '../../core/config/rest.schema.js';
 import { UnknownRecord } from '../../types/common/unknown-record.type.js';
-import HttpError from '../../core/errors/http-error.js';
 import { fillDTO } from '../../core/helpers/index.js';
 import CreateRequestDto from './dto/create-request.dto.js';
 import RequestRdo from './rdo/request.rdo.js';
@@ -27,6 +26,8 @@ import { ParamsGetRequest } from '../../types/params/params-get-request.type.js'
 import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class RequestController extends Controller {
@@ -35,7 +36,8 @@ export default class RequestController extends Controller {
     @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for RequestController...');
@@ -44,7 +46,7 @@ export default class RequestController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('userId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
@@ -55,12 +57,29 @@ export default class RequestController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('requestId'),
         new DocumentExistsMiddleware(this.requestService, 'Request', 'requestId'),
         new ValidateDtoMiddleware(UpdateRequestDto)
       ]
     });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Get,
+      handler: this.index,
+      middlewares: [
+        new PrivateRouteMiddleware(this.authExceptionFilter)
+      ],
+    });
+  }
+
+  public async index(
+    { user }: Request<core.ParamsDictionary, UnknownRecord>,
+    res: Response
+  ) {
+    const requests = await this.requestService.findByUserId(user.id);
+
+    this.ok(res, fillDTO(RequestRdo, requests));
   }
 
   public async create(
@@ -79,11 +98,21 @@ export default class RequestController extends Controller {
 
     const defaultStatus = RequestStatus.Pending;
 
+    const initiatorDetails = await this.userService.findById(initiator.id);
+
+    if(!initiatorDetails){
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        'Initiator not exists.',
+        'RequestController'
+      );
+    }
+
     const request = await this.requestService.create({...body}, initiator.id, userId, defaultStatus);
 
     this.created(res, fillDTO(RequestRdo, request));
 
-    await this.notificationService.createNotification(userId, body.requestType);
+    await this.notificationService.createNotification(request.id ,initiatorDetails.name, initiator.id, userId, body.requestType);
   }
 
   public async update(

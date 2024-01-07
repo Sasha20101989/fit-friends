@@ -1,4 +1,9 @@
 import React from 'react';
+<<<<<<< HEAD
+=======
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
+>>>>>>> refactoring
 import TrainingList from '../../components/training-list/training-list';
 import { WorkoutDuration } from '../../types/workout-duration.enum';
 import { useAppDispatch, useAppSelector } from '../../hooks/index';
@@ -10,7 +15,7 @@ import { useParams } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import { TrainingCategory } from '../../types/training-category';
 import GoBack from '../../components/go-back/go-back';
-import { AppRoute, MAX_TRAININGS_COUNT } from '../../const';
+import { AppRoute, CALORIES_CONSTRAINTS, MAX_TRAININGS_COUNT, RATING_CONSTRAINTS } from '../../const';
 import ShowMore from '../../components/show-more/show-more';
 
 function TrainerTrainingsScreen(): JSX.Element {
@@ -18,23 +23,30 @@ function TrainerTrainingsScreen(): JSX.Element {
   const { id } = useParams<{ id: string }>();
   const trainings: Training[] = useAppSelector(getTrainerTrainings);
 
-  const [minPrice, setMinPrice] = useState<number | ''>('');
-  const [maxPrice, setMaxPrice] = useState<number | ''>('');
-  const [minCalories, setMinCalories] = useState<number | ''>('');
-  const [maxCalories, setMaxCalories] = useState<number | ''>('');
+  const [initialLoad, setInitialLoad] = useState(true);
+
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(0);
+  const [initialMinPrice, setInitialMinPrice] = useState<number>(0);
+  const [initialMaxPrice, setInitialMaxPrice] = useState<number>(0);
+  const [minCalories, setMinCalories] = useState<number>(0);
+  const [maxCalories, setMaxCalories] = useState<number>(0);
+  const [minRating, setMinRating] = useState<number>(1);
+  const [maxRating, setMaxRating] = useState<number>(0);
   const [selectedDuration, setDuration] = useState<WorkoutDuration | ''>('');
 
   const [queryParams, setQueryParams] = useState<FetchTrainingsParams>({
     category: TrainingCategory.FOR_TRAINER,
     trainer: id || '',
+    limit: MAX_TRAININGS_COUNT
   });
 
   const handleInputChange = (
     evt: ChangeEvent<HTMLInputElement>,
-    setValue: React.Dispatch<React.SetStateAction<number | ''>>,
+    setValue: React.Dispatch<React.SetStateAction<number>>,
     paramName: string
   ) => {
-    evt.preventDefault();
+
     const inputValue = evt.currentTarget.value.trim();
     const newValue: number | '' = inputValue === '' ? '' : parseInt(inputValue, 10);
 
@@ -42,7 +54,7 @@ function TrainerTrainingsScreen(): JSX.Element {
       setValue(newValue);
       setQueryParams((prevParams) => ({ ...prevParams, [paramName]: newValue }));
     } else {
-      setValue('');
+      setValue(0);
       setQueryParams((prevParams) => ({ ...prevParams, [paramName]: undefined }));
     }
   };
@@ -70,6 +82,54 @@ function TrainerTrainingsScreen(): JSX.Element {
     }));
   };
 
+  const handleSliderCaloriesChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      handleInputChange(
+        { currentTarget: { value: value[0].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMinCalories,
+        'minCalories'
+      );
+
+      handleInputChange(
+        { currentTarget: { value: value[1].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMaxCalories,
+        'maxCalories'
+      );
+    }
+  };
+
+  const handleSliderPriceChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      handleInputChange(
+        { currentTarget: { value: value[0].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMinPrice,
+        'minPrice'
+      );
+
+      handleInputChange(
+        { currentTarget: { value: value[1].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMaxPrice,
+        'maxPrice'
+      );
+    }
+  };
+
+  const handleSliderRatingChange = (value: number | number[]) => {
+    if (Array.isArray(value)) {
+      handleInputChange(
+        { currentTarget: { value: value[0].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMinRating,
+        'minRating'
+      );
+
+      handleInputChange(
+        { currentTarget: { value: value[1].toString().trim() } } as React.ChangeEvent<HTMLInputElement>,
+        setMaxRating,
+        'maxRating'
+      );
+    }
+  };
+
   useEffect(() => {
     if (id) {
       setQueryParams((prevParams) => ({ ...prevParams, userId: id }));
@@ -78,9 +138,41 @@ function TrainerTrainingsScreen(): JSX.Element {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchTrainerTrainingsAction(queryParams));
+      setTimeout(() => {
+        dispatch(fetchTrainerTrainingsAction(queryParams));
+      }, 600);
     }
   }, [dispatch, id, queryParams]);
+<<<<<<< HEAD
+=======
+
+  useEffect(() => {
+    if (initialLoad && trainings.length > 0) {
+      const prices = trainings.map((training) => training.price);
+      const calories = trainings.map((training) => training.calories);
+      const ratings = trainings.map((training) => training.rating);
+      const minValuePrice = Math.min(...prices);
+      const maxValuePrice = Math.max(...prices);
+      const minValueCalories = Math.min(...calories);
+      const maxValueCalories = Math.max(...calories);
+      const minValueRatings = Math.min(...ratings);
+      const maxValueRatings = Math.max(...ratings);
+
+      setMinPrice(minValuePrice);
+      setMaxPrice(maxValuePrice);
+      setInitialMinPrice(minValuePrice);
+      setInitialMaxPrice(maxValuePrice);
+      setMinCalories(minValueCalories);
+      setMaxCalories(maxValueCalories);
+      setMinRating(minValueRatings);
+      setMaxRating(maxValueRatings);
+      setInitialLoad(false);
+    }
+  }, [trainings, initialLoad]);
+
+  const minCaloriesValue = minCalories === 0 ? CALORIES_CONSTRAINTS.MIN : Number(minCalories);
+  const maxCaloriesValue = Number(maxCalories !== 0 ? maxCalories : CALORIES_CONSTRAINTS.MAX);
+>>>>>>> refactoring
 
   return(
     <Layout>
@@ -106,13 +198,17 @@ function TrainerTrainingsScreen(): JSX.Element {
                         <label htmlFor="text-max">до</label>
                       </div>
                     </div>
-                    {/* <div style={mySliderStyle} className="my-slider-wrapper">
-                    <fieldset className="img-upload__scale  scale">
-                    <button type="button" className="scale__control  scale__control--smaller">Уменьшить</button>
-                    <input type="text" className="scale__control  scale__control--value" minLength={25} step={25} maxLength={100} value="100%" title="Image Scale" name="scale" readOnly/>
-                    <button type="button" className="scale__control  scale__control--bigger">Увеличить</button>
-                     </fieldset>
-                    </div> */}
+                    <div className="filter-range">
+                      <Slider
+                        range
+                        min={initialMinPrice}
+                        max={initialMaxPrice}
+                        step={1}
+                        value={[minPrice, maxPrice]}
+                        onChange={handleSliderPriceChange}
+                      />
+
+                    </div>
                   </div>
                   <div className="my-training-form__block my-training-form__block--calories">
                     <h4 className="my-training-form__block-title">Калории</h4>
@@ -127,65 +223,62 @@ function TrainerTrainingsScreen(): JSX.Element {
                       </div>
                     </div>
                     <div className="filter-range">
-                      <div className="filter-range__scale">
-                        <div className="filter-range__bar">
-                          <span className="visually-hidden">Полоса прокрутки</span>
-                        </div>
-                      </div>
-                      <div className="filter-range__control">
-                        <button className="filter-range__min-toggle">
-                          <span className="visually-hidden">Минимальное значение</span>
-                        </button>
-                        <button className="filter-range__max-toggle">
-                          <span className="visually-hidden">Максимальное значение</span>
-                        </button>
-                      </div>
+                      <Slider
+                        range
+                        min={CALORIES_CONSTRAINTS.MIN}
+                        max={CALORIES_CONSTRAINTS.MAX}
+                        step={1}
+                        value={[minCaloriesValue, maxCaloriesValue]}
+                        onChange={handleSliderCaloriesChange}
+                      />
                     </div>
                   </div>
                   <div className="my-training-form__block my-training-form__block--raiting">
                     <h4 className="my-training-form__block-title">Рейтинг</h4>
                     <div className="filter-raiting">
-                      <div className="filter-raiting__scale">
-                        <div className="filter-raiting__bar">
-                          <span className="visually-hidden">Полоса прокрутки</span>
-                        </div>
-                      </div>
-                      <div className="filter-raiting__control">
-                        <button className="filter-raiting__min-toggle">
-                          <span className="visually-hidden">Минимальное значение</span>
-                        </button>
-                        <span>0</span>
-                        <button className="filter-raiting__max-toggle">
-                          <span className="visually-hidden">Максимальное значение</span>
-                        </button>
-                        <span>5</span>
-                      </div>
+                      <Slider
+                        range
+                        min={RATING_CONSTRAINTS.MIN}
+                        max={RATING_CONSTRAINTS.MAX}
+                        step={1}
+                        value={[minRating, maxRating]}
+                        onChange={handleSliderRatingChange}
+                        marks={{
+                          1: '1',
+                          2: '2',
+                          3: '3',
+                          4: '4',
+                          5: '5',
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="my-training-form__block my-training-form__block--duration">
                     <h4 className="my-training-form__block-title">Длительность</h4>
                     <ul className="my-training-form__check-list">
-                      {Object.values(WorkoutDuration).map((duration) => (
-                        <li key={duration} className="my-training-form__check-list-item">
-                          <div className="custom-toggle custom-toggle--checkbox">
-                            <label>
-                              <input
-                                type="checkbox"
-                                name="duration"
-                                value={duration}
-                                checked={selectedDuration === duration}
-                                onChange={(evt) => handleDurationChange(evt, setDuration, 'workoutDuration')}
-                              />
-                              <span className="custom-toggle__icon">
-                                <svg width="9" height="6" aria-hidden="true">
-                                  <use xlinkHref="#arrow-check"></use>
-                                </svg>
-                              </span>
-                              <span className="custom-toggle__label">{duration}</span>
-                            </label>
-                          </div>
-                        </li>
-                      ))}
+                      {Object.values(WorkoutDuration)
+                        .filter((duration) => duration !== WorkoutDuration.Unknown)
+                        .map((duration) => (
+                          <li key={duration} className="my-training-form__check-list-item">
+                            <div className="custom-toggle custom-toggle--checkbox">
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  name="duration"
+                                  value={duration}
+                                  checked={selectedDuration === duration}
+                                  onChange={(evt) => handleDurationChange(evt, setDuration, 'workoutDuration')}
+                                />
+                                <span className="custom-toggle__icon">
+                                  <svg width="9" height="6" aria-hidden="true">
+                                    <use xlinkHref="#arrow-check"></use>
+                                  </svg>
+                                </span>
+                                <span className="custom-toggle__label">{duration}</span>
+                              </label>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 </form>

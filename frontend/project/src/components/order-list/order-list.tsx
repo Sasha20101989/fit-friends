@@ -8,9 +8,9 @@ type OrderListProps = {
 
 function OrderList({orders}: OrderListProps): JSX.Element {
   return (
-    <ul className="my-orders__list">
+    <ul className="my-orders__list" data-testid="orders-list">
       {orders.map((order) => (
-        <OrderItem key={order.name} order={order} />
+        <OrderItem key={`${order.name}-${order.createdAt.toString()}`} order={order} />
       ))}
     </ul>
   );

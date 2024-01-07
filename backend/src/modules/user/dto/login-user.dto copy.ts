@@ -15,5 +15,5 @@ export default class LoginUserDto {
   @MaxLength(12, { message: 'Maximum password length must be 12' })
   public password?: string;
 
-  public refreshToken?: string
+  public refreshToken?: string;
 }

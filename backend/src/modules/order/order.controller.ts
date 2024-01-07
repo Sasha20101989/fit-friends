@@ -24,10 +24,11 @@ import { ParamsGetTraining } from '../../types/params/params-get-training.type.j
 import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-object-id.middleware.js';
 import { TrainingServiceInterface } from '../training/training-service.interface.js';
 import { StatusCodes } from 'http-status-codes';
-import HttpError from '../../core/errors/http-error.js';
 import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js';
 import { ParamsGetTrainer } from '../../types/params/params-get-trainer.type.js';
 import OrderRdo from './rdo/order.rdo.js';
+import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class OrderController extends Controller {
@@ -36,7 +37,8 @@ export default class OrderController extends Controller {
     @inject(AppComponent.OrderServiceInterface) private readonly orderService: OrderServiceInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.TrainerServiceInterface) private readonly traininerService: TrainerServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for OrderController...');
@@ -45,7 +47,7 @@ export default class OrderController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainerId'),
         new DocumentExistsMiddleware(this.traininerService, 'Trainer', 'trainerId'),
@@ -55,7 +57,7 @@ export default class OrderController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
         new ValidateDtoMiddleware(CreateOrderDto)

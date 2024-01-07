@@ -6,7 +6,6 @@ import { APIRoute, RegisterStatus } from '../../../const';
 import { setRegisterStatus } from '../../user-process/user-process.slice';
 import UpdateUserDto from '../../../dto/update-user.dto';
 import UpdateTrainerDto from '../../../dto/update-trainer.dto';
-import { changeLevel, changeReadiessToWorkout, setAvatar, setDescription, setGender, setLocation, setName, setSpecializations } from '../../main-process/main-process.slice';
 import { User } from '../../../types/user.interface';
 import { Trainer } from '../../../types/trainer.interface';
 import { Role } from '../../../types/role.enum';
@@ -41,7 +40,7 @@ export const editUserAction = createAsyncThunk<
   'user/editUser',
   async (userData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateUserDto>(APIRoute.Users, userData);
+      await api.put<User>(APIRoute.Users, userData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
     } catch (error) {
@@ -62,7 +61,7 @@ export const editTrainerAction = createAsyncThunk<
   'user/editTrainer',
   async (trainerData, {dispatch, extra: api}) => {
     try {
-      await api.put<UpdateTrainerDto>(APIRoute.UpdateTrainer, trainerData);
+      await api.put<Trainer>(APIRoute.UpdateTrainer, trainerData);
 
       dispatch(setRegisterStatus(RegisterStatus.Done));
     } catch (error) {
@@ -71,29 +70,31 @@ export const editTrainerAction = createAsyncThunk<
   },
 );
 
-export const fetchUserAction = createAsyncThunk<User | Trainer | null, string, {
+export const updateAvatarAction = createAsyncThunk<void, {userId: string; avatar: File}, {
   dispatch: AppDispatch;
   state: State;
   extra: AxiosInstance;
 }>(
-  'user/fetchUser',
+  'user/updateAvatar',
+  async (data, {dispatch, extra: api}) => {
+    const postAvatarApiRoute = `${APIRoute.Users}/${data.userId}/avatar`;
+
+    const formData = new FormData();
+
+    formData.append('avatar', data.avatar);
+
+    await api.post(postAvatarApiRoute, formData);
+  },
+);
+
+export const fetchCurrentUserAction = createAsyncThunk<User | Trainer | null, string, {
+  dispatch: AppDispatch;
+  state: State;
+  extra: AxiosInstance;
+}>(
+  'user/fetchCurrentUser',
   async (userId: string, {dispatch, extra: api}) => {
     const { data } = await api.get<User | Trainer>(`${APIRoute.Users}/${userId}`);
-    dispatch(setSpecializations(data.workoutTypes));
-    dispatch(setLocation(data.location));
-    dispatch(setGender(data.gender));
-    dispatch(changeLevel(data.trainingLevel));
-    dispatch(setDescription(data.description));
-    dispatch(setName(data.name));
-    dispatch(setAvatar(data.avatar));
-
-    if(data.role === Role.Trainer){
-      const trainer = data as Trainer;
-      dispatch(changeReadiessToWorkout(trainer.personalTraining));
-    }else if(data && data.role === Role.User){
-      const trained = data as User;
-      dispatch(changeReadiessToWorkout(trained.readinessForWorkout));
-    }
 
     return data;
   },
@@ -114,6 +115,7 @@ export const fetchMyFriendsAction = createAsyncThunk<User[], object, {
     }
   },
 );
+
 
 export const fetchMySubscribesAction = createAsyncThunk<Subscribe[], object, {
   dispatch: AppDispatch;

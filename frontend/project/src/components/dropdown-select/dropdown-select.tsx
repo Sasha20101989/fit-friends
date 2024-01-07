@@ -7,7 +7,7 @@ import { Gender } from '../../types/gender.enum';
 type DropdownSelectProps = {
   classType: string;
   label: string;
-  selectedValue: string | null;
+  selectedValue: string | undefined;
   error: string;
   object: WorkoutDuration[] | WorkoutType[] | TrainingLevel[] | Location[] | Gender[];
   onValueChange: (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
@@ -21,7 +21,7 @@ function DropdownSelect({classType, label, selectedValue, error, onValueChange, 
   };
 
   return(
-    <div className={classType}>
+    <div className={classType} data-testid={classType}>
       <span className="custom-select__label">{label}</span>
       <div className="custom-select__placeholder">{selectedValue}</div>
       <button className="custom-select__button" type="button" onClick={onToggleDropdown} aria-label="Выберите одну из опций">
