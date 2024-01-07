@@ -3,9 +3,7 @@ import fs from 'node:fs';
 import { Logger, pino } from 'pino';
 import { injectable } from 'inversify';
 
-
 import type { LoggerInterface } from './logger.interface.js';
-
 
 @injectable()
 export default class PinoService implements LoggerInterface {

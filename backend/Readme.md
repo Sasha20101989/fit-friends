@@ -148,8 +148,9 @@ npm run ts ./src/main.cli.ts -- --import <имя пользователя баз
 npm run ts ./src/main.cli.ts -- --import admin admin 127.0.0.1 fit-friends secret 
 ```
 
-выполнить сборку
-npm run build
+### Деплой
 
-выполнить 
-docker build --file C:/Users/Test/Desktop/Dev/fit-friends/backend/Dockerfile --tag fit.friends:1.0 .
+Выполните команду
+```bash
+npm run buildDockerImage
+```
