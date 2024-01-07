@@ -1,24 +1,24 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { StatusCodes } from 'http-status-codes';
 import type{ MiddlewareInterface } from './types/middleware.interface.js';
 import type{ UserServiceInterface } from '../../modules/user/user-service.interface.js';
-import { HttpError } from '../errors/http-error.js';
+import { ExceptionFilter } from '../exception-filter/exception-filter.interface.js';
+import { UserNotFoundException } from '../exception-filter/user-not-found.exception.js';
 
 
 export class UserExistsByEmailMiddleware implements MiddlewareInterface {
-  constructor(private readonly userService: UserServiceInterface) {}
+  constructor(
+    private readonly authExceptionFilter: ExceptionFilter,
+    private readonly userService: UserServiceInterface
+  ) {}
 
-  public async execute({ body }: Request, _res: Response, next: NextFunction): Promise<void> {
-    const { email } = body;
+
+  public async execute(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { email } = req.body;
     const user = await this.userService.findByEmail(email);
 
     if (!user) {
-      throw new HttpError(
-        StatusCodes.NOT_FOUND,
-        `User with email ${email} not found.`,
-        'UserExistsByEmailMiddleware'
-      );
+      return next(this.authExceptionFilter.catch(new UserNotFoundException(), req, res, next));
     }
 
     next();

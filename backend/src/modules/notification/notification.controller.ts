@@ -18,13 +18,15 @@ import { DocumentExistsMiddleware } from '../../core/middlewares/document-exists
 import { StatusCodes } from 'http-status-codes';
 import { ParamsGetNotification } from '../../types/params/params-get-notification.type.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class NotificationController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for NotificationController...');
@@ -34,14 +36,14 @@ export default class NotificationController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
     this.addRoute({ path: '/:notificationId',
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('notificationId'),
         new DocumentExistsMiddleware(this.notificationService, 'Notification', 'notificationId')
       ]

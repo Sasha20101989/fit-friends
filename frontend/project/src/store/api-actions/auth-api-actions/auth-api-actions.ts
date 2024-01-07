@@ -4,7 +4,7 @@ import { AppDispatch, State } from '../../../types/state';
 import { AxiosInstance, AxiosResponse } from 'axios';
 import { APIRoute, AppRoute, AuthorizationStatus } from '../../../const';
 import { AuthData } from '../../../types/auth-data';
-import { Token, updateAccessToken, updateRefreshToken } from '../../../services/token';
+import { updateAccessToken, updateRefreshToken } from '../../../services/token';
 import { setAuthorizationStatus } from '../../user-process/user-process.slice';
 import CreateUserDto from '../../../dto/create-user.dto';
 import { Role } from '../../../types/role.enum';
@@ -25,6 +25,7 @@ export const checkAuthAction = createAsyncThunk<UserData | null, undefined, {
       dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       return data;
     } catch(error) {
+      dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       return null;
     }
   }
@@ -41,8 +42,8 @@ export const loginAction = createAsyncThunk<UserData | null, AuthData, {
       const response = await api.post<UserData>(APIRoute.Login, { email, password });
 
       if (response.data.accessToken && response.data.refreshToken) {
-        updateAccessToken(response.data.accessToken as Token.Access);
-        updateRefreshToken(response.data.refreshToken as Token.Refresh);
+        updateAccessToken(response.data.accessToken);
+        updateRefreshToken(response.data.refreshToken);
       }
 
       dispatch(checkAuthAction());
@@ -51,10 +52,12 @@ export const loginAction = createAsyncThunk<UserData | null, AuthData, {
         dispatch(redirectToRoute(`${AppRoute.TrainerRoom}/${response.data.id}`));
       }
 
+      dispatch(setAuthorizationStatus(AuthorizationStatus.Auth));
       dispatch(redirectToRoute(AppRoute.Main));
 
       return response.data;
     } catch (error) {
+      dispatch(setAuthorizationStatus(AuthorizationStatus.NoAuth));
       return null;
     }
   },

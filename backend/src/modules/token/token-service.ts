@@ -84,8 +84,8 @@ export default class TokenService implements TokenServiceInterface {
   }
 
   public async updateAccessToken(decodedRefreshToken: RefreshTokenDto): Promise<string> {
-      const tokens = this.generateTokens(decodedRefreshToken);
-      return tokens.accessToken;
+    const tokens = this.generateTokens(decodedRefreshToken);
+    return tokens.accessToken;
   }
 
   public async decodeRefreshToken(refreshToken: string): Promise<JwtPayload | null> {

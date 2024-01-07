@@ -26,6 +26,7 @@ import { RequestType } from '../request/types/request-type.enum.js';
 import { RequestServiceInterface } from '../request/request-service.interface.js';
 import { RequestStatus } from '../request/types/request-status.enum.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class FriendController extends Controller {
@@ -35,7 +36,8 @@ export default class FriendController extends Controller {
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for FriendController...');
@@ -44,7 +46,7 @@ export default class FriendController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
@@ -54,14 +56,14 @@ export default class FriendController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
     this.addRoute({ path: '/:friendId',
       method: HttpMethod.Delete,
       handler: this.delete,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('friendId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'friendId')
       ]

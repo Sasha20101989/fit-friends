@@ -29,6 +29,7 @@ import { TrainerServiceInterface } from '../trainer/trainer-service.interface.js
 import { UploadTrainingVideoRdo } from './rdo/upload-video-training.rdo.js';
 import { UploadVideoMiddleware } from '../../core/middlewares/upload-video.middleware.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class TrainingController extends Controller {
@@ -37,6 +38,7 @@ export default class TrainingController extends Controller {
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
     @inject(AppComponent.TrainerServiceInterface) private readonly traininerService: TrainerServiceInterface,
     @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
 
@@ -46,7 +48,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Post,
       handler: this.createTraining,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateDtoMiddleware(CreateTrainingDto)
       ]
@@ -55,7 +57,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.showTrainingDetails,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
       ]
@@ -64,7 +66,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Put,
       handler: this.updateTraining,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
@@ -75,7 +77,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.indexForTrainer,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.Trainer),
         new ValidateObjectIdMiddleware('trainerId'),
         new DocumentExistsMiddleware(this.traininerService, 'Trainer', 'trainerId'),
@@ -85,7 +87,7 @@ export default class TrainingController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
     this.addRoute({

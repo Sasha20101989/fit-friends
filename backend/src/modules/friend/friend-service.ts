@@ -92,7 +92,7 @@ export default class FriendService implements FriendServiceInterface {
       await userData.save();
 
       friendData.AddFriend(user);
-        await friendData.save();
+      await friendData.save();
     }
 
     return userData.populate('friends');

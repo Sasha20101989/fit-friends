@@ -285,14 +285,14 @@ export default class ImportCommand implements CliCommandInterface {
 
     for (const request of requests) {
 
-      const user: User | undefined = users.find((user) => user.id === request.initiator?.id);
+      const notificatedUser: User | undefined = users.find((user) => user.id === request.initiator?.id);
 
-      if(user && request.initiator?.id && request.user?.id){
+      if(notificatedUser && request.initiator?.id && request.user?.id){
         const notification: Notification = {
           owner: request.initiator.id,
           user: request.user.id,
           request: request.id,
-          text: generateNotification(user.name, request.requestType),
+          text: generateNotification(notificatedUser.name, request.requestType),
           type: request.requestType
         };
 
@@ -328,12 +328,12 @@ export default class ImportCommand implements CliCommandInterface {
 
       const defaultStatus = RequestStatus.Pending;
 
-      const user: User | undefined = users.find((user) => user.id === userId);
+      const foundedUser: User | undefined = users.find((user) => user.id === userId);
 
-      if(user && user.id){
+      if(foundedUser && foundedUser.id){
         const request = await this.requestService.create({requestType: RequestType.Friend}, userId, friendId, defaultStatus);
 
-        await this.notificationService.createNotification(request.id, user.name, user.id, friendId, RequestType.Friend);
+        await this.notificationService.createNotification(request.id, foundedUser.name, foundedUser.id, friendId, RequestType.Friend);
 
         promises.push(Promise.resolve());
       }

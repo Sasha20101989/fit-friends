@@ -200,14 +200,12 @@ export const userProcess = createSlice({
       })
       .addCase(checkAuthAction.rejected, (state, _action) => {
         state.isSubmitting = false;
-        state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
       .addCase(loginAction.pending, (state, _action) => {
         state.isSubmitting = true;
       })
       .addCase(loginAction.fulfilled, (state, action) => {
         state.isSubmitting = false;
-        state.authorizationStatus = AuthorizationStatus.Auth;
 
         if (action.payload && action.payload.role === Role.User) {
           state.user.id = action.payload.id;
@@ -221,7 +219,6 @@ export const userProcess = createSlice({
       })
       .addCase(loginAction.rejected, (state, _action) => {
         state.isSubmitting = false;
-        state.authorizationStatus = AuthorizationStatus.NoAuth;
       })
       .addCase(registerAction.pending, (state, _action) => {
         state.isSubmitting = true;

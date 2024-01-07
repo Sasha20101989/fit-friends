@@ -9,19 +9,19 @@ import browserHistory from './browser-history';
 import { store } from './store';
 import { checkAuthAction } from './store/api-actions/auth-api-actions/auth-api-actions';
 
-store.dispatch(checkAuthAction());
+async function startApp() {
+  await store.dispatch(checkAuthAction());
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
+  ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <HistoryRouter history={browserHistory}>
+          <ToastContainer />
+          <App />
+        </HistoryRouter>
+      </Provider>
+    </React.StrictMode>
+  );
+}
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <HistoryRouter history={browserHistory}>
-        <ToastContainer/>
-        <App/>
-      </HistoryRouter>
-    </Provider>
-  </React.StrictMode>
-);
+startApp();

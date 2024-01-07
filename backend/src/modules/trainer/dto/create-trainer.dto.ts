@@ -4,7 +4,6 @@ import { Location } from '../../../types/location.enum.js';
 import { TrainingLevel } from '../../../types/training-level.enum.js';
 import { WorkoutType } from '../../../types/workout-type.enum.js';
 import { ARCHIEVEMENTS_CONSTRAINTS, DESCRIPTION_CONSTRAINTS, PASSWORD_CONSTRAINTS, USERNAME_CONSTRAINTS } from '../../user/user.const.js';
-import { IsSinglePDF } from '../validators/is-single-pdf.validator.js';
 import { IsThreeWorkoutTypes } from '../validators/is-three-workout-types.js';
 import { Role } from '../../../types/role.enum.js';
 
@@ -65,6 +64,5 @@ export default class CreateTrainerDto {
   public trainerAchievements?: string;
 
   @IsOptional()
-  @IsSinglePDF({ message: 'Trainer certificate must be a single PDF file' })
   public certificates!: string[];
 }

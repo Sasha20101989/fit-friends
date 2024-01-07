@@ -21,6 +21,8 @@ export enum HTTP_CODE {
   UNAUTHORIZED = 401,
   NOT_FOUND = 404,
   CONFLICT = 409,
+  EXPECTATION_FAILED = 419,
+  FORBIDDEN = 403
 }
 
 export enum APIRoute {
@@ -139,10 +141,10 @@ export const isAuthorization = (status: AuthorizationStatus) =>
 
 export const isAuthorizationUnknown = (status: AuthorizationStatus, user: Trainer | User | null) => {
   if(!user){
-    return false;
+    return true;
   }
 
-  return status === AuthorizationStatus.Unknown && user.role === null;
+  return status === AuthorizationStatus.Unknown && user.role === Role.Unknown;
 };
 
 export const RING_LOADER_COLOR = '#123abc';

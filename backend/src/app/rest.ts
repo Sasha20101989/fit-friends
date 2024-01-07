@@ -153,7 +153,7 @@ export default class RestApplication {
       express.static(this.config.get('STATIC_DIRECTORY_PATH'))
     );
 
-    const authenticateMiddleware = new AuthenticateMiddleware(this.config.get('JWT_ACCESS_SECRET'));
+    const authenticateMiddleware = new AuthenticateMiddleware(this.authExceptionFilter, this.config.get('JWT_ACCESS_SECRET'));
     this.expressApplication.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
 
     this.logger.info('Global middleware initialization completed');

@@ -33,6 +33,7 @@ import AccessTokenRdo from '../token/rdo/access-token.rdo.js';
 import { UploadUserAvatarRdo } from './rdo/upload-user-avatar.rdo.js';
 import { UploadFileMiddleware } from '../../core/middlewares/upload-file.middleware.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 
 @injectable()
@@ -41,7 +42,8 @@ export default class UserController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
     @inject(AppComponent.TokenServiceInterface) private readonly tokenService: TokenServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for UserController...');
@@ -57,7 +59,7 @@ export default class UserController extends Controller {
       method: HttpMethod.Post,
       handler: this.login,
       middlewares: [
-        new UserExistsByEmailMiddleware(this.userService),
+        new UserExistsByEmailMiddleware(this.authExceptionFilter, this.userService),
         new ValidateDtoMiddleware(LoginUserDto)
       ]
     });
@@ -69,7 +71,7 @@ export default class UserController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User)
       ]
     });
@@ -77,7 +79,7 @@ export default class UserController extends Controller {
       method: HttpMethod.Put,
       handler: this.update,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateDtoMiddleware(UpdateUserDto)
       ]
     });
@@ -92,14 +94,14 @@ export default class UserController extends Controller {
       method: HttpMethod.Get,
       handler: this.checkAuthenticate,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ]
     });
     this.addRoute({ path: '/:userId',
       method: HttpMethod.Get,
       handler: this.showUserDetails,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('userId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId')
       ]
@@ -162,7 +164,7 @@ export default class UserController extends Controller {
     if(!this.tokenService.exists(req.body.refreshToken)){
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Refresh token with not found.`,
+        'Refresh token with not found.',
         'UserController'
       );
     }
@@ -196,19 +198,14 @@ export default class UserController extends Controller {
   }
 
   public async login(
-    { user, body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
+    { body }: Request<UnknownRecord, UnknownRecord, LoginUserDto>,
     res: Response
   ): Promise<void> {
-    if (user) {
-      this.ok(res, {});
-      return;
-    }
-
     const result = await this.userService.verifyUser(body, this.configService.get('SALT_ROUNDS'));
 
     if (!result?.user) {
       throw new HttpError(
-        StatusCodes.UNAUTHORIZED,
+        StatusCodes.FORBIDDEN,
         'Unauthorized',
         'UserController'
       );

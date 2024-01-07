@@ -1,6 +1,6 @@
 export const STATIC_UPLOAD_ROUTE = '/upload';
 export const STATIC_FILES_ROUTE = '/static';
-export const DEFAULT_STATIC_CERTIFICATES_ROUTE  = '/img/content/certificates-and-diplomas';
+export const DEFAULT_STATIC_CERTIFICATES_ROUTE = '/img/content/certificates-and-diplomas';
 export const DEFAULT_STATIC_TRAINING_IMAGES_ROUTE = '/img/content/user-card-coach';
 export const DEFAULT_STATIC_AVATAR_COACH_IMAGES_ROUTE = '/img/content/avatars/coaches';
 export const DEFAULT_STATIC_AVATAR_USER_IMAGES_ROUTE = '/img/content/avatars/users';

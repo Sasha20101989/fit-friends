@@ -27,6 +27,7 @@ import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { NotificationServiceInterface } from '../notification/notification-service.interface.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class RequestController extends Controller {
@@ -35,7 +36,8 @@ export default class RequestController extends Controller {
     @inject(AppComponent.RequestServiceInterface) private readonly requestService: RequestServiceInterface,
     @inject(AppComponent.NotificationServiceInterface) private readonly notificationService: NotificationServiceInterface,
     @inject(AppComponent.UserServiceInterface) private readonly userService: UserServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for RequestController...');
@@ -44,7 +46,7 @@ export default class RequestController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('userId'),
         new DocumentExistsMiddleware(this.userService, 'User', 'userId'),
@@ -55,7 +57,7 @@ export default class RequestController extends Controller {
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('requestId'),
         new DocumentExistsMiddleware(this.requestService, 'Request', 'requestId'),
         new ValidateDtoMiddleware(UpdateRequestDto)
@@ -66,7 +68,7 @@ export default class RequestController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware()
+        new PrivateRouteMiddleware(this.authExceptionFilter)
       ],
     });
   }
@@ -101,7 +103,7 @@ export default class RequestController extends Controller {
     if(!initiatorDetails){
       throw new HttpError(
         StatusCodes.NOT_FOUND,
-        `Initiator not exists.`,
+        'Initiator not exists.',
         'RequestController'
       );
     }

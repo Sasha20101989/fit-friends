@@ -67,16 +67,14 @@ export function transformObject(properties: string[], staticPath: string, upload
           ? `${rootPath}${DEFAULT_STATIC_TRAINING_IMAGES_ROUTE}/${target[property]}`
           : `${rootPath}/${target[property]}`;
       } else if (property === 'certificates') {
-          const updatedCertificates = (target[property] as string[]).map((certificate) => {
-            const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(certificate);
-            const rootPath = isDefaultImage ? staticPath : uploadPath;
-
-            return isDefaultImage
-              ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${certificate}`
-              : `${rootPath}/${certificate}`;
-          });
-
-          target[property] = updatedCertificates;
+        const updatedCertificates = (target[property] as string[]).map((certificate) => {
+          const isDefaultImage = DEFAULT_STATIC_CERTIFICATES_IMAGES.includes(certificate);
+          const rootPath = isDefaultImage ? staticPath : uploadPath;
+          return isDefaultImage
+            ? `${rootPath}${DEFAULT_STATIC_CERTIFICATES_ROUTE}/${certificate}`
+            : `${rootPath}/${certificate}`;
+        });
+        target[property] = updatedCertificates;
       } else if (property === 'avatar') {
         if(data.role === Role.Trainer){
           const isDefaultImage = DEFAULT_STATIC_COACH_AVATAR_IMAGES.includes(target[property] as string);

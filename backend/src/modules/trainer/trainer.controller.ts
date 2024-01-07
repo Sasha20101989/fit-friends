@@ -20,13 +20,15 @@ import { ParamsGetUser } from '../../types/params/params-get-user.type.js';
 import UpdateTrainerDto from './dto/update-trainer.dto.js';
 import { PrivateRouteMiddleware } from '../../core/middlewares/private-route.middleware.js';
 import { HttpError } from '../../core/errors/http-error.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class TrainerController extends Controller {
   constructor(
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.TrainerServiceInterface) private readonly trainerService: TrainerServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for TrainerController...');
@@ -42,7 +44,7 @@ export default class TrainerController extends Controller {
       method: HttpMethod.Put,
       handler: this.update,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateDtoMiddleware(UpdateTrainerDto)
       ]
     });

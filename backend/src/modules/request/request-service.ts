@@ -22,7 +22,7 @@ export default class RequestService implements RequestServiceInterface {
   public async findByUserId(userId: string): Promise<DocumentType<RequestEntity>[]> {
     return await this.requestModel
       .find({ user: userId})
-      .populate(['user', 'initiator']);;
+      .populate(['user', 'initiator']);
   }
 
   public async updateStatus(dto: UpdateRequestDto, requestId: MongoId): Promise<DocumentType<RequestEntity> | null> {

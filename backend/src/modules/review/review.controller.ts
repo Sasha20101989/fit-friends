@@ -23,6 +23,7 @@ import { ValidateObjectIdMiddleware } from '../../core/middlewares/validate-obje
 import { ParamsGetTraining } from '../../types/params/params-get-training.type.js';
 import { RoleCheckMiddleware } from '../../core/middlewares/role-check.middleware.js';
 import { ReviewQueryParams } from './types/review-query-params.js';
+import { AuthExceptionFilter } from '../../core/exception-filter/auth.exception-filter.js';
 
 @injectable()
 export default class ReviewController extends Controller {
@@ -30,7 +31,8 @@ export default class ReviewController extends Controller {
     @inject(AppComponent.LoggerInterface) protected readonly logger: LoggerInterface,
     @inject(AppComponent.ReviewServiceInterface) private readonly reviewService: ReviewServiceInterface,
     @inject(AppComponent.TrainingServiceInterface) private readonly trainingService: TrainingServiceInterface,
-    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>
+    @inject(AppComponent.ConfigInterface) configService: ConfigInterface<RestSchema>,
+    @inject(AppComponent.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter
   ) {
     super(logger, configService);
     this.logger.info('Register routes for ReviewController...');
@@ -39,7 +41,7 @@ export default class ReviewController extends Controller {
       method: HttpMethod.Get,
       handler: this.index,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId')
       ]
@@ -48,7 +50,7 @@ export default class ReviewController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new PrivateRouteMiddleware(),
+        new PrivateRouteMiddleware(this.authExceptionFilter),
         new RoleCheckMiddleware(Role.User),
         new ValidateObjectIdMiddleware('trainingId'),
         new DocumentExistsMiddleware(this.trainingService, 'Training', 'trainingId'),
