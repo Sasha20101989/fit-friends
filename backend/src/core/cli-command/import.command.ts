@@ -345,7 +345,7 @@ export default class ImportCommand implements CliCommandInterface {
   }
 
   public async execute(login: string, password: string, host: string, dbname: string, saltRounds: string): Promise<void> {
-    const defaulDbPort = this.configService.get('DB_PORT');
+    const defaulDbPort = this.configService.get('MONGO_PORT');
     const uri = getMongoURI(login, password, host, defaulDbPort, dbname);
     this.saltRounds = parseInt(saltRounds, this.configService.get('SALT_ROUNDS'));
 

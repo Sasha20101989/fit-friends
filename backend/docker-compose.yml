@@ -1,0 +1,60 @@
+version: '3.9'
+services:
+  fit-friends.mongodb:
+    image: mongo:latest
+    restart: always
+    container_name: fit-friends.mongodb
+    env_file:
+      - .fit-friends.mongodb.env
+    volumes:
+      - fit-friends.volume:/data/db
+    networks:
+      - fit-friends.network
+
+  fit-friends:
+    container_name: fit-friends
+    depends_on:
+      - fit-friends.mongodb
+    restart: always
+    image: fit.friends:1.0
+    env_file:
+      - .fit-friends.env
+    ports:
+      - 3333:3333
+    networks:
+      - fit-friends.network
+
+  fit-friends.notify.fakesmtp:
+    image: gessnerfl/fake-smtp-server
+    container_name: "fit-friends.notify.fakesmtp"
+    depends_on:
+      - fit-friends
+    hostname: "fakesmtp"
+    ports:
+      - "8025:8025"
+      - "1083:8080"
+
+  fit-friends.notify.rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: fit-friends.notify.rabbitmq
+    restart: always
+    ports:
+      - '1088:15672'
+      - '5672:5672'
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: test
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - fit-friends.network
+
+volumes:
+  fit-friends.volume:
+
+networks:
+  fit-friends.network:
+    driver: bridge

@@ -126,9 +126,9 @@ export default class RestApplication {
     const mongoUri = getMongoURI(
       this.config.get('MONGO_INITDB_ROOT_USERNAME'),
       this.config.get('MONGO_INITDB_ROOT_PASSWORD'),
-      this.config.get('DB_HOST'),
-      this.config.get('DB_PORT'),
-      this.config.get('DB_NAME'),
+      this.config.get('MONGO_HOST'),
+      this.config.get('MONGO_PORT'),
+      this.config.get('MONGO_DB'),
     );
 
     await this.databaseClient.connect(mongoUri);

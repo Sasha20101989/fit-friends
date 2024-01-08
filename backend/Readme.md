@@ -98,11 +98,11 @@ npm start
 
 PORT - Порт, на котором будет работать сервер
 SALT - Соль, используемая для шифрования
-DB_HOST - Хост базы данных
+MONGO_HOST - Хост базы данных
 MONGO_INITDB_ROOT_USERNAME - Имя пользователя базы данных
 MONGO_INITDB_ROOT_PASSWORD - Пароль пользователя базы данных
-DB_PORT - Порт базы данных
-DB_NAME - Название базы данных
+MONGO_PORT - Порт базы данных
+MONGO_DB - Название базы данных
 JWT_ACCESS_SECRET - Секретный ключ для подписи и верификации JWT-токенов
 JWT_REFRESH_SECRET - Секретный ключ для восстановления JWT_ACCESS-токенов
 ACCESS_TOKEN_EXPIRATION_TIME - Срок действия для токена аутентификации
@@ -150,7 +150,8 @@ npm run ts ./src/main.cli.ts -- --import admin admin 127.0.0.1 fit-friends secre
 
 ### Деплой
 
-Выполните команду
+Выполните команды
 ```bash
 npm run buildDockerImage
+docker compose --file ./docker-compose.yml --project-name "fit-friends" up -d
 ```

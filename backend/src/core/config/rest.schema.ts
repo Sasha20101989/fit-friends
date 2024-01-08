@@ -7,11 +7,11 @@ export type RestSchema = {
   PORT: number;
   SALT: string;
   SALT_ROUNDS: number;
-  DB_HOST: string;
+  MONGO_HOST: string;
   MONGO_INITDB_ROOT_USERNAME: string;
   MONGO_INITDB_ROOT_PASSWORD: string;
-  DB_PORT: string;
-  DB_NAME: string;
+  MONGO_PORT: string;
+  MONGO_DB: string;
   JWT_ACCESS_SECRET:string;
   JWT_REFRESH_SECRET:string;
   ACCESS_TOKEN_EXPIRATION_TIME: string;
@@ -57,10 +57,10 @@ export const configRestSchema = convict<RestSchema>({
     env: 'SALT_ROUNDS',
     default: null
   },
-  DB_HOST: {
+  MONGO_HOST: {
     doc: 'IP address of the database server (MongoDB)',
-    format: 'ipaddress',
-    env: 'DB_HOST',
+    format: String,
+    env: 'MONGO_HOST',
     default: null
   },
   MONGO_INITDB_ROOT_USERNAME: {
@@ -75,16 +75,16 @@ export const configRestSchema = convict<RestSchema>({
     env: 'MONGO_INITDB_ROOT_PASSWORD',
     default: null,
   },
-  DB_PORT: {
+  MONGO_PORT: {
     doc: 'Port to connect to the database (MongoDB)',
     format: 'port',
-    env: 'DB_PORT',
+    env: 'MONGO_PORT',
     default: '27017',
   },
-  DB_NAME: {
+  MONGO_DB: {
     doc: 'Database name (MongoDB)',
     format: String,
-    env: 'DB_NAME',
+    env: 'MONGO_DB',
     default: null
   },
   JWT_ACCESS_SECRET: {
