@@ -15,7 +15,7 @@
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
-    "copy": "copy package.json dist\\ && copy README.md dist\\",
+    "copy": "copy package.json dist\\ && copy README.md dist\\ && xcopy static\\ dist\\static /E /I && xcopy upload\\ dist\\upload /E /I",
     "ts": "ts-node",
     "start:dev": "nodemon"
   },

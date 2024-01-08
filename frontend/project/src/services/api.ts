@@ -6,7 +6,7 @@ import { errorHandle } from './error-handler';
 import { ApiErrorType, CustomResponse, shouldDisplayError } from './error-handler.co';
 import { APIRoute } from '../const';
 
-export const BACKEND_URL = 'http://localhost:4000';
+export const BACKEND_URL = 'http://localhost:3333';
 const REQUEST_TIMEOUT = 5000;
 
 export const createApi = (): AxiosInstance => {
