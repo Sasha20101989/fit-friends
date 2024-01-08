@@ -147,11 +147,3 @@ docker compose --file ./docker-compose.dev.yml --project-name "fit-friends" up -
 npm run ts ./src/main.cli.ts -- --import <имя пользователя базы данных> <пароль пользователя базы данных> <хост базы данных> <название базы данных> <соль>
 npm run ts ./src/main.cli.ts -- --import admin admin 127.0.0.1 fit-friends secret 
 ```
-
-### Деплой
-
-Выполните команды
-```bash
-npm run buildDockerImage
-docker compose --file ./docker-compose.yml --project-name "fit-friends" up -d
-```
